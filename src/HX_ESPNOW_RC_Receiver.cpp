@@ -3,21 +3,24 @@
 
 #include <esp_now.h>
 #include <WiFi.h>
+#include <esp_wifi.h>
 
 // REPLACE WITH THE MAC Address of your receiver 
-uint8_t broadcastAddress[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDD};
-//ttgo-display 24:62:AB:CA:AA:DC - STA
+//ttgo-display 24:62:AB:CA:AA:DD - AP
+//uint8_t broadcastAddress[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDD};
 
+
+//quad {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5} - AP
+uint8_t broadcastAddress[] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5};
 
 
 static HXRCTransmitterStats transmitterStats;
 static HXRCReceiverStats receiverStats;
 static HXRCSenderStateEnum senderState;
 
-static HXRCPayloadChannels receivedChannels;
+static HXRCChannels receivedChannels;
 
-static HXRCPayloadTelemetry outgoingTelemetry;
-static HXRCPayloadTelemetry incomingTelemetry;  //TODO
+static HXRCPayloadReceiver outgoingTelemetry;
 
 // Callback when data is sent
 static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
@@ -26,8 +29,8 @@ static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 
     if( success )
     {
-        transmitterStats.onPacketSendSuccess();
-        transmitterStats.lastTelemetryBytesSentTotal += outgoingTelemetry.length;
+        transmitterStats.onPacketSendSuccess(outgoingTelemetry.length );
+        //todo: free telemetry buffer
     }
     else    
     {
@@ -40,22 +43,21 @@ static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 // Callback when data is received
 static void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 {
-    if ( len >=HXRCPayloadSize_MIN )
+    if ( len >= HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE )
     {
-        const HXRCPayload* pPayload = (const HXRCPayload*) incomingData;
-        if (pPayload->packetId == HXRCPKID_RCDATA)
-        {
-            memcpy(&receivedChannels, incomingData, sizeof(receivedChannels));
-        }
-        else if (pPayload->packetId == HXRCPKID_TELEMETRY)
-        {
-            memcpy(&incomingTelemetry, incomingData, sizeof(incomingTelemetry));
-        }
-        receiverStats.onPacketReceived( pPayload );
+        const HXRCPayloadTransmitter* pPayload = (const HXRCPayloadTransmitter*) incomingData;
+        memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
+
+        //todo:process telemetry
+        receiverStats.onPacketReceived( pPayload->sequenceId, -1, pPayload->length );
+
+        //todo: copy incoming telemetry
     }
     else
     {
         //ignore unknown packet, too short
+        Serial.print("Unknown packet length:");
+        Serial.println(len);
     }
 }
 
@@ -63,10 +65,25 @@ static void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 //WiFi.softAP("quad", NULL, 13);
 void HXRCInit( int channel )
 {
+    outgoingTelemetry.sequenceId = 0;
+    for ( int i = 0; i < HXRC_CHANNELS; i++ )
+    {
+        HXRCSetChannelValueInt( receivedChannels, i, 1000 );
+    }
+
+    senderState = HXRCSS_READY_TO_SEND;
+  
     Serial.println("HXESPNOWRC: Info: Board MAC address:");
     //Serial.println(WiFi.macAddress());
     Serial.println(WiFi.softAPmacAddress());
 
+/*
+    if ( esp_wifi_set_protocol (WIFI_IF_AP, WIFI_PROTOCOL_LR) != ESP_OK)
+    {
+        Serial.println("HXRC: Error: Failed to enable LR mode");
+        return;
+    }
+*/
     // Init ESP-NOW
     if (esp_now_init() != ESP_OK)
     {
@@ -93,48 +110,35 @@ void HXRCInit( int channel )
     }
     // Register for a callback function that will be called when data is received
     esp_now_register_recv_cb(OnDataRecv);
-
-    for ( int i = 0; i < HXRC_CHANNELS; i++ )
-    {
-        HXRCSetChannelValueInt( receivedChannels, i, 1000 );
-    }
-
-    senderState = HXRCSS_READY_TO_SEND;
-    
-    outgoingTelemetry.packetId = HXRCPKID_TELEMETRY;
-    outgoingTelemetry.sequenceId = 0;
 }
 
 void HXRCLoop()
 {
     unsigned long t = millis();
-
     unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
-        //if (hastelemetry)
+        outgoingTelemetry.sequenceId++;
+        outgoingTelemetry.rssi = receiverStats.getRSSI();
+        
+        //TODO: send any telemetry data or empty packet
+        outgoingTelemetry.length = HXRC_RECEIVER_TELEMETRY_SIZE_MAX;  
+
+        transmitterStats.onPacketSend( t );
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &outgoingTelemetry, HXRC_RECEIVER_PAYLOAD_SIZE_BASE + outgoingTelemetry.length );
+        if (result == ESP_OK) 
         {
-            outgoingTelemetry.sequenceId++;
-
-            outgoingTelemetry.rssi = receiverStats.getRSSI();
-            
-            //TODO: send any telemetry data
-            outgoingTelemetry.length = HXRCTelemetryDataSizeMAX;  
-
-            transmitterStats.packetsSentTotal++;
-
-            esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &outgoingTelemetry, HXRCTelemetryHeaderSize + outgoingTelemetry.length );
-            if (result == ESP_OK) 
-            {
-                senderState = HXRCSS_WAITING_CONFIRMATION;
-            }
-            else 
-            {
-                transmitterStats.onPacketSendError();
-            }            
+            senderState = HXRCSS_WAITING_CONFIRMATION;
         }
+        else 
+        {
+            transmitterStats.onPacketSendError();
+        }            
     }
+
+    transmitterStats.update();
+    receiverStats.update();
 }
 
 uint16_t HXRCGetChannelValue(uint8_t index )

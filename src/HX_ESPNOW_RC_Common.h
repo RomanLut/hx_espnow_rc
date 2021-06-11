@@ -2,33 +2,22 @@
 
 #include <Arduino.h>
 
-#define FAILSAFE_PACKETS_COUNT  20  //for 50ms packets period, 20 packets for failsafe period 1 second
-#define PACKET_SEND_PERIOD_MS   50      //20Hz    
-#define FAILSAFE_PERIOD_MS (PACKET_SEND_PERIOD_MS * FAILSAFE_PACKETS_COUNT)
-#define FAILSAFE_PACKETS_BITMASK 0xfffff
-
-typedef enum
-{
-    HXRCPKID_RCDATA     = 0,
-    HXRCPKID_TELEMETRY  = 1
-} HXRCPacketId;
+#define PACKET_SEND_PERIOD_MS   100      //10Hz    
+#define FAILSAFE_PERIOD_MS      1000
 
 #define HXRC_CHANNELS 16
 
 #pragma pack (push)
 #pragma pack (1)
 
-typedef struct 
-{
-    uint16_t packetId   : 2;    //HXRCPacketId
-    uint16_t sequenceId : 14;
-} HXRCPayload;
+#define HXRC_PAYLOAD_SIZE_MAX 250
+
+#define HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE (2 + 22 + 1 )  //sequenceId, channels, telemetry length
+//#define HXRC_TRANSMITTER_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE )
+#define HXRC_TRANSMITTER_TELEMETRY_SIZE_MAX 64  //limit packet size  to achieve target packet rate
 
 typedef struct 
 {
-    uint16_t packetId   : 2;    //HXRCPacketId
-    uint16_t sequenceId : 14;
-
     uint16_t Ch1        : 11; 
     uint16_t Ch2        : 11;
     uint16_t Ch3        : 11;
@@ -44,38 +33,44 @@ typedef struct
     uint16_t Ch13       : 11;
     uint16_t Ch14       : 11;
     uint16_t Ch15       : 11;
-    uint16_t Ch16       : 11;   //16*11 = 22 bytes, 24 bytes with id
-} HXRCPayloadChannels;
+    uint16_t Ch16       : 11;   //16*11 = 22 bytes
+} HXRCChannels;
 
-#define HXRCPayloadSize_MAX 250
-#define HXRCPayloadSize_MIN 2   //at least 2 bytes for packedId and sequenceId 
-
-#define HXRCTelemetryHeaderSize ( 1 + 1 + 2 )
-#define HXRCTelemetryDataSizeMAX ( HXRCPayloadSize_MAX - HXRCTelemetryHeaderSize )
 
 typedef struct 
 {
-    uint16_t packetId   : 2;    //HXRCPacketId
-    uint16_t sequenceId : 14;
+    //sequenceId increments with each sent packet
+    //and each packet which was not sent in time ( transmitter is required to keep PACKET_SEND_PERIOD_MS miminum rate)
+    uint16_t sequenceId;
 
-    uint8_t rssi;  //transmitted from uav to ground
+    HXRCChannels channels;
 
-    uint8_t length;  //length of telemetry data, if any
+    uint8_t length;
+    uint8_t data[HXRC_TRANSMITTER_TELEMETRY_SIZE_MAX];
+} HXRCPayloadTransmitter;
 
-    uint8_t data[HXRCTelemetryDataSizeMAX];
+#define HXRC_RECEIVER_PAYLOAD_SIZE_BASE (2 + 1 + 1 )  //sequenceId, rssi, telemetry length
+#define HXRC_RECEIVER_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE )
 
-} HXRCPayloadTelemetry;
+typedef struct 
+{
+    uint16_t sequenceId;
+
+    int8_t rssi;
+
+    uint8_t length;
+    uint8_t data[HXRC_RECEIVER_TELEMETRY_SIZE_MAX];
+} HXRCPayloadReceiver;
 
 #pragma pack (pop)
 
-//Ground transmitter state, uav telemetry transmitter state
 typedef enum
 {
     HXRCSS_READY_TO_SEND        = 0,
     HXRCSS_WAITING_CONFIRMATION = 1
 } HXRCSenderStateEnum;
 
-uint16_t inline HXRCGetChannelValueInt(HXRCPayloadChannels& channels, uint8_t index )
+uint16_t inline HXRCGetChannelValueInt(HXRCChannels& channels, uint8_t index )
 {
     switch( index )
     {
@@ -116,7 +111,7 @@ uint16_t inline HXRCGetChannelValueInt(HXRCPayloadChannels& channels, uint8_t in
     }
 }
 
-void inline HXRCSetChannelValueInt(HXRCPayloadChannels& channels, uint8_t index, uint16_t data)
+void inline HXRCSetChannelValueInt(HXRCChannels& channels, uint8_t index, uint16_t data)
 {
     data -= 1000;
     switch( index )

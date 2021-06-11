@@ -6,73 +6,89 @@
 class HXRCReceiverStats
 {
 private:
-    uint8_t calculateRSSI(uint32_t value, uint8_t bitsCount)
-    {
-        uint32_t bit = 1;            
-        uint8_t count = 0;
-        for ( uint8_t i = 0; i < bitsCount; i++ )
-        {
-            if ( value & bit ) count++;
-            bit <<= 1;
-        }
-
-        return (uint8_t)(((uint16_t)count) * 100 / bitsCount);
-    }
-
 
 public:
-    //== receiver stats
-    //shifted with sequenceId
-    uint32_t receivedPacketsMask;
-    uint32_t  lastReceivedTime;
+    unsigned long lastReceivedTimeMs;
 
     uint16_t prevSequenceId;
+    uint16_t packetsSuccess;
+    uint16_t packetsError;
 
     //receiver RSSI of other size ( value is received with telemetry)
     //-1 if is unknown
     int8_t remoteReceiverRSSI;
 
-    uint16_t telemetryBytesReceivedTotal;
+    unsigned long RSSIUpdateMs;
+    uint16_t RSSIPacketsSuccess;
+    uint16_t RSSIPacketsError;
+    uint8_t RSSILast;
+
+    uint32_t telemetryBytesReceivedTotal;
 
     uint32_t lastTelemetryBytesReceivedSpeed;
     uint32_t lastTelemetryBytesReceivedTotal;
-    uint32_t lastTelemetryBytesReceivedTotalMs;
+    unsigned long telemetrySpeedUpdateMs;
 
     HXRCReceiverStats()
     {
         reset();
     }
 
-    bool isFailsafe()    
+    void reset()
     {
-        uint32_t delta = millis() - this->lastReceivedTime;
-        if ( delta >= FAILSAFE_PERIOD_MS )
-        {
-            return true;
-        }
+        unsigned long t = millis();
+        
+        this->lastReceivedTimeMs = t - FAILSAFE_PERIOD_MS;
 
-        //all last 20 packets are not received?
-        return (receivedPacketsMask & FAILSAFE_PACKETS_BITMASK) == 0;
+        this->prevSequenceId = 0;
+        this->packetsSuccess = 0;
+        this->packetsError = 0;
+
+        this->RSSIUpdateMs = t;
+        this->RSSIPacketsSuccess = 0;
+        this->RSSIPacketsError = 0;
+        this->RSSILast = 0;
+
+        this->remoteReceiverRSSI = -1;
+        this->telemetryBytesReceivedTotal = 0;
+
+        this->lastTelemetryBytesReceivedSpeed = 0;
+        this->lastTelemetryBytesReceivedTotal = 0;
+        this->telemetrySpeedUpdateMs = t;
     }
 
+    bool isFailsafe()    
+    {
+        unsigned long delta = millis() - this->lastReceivedTimeMs;
+        return delta >= FAILSAFE_PERIOD_MS;
+    }
 
     //(percentage of packets received) 0...100
     //or -1 if not received for a long time
     uint8_t getRSSI()
     {
-        uint32_t delta = millis() - this->lastReceivedTime;
-        if ( delta >= FAILSAFE_PERIOD_MS )
-        {
-            return -1;
-        }
+        unsigned long t = millis();
+        unsigned long delta = t - this->RSSIUpdateMs;
 
-        return calculateRSSI( this->receivedPacketsMask, FAILSAFE_PACKETS_COUNT);
+        if ( delta > 1000)
+        {
+            uint16_t packetsSuccessCount = this->packetsSuccess - this->RSSIPacketsSuccess;
+            uint16_t packetsErrorCount = this->packetsError - this->RSSIPacketsError;
+            uint16_t totalPackets = packetsSuccessCount + packetsErrorCount;
+
+            this->RSSILast = ( totalPackets > 0 ) ? (((uint32_t)packetsSuccessCount) * 100 / totalPackets) : 0;
+            this->RSSIPacketsSuccess = this->packetsSuccess;
+            this->RSSIPacketsError = this->packetsError;
+            this->RSSIUpdateMs = t; 
+        }
+        return this->RSSILast;
+
+
     }
 
     int8_t getRemoteReceiverRSSI()
     {
-        uint32_t delta = millis() - this->lastReceivedTime;
-        if ( delta >= FAILSAFE_PERIOD_MS )
+        if ( isFailsafe() )
         {
             return -1;
         }
@@ -80,54 +96,45 @@ public:
         return this->remoteReceiverRSSI;
     }
 
-    void reset()
+
+    void onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize )
     {
-        this->receivedPacketsMask = 0;
-        this->lastReceivedTime = 0;
-        this->prevSequenceId = 0;
-        this->remoteReceiverRSSI = -1;
-        this->telemetryBytesReceivedTotal = 0;
+        this->remoteReceiverRSSI = rssi;
+        this->telemetryBytesReceivedTotal += telemetrySize;
 
-        this->lastTelemetryBytesReceivedSpeed = 0;
-        this->lastTelemetryBytesReceivedTotal = 0;
-        this->lastTelemetryBytesReceivedTotalMs = millis();
-    }
+        uint16_t seqDelta = sequenceId - this->prevSequenceId;
 
-    void onPacketReceived( const HXRCPayload* payload )
-    {
-        if ( payload->packetId == HXRCPKID_TELEMETRY )
+        if ( seqDelta > 1)
         {
-            this->remoteReceiverRSSI = (int8_t)(((const HXRCPayloadTelemetry*)payload)->rssi);
-            this->telemetryBytesReceivedTotal += ((const HXRCPayloadTelemetry*)payload)->length;
+            this->packetsError += seqDelta - 1;
         }
+        
+        this->packetsSuccess++;
 
-        uint16_t seqDelta = payload->sequenceId - this->prevSequenceId;
-        if ( seqDelta > 32 ) seqDelta = 32;
-
-        while ( seqDelta > 0)
-        {
-            this->receivedPacketsMask <<= 1;
-            seqDelta--;
-        }
-        this->receivedPacketsMask |= 1;
-
-        this->prevSequenceId = payload->sequenceId;
-        this->lastReceivedTime = millis();
+        this->prevSequenceId = sequenceId;
+        this->lastReceivedTimeMs = millis();
     }
 
     //telemetry receive speed stats, bytes/sec
     uint32_t getTelemetryReceivedSpeed()
     {
-        uint32_t delta = millis() - this->lastTelemetryBytesReceivedTotalMs;
+        unsigned long t = millis();
+        uint32_t delta = t - this->telemetrySpeedUpdateMs;
 
         if ( delta > 1000 )
         {
-            this->lastTelemetryBytesReceivedTotalMs = millis();
             this->lastTelemetryBytesReceivedSpeed = ((uint32_t)(this->telemetryBytesReceivedTotal - this->lastTelemetryBytesReceivedTotal)) * 1000 / delta;
             this->lastTelemetryBytesReceivedTotal = this->telemetryBytesReceivedTotal;
+            this->telemetrySpeedUpdateMs = t;
         }
 
         return this->lastTelemetryBytesReceivedSpeed;
+    }
+
+    void update()
+    {
+        getTelemetryReceivedSpeed(); 
+        getRSSI(); 
     }
 
 };
