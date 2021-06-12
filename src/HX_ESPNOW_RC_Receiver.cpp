@@ -1,29 +1,23 @@
-#include "HX_ESPNOW_RC_Common.h"
 #include "HX_ESPNOW_RC_Receiver.h"
 
-#include <esp_now.h>
-#include <WiFi.h>
-#include <esp_wifi.h>
+HXRCReceiver* HXRCReceiver::pInstance;
 
-// REPLACE WITH THE MAC Address of your receiver 
-//ttgo-display 24:62:AB:CA:AA:DD - AP
-//uint8_t broadcastAddress[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDD};
+#if defined(ESP8266)
+void HXRCReceiver::OnDataSentStatic(uint8_t *mac_addr, uint8_t status) {HXRCReceiver::pInstance->OnDataSent( mac_addr, status );};
+void HXRCReceiver::OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len) {HXRCReceiver::pInstance->OnDataRecv( mac, incomingData, len);};
+#elif defined (ESP32)
+static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
+static void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len);
+#endif
 
-
-//quad {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5} - AP
-uint8_t broadcastAddress[] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5};
-
-
-static HXRCTransmitterStats transmitterStats;
-static HXRCReceiverStats receiverStats;
-static HXRCSenderStateEnum senderState;
-
-static HXRCChannels receivedChannels;
-
-static HXRCPayloadReceiver outgoingTelemetry;
-
+//=====================================================================
+//=====================================================================
 // Callback when data is sent
-static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+#if defined(ESP8266)
+void HXRCReceiver::OnDataSent(uint8_t *mac_addr, uint8_t status)
+#elif defined (ESP32)
+void HXRCReceiver::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+#endif
 {
     bool success = status == ESP_NOW_SEND_SUCCESS;
 
@@ -40,8 +34,14 @@ static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
     senderState = HXRCSS_READY_TO_SEND;
 }
 
+//=====================================================================
+//=====================================================================
 // Callback when data is received
-static void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
+#if defined(ESP8266)
+void HXRCReceiver::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
+#elif defined (ESP32)
+void HXRCReceiver::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
+#endif
 {
     if ( len >= HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE )
     {
@@ -61,10 +61,20 @@ static void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
     }
 }
 
+//=====================================================================
+//=====================================================================
 //channel - channel where AP was is initialized
 //WiFi.softAP("quad", NULL, 13);
-void HXRCInit( int channel )
+void HXRCReceiver::init( HXRCConfig config )
 {
+    this->config = config;
+
+    if ( config.ledPin != -1 )
+    {
+        pinMode(config.ledPin,OUTPUT);
+        digitalWrite(this->config.ledPin, this->config.ledPinInverted ? HIGH : LOW );
+    }
+
     outgoingTelemetry.sequenceId = 0;
     for ( int i = 0; i < HXRC_CHANNELS; i++ )
     {
@@ -93,7 +103,19 @@ void HXRCInit( int channel )
 
     // Once ESPNow is successfully Init, we will register for Send CB to
     // get the status of Trasnmitted packet
-    esp_now_register_send_cb(OnDataSent);
+    esp_now_register_send_cb(OnDataSentStatic);
+
+#if defined(ESP8266)
+
+    if ( esp_now_set_self_role(ESP_NOW_ROLE_COMBO) != ESP_OK )
+    {
+        Serial.println("HXRC: Error: Failed to set role");
+        return;
+    }
+
+    esp_now_add_peer(this->config.peer_mac, ESP_NOW_ROLE_SLAVE, this->config.wifi_channel, NULL, 0);
+
+#elif defined(ESP32)
 
     // Register peer
     esp_now_peer_info_t peerInfo;
@@ -108,14 +130,17 @@ void HXRCInit( int channel )
         Serial.println("HXRC: Error: Failed to add peer");
         return;
     }
+#endif
+
     // Register for a callback function that will be called when data is received
-    esp_now_register_recv_cb(OnDataRecv);
+    esp_now_register_recv_cb(OnDataRecvStatic);
 }
 
-void HXRCLoop()
+//=====================================================================
+//=====================================================================
+void HXRCReceiver::loop()
 {
     unsigned long t = millis();
-    unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
@@ -126,7 +151,7 @@ void HXRCLoop()
         outgoingTelemetry.length = HXRC_RECEIVER_TELEMETRY_SIZE_MAX;  
 
         transmitterStats.onPacketSend( t );
-        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &outgoingTelemetry, HXRC_RECEIVER_PAYLOAD_SIZE_BASE + outgoingTelemetry.length );
+        esp_err_t result = esp_now_send(this->config.peer_mac, (uint8_t *) &outgoingTelemetry, HXRC_RECEIVER_PAYLOAD_SIZE_BASE + outgoingTelemetry.length );
         if (result == ESP_OK) 
         {
             senderState = HXRCSS_WAITING_CONFIRMATION;
@@ -139,20 +164,44 @@ void HXRCLoop()
 
     transmitterStats.update();
     receiverStats.update();
+
+    updateLed();
 }
 
-uint16_t HXRCGetChannelValue(uint8_t index )
+//=====================================================================
+//=====================================================================
+uint16_t HXRCReceiver::getChannelValue(uint8_t index )
 {
     return HXRCGetChannelValueInt( receivedChannels, index );
 }
 
-HXRCReceiverStats& HXRCGetReceiverStats() 
+//=====================================================================
+//=====================================================================
+HXRCReceiverStats& HXRCReceiver::getReceiverStats() 
 {
     return receiverStats;
 }
 
-HXRCTransmitterStats& HXRCGetTransmitterStats() 
+//=====================================================================
+//=====================================================================
+HXRCTransmitterStats& HXRCReceiver::getTransmitterStats() 
 {
     return transmitterStats;
+}
+
+//=====================================================================
+//=====================================================================
+void HXRCReceiver::updateLed()
+{
+    if ( config.ledPin == -1) return;
+
+    if ( getTransmitterStats().isFailsafe())
+    {
+        digitalWrite(this->config.ledPin, this->config.ledPinInverted ? HIGH : LOW );
+    }
+    else
+    {
+        digitalWrite(config.ledPin,(millis() & 32) ? HIGH : LOW );
+    }
 }
 

@@ -1,14 +1,68 @@
 #pragma once
 
 #include <Arduino.h>
+#include <stdint.h>
+
+#if defined(ESP8266)
+
+#include <ESP8266WiFi.h>
+#include <espnow.h>
+
+#define ESP_OK 0
+#define esp_err_t int
+//#define esp_now_send_status_t uint8_t
+#define ESP_NOW_SEND_SUCCESS 0
+
+#elif defined(ESP32)
+
+#include <esp_now.h>
+#include <WiFi.h>
+#include <esp_wifi.h>
+
+#endif
 
 #define PACKET_SEND_PERIOD_MS   100      //10Hz    
 #define FAILSAFE_PERIOD_MS      1000
 
 #define HXRC_CHANNELS 16
 
+//=====================================================================
+//=====================================================================
+class HXRCConfig
+{
+public:
+    uint8_t wifi_channel;
+    uint8_t peer_mac[6];
+    int8_t ledPin;
+    int8_t ledPinInverted;
+
+    HXRCConfig()
+    {
+        wifi_channel = 1;
+        memset( this->peer_mac, 0xff, 6 );
+        this->ledPin = -1;
+        this->ledPinInverted = false;
+    }
+
+    HXRCConfig(
+        uint8_t wifi_channel,
+        uint8_t peer_mac[6],
+        int8_t ledPin,
+        bool ledPinInverted
+    )
+    {
+        this->wifi_channel = wifi_channel;
+        memcpy( this->peer_mac, peer_mac, 6 );
+        this->ledPin = ledPin;
+        this-> ledPinInverted = ledPinInverted;
+    }
+};
+
 #pragma pack (push)
 #pragma pack (1)
+
+//=====================================================================
+//=====================================================================
 
 #define HXRC_PAYLOAD_SIZE_MAX 250
 
@@ -37,6 +91,8 @@ typedef struct
 } HXRCChannels;
 
 
+//=====================================================================
+//=====================================================================
 typedef struct 
 {
     //sequenceId increments with each sent packet
@@ -49,6 +105,9 @@ typedef struct
     uint8_t data[HXRC_TRANSMITTER_TELEMETRY_SIZE_MAX];
 } HXRCPayloadTransmitter;
 
+//=====================================================================
+//=====================================================================
+
 #define HXRC_RECEIVER_PAYLOAD_SIZE_BASE (2 + 1 + 1 )  //sequenceId, rssi, telemetry length
 #define HXRC_RECEIVER_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE )
 
@@ -60,109 +119,19 @@ typedef struct
 
     uint8_t length;
     uint8_t data[HXRC_RECEIVER_TELEMETRY_SIZE_MAX];
-} HXRCPayloadReceiver;
+} HXRCPayloadFromReceiver;
 
 #pragma pack (pop)
 
+//=====================================================================
+//=====================================================================
 typedef enum
 {
     HXRCSS_READY_TO_SEND        = 0,
     HXRCSS_WAITING_CONFIRMATION = 1
 } HXRCSenderStateEnum;
 
-uint16_t inline HXRCGetChannelValueInt(HXRCChannels& channels, uint8_t index )
-{
-    switch( index )
-    {
-        case 0:
-            return channels.Ch1 + 1000;
-        case 1:
-            return channels.Ch2 + 1000;
-        case 2:
-            return channels.Ch3 + 1000;
-        case 3:
-            return channels.Ch4 + 1000;
-        case 4:
-            return channels.Ch5 + 1000;
-        case 5:
-            return channels.Ch6 + 1000;
-        case 6:
-            return channels.Ch7 + 1000;
-        case 7:
-            return channels.Ch8 + 1000;
-        case 8:
-            return channels.Ch9 + 1000;
-        case 9:
-            return channels.Ch10 + 1000;
-        case 10:
-            return channels.Ch11 + 1000;
-        case 11:
-            return channels.Ch12 + 1000;
-        case 12:
-            return channels.Ch13 + 1000;
-        case 13:
-            return channels.Ch14 + 1000;
-        case 14:
-            return channels.Ch15 + 1000;
-        case 15:
-            return channels.Ch16 + 1000;
-        default:
-            return 1000;
-    }
-}
-
-void inline HXRCSetChannelValueInt(HXRCChannels& channels, uint8_t index, uint16_t data)
-{
-    data -= 1000;
-    switch( index )
-    {
-        case 0:
-            channels.Ch1 = data;
-            break;
-        case 1:
-            channels.Ch2 = data;
-            break;
-        case 2:
-            channels.Ch3 = data;
-            break;
-        case 3:
-            channels.Ch4 = data;
-            break;
-        case 4:
-            channels.Ch5 = data;
-            break;
-        case 5:
-            channels.Ch6 = data;
-            break;
-        case 6:
-            channels.Ch7 = data;
-            break;
-        case 7:
-            channels.Ch8 = data;
-            break;
-        case 8:
-            channels.Ch9 = data;
-            break;
-        case 9:
-            channels.Ch10 = data;
-            break;
-        case 10:
-            channels.Ch11 = data;
-            break;
-        case 11:
-            channels.Ch12 = data;
-            break;
-        case 12:
-            channels.Ch13 = data;
-            break;
-        case 13:
-            channels.Ch14 = data;
-            break;
-        case 14:
-            channels.Ch15 = data;
-            break;
-        case 15:
-            channels.Ch16 = data;
-            break;
-    }
-}
+//=====================================================================
+//=====================================================================
+extern uint16_t HXRCGetChannelValueInt(const HXRCChannels& channels, uint8_t index );
+extern void HXRCSetChannelValueInt(HXRCChannels& channels, uint8_t index, uint16_t data);
