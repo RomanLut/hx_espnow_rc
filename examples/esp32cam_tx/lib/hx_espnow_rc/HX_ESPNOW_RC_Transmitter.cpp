@@ -6,8 +6,8 @@ HXRCTransmitter* HXRCTransmitter::pInstance;
 void HXRCTransmitter::OnDataSentStatic(uint8_t *mac_addr, uint8_t status) {HXRCTransmitter::pInstance->OnDataSent( mac_addr, status );};
 void HXRCTransmitter::OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len) {HXRCTransmitter::pInstance->OnDataRecv( mac, incomingData, len);};
 #elif defined (ESP32)
-static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
-static void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len);
+void HXRCTransmitter::OnDataSentStatic(const uint8_t *mac_addr, esp_now_send_status_t status) {HXRCTransmitter::pInstance->OnDataSent( mac_addr, status );};
+void HXRCTransmitter::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData, int len) {HXRCTransmitter::pInstance->OnDataRecv( mac, incomingData, len);};
 #endif
 
 //=====================================================================
@@ -40,19 +40,32 @@ void HXRCTransmitter::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t 
 #if defined(ESP8266)
 void HXRCTransmitter::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
 #elif defined (ESP32)
-void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
+void HXRCTransmitter::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 #endif
 {
-    const HXRCPayloadFromReceiver* pPayload = ( const HXRCPayloadFromReceiver*) incomingData;
+    const HXRCPayloadSlave* pPayload = ( const HXRCPayloadSlave*) incomingData;
 
-    if ( len >= HXRC_RECEIVER_PAYLOAD_SIZE_BASE )
+    if ( len >= HXRC_SLAVE_PAYLOAD_SIZE_BASE &&  pPayload->length == HXRC_SLAVE_PAYLOAD_SIZE_BASE + pPayload->length )
     {
         receiverStats.onPacketReceived( pPayload->sequenceId, pPayload->rssi, pPayload->length );
-        //todo:copy telemetry data pPayloadTelemetry.length               
+
+        uint16_t lenToWrite = pPayload->length;
+        uint16_t freeCount = this->incomingTelemetryBufffer.getFreeCount();
+        if ( lenToWrite > freeCount )
+        {
+            lenToWrite = freeCount;  
+            receiverStats.onTelemetryOverflow();
+        }
+        this->incomingTelemetryBufffer.insertBuffer( pPayload->data, lenToWrite );
+        if ( this->incomingTelemetryCallback )
+        {
+            this->incomingTelemetryCallback( this->incomingTelemetryCallbackParm, *this );
+        }
     }
     else
     {
         //ignore too short payload
+        //Serial.println("HXRC: Error: invalid payload length");
     }
 }
 
@@ -60,6 +73,9 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 //=====================================================================
 void HXRCTransmitter::init( HXRCConfig config )
 {
+    this->incomingTelemetryCallback = NULL;
+    this->outgoingTelemetryCallback = NULL;
+
     this->config = config;
 
     transmitterStats.reset();
@@ -80,13 +96,33 @@ void HXRCTransmitter::init( HXRCConfig config )
 
 #if defined(ESP8266)
     
-    WiFi.mode(WIFI_AP);
+    WiFi.mode(WIFI_STA);
+
+    //promiscous mode is required to set channel
+    wifi_promiscuous_enable(true);
+
+    //Channel setting works only in WIFI_STA mode. Mode can be changed later.Channel will be preserved.
+    if  (!wifi_set_channel( this->config.wifi_channel ) )
+    {
+        Serial.println("HXRC: Error: Failed to set channel");
+        return;
+    }
+    wifi_promiscuous_enable(false);
+
+    //review: do we need to disable wifi sleep somehow?
+    //esp_wifi_set_ps(WIFI_PS_NONE);
 
 #elif defined(ESP32)
-    // Set device as a Wi-Fi Station
-    WiFi.mode(WIFI_AP);
 
-    if ( esp_wifi_set_protocol (WIFI_IF_AP, WIFI_PROTOCOL_11B) != ESP_OK)
+    WiFi.mode(WIFI_STA);
+
+    if ( esp_wifi_set_channel( this->config.wifi_channel, WIFI_SECOND_CHAN_NONE) != ESP_OK )
+    {
+        Serial.println("HXRC: Error: Failed to set channel");
+        return;
+    }
+
+    if ( esp_wifi_set_protocol (WIFI_IF_STA, WIFI_PROTOCOL_11B) != ESP_OK)
     {
         Serial.println("HXRC: Error: Failed to enable LR mode");
         return;
@@ -106,16 +142,13 @@ If you want to use esp_wifi_internal_set_fix_rate, please disable WiFi AMPDU TX 
 make menuconfig => components => Wi-Fi => Disable TX AMPDU.
 
 */
-
-    WiFi.softAP("hxrct", NULL, wifi_channel);
+    esp_wifi_set_ps(WIFI_PS_NONE);
 
 #endif
 
-    WiFi.softAP("hxrct", NULL, config.wifi_channel);
-
     Serial.println("HXESPNOWRC: Info: Board MAC address:");
-    //Serial.println(WiFi.macAddress());
-    Serial.println(WiFi.softAPmacAddress());
+    Serial.println(WiFi.macAddress());
+    //Serial.println(WiFi.softAPmacAddress());
 
     // Init ESP-NOW
     if (esp_now_init() != ESP_OK)
@@ -132,16 +165,16 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
         return;
     }
 
-    esp_now_add_peer(config.peer_mac, ESP_NOW_ROLE_SLAVE, config.wifi_channel, NULL, 0);
+    esp_now_add_peer(config.peer_mac, ESP_NOW_ROLE_COMBO, config.wifi_channel, NULL, 0);
 
 #elif defined(ESP32)
 
     // Register peer
     esp_now_peer_info_t peerInfo;
-    memcpy(peerInfo.peer_addr, broadcastAddress, 6);
-    peerInfo.channel = wifi_channel;
+    memcpy(peerInfo.peer_addr, this->config.peer_mac, 6);
+    peerInfo.channel = this->config.wifi_channel;
     peerInfo.encrypt = false;
-    peerInfo.ifidx = WIFI_IF_AP;
+    peerInfo.ifidx = WIFI_IF_STA;
 
     // Add peer
     if (esp_now_add_peer(&peerInfo) != ESP_OK)
@@ -161,7 +194,7 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
     esp_now_register_recv_cb(OnDataRecvStatic);
 
     //Serial.print("Packetsize: ");
-    //Serial.println(sizeof(HXRCPayloadTransmitter));
+    //Serial.println(sizeof(HXRCPayloadMaster));
     
 }
 
@@ -185,13 +218,13 @@ void HXRCTransmitter::loop()
         outgoingData.length = 0;
         //if (hasTelemetry())
         {
-            outgoingData.length = HXRC_TRANSMITTER_TELEMETRY_SIZE_MAX;
+            outgoingData.length = HXRC_MASTER_TELEMETRY_SIZE_MAX;
         }
 
         transmitterStats.onPacketSend( t );
 
         outgoingData.sequenceId++;
-        esp_err_t result = esp_now_send( this->config.peer_mac, (uint8_t *) &outgoingData, HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE + outgoingData.length);
+        esp_err_t result = esp_now_send( this->config.peer_mac, (uint8_t *) &outgoingData, HXRC_MASTER_PAYLOAD_SIZE_BASE + outgoingData.length);
         if (result == ESP_OK) 
         {
             senderState = HXRCSS_WAITING_CONFIRMATION;
@@ -246,3 +279,32 @@ void HXRCTransmitter::updateLed()
     }
 }
 
+//=====================================================================
+//=====================================================================
+void HXRCTransmitter::addIncomingTelemetryCallback( void (*callback)(void* parm, HXRCTransmitter& transmitter), void* parm)
+{
+    this->incomingTelemetryCallback = callback;
+    this->incomingTelemetryCallbackParm = parm;
+}
+
+//=====================================================================
+//=====================================================================
+void HXRCTransmitter::addOutgoingTelemetryCallback( void (*callback)(void* parm, HXRCTransmitter& transmitter), void* parm)
+{
+    this->outgoingTelemetryCallback = callback;
+    this->outgoingTelemetryCallbackParm = parm;
+}
+
+//=====================================================================
+//=====================================================================
+HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> HXRCTransmitter::getIncomingTelemetryBufffer()
+{
+    return this->incomingTelemetryBufffer;
+}
+
+//=====================================================================
+//=====================================================================
+HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> HXRCTransmitter::getOutgoingTelemetryBufffer()
+{
+    return this->outgoingTelemetryBufffer;
+}

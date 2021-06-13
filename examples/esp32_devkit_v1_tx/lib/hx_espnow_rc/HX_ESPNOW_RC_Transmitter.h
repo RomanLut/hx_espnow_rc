@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include "HX_ESPNOW_RC_Common.h"
+#include "HX_ESPNOW_RC_RingBuffer.h"
 #include "HX_ESPNOW_RC_TransmitterStats.h"
 #include "HX_ESPNOW_RC_ReceiverStats.h"
 
@@ -24,7 +25,15 @@ private:
     HXRCReceiverStats receiverStats;
     HXRCSenderStateEnum senderState;
 
-    HXRCPayloadTransmitter outgoingData;
+    HXRCPayloadMaster outgoingData;
+
+    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBufffer;
+    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBufffer;
+
+    void (*incomingTelemetryCallback)(void* parm, HXRCTransmitter& transmitter);
+    void* incomingTelemetryCallbackParm;
+    void (*outgoingTelemetryCallback)(void* parm, HXRCTransmitter& transmitter);
+    void* outgoingTelemetryCallbackParm;
 
 #if defined(ESP8266)
     static void OnDataSentStatic(uint8_t *mac_addr, uint8_t status);
@@ -45,14 +54,22 @@ public:
     HXRCTransmitter()
     {
         pInstance = this;
+        this->incomingTelemetryCallback = NULL;
+        this->outgoingTelemetryCallback = NULL;
     }
 
-    void init(HXRCConfig config);
+    bool init(HXRCConfig config);
     void loop();
+
+    void addIncomingTelemetryCallback( void (*callback)(void* parm, HXRCTransmitter& transmitter), void* parm);
+    void addOutgoingTelemetryCallback( void (*callback)(void* parm, HXRCTransmitter& transmitter), void* parm);
 
     //index = 0..15
     //data = 1000...2000
     void setChannelValue( uint8_t index, uint16_t data);
+
+    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& getIncomingTelemetryBufffer();
+    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& getOutgoingTelemetryBufffer();
 
     HXRCTransmitterStats& getTransmitterStats();
     HXRCReceiverStats& getReceiverStats();

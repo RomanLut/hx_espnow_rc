@@ -1,27 +1,11 @@
 #include <Arduino.h>
 #include "HX_ESPNOW_RC_Transmitter.h"
 
-// REPLACE WITH THE MAC Address of your receiver 
-//quad {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB4} - STA
-//quad {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5} - AP
-//uint8_t broadcastAddress[] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5};
-
-//doit esp32dev v1 7C:9E:BD:F5:0D:6D sta
-//uint8_t broadcastAddress[] = {0x7c, 0x9e, 0xbd, 0xf5, 0x0d, 0x6d};
-
-//esp32cam sta F0:08:D1:CC:B3:11
-//uint8_t broadcastAddress[] = {0xf0, 0x08, 0xd1, 0xcc, 0xb3, 0x11};
-
-// REPLACE WITH THE MAC Address of your receiver 
-//ttgo-display 24:62:AB:CA:AA:DD - AP
-//uint8_t broadcastAddress[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDD};
-
-
-//#define LED 33  //ttgo
-
 HXRCTransmitter hxrcTransmitter;
 
 unsigned long lastStats = millis();
+
+#define USE_WIFI_CHANNEL 3
 
 //=====================================================================
 //=====================================================================
@@ -30,15 +14,35 @@ void setup()
     Serial.begin(115200);
     Serial.println("Start");
 
-    uint8_t peer_mac[6] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5}; //quad ap
+    //uint8_t peer_mac[6] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5}; //quad ap
+    uint8_t peer_mac[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDC};  //ttgo display sta
+
+    hxrcTransmitter.addIncomingTelemetryCallback( [](void* parm, HXRCTransmitter& transmitter)
+    {
+      auto incomingTelemetry = transmitter.getIncomingTelemetryBufffer();
+
+      while ( incomingTelemetry.getCount() != 0 )      
+      {
+        incomingTelemetry.remove();
+      }
+    },NULL);
 
     hxrcTransmitter.init( 
       HXRCConfig( 
-        3,
+        USE_WIFI_CHANNEL,
         peer_mac,
+        false,
         LED_BUILTIN, true 
       )
     );
+
+    //init SoftAp after HXRC
+    //Wifi Channel is global setting for AP, STA and ESP-NOW.
+    //If you need AP on this device, initialize it on the same channel that ESP-NOW is using.
+    //Station usage is limited. Station will change channel to router AP Channel on connect.
+    //It will work only if you ensure that router AP is using the same channels as ESP-NOW.
+
+    WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL );
 }
 
 //=====================================================================

@@ -129,6 +129,6 @@ void HXRCTransmitterStats::printStats()
     Serial.printf("Packets success: %d\n", packetsSentSuccess);
     Serial.printf("Packets error: %d\n", packetsSentError);
     Serial.printf("Packets missed: %d\n", packetsNotSentInTime);
-    Serial.printf("Out telelemetry: %d b/s\n", getTelemetrySendSpeed());
+    Serial.printf("Out telemetry: %d b/s\n", getTelemetrySendSpeed());
 }
 

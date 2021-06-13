@@ -63,17 +63,14 @@ void HXRCReceiver::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, i
 
 //=====================================================================
 //=====================================================================
-//channel - channel where AP was is initialized
-//WiFi.softAP("quad", NULL, 13);
-void HXRCReceiver::init( HXRCConfig config )
+bool HXRCReceiver::init( HXRCConfig config )
 {
     this->config = config;
 
-    if ( config.ledPin != -1 )
-    {
-        pinMode(config.ledPin,OUTPUT);
-        digitalWrite(this->config.ledPin, this->config.ledPinInverted ? HIGH : LOW );
-    }
+    transmitterStats.reset();
+    receiverStats.reset();
+
+    HXRCInitLedPin(config);
 
     outgoingTelemetry.sequenceId = 0;
     for ( int i = 0; i < HXRC_CHANNELS; i++ )
@@ -82,58 +79,16 @@ void HXRCReceiver::init( HXRCConfig config )
     }
 
     senderState = HXRCSS_READY_TO_SEND;
-  
-    Serial.println("HXESPNOWRC: Info: Board MAC address:");
-    //Serial.println(WiFi.macAddress());
-    Serial.println(WiFi.softAPmacAddress());
 
-/*
-    if ( esp_wifi_set_protocol (WIFI_IF_AP, WIFI_PROTOCOL_LR) != ESP_OK)
+    if ( !HXRCInitEspNow( config, "hxrcr"))
     {
-        Serial.println("HXRC: Error: Failed to enable LR mode");
-        return;
-    }
-*/
-    // Init ESP-NOW
-    if (esp_now_init() != ESP_OK)
-    {
-        Serial.println("HXESPNOWRC: Error: Error initializing ESP-NOW");
-        return;
+        return false;
     }
 
-    // Once ESPNow is successfully Init, we will register for Send CB to
-    // get the status of Trasnmitted packet
+    esp_now_register_recv_cb(OnDataRecvStatic);
     esp_now_register_send_cb(OnDataSentStatic);
 
-#if defined(ESP8266)
-
-    if ( esp_now_set_self_role(ESP_NOW_ROLE_COMBO) != ESP_OK )
-    {
-        Serial.println("HXRC: Error: Failed to set role");
-        return;
-    }
-
-    esp_now_add_peer(this->config.peer_mac, ESP_NOW_ROLE_SLAVE, this->config.wifi_channel, NULL, 0);
-
-#elif defined(ESP32)
-
-    // Register peer
-    esp_now_peer_info_t peerInfo;
-    memcpy(peerInfo.peer_addr, this->config.peer_mac, 6);
-    peerInfo.channel = this->config.wifi_channel;
-    peerInfo.encrypt = false;
-    peerInfo.ifidx = WIFI_IF_AP;
-
-    // Add peer
-    if (esp_now_add_peer(&peerInfo) != ESP_OK)
-    {
-        Serial.println("HXRC: Error: Failed to add peer");
-        return;
-    }
-#endif
-
-    // Register for a callback function that will be called when data is received
-    esp_now_register_recv_cb(OnDataRecvStatic);
+    return true;
 }
 
 //=====================================================================
