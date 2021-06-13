@@ -7,6 +7,7 @@
 
 #include <ESP8266WiFi.h>
 #include <espnow.h>
+#include <user_interface.h>
 
 #define ESP_OK 0
 #define esp_err_t int
@@ -26,6 +27,8 @@
 
 #define HXRC_CHANNELS 16
 
+#define HXRC_TELEMETRY_BUFFER_SIZE   512
+
 //=====================================================================
 //=====================================================================
 class HXRCConfig
@@ -33,6 +36,7 @@ class HXRCConfig
 public:
     uint8_t wifi_channel;
     uint8_t peer_mac[6];
+    bool LRMode;
     int8_t ledPin;
     int8_t ledPinInverted;
 
@@ -40,6 +44,7 @@ public:
     {
         wifi_channel = 1;
         memset( this->peer_mac, 0xff, 6 );
+        this->LRMode = false;
         this->ledPin = -1;
         this->ledPinInverted = false;
     }
@@ -47,12 +52,14 @@ public:
     HXRCConfig(
         uint8_t wifi_channel,
         uint8_t peer_mac[6],
+        bool LRMode,
         int8_t ledPin,
         bool ledPinInverted
     )
     {
         this->wifi_channel = wifi_channel;
         memcpy( this->peer_mac, peer_mac, 6 );
+        this->LRMode = LRMode;
         this->ledPin = ledPin;
         this-> ledPinInverted = ledPinInverted;
     }
@@ -66,9 +73,9 @@ public:
 
 #define HXRC_PAYLOAD_SIZE_MAX 250
 
-#define HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE (2 + 22 + 1 )  //sequenceId, channels, telemetry length
-//#define HXRC_TRANSMITTER_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE )
-#define HXRC_TRANSMITTER_TELEMETRY_SIZE_MAX 64  //limit packet size  to achieve target packet rate
+#define HXRC_MASTER_PAYLOAD_SIZE_BASE (2 + 22 + 1 )  //sequenceId, channels, telemetry length
+//#define HXRC_MASTER_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_MASTER_PAYLOAD_SIZE_BASE )
+#define HXRC_MASTER_TELEMETRY_SIZE_MAX 64  //limit packet size  to achieve target packet rate
 
 typedef struct 
 {
@@ -102,14 +109,14 @@ typedef struct
     HXRCChannels channels;
 
     uint8_t length;
-    uint8_t data[HXRC_TRANSMITTER_TELEMETRY_SIZE_MAX];
-} HXRCPayloadTransmitter;
+    uint8_t data[HXRC_MASTER_TELEMETRY_SIZE_MAX];
+} HXRCPayloadMaster;
 
 //=====================================================================
 //=====================================================================
 
-#define HXRC_RECEIVER_PAYLOAD_SIZE_BASE (2 + 1 + 1 )  //sequenceId, rssi, telemetry length
-#define HXRC_RECEIVER_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_TRANSMITTER_PAYLOAD_SIZE_BASE )
+#define HXRC_SLAVE_PAYLOAD_SIZE_BASE (2 + 1 + 1 )  //sequenceId, rssi, telemetry length
+#define HXRC_SLAVE_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_SLAVE_PAYLOAD_SIZE_BASE )
 
 typedef struct 
 {
@@ -118,8 +125,8 @@ typedef struct
     int8_t rssi;
 
     uint8_t length;
-    uint8_t data[HXRC_RECEIVER_TELEMETRY_SIZE_MAX];
-} HXRCPayloadFromReceiver;
+    uint8_t data[HXRC_SLAVE_TELEMETRY_SIZE_MAX];
+} HXRCPayloadSlave;
 
 #pragma pack (pop)
 
@@ -135,3 +142,6 @@ typedef enum
 //=====================================================================
 extern uint16_t HXRCGetChannelValueInt(const HXRCChannels& channels, uint8_t index );
 extern void HXRCSetChannelValueInt(HXRCChannels& channels, uint8_t index, uint16_t data);
+
+extern void HXRCInitLedPin( const HXRCConfig& config );
+extern bool HXRCInitEspNow( HXRCConfig& config, const char* ssid );

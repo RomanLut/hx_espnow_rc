@@ -13,6 +13,7 @@ private:
     void update();
 
     void onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize );
+    void onTelemetryOverflow();
 
     friend class HXRCTransmitter;
     friend class HXRCReceiver;
@@ -25,7 +26,8 @@ public:
     uint16_t packetsError;
 
     //receiver RSSI of other size ( value is received with telemetry)
-    //-1 if is unknown
+    //-1 if is unknown because we are not receiving telemetry from peer
+    //-2 on Slave ( this parameter is not sent from master to slave ).
     int8_t remoteReceiverRSSI;
 
     unsigned long RSSIUpdateMs;
@@ -38,6 +40,8 @@ public:
     uint32_t lastTelemetryBytesReceivedSpeed;
     uint32_t lastTelemetryBytesReceivedTotal;
     unsigned long telemetrySpeedUpdateMs;
+
+    uint16_t telemetryOverflowCount;
 
     HXRCReceiverStats();
 

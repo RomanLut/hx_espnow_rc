@@ -23,7 +23,7 @@ private:
 
     HXRCChannels receivedChannels;
 
-    HXRCPayloadFromReceiver outgoingTelemetry;
+    HXRCPayloadSlave outgoingTelemetry;
 #if defined(ESP8266)
     static void OnDataSentStatic(uint8_t *mac_addr, uint8_t status);
     static void OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len);
@@ -49,7 +49,7 @@ public:
         HXRCReceiver::pInstance = this;
     }
 
-    void init( HXRCConfig config );
+    bool init( HXRCConfig config );
     void loop();
 
     //index = 0..15
