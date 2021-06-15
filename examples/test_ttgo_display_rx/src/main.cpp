@@ -3,6 +3,10 @@
 
 #include "HX_ESPNOW_RC_Receiver.h"
 
+#define USE_WIFI_CHANNEL 3
+#define LED_BUILTIN 33
+
+
 HXRCReceiver hxrcReceiver;
 
 unsigned long lastStats = millis();
@@ -13,7 +17,68 @@ char buff[512];
 
 uint16_t y = 0;
 
-#define LED_BUILTIN 33
+uint16_t errorCount = 0;
+
+uint8_t incomingTelVal = 0;
+uint8_t outgoingTelVal = 0;
+
+//=====================================================================
+//=====================================================================
+void processIncomingTelemetry()
+{
+  auto& incomingTelemetry = hxrcReceiver.getIncomingTelemetryBufffer();
+
+  //we expect that telemetry contains stream of increasing numbers
+  while (incomingTelemetry.getCount() != 0)
+  {
+    uint8_t v = incomingTelemetry.remove();
+    if ( incomingTelVal != v )
+    {
+      incomingTelVal = v;
+      //errorCount++;
+    }
+    incomingTelVal++;
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void fillOutgoingTelemetry()
+{
+  auto& outgoingTelemetry = hxrcReceiver.getOutgoingTelemetryBufffer();
+
+  //fill stream with increasing numbers
+  while (outgoingTelemetry.getFreeCount() != 0)
+  {
+    outgoingTelemetry.insert(outgoingTelVal);
+    outgoingTelVal++;
+
+    //do not fill buffer fully 
+    if ( rand() < RAND_MAX / 10 )
+    {
+      break;
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void checkChannels()
+{
+  uint16_t sum = 0;
+  for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
+  {
+    sum += hxrcReceiver.getChannelValue( i );
+  }
+
+  sum %= 1000;
+  sum += 1000;
+
+  if ( hxrcReceiver.getChannelValue( HXRC_CHANNELS-1) != sum )
+  {
+      errorCount++;
+  }
+}
 
 //=====================================================================
 //=====================================================================
@@ -35,12 +100,12 @@ void setup()
 
   hxrcReceiver.init(
       HXRCConfig(
-          3,
+          USE_WIFI_CHANNEL,
           peer_mac,
           false,
           LED_BUILTIN, false));
 
-    WiFi.softAP("hxrcr", NULL, 3 );
+    WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL );
 }
 
 //=====================================================================
@@ -65,7 +130,10 @@ void drawLineI(const char *text, int16_t value)
 //=====================================================================
 void loop()
 {
-  // put your main code here, to run repeatedly:
+  checkChannels();
+  processIncomingTelemetry();
+  fillOutgoingTelemetry();
+
   hxrcReceiver.loop();
 
   if (millis() - lastStats > 1000)
@@ -73,7 +141,9 @@ void loop()
     lastStats = millis();
     hxrcReceiver.getTransmitterStats().printStats();
     hxrcReceiver.getReceiverStats().printStats();
-  }
+    Serial.print("Errors: ");
+    Serial.println(errorCount);
+ }
 
   y = 0;
 
@@ -92,9 +162,10 @@ void loop()
   drawLine("Receiver Failsafe: %d     ", prStats.isFailsafe() ? 1 : 0);
   drawLine("Receiver RSSI: %d     ", prStats.getRSSI());
   drawLineI("Remote RSSI: %i     ", prStats.getRemoteReceiverRSSI());
-  drawLineI("Packets received: %u     ", prStats.packetsSuccess);
-  drawLineI("Packets missed: %u     ", prStats.packetsError);
-  drawLineI("Tel. overflow: %u     ", prStats.telemetryOverflowCount);
+  drawLine("Packets received: %u     ", prStats.packetsSuccess);
+  drawLine("Packets missed: %u     ", prStats.packetsError);
+  drawLine("Tel. overflow: %u     ", prStats.telemetryOverflowCount);
   drawLine("In tel.: %ub/s     ", prStats.getTelemetryReceivedSpeed());
+  drawLine("Errors: %u     ", errorCount);
 
 }

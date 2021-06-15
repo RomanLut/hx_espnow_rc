@@ -23,8 +23,12 @@ void HXRCReceiver::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t sta
 
     if( success )
     {
-        transmitterStats.onPacketSendSuccess(outgoingTelemetry.length );
-        //todo: free telemetry buffer
+        uint8_t length = outgoingTelemetry.length;
+
+        transmitterStats.onPacketSendSuccess( length );
+
+        //now we can remove data which were sent
+        while ( length-- ) outgoingTelemetryBufffer.remove();
     }
     else    
     {
@@ -48,10 +52,17 @@ void HXRCReceiver::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, i
         const HXRCPayloadMaster* pPayload = (const HXRCPayloadMaster*) incomingData;
         memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
 
-        //todo:process telemetry
         receiverStats.onPacketReceived( pPayload->sequenceId, -2, pPayload->length );
 
-        //todo: copy incoming telemetry
+        uint16_t lenToWrite = pPayload->length;
+        uint16_t freeCount = this->incomingTelemetryBufffer.getFreeCount();
+
+        if ( lenToWrite > freeCount )
+        {
+            lenToWrite = freeCount;  
+            receiverStats.onTelemetryOverflow();
+        }
+        this->incomingTelemetryBufffer.insertBuffer( pPayload->data, lenToWrite );
     }
     else
     {
@@ -102,8 +113,16 @@ void HXRCReceiver::loop()
         outgoingTelemetry.sequenceId++;
         outgoingTelemetry.rssi = receiverStats.getRSSI();
         
-        //TODO: send any telemetry data or empty packet
-        outgoingTelemetry.length = HXRC_SLAVE_TELEMETRY_SIZE_MAX;  
+        uint16_t otc = outgoingTelemetryBufffer.getCount();
+        if ( otc != 0)
+        {
+            outgoingTelemetry.length = otc > HXRC_SLAVE_TELEMETRY_SIZE_MAX ? HXRC_SLAVE_TELEMETRY_SIZE_MAX : otc;
+            outgoingTelemetryBufffer.peekToBuffer( outgoingTelemetry.data, outgoingTelemetry.length );
+        }
+        else
+        {
+            outgoingTelemetry.length = 0;
+        }
 
         transmitterStats.onPacketSend( t );
         esp_err_t result = esp_now_send(this->config.peer_mac, (uint8_t *) &outgoingTelemetry, HXRC_SLAVE_PAYLOAD_SIZE_BASE + outgoingTelemetry.length );
@@ -160,3 +179,16 @@ void HXRCReceiver::updateLed()
     }
 }
 
+//=====================================================================
+//=====================================================================
+HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& HXRCReceiver::getIncomingTelemetryBufffer()
+{
+    return this->incomingTelemetryBufffer;
+}
+
+//=====================================================================
+//=====================================================================
+HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& HXRCReceiver::getOutgoingTelemetryBufffer()
+{
+    return this->outgoingTelemetryBufffer;
+}

@@ -26,7 +26,8 @@ public:
     uint16_t packetsError;
 
     //receiver RSSI of other size ( value is received with telemetry)
-    //-1 if is unknown
+    //-1 if is unknown because we are not receiving telemetry from peer
+    //-2 on Slave ( this parameter is not sent from master to slave ).
     int8_t remoteReceiverRSSI;
 
     unsigned long RSSIUpdateMs;

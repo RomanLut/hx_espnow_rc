@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include "HX_ESPNOW_RC_Common.h"
+#include "HX_ESPNOW_RC_RingBuffer.h"
 #include "HX_ESPNOW_RC_ReceiverStats.h"
 #include "HX_ESPNOW_RC_TransmitterStats.h"
 
@@ -20,6 +21,9 @@ private:
     HXRCReceiverStats receiverStats;
 
     HXRCSenderStateEnum senderState;
+
+    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBufffer;
+    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBufffer;
 
     HXRCChannels receivedChannels;
 
@@ -55,6 +59,9 @@ public:
     //index = 0..15
     //data = 1000...2000
     uint16_t getChannelValue( uint8_t index );
+
+    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& getIncomingTelemetryBufffer();
+    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& getOutgoingTelemetryBufffer();
 
     HXRCReceiverStats& getReceiverStats();
     HXRCTransmitterStats& getTransmitterStats();

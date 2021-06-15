@@ -23,8 +23,12 @@ void HXRCTransmitter::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t 
 
     if( success )
     {
-        transmitterStats.onPacketSendSuccess( outgoingData.length );
-        //todo: free telemetry buffer
+        uint8_t length = outgoingData.length;
+        
+        transmitterStats.onPacketSendSuccess( length );
+        
+        //now we can remove data which were sent
+        while ( length-- ) outgoingTelemetryBufffer.remove();
     }
     else    
     {
@@ -58,10 +62,6 @@ void HXRCTransmitter::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData
             receiverStats.onTelemetryOverflow();
         }
         this->incomingTelemetryBufffer.insertBuffer( pPayload->data, lenToWrite );
-        if ( this->incomingTelemetryCallback )
-        {
-            this->incomingTelemetryCallback( this->incomingTelemetryCallbackParm, *this );
-        }
     }
     else
     {
@@ -116,11 +116,18 @@ void HXRCTransmitter::loop()
             outgoingData.sequenceId += count - 1;
         }
 
-        outgoingData.length = 0;
-        //if (hasTelemetry())
+        uint16_t otc = outgoingTelemetryBufffer.getCount();
+        if ( otc != 0)
         {
-            outgoingData.length = HXRC_MASTER_TELEMETRY_SIZE_MAX;
+            outgoingData.length = otc > HXRC_MASTER_TELEMETRY_SIZE_MAX ? HXRC_MASTER_TELEMETRY_SIZE_MAX : otc;
+            outgoingTelemetryBufffer.peekToBuffer( outgoingData.data, outgoingData.length );
         }
+        else
+        {
+            outgoingData.length = 0;
+        }
+
+        memcpy( &outgoingData.channels, &channels, sizeof (HXRCChannels));
 
         transmitterStats.onPacketSend( t );
 
@@ -147,7 +154,7 @@ void HXRCTransmitter::loop()
 //=====================================================================
 void HXRCTransmitter::setChannelValue(uint8_t index, uint16_t data)
 {
-    HXRCSetChannelValueInt( outgoingData.channels, index, data);
+    HXRCSetChannelValueInt( channels, index, data);
 }
 
 //=====================================================================
@@ -178,22 +185,6 @@ void HXRCTransmitter::updateLed()
     {
         digitalWrite(config.ledPin,(millis() & 32) ? HIGH : LOW );
     }
-}
-
-//=====================================================================
-//=====================================================================
-void HXRCTransmitter::addIncomingTelemetryCallback( void (*callback)(void* parm, HXRCTransmitter& transmitter), void* parm)
-{
-    this->incomingTelemetryCallback = callback;
-    this->incomingTelemetryCallbackParm = parm;
-}
-
-//=====================================================================
-//=====================================================================
-void HXRCTransmitter::addOutgoingTelemetryCallback( void (*callback)(void* parm, HXRCTransmitter& transmitter), void* parm)
-{
-    this->outgoingTelemetryCallback = callback;
-    this->outgoingTelemetryCallbackParm = parm;
 }
 
 //=====================================================================

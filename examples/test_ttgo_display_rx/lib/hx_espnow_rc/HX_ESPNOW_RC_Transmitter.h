@@ -26,14 +26,10 @@ private:
     HXRCSenderStateEnum senderState;
 
     HXRCPayloadMaster outgoingData;
+    HXRCChannels channels;
 
     HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBufffer;
     HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBufffer;
-
-    void (*incomingTelemetryCallback)(void* parm, HXRCTransmitter& transmitter);
-    void* incomingTelemetryCallbackParm;
-    void (*outgoingTelemetryCallback)(void* parm, HXRCTransmitter& transmitter);
-    void* outgoingTelemetryCallbackParm;
 
 #if defined(ESP8266)
     static void OnDataSentStatic(uint8_t *mac_addr, uint8_t status);
@@ -54,8 +50,6 @@ public:
     HXRCTransmitter()
     {
         pInstance = this;
-        this->incomingTelemetryCallback = NULL;
-        this->outgoingTelemetryCallback = NULL;
     }
 
     bool init(HXRCConfig config);

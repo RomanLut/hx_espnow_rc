@@ -47,13 +47,9 @@ public:
         this->count++;
     }
 
-    void insertBuffer(const uint8_t* pData, uint16_t len)
+    void insertBuffer(const uint8_t* pData, uint16_t length)
     {
-        while ( len )
-        {
-            insert(*pData++);
-            len--;
-        }
+        while ( length-- ) insert(*pData++);
     }
 
     uint8_t remove()
@@ -68,6 +64,21 @@ public:
         this->count--;
 
         return data;
+    }
+
+    // length should be less or equal to getCount()
+    void peekToBuffer( uint8_t* buffer, uint16_t length )
+    {
+        uint8_t* pData = this->pOut;
+
+        while ( length-- ) 
+        {
+            *buffer++ = *pData;
+            if (++pData == this->pEnd)
+            {
+                pData = this->pStart;
+            }
+        }
     }
 
     uint8_t peek()
