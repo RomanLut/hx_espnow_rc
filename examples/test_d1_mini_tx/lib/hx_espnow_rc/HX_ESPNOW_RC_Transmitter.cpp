@@ -57,12 +57,9 @@ void HXRCTransmitter::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData
 
     if ( ( len >= HXRC_SLAVE_PAYLOAD_SIZE_BASE ) &&  ( len == HXRC_SLAVE_PAYLOAD_SIZE_BASE + pPayload->length ) )
     {
-        receiverStats.onPacketReceived( pPayload->sequenceId, pPayload->rssi, pPayload->length );
-
-        uint8_t lenToWrite = pPayload->length;
-        if ( lenToWrite > 0 )
+        if ( receiverStats.onPacketReceived( pPayload->sequenceId, pPayload->rssi, pPayload->length ) )
         {
-             if ( !this->incomingTelemetryBuffer.send( pPayload->data, lenToWrite ) )
+             if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )
              {
                 receiverStats.onTelemetryOverflow();
              }
@@ -116,25 +113,17 @@ void HXRCTransmitter::loop()
         int count = deltaT / PACKET_SEND_PERIOD_MS;
         if ( count > 1)
         {
-            transmitterStats.onPacketSendMiss( count - 1 );           
             outgoingData.sequenceId += count - 1;
+            transmitterStats.onPacketSendMiss( count - 1 );           
         }
 
-        outgoingData.length = 0;
-        uint8_t freeBytes = HXRC_MASTER_TELEMETRY_SIZE_MAX;
-        while ( freeBytes > 0 )
-        {
-            uint16_t returnedSize = outgoingTelemetryBuffer.receiveUpTo( freeBytes, &outgoingData.data[outgoingData.length] );
-            if ( returnedSize == 0 ) break;
-            outgoingData.length += returnedSize;
-            freeBytes -= returnedSize;
-        }
+        outgoingData.sequenceId++;
+        outgoingData.length = outgoingTelemetryBuffer.receiveUpTo( HXRC_MASTER_TELEMETRY_SIZE_MAX, outgoingData.data );
     }
 
     //if state is senderState == HXRCSS_RETRY_SEND, send the same telemetry data again
     if ( senderState == HXRCSS_READY_TO_SEND || senderState == HXRCSS_RETRY_SEND )
     {
-        outgoingData.sequenceId++;
         memcpy( &outgoingData.channels, &channels, sizeof (HXRCChannels));
 
         transmitterStats.onPacketSend( t );

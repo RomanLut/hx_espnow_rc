@@ -139,18 +139,27 @@ public:
 
     bool send( const void* data, uint16_t lenToWrite )
     {
+        if ( lenToWrite == 0) return true;
         return xRingbufferSend( this->buffferHandle, data, lenToWrite, (TickType_t)0 ) == pdTRUE;
     }
 
     //returns number of bytes received
-    uint16_t receiveUpTo( uint16_t maxLen, void* toPtr )
+    uint16_t receiveUpTo( uint16_t maxLen, uint8_t* toPtr )
     {
-        size_t returnedSize = 0;
-        void* ptr = xRingbufferReceiveUpTo( this->buffferHandle, &returnedSize, (TickType_t)0, maxLen );
-        if ( ptr == NULL ) return 0;
-        memcpy( toPtr, ptr, returnedSize );
-        vRingbufferReturnItem( this->buffferHandle, ptr );
-        return returnedSize;
+        uint16_t total = 0;
+        while ( maxLen > 0 ) 
+        {
+            size_t returnedSize = 0;
+            //two calls to xRingbufferReceiveUpTo() are required for retrieve data which wraps around
+            void* ptr = xRingbufferReceiveUpTo( this->buffferHandle, &returnedSize, (TickType_t)0, maxLen );
+            if ( ptr == NULL ) break;
+            memcpy( toPtr, ptr, returnedSize );
+            vRingbufferReturnItem( this->buffferHandle, ptr );
+            toPtr += returnedSize;
+            total += returnedSize;
+            return returnedSize;
+        }
+        return total;
     }
 
 

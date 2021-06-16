@@ -27,6 +27,7 @@ void HXRCReceiverStats::reset()
 
     this->remoteReceiverRSSI = -1;
     this->telemetryBytesReceivedTotal = 0;
+    this->packetsRetransmit = 0;
 
     this->lastTelemetryBytesReceivedSpeed = 0;
     this->lastTelemetryBytesReceivedTotal = 0;
@@ -83,12 +84,18 @@ int8_t HXRCReceiverStats::getRemoteReceiverRSSI()
 
 //=====================================================================
 //=====================================================================
-void HXRCReceiverStats::onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize )
+bool HXRCReceiverStats::onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize )
 {
+    uint16_t seqDelta = sequenceId - this->prevSequenceId;
+
+    if ( seqDelta == 0 )
+    {
+        this->packetsRetransmit++;
+        return false;
+    }
+
     this->remoteReceiverRSSI = rssi;
     this->telemetryBytesReceivedTotal += telemetrySize;
-
-    uint16_t seqDelta = sequenceId - this->prevSequenceId;
 
     if ( (seqDelta > 1) && ( this->prevSequenceId!=0 ) )
     {
@@ -99,6 +106,8 @@ void HXRCReceiverStats::onPacketReceived( uint16_t sequenceId, int8_t rssi, uint
 
     this->prevSequenceId = sequenceId;
     this->lastReceivedTimeMs = millis();
+
+    return true;
 }
 
 //=====================================================================
@@ -135,7 +144,7 @@ void HXRCReceiverStats::printStats()
     Serial.printf("Failsafe: %d\n", isFailsafe()?1:0);
     Serial.printf("RSSI: %d\n", getRSSI() );
     Serial.printf("Remote receiver RSSI: %i\n", getRemoteReceiverRSSI() );
-    Serial.printf("Packets received: %u\n", packetsSuccess);
+    Serial.printf("Packets received: %u(%u)\n", packetsSuccess, packetsRetransmit);
     Serial.printf("Packets missed: %u\n", packetsError);
     Serial.printf("Telemetry overflow count: %u\n", telemetryOverflowCount);
     Serial.printf("In telemetry: %d b/s\n", getTelemetryReceivedSpeed());

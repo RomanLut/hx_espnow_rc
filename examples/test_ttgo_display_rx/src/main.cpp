@@ -33,7 +33,7 @@ void processIncomingTelemetry()
   //we expect that telemetry contains stream of increasing numbers
 
   //max 10 cycles at at time
-  //otherwise we will sit here forewer processinf fast incoming telemetry stream
+  //otherwise we will sit here forewer processing fast incoming telemetry stream
   for ( int j = 0; j < 10; j++ )
   {
     uint16_t returnedSize = hxrcReceiver.getIncomingTelemetry( 100, buffer );
@@ -180,7 +180,11 @@ void loop()
   drawLine("Receiver Failsafe: %d     ", prStats.isFailsafe() ? 1 : 0);
   drawLine("Receiver RSSI: %d     ", prStats.getRSSI());
   drawLineI("Remote RSSI: %i     ", prStats.getRemoteReceiverRSSI());
-  drawLine("Packets received: %u     ", prStats.packetsSuccess);
+
+  sprintf(buff, "Packets received: %u(%u)     ", prStats.packetsSuccess, prStats.packetsRetransmit);
+  tft.drawString(buff, 0, y);
+  y += 14;
+
   drawLine("Packets missed: %u     ", prStats.packetsError);
   drawLine("Tel. overflow: %u     ", prStats.telemetryOverflowCount);
   drawLine("In tel.: %ub/s     ", prStats.getTelemetryReceivedSpeed());

@@ -12,7 +12,8 @@ private:
     void reset();
     void update();
 
-    void onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize );
+    //returns false if sequence id did not increase (it is retransmission)
+    bool onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize );
     void onTelemetryOverflow();
 
     friend class HXRCTransmitter;
@@ -35,6 +36,10 @@ public:
     uint16_t RSSIPacketsError;
     uint8_t RSSILast;
 
+    //number of packers with non-increased sequense id   
+    //it might happend that we got packet but sender did not got ack
+    //wei gnore such packets
+    uint16_t packetsRetransmit;
     uint32_t telemetryBytesReceivedTotal;
 
     uint32_t lastTelemetryBytesReceivedSpeed;

@@ -85,15 +85,13 @@ void HXRCReceiver::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, i
             xSemaphoreGive( this->channelsMutex);
         }
 #endif
-        receiverStats.onPacketReceived( pPayload->sequenceId, -2, pPayload->length );
-
-        uint8_t lenToWrite = pPayload->length;
-        if ( lenToWrite > 0 )
+        
+        if ( receiverStats.onPacketReceived( pPayload->sequenceId, -2, pPayload->length ) )
         {
-             if ( !this->incomingTelemetryBuffer.send( pPayload->data, lenToWrite ) )
-             {
+            if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )  //length = 0 is ok
+            {
                 receiverStats.onTelemetryOverflow();
-             }
+            }
         }
     }
     else
@@ -139,21 +137,13 @@ void HXRCReceiver::loop()
 
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
-        outgoingTelemetry.length = 0;
-        uint8_t freeBytes = HXRC_SLAVE_TELEMETRY_SIZE_MAX;
-        while ( freeBytes > 0 )
-        {
-            uint16_t returnedSize = outgoingTelemetryBuffer.receiveUpTo( freeBytes, &outgoingTelemetry.data[outgoingTelemetry.length] );
-            if ( returnedSize == 0 ) break;
-            outgoingTelemetry.length += returnedSize;
-            freeBytes -= returnedSize;
-        }
+        outgoingTelemetry.sequenceId++;
+        outgoingTelemetry.length = outgoingTelemetryBuffer.receiveUpTo( HXRC_SLAVE_TELEMETRY_SIZE_MAX, outgoingTelemetry.data );
     }
 
     //if state is senderState == HXRCSS_RETRY_SEND, send the same telemetry data again
     if ( senderState == HXRCSS_READY_TO_SEND || senderState == HXRCSS_RETRY_SEND )
     {
-        outgoingTelemetry.sequenceId++;
         outgoingTelemetry.rssi = receiverStats.getRSSI();
 
         transmitterStats.onPacketSend( t );
