@@ -17,8 +17,10 @@ char buff[512];
 
 uint16_t y = 0;
 
-uint16_t errorCount = 0;
+uint16_t errorCountRC = 0;
+uint16_t errorCountTelemetry = 0;
 
+bool gotSync = false;
 uint8_t incomingTelVal = 0;
 uint8_t outgoingTelVal = 0;
 
@@ -26,18 +28,29 @@ uint8_t outgoingTelVal = 0;
 //=====================================================================
 void processIncomingTelemetry()
 {
-  auto& incomingTelemetry = hxrcReceiver.getIncomingTelemetryBufffer();
+  uint8_t buffer[100];
 
   //we expect that telemetry contains stream of increasing numbers
-  while (incomingTelemetry.getCount() != 0)
+
+  //max 10 cycles at at time
+  //otherwise we will sit here forewer processinf fast incoming telemetry stream
+  for ( int j = 0; j < 10; j++ )
   {
-    uint8_t v = incomingTelemetry.remove();
-    if ( incomingTelVal != v )
+    uint16_t returnedSize = hxrcReceiver.getIncomingTelemetry( 100, buffer );
+    if ( returnedSize == 0 ) break;
+
+    uint8_t* ptr = buffer;
+    for ( int i = 0; i < returnedSize; i++ )
     {
-      incomingTelVal = v;
-      //errorCount++;
+      if ( incomingTelVal != *ptr )
+      {
+        if ( gotSync ) errorCountTelemetry++;
+        gotSync = true;
+        incomingTelVal = *ptr;
+      }
+      ptr++;
+      incomingTelVal++;
     }
-    incomingTelVal++;
   }
 }
 
@@ -45,19 +58,19 @@ void processIncomingTelemetry()
 //=====================================================================
 void fillOutgoingTelemetry()
 {
-  auto& outgoingTelemetry = hxrcReceiver.getOutgoingTelemetryBufffer();
+  uint8_t buffer[HXRC_SLAVE_TELEMETRY_SIZE_MAX];
 
+  //generate at most HXRC_SLAVE_TELEMETRY_SIZE_MAX bytes on each loop
+  uint8_t len = rand() % (HXRC_SLAVE_TELEMETRY_SIZE_MAX+1);
+
+  uint8_t v = outgoingTelVal;
+  
   //fill stream with increasing numbers
-  while (outgoingTelemetry.getFreeCount() != 0)
+  for ( int i = 0; i < len; i++ ) buffer[i] = v++;
+  
+  if ( hxrcReceiver.sendOutgoingTelemetry( buffer, len ))
   {
-    outgoingTelemetry.insert(outgoingTelVal);
-    outgoingTelVal++;
-
-    //do not fill buffer fully 
-    if ( rand() < RAND_MAX / 10 )
-    {
-      break;
-    }
+    outgoingTelVal = v;
   }
 }
 
@@ -65,18 +78,23 @@ void fillOutgoingTelemetry()
 //=====================================================================
 void checkChannels()
 {
+  //no sense to check channels before first packet is received
+  if ( hxrcReceiver.getReceiverStats().isFailsafe()) return;
+
+  HXRCChannels channels = hxrcReceiver.getChannels();
+
   uint16_t sum = 0;
   for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
   {
-    sum += hxrcReceiver.getChannelValue( i );
+    sum += channels.getChannelValue( i );
   }
 
   sum %= 1000;
   sum += 1000;
 
-  if ( hxrcReceiver.getChannelValue( HXRC_CHANNELS-1) != sum )
+  if ( channels.getChannelValue( HXRC_CHANNELS-1) != sum )
   {
-      errorCount++;
+      errorCountRC++;
   }
 }
 
@@ -142,7 +160,7 @@ void loop()
     hxrcReceiver.getTransmitterStats().printStats();
     hxrcReceiver.getReceiverStats().printStats();
     Serial.print("Errors: ");
-    Serial.println(errorCount);
+    Serial.println(errorCountRC);
  }
 
   y = 0;
@@ -166,6 +184,8 @@ void loop()
   drawLine("Packets missed: %u     ", prStats.packetsError);
   drawLine("Tel. overflow: %u     ", prStats.telemetryOverflowCount);
   drawLine("In tel.: %ub/s     ", prStats.getTelemetryReceivedSpeed());
-  drawLine("Errors: %u     ", errorCount);
 
+  sprintf(buff, "Errors: %u, %u     ", errorCountRC, errorCountTelemetry);
+  tft.drawString(buff, 0, y);
+ 
 }

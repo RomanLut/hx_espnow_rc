@@ -20,11 +20,14 @@ private:
     HXRCTransmitterStats transmitterStats;
     HXRCReceiverStats receiverStats;
 
-    HXRCSenderStateEnum senderState;
+    volatile HXRCSenderStateEnum senderState;
 
-    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBufffer;
-    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBufffer;
+    HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBuffer;
+    HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBuffer;
 
+#if defined(ESP32)
+    SemaphoreHandle_t channelsMutex;
+#endif    
     HXRCChannels receivedChannels;
 
     HXRCPayloadSlave outgoingTelemetry;
@@ -48,20 +51,26 @@ public:
 //Receiver MAC address
 //channel
 
-    HXRCReceiver()
-    {
-        HXRCReceiver::pInstance = this;
-    }
+    HXRCReceiver();
+    ~HXRCReceiver();
 
     bool init( HXRCConfig config );
     void loop();
 
     //index = 0..15
     //data = 1000...2000
-    uint16_t getChannelValue( uint8_t index );
+    HXRCChannels getChannels();
 
-    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& getIncomingTelemetryBufffer();
-    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& getOutgoingTelemetryBufffer();
+    //return portion of incoming telemetry into buffer pBuffer which has size maxSize
+    //returns size of returned data
+    uint16_t getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer);
+    
+    //add size byter from *ptr buffer to outgoing telemetry stream
+    //returns true if bytes where added sucessfully
+    //return false if buffer is overflown
+    //As packet sensing is done from loop thread, 
+    //we can send at most HXRC_SLAVE_TELEMETRY_SIZE_MAX every loop.
+    bool sendOutgoingTelemetry( uint8_t* ptr, uint16_t size );
 
     HXRCReceiverStats& getReceiverStats();
     HXRCTransmitterStats& getTransmitterStats();

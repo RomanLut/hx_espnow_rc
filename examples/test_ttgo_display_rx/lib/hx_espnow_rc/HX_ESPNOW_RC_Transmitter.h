@@ -7,10 +7,6 @@
 #include "HX_ESPNOW_RC_TransmitterStats.h"
 #include "HX_ESPNOW_RC_ReceiverStats.h"
 
-//TODO: settings:
-//Receiver MAC address
-//channel
-
 //=====================================================================
 //=====================================================================
 class HXRCTransmitter
@@ -23,13 +19,14 @@ private:
 
     HXRCTransmitterStats transmitterStats;
     HXRCReceiverStats receiverStats;
-    HXRCSenderStateEnum senderState;
+    
+    volatile HXRCSenderStateEnum senderState;
 
     HXRCPayloadMaster outgoingData;
     HXRCChannels channels;
 
-    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBufffer;
-    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBufffer;
+    HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBuffer;
+    HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBuffer;
 
 #if defined(ESP8266)
     static void OnDataSentStatic(uint8_t *mac_addr, uint8_t status);
@@ -47,10 +44,8 @@ private:
 
 public:
 
-    HXRCTransmitter()
-    {
-        pInstance = this;
-    }
+    HXRCTransmitter();
+    ~HXRCTransmitter();
 
     bool init(HXRCConfig config);
     void loop();
@@ -62,8 +57,16 @@ public:
     //data = 1000...2000
     void setChannelValue( uint8_t index, uint16_t data);
 
-    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& getIncomingTelemetryBufffer();
-    HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& getOutgoingTelemetryBufffer();
+    //return portion of incoming telemetry into buffer pBuffer which has size maxSize
+    //returns size of returned data
+    uint16_t getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer);
+
+    //add size byter from *ptr buffer to outgoing telemetry stream
+    //returns true if bytes where added sucessfully
+    //return false if buffer is overflown
+    //As packet sensing is done from loop thread, 
+    //we can send at most HXRC_MASTER_TELEMETRY_SIZE_MAX bytes every loop.
+    bool sendOutgoingTelemetry( uint8_t* ptr, uint16_t size );
 
     HXRCTransmitterStats& getTransmitterStats();
     HXRCReceiverStats& getReceiverStats();

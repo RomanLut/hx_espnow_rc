@@ -26,7 +26,7 @@ public:
     uint16_t packetsSentTotal;
     uint16_t packetsSentSuccess;
     uint16_t packetsSentError;
-    uint16_t packetsNotSentInTime;  //packets not sent in time because akknowledgement took too long OR HXRCLoop() was not called in time
+    uint16_t packetsNotSentInTime;  //packets not sent in time because HXRCLoop() was not called in time
 
     unsigned long lastSendTimeMs;
     unsigned long lastSuccessfulPacketMs;

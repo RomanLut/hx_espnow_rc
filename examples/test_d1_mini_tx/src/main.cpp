@@ -9,30 +9,42 @@ HXRCTransmitter hxrcTransmitter;
 
 unsigned long lastStats = millis();
 
-uint16_t errorCount = 0;
+uint16_t errorCountTelemetry = 0;
 
+bool gotSync = false;
 uint8_t incomingTelVal = 0;
 uint8_t outgoingTelVal = 0;
 
-uint16 sentCount = 0;
-unsigned long rateTime;
+unsigned long rateTime = millis();
+uint16_t rateCounter = 0;
 
 //=====================================================================
 //=====================================================================
 void processIncomingTelemetry()
 {
-  auto& incomingTelemetry = hxrcTransmitter.getIncomingTelemetryBufffer();
+  uint8_t buffer[100];
 
   //we expect that telemetry contains stream of increasing numbers
-  while (incomingTelemetry.getCount() != 0)
+
+  //max 10 cycles at at time
+  //otherwise we will sit here forewer processinf fast incoming telemetry stream
+  for ( int j = 0; j < 10; j++ )
   {
-    uint8_t v = incomingTelemetry.remove();
-    if ( incomingTelVal != v )
+    uint16_t returnedSize = hxrcTransmitter.getIncomingTelemetry( 100, buffer );
+    if ( returnedSize == 0 ) break;
+
+    uint8_t* ptr = buffer;
+    for ( int i = 0; i < returnedSize; i++ )
     {
-      incomingTelVal = v;
-      errorCount++;
+      if ( incomingTelVal != *ptr )
+      {
+        if ( gotSync ) errorCountTelemetry++;
+        gotSync = true;
+        incomingTelVal = *ptr;
+      }
+      ptr++;
+      incomingTelVal++;
     }
-    incomingTelVal++;
   }
 }
 
@@ -40,35 +52,33 @@ void processIncomingTelemetry()
 //=====================================================================
 void fillOutgoingTelemetry()
 {
-  auto& outgoingTelemetry = hxrcTransmitter.getOutgoingTelemetryBufffer();
-
-  //fill stream with increasing numbers
-  while (outgoingTelemetry.getFreeCount() != 0)
-  {
-    outgoingTelemetry.insert(outgoingTelVal);
-    outgoingTelVal++;
-    sentCount++;
-
-    //do not fill buffer randomly
-    if ( rand() < RAND_MAX / 10 )
-    {
-      break;
-    }
-
-    //keep max rate
-    if ( sentCount > TELEMETRY_RATE / 10 )
-    {
-      break;
-    }
-  }
-
   unsigned long t = millis();
   if ( t - rateTime > 100 )
   {
     rateTime = t;
-    sentCount = 0;
+    rateCounter = 0;
   }
 
+  if ( rateCounter > 100)  //1kb/sec
+  {
+    return;
+  }
+
+  uint8_t buffer[HXRC_MASTER_TELEMETRY_SIZE_MAX];
+
+  //generate at most HXRC_MASTER_TELEMETRY_SIZE_MAX bytes on each loop
+  uint8_t len = rand() % (HXRC_MASTER_TELEMETRY_SIZE_MAX+1);
+
+  uint8_t v = outgoingTelVal;
+  
+  //fill stream with increasing numbers
+  for ( int i = 0; i < len; i++ ) buffer[i] = v++;
+  
+  if ( hxrcTransmitter.sendOutgoingTelemetry( buffer, len ))
+  {
+    outgoingTelVal = v;
+    rateCounter += len;
+  }
 }
 
 
@@ -119,8 +129,6 @@ void setup()
 
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH); //led pin is inverted
-
-  rateTime = millis();
 }
 
 //=====================================================================
@@ -139,10 +147,10 @@ void loop()
     hxrcTransmitter.getTransmitterStats().printStats();
     hxrcTransmitter.getReceiverStats().printStats();
     Serial.print("Errors: ");
-    Serial.println(errorCount);
+    Serial.println(errorCountTelemetry);
   }
 
-  if (errorCount != 0)
+  if (errorCountTelemetry > 0) 
   {
     digitalWrite(LED_BUILTIN, millis() & 128 ? HIGH : LOW);
   }

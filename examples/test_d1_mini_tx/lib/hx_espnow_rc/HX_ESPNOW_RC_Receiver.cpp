@@ -1,3 +1,7 @@
+#if defined (ESP8266)
+#include <interrupts.h>
+#endif
+
 #include "HX_ESPNOW_RC_Receiver.h"
 
 HXRCReceiver* HXRCReceiver::pInstance;
@@ -12,6 +16,30 @@ void HXRCReceiver::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingD
 
 //=====================================================================
 //=====================================================================
+HXRCReceiver::HXRCReceiver()
+{
+    HXRCReceiver::pInstance = this;
+#if defined(ESP32)
+    this->channelsMutex = xSemaphoreCreateMutex();
+    if( this->channelsMutex == NULL )
+    {
+        Serial.print("HXRC: Failed create mutex");
+    }
+#endif
+}
+
+//=====================================================================
+//=====================================================================
+HXRCReceiver::~HXRCReceiver()
+{
+#if defined (ESP32)
+    vSemaphoreDelete(this->channelsMutex);
+#endif
+}
+
+
+//=====================================================================
+//=====================================================================
 // Callback when data is sent
 #if defined(ESP8266)
 void HXRCReceiver::OnDataSent(uint8_t *mac_addr, uint8_t status)
@@ -19,28 +47,23 @@ void HXRCReceiver::OnDataSent(uint8_t *mac_addr, uint8_t status)
 void HXRCReceiver::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 #endif
 {
-    bool success = status == ESP_NOW_SEND_SUCCESS;
-
-    if( success )
+    if( status == ESP_NOW_SEND_SUCCESS )
     {
-        uint8_t length = outgoingTelemetry.length;
-
-        transmitterStats.onPacketSendSuccess( length );
-
-        //now we can remove data which were sent
-        while ( length-- ) outgoingTelemetryBufffer.remove();
+        transmitterStats.onPacketSendSuccess( outgoingTelemetry.length );
+        senderState = HXRCSS_READY_TO_SEND;
     }
     else    
     {
         transmitterStats.onPacketSendError();
+        senderState = HXRCSS_RETRY_SEND;
     }
-
-    senderState = HXRCSS_READY_TO_SEND;
 }
 
 //=====================================================================
 //=====================================================================
 // Callback when data is received
+//This function wokrs in Wifi task, which may run on the second core parallel to loop task.
+//We have to use thread-safe ring buffer and mutex.
 #if defined(ESP8266)
 void HXRCReceiver::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
 #elif defined (ESP32)
@@ -50,19 +73,28 @@ void HXRCReceiver::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, i
     if ( len >= HXRC_MASTER_PAYLOAD_SIZE_BASE )
     {
         const HXRCPayloadMaster* pPayload = (const HXRCPayloadMaster*) incomingData;
+#if defined(ESP8266)
+    {
+        esp8266::InterruptLock lock;
         memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
-
+    }
+#elif(ESP32)
+        if ( xSemaphoreTake( this->channelsMutex,  (TickType_t) 100) == pdTRUE );
+        {
+            memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
+            xSemaphoreGive( this->channelsMutex);
+        }
+#endif
         receiverStats.onPacketReceived( pPayload->sequenceId, -2, pPayload->length );
 
-        uint16_t lenToWrite = pPayload->length;
-        uint16_t freeCount = this->incomingTelemetryBufffer.getFreeCount();
-
-        if ( lenToWrite > freeCount )
+        uint8_t lenToWrite = pPayload->length;
+        if ( lenToWrite > 0 )
         {
-            lenToWrite = freeCount;  
-            receiverStats.onTelemetryOverflow();
+             if ( !this->incomingTelemetryBuffer.send( pPayload->data, lenToWrite ) )
+             {
+                receiverStats.onTelemetryOverflow();
+             }
         }
-        this->incomingTelemetryBufffer.insertBuffer( pPayload->data, lenToWrite );
     }
     else
     {
@@ -84,10 +116,7 @@ bool HXRCReceiver::init( HXRCConfig config )
     HXRCInitLedPin(config);
 
     outgoingTelemetry.sequenceId = 0;
-    for ( int i = 0; i < HXRC_CHANNELS; i++ )
-    {
-        HXRCSetChannelValueInt( receivedChannels, i, 1000 );
-    }
+    receivedChannels.init();
 
     senderState = HXRCSS_READY_TO_SEND;
 
@@ -110,19 +139,22 @@ void HXRCReceiver::loop()
 
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
+        outgoingTelemetry.length = 0;
+        uint8_t freeBytes = HXRC_SLAVE_TELEMETRY_SIZE_MAX;
+        while ( freeBytes > 0 )
+        {
+            uint16_t returnedSize = outgoingTelemetryBuffer.receiveUpTo( freeBytes, &outgoingTelemetry.data[outgoingTelemetry.length] );
+            if ( returnedSize == 0 ) break;
+            outgoingTelemetry.length += returnedSize;
+            freeBytes -= returnedSize;
+        }
+    }
+
+    //if state is senderState == HXRCSS_RETRY_SEND, send the same telemetry data again
+    if ( senderState == HXRCSS_READY_TO_SEND || senderState == HXRCSS_RETRY_SEND )
+    {
         outgoingTelemetry.sequenceId++;
         outgoingTelemetry.rssi = receiverStats.getRSSI();
-        
-        uint16_t otc = outgoingTelemetryBufffer.getCount();
-        if ( otc != 0)
-        {
-            outgoingTelemetry.length = otc > HXRC_SLAVE_TELEMETRY_SIZE_MAX ? HXRC_SLAVE_TELEMETRY_SIZE_MAX : otc;
-            outgoingTelemetryBufffer.peekToBuffer( outgoingTelemetry.data, outgoingTelemetry.length );
-        }
-        else
-        {
-            outgoingTelemetry.length = 0;
-        }
 
         transmitterStats.onPacketSend( t );
         esp_err_t result = esp_now_send(this->config.peer_mac, (uint8_t *) &outgoingTelemetry, HXRC_SLAVE_PAYLOAD_SIZE_BASE + outgoingTelemetry.length );
@@ -144,9 +176,25 @@ void HXRCReceiver::loop()
 
 //=====================================================================
 //=====================================================================
-uint16_t HXRCReceiver::getChannelValue(uint8_t index )
+HXRCChannels HXRCReceiver::getChannels()
 {
-    return HXRCGetChannelValueInt( receivedChannels, index );
+    HXRCChannels ret;
+
+#if defined(ESP8266)
+    {
+        esp8266::InterruptLock lock;
+        memcpy(&ret, &receivedChannels, sizeof(receivedChannels));
+    }
+#elif defined (ESP32)
+    if ( xSemaphoreTake( this->channelsMutex,  portMAX_DELAY ) != pdTRUE )
+    {
+        Serial.println("HXRC: Failed to get mutex");
+    }
+    memcpy(&ret, &receivedChannels, sizeof(receivedChannels));
+    xSemaphoreGive( this->channelsMutex);
+#endif
+
+    return ret;
 }
 
 //=====================================================================
@@ -181,14 +229,14 @@ void HXRCReceiver::updateLed()
 
 //=====================================================================
 //=====================================================================
-HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& HXRCReceiver::getIncomingTelemetryBufffer()
+uint16_t HXRCReceiver::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
 {
-    return this->incomingTelemetryBufffer;
+    return this->incomingTelemetryBuffer.receiveUpTo( maxSize, pBuffer);
 }
 
 //=====================================================================
 //=====================================================================
-HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& HXRCReceiver::getOutgoingTelemetryBufffer()
+bool HXRCReceiver::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
 {
-    return this->outgoingTelemetryBufffer;
+    return outgoingTelemetryBuffer.send( ptr, size );
 }

@@ -1,12 +1,21 @@
 #pragma once
 
+#if defined(ESP8266)
+#include <interrupts.h>
+#elif defined (ESP32)
+#include "freertos/ringbuf.h"
+#endif
+
 #include <Arduino.h>
+
+#if defined(ESP8266)
 
 //=====================================================================
 //=====================================================================
-template<int Size> class HXRCRingBufer
+template<int Size> class HXRCRingBuffer
 {
 private:
+
     uint8_t* pIn;
     uint8_t* pOut;
     uint8_t* pStart;
@@ -14,16 +23,6 @@ private:
     uint16_t count;
 
     uint8_t buffer[Size];
-
-public:
-    HXRCRingBufer() 
-    {
-        this->pIn     = buffer;
-        this->pOut    = buffer;
-        this->pStart  = &buffer[0];
-        this->pEnd    = &buffer[Size];
-        this->count  = 0;
-    }
 
     uint16_t getCount()
     {
@@ -52,7 +51,7 @@ public:
         while ( length-- ) insert(*pData++);
     }
 
-    uint8_t remove()
+    uint8_t receive()
     {
         uint8_t data = *this->pOut;
 
@@ -67,22 +66,94 @@ public:
     }
 
     // length should be less or equal to getCount()
-    void peekToBuffer( uint8_t* buffer, uint16_t length )
+    void receiveBuffer( uint8_t* buffer, uint16_t length )
     {
-        uint8_t* pData = this->pOut;
-
-        while ( length-- ) 
-        {
-            *buffer++ = *pData;
-            if (++pData == this->pEnd)
-            {
-                pData = this->pStart;
-            }
-        }
+        while ( length-- ) *buffer++ = receive();
     }
 
     uint8_t peek()
     {
         return *this->pOut;
     }
+
+public:
+    HXRCRingBuffer() 
+    {
+        this->pIn     = buffer;
+        this->pOut    = buffer;
+        this->pStart  = &buffer[0];
+        this->pEnd    = &buffer[Size];
+        this->count  = 0;
+    }
+
+    bool send( const void* data, uint16_t lenToWrite )
+    {
+        {     
+            esp8266::InterruptLock lock;
+            if ( getFreeCount() < lenToWrite ) return false;
+            insertBuffer(reinterpret_cast<const uint8_t*>(data), lenToWrite);
+        }
+        return true;
+    }
+
+    //returns number of bytes received
+    uint16_t receiveUpTo( uint16_t maxLen, void* toPtr )
+    {
+        {     
+            esp8266::InterruptLock lock;
+
+            if ( maxLen > this->count ) maxLen = this->count;
+            if ( maxLen == 0 ) return 0;
+            receiveBuffer(reinterpret_cast<uint8_t*>(toPtr), maxLen);
+        }
+        return maxLen;
+    }
+
+
 };
+
+#elif defined (ESP32)
+
+//=====================================================================
+//=====================================================================
+template<int Size> class HXRCRingBuffer
+{
+private:
+
+    RingbufHandle_t buffferHandle;
+
+public:
+    HXRCRingBuffer() 
+    {
+        this->buffferHandle = xRingbufferCreate(Size, RINGBUF_TYPE_BYTEBUF);
+        if ( this->buffferHandle == NULL) 
+        {
+            Serial.print("HXRC: Failed create ring buffer");
+        }    
+    }
+
+    ~HXRCRingBuffer() 
+    {
+        vRingbufferDelete(this->buffferHandle);
+    }
+
+    bool send( const void* data, uint16_t lenToWrite )
+    {
+        return xRingbufferSend( this->buffferHandle, data, lenToWrite, (TickType_t)0 ) == pdTRUE;
+    }
+
+    //returns number of bytes received
+    uint16_t receiveUpTo( uint16_t maxLen, void* toPtr )
+    {
+        size_t returnedSize = 0;
+        void* ptr = xRingbufferReceiveUpTo( this->buffferHandle, &returnedSize, (TickType_t)0, maxLen );
+        if ( ptr == NULL ) return 0;
+        memcpy( toPtr, ptr, returnedSize );
+        vRingbufferReturnItem( this->buffferHandle, ptr );
+        return returnedSize;
+    }
+
+
+};
+
+#endif

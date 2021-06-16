@@ -12,6 +12,19 @@ void HXRCTransmitter::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomi
 
 //=====================================================================
 //=====================================================================
+HXRCTransmitter::HXRCTransmitter()
+{
+    pInstance = this;
+}
+
+//=====================================================================
+//=====================================================================
+HXRCTransmitter::~HXRCTransmitter()
+{
+}
+
+//=====================================================================
+//=====================================================================
 // Callback when data is sent
 #if defined(ESP8266)
 void HXRCTransmitter::OnDataSent(uint8_t *mac_addr, uint8_t status)
@@ -19,23 +32,16 @@ void HXRCTransmitter::OnDataSent(uint8_t *mac_addr, uint8_t status)
 void HXRCTransmitter::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 #endif
 {
-    bool success = status == ESP_NOW_SEND_SUCCESS;
-
-    if( success )
+    if( status == ESP_NOW_SEND_SUCCESS )
     {
-        uint8_t length = outgoingData.length;
-        
-        transmitterStats.onPacketSendSuccess( length );
-        
-        //now we can remove data which were sent
-        while ( length-- ) outgoingTelemetryBufffer.remove();
+        transmitterStats.onPacketSendSuccess( outgoingData.length );
+        senderState = HXRCSS_READY_TO_SEND;
     }
     else    
     {
         transmitterStats.onPacketSendError();
+        senderState = HXRCSS_RETRY_SEND;
     }
-
-    senderState = HXRCSS_READY_TO_SEND;
 }
 
 //=====================================================================
@@ -53,15 +59,14 @@ void HXRCTransmitter::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData
     {
         receiverStats.onPacketReceived( pPayload->sequenceId, pPayload->rssi, pPayload->length );
 
-        uint16_t lenToWrite = pPayload->length;
-        uint16_t freeCount = this->incomingTelemetryBufffer.getFreeCount();
-
-        if ( lenToWrite > freeCount )
+        uint8_t lenToWrite = pPayload->length;
+        if ( lenToWrite > 0 )
         {
-            lenToWrite = freeCount;  
-            receiverStats.onTelemetryOverflow();
+             if ( !this->incomingTelemetryBuffer.send( pPayload->data, lenToWrite ) )
+             {
+                receiverStats.onTelemetryOverflow();
+             }
         }
-        this->incomingTelemetryBufffer.insertBuffer( pPayload->data, lenToWrite );
     }
     else
     {
@@ -82,7 +87,7 @@ bool HXRCTransmitter::init( HXRCConfig config )
     HXRCInitLedPin(config);
 
     outgoingData.sequenceId = 0;
-    for ( int i =0; i < HXRC_CHANNELS; i++ )
+    for ( int i = 0; i < HXRC_CHANNELS; i++ )
     {
         setChannelValue( i, 1000);
     }
@@ -106,40 +111,40 @@ void HXRCTransmitter::loop()
     unsigned long t = millis();
     unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
-    if (senderState == HXRCSS_READY_TO_SEND )
+    if ( senderState == HXRCSS_READY_TO_SEND )
     {
         int count = deltaT / PACKET_SEND_PERIOD_MS;
-
         if ( count > 1)
         {
             transmitterStats.onPacketSendMiss( count - 1 );           
             outgoingData.sequenceId += count - 1;
         }
 
-        uint16_t otc = outgoingTelemetryBufffer.getCount();
-        if ( otc != 0)
+        outgoingData.length = 0;
+        uint8_t freeBytes = HXRC_MASTER_TELEMETRY_SIZE_MAX;
+        while ( freeBytes > 0 )
         {
-            outgoingData.length = otc > HXRC_MASTER_TELEMETRY_SIZE_MAX ? HXRC_MASTER_TELEMETRY_SIZE_MAX : otc;
-            outgoingTelemetryBufffer.peekToBuffer( outgoingData.data, outgoingData.length );
+            uint16_t returnedSize = outgoingTelemetryBuffer.receiveUpTo( freeBytes, &outgoingData.data[outgoingData.length] );
+            if ( returnedSize == 0 ) break;
+            outgoingData.length += returnedSize;
+            freeBytes -= returnedSize;
         }
-        else
-        {
-            outgoingData.length = 0;
-        }
+    }
 
+    //if state is senderState == HXRCSS_RETRY_SEND, send the same telemetry data again
+    if ( senderState == HXRCSS_READY_TO_SEND || senderState == HXRCSS_RETRY_SEND )
+    {
+        outgoingData.sequenceId++;
         memcpy( &outgoingData.channels, &channels, sizeof (HXRCChannels));
 
         transmitterStats.onPacketSend( t );
-
-        outgoingData.sequenceId++;
-        esp_err_t result = esp_now_send( this->config.peer_mac, (uint8_t *) &outgoingData, HXRC_MASTER_PAYLOAD_SIZE_BASE + outgoingData.length);
+        esp_err_t result = esp_now_send(this->config.peer_mac, (uint8_t *) &outgoingData, HXRC_MASTER_PAYLOAD_SIZE_BASE + outgoingData.length );
         if (result == ESP_OK) 
         {
             senderState = HXRCSS_WAITING_CONFIRMATION;
         }
         else 
         {
-            //Serial.println("immediate send error");
             transmitterStats.onPacketSendError();
         }            
     }
@@ -154,7 +159,7 @@ void HXRCTransmitter::loop()
 //=====================================================================
 void HXRCTransmitter::setChannelValue(uint8_t index, uint16_t data)
 {
-    HXRCSetChannelValueInt( channels, index, data);
+    this->channels.setChannelValue( index, data );
 }
 
 //=====================================================================
@@ -189,14 +194,15 @@ void HXRCTransmitter::updateLed()
 
 //=====================================================================
 //=====================================================================
-HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& HXRCTransmitter::getIncomingTelemetryBufffer()
+uint16_t HXRCTransmitter::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
 {
-    return this->incomingTelemetryBufffer;
+    return this->incomingTelemetryBuffer.receiveUpTo( maxSize, pBuffer);
 }
 
 //=====================================================================
 //=====================================================================
-HXRCRingBufer<HXRC_TELEMETRY_BUFFER_SIZE>& HXRCTransmitter::getOutgoingTelemetryBufffer()
+bool HXRCTransmitter::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
 {
-    return this->outgoingTelemetryBufffer;
+    return this->outgoingTelemetryBuffer.send( ptr, size );
 }
+

@@ -2,42 +2,49 @@
 
 //=====================================================================
 //=====================================================================
-uint16_t HXRCGetChannelValueInt(const HXRCChannels& channels, uint8_t index )
+void HXRCChannels::init()
+{
+    ch1 = ch2 = ch3 = ch4 = ch5 = ch6 = ch7 = ch8 = ch9 = ch10 = ch11 = ch12 = ch13 = ch14 =ch15 = ch16 = 1000;
+}
+
+//=====================================================================
+//=====================================================================
+uint16_t HXRCChannels::getChannelValue( uint8_t index ) const
 {
     switch( index )
     {
         case 0:
-            return channels.Ch1 + 1000;
+            return ch1 + 1000;
         case 1:
-            return channels.Ch2 + 1000;
+            return ch2 + 1000;
         case 2:
-            return channels.Ch3 + 1000;
+            return ch3 + 1000;
         case 3:
-            return channels.Ch4 + 1000;
+            return ch4 + 1000;
         case 4:
-            return channels.Ch5 + 1000;
+            return ch5 + 1000;
         case 5:
-            return channels.Ch6 + 1000;
+            return ch6 + 1000;
         case 6:
-            return channels.Ch7 + 1000;
+            return ch7 + 1000;
         case 7:
-            return channels.Ch8 + 1000;
+            return ch8 + 1000;
         case 8:
-            return channels.Ch9 + 1000;
+            return ch9 + 1000;
         case 9:
-            return channels.Ch10 + 1000;
+            return ch10 + 1000;
         case 10:
-            return channels.Ch11 + 1000;
+            return ch11 + 1000;
         case 11:
-            return channels.Ch12 + 1000;
+            return ch12 + 1000;
         case 12:
-            return channels.Ch13 + 1000;
+            return ch13 + 1000;
         case 13:
-            return channels.Ch14 + 1000;
+            return ch14 + 1000;
         case 14:
-            return channels.Ch15 + 1000;
+            return ch15 + 1000;
         case 15:
-            return channels.Ch16 + 1000;
+            return ch16 + 1000;
         default:
             return 1000;
     }
@@ -45,58 +52,58 @@ uint16_t HXRCGetChannelValueInt(const HXRCChannels& channels, uint8_t index )
 
 //=====================================================================
 //=====================================================================
-void HXRCSetChannelValueInt(HXRCChannels& channels, uint8_t index, uint16_t data)
+void HXRCChannels::setChannelValue( uint8_t index, uint16_t data )
 {
     data -= 1000;
     switch( index )
     {
         case 0:
-            channels.Ch1 = data;
+            ch1 = data;
             break;
         case 1:
-            channels.Ch2 = data;
+            ch2 = data;
             break;
         case 2:
-            channels.Ch3 = data;
+            ch3 = data;
             break;
         case 3:
-            channels.Ch4 = data;
+            ch4 = data;
             break;
         case 4:
-            channels.Ch5 = data;
+            ch5 = data;
             break;
         case 5:
-            channels.Ch6 = data;
+            ch6 = data;
             break;
         case 6:
-            channels.Ch7 = data;
+            ch7 = data;
             break;
         case 7:
-            channels.Ch8 = data;
+            ch8 = data;
             break;
         case 8:
-            channels.Ch9 = data;
+            ch9 = data;
             break;
         case 9:
-            channels.Ch10 = data;
+            ch10 = data;
             break;
         case 10:
-            channels.Ch11 = data;
+            ch11 = data;
             break;
         case 11:
-            channels.Ch12 = data;
+            ch12 = data;
             break;
         case 12:
-            channels.Ch13 = data;
+            ch13 = data;
             break;
         case 13:
-            channels.Ch14 = data;
+            ch14 = data;
             break;
         case 14:
-            channels.Ch15 = data;
+            ch15 = data;
             break;
         case 15:
-            channels.Ch16 = data;
+            ch16 = data;
             break;
     }
 }

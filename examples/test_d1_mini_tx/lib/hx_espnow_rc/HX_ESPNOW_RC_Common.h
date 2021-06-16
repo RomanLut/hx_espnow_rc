@@ -79,22 +79,26 @@ public:
 
 typedef struct 
 {
-    uint16_t Ch1        : 11; 
-    uint16_t Ch2        : 11;
-    uint16_t Ch3        : 11;
-    uint16_t Ch4        : 11;
-    uint16_t Ch5        : 11;
-    uint16_t Ch6        : 11;
-    uint16_t Ch7        : 11;
-    uint16_t Ch8        : 11;
-    uint16_t Ch9        : 11;
-    uint16_t Ch10       : 11;
-    uint16_t Ch11       : 11;
-    uint16_t Ch12       : 11;
-    uint16_t Ch13       : 11;
-    uint16_t Ch14       : 11;
-    uint16_t Ch15       : 11;
-    uint16_t Ch16       : 11;   //16*11 = 22 bytes
+    uint16_t ch1        : 11; 
+    uint16_t ch2        : 11;
+    uint16_t ch3        : 11;
+    uint16_t ch4        : 11;
+    uint16_t ch5        : 11;
+    uint16_t ch6        : 11;
+    uint16_t ch7        : 11;
+    uint16_t ch8        : 11;
+    uint16_t ch9        : 11;
+    uint16_t ch10       : 11;
+    uint16_t ch11       : 11;
+    uint16_t ch12       : 11;
+    uint16_t ch13       : 11;
+    uint16_t ch14       : 11;
+    uint16_t ch15       : 11;
+    uint16_t ch16       : 11;   //16*11 = 22 bytes
+
+    void init();
+    uint16_t getChannelValue( uint8_t index ) const;
+    void setChannelValue(uint8_t index, uint16_t data);
 } HXRCChannels;
 
 
@@ -135,13 +139,11 @@ typedef struct
 typedef enum
 {
     HXRCSS_READY_TO_SEND        = 0,
-    HXRCSS_WAITING_CONFIRMATION = 1
+    HXRCSS_RETRY_SEND           = 1,
+    HXRCSS_WAITING_CONFIRMATION = 2
 } HXRCSenderStateEnum;
 
 //=====================================================================
 //=====================================================================
-extern uint16_t HXRCGetChannelValueInt(const HXRCChannels& channels, uint8_t index );
-extern void HXRCSetChannelValueInt(HXRCChannels& channels, uint8_t index, uint16_t data);
-
 extern void HXRCInitLedPin( const HXRCConfig& config );
 extern bool HXRCInitEspNow( HXRCConfig& config, const char* ssid );
