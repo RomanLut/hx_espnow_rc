@@ -3,6 +3,10 @@
 		{
 			name: "esp32_devkit_v1_rx",
 			"path": "."
+		},
+		{
+			"name": "hx_espnow_rc",
+			"path": "../../lib"
 		}
 	],
 	"settings": {}

@@ -3,6 +3,10 @@
 		{
 			name: "ttgo_display_rx",
 			"path": "."
+		},
+		{
+			"name": "hx_espnow_rc",
+			"path": "../../lib"
 		}
 	],
 	"settings": {}

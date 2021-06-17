@@ -3,6 +3,10 @@
 		{
 			"name": "d1_mini_t1",
 			"path": "."
+		},
+		{
+			"name": "hx_espnow_rc",
+			"path": "../../lib"
 		}
 	],
 	"settings": {
