@@ -61,3 +61,10 @@ LR mode is global setting for AP and STA. It is not possible to configure modes 
 
 
 
+# ESP-NOW technical details
+ESP-NOW packets are vendor-specific packets. ESP sends packet and waits for confirmation packet from peer mac address.
+If Ack paket is not recevied, erorr is returned. So sender knows that packet is not delivered successfully. 
+Opposite is not true. If API call returns error, packet still may have been delivered, but sender did not hear Ack packet.
+
+If peer address is set to broadcast address (ff:ff:ff:ff:ff:ff), ESP does not wait for Ack packet and returns no error. This fact can be used to send one-way packets in some scenarios(OpenHD-like video transmission?)
+

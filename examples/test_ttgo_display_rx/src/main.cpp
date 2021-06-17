@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 
-#include "HX_ESPNOW_RC_Receiver.h"
+#include "HX_ESPNOW_RC_Slave.h"
 
 #define USE_WIFI_CHANNEL 3
 #define LED_BUILTIN 33
 
 
-HXRCReceiver hxrcReceiver;
+HXRCSlave hxrcReceiver;
 
 unsigned long lastStats = millis();
 
@@ -115,6 +115,7 @@ void setup()
 
   //uint8_t peer_mac[6] = {0x7c, 0x9e, 0xbd, 0xf4, 0xC2, 0x28}; //devkit STA 1
   uint8_t peer_mac[6] = {0x98, 0xf4, 0xAB, 0xfb, 0x11, 0x44};  //d1 mini sta
+  //uint8_t peer_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};  //broadcast
 
   hxrcReceiver.init(
       HXRCConfig(

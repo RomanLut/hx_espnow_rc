@@ -1,25 +1,25 @@
-#include "HX_ESPNOW_RC_Transmitter.h"
+#include "HX_ESPNOW_RC_Master.h"
 
-HXRCTransmitter* HXRCTransmitter::pInstance;
+HXRCMaster* HXRCMaster::pInstance;
 
 #if defined(ESP8266)
-void HXRCTransmitter::OnDataSentStatic(uint8_t *mac_addr, uint8_t status) {HXRCTransmitter::pInstance->OnDataSent( mac_addr, status );};
-void HXRCTransmitter::OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len) {HXRCTransmitter::pInstance->OnDataRecv( mac, incomingData, len);};
+void HXRCMaster::OnDataSentStatic(uint8_t *mac_addr, uint8_t status) {HXRCMaster::pInstance->OnDataSent( mac_addr, status );};
+void HXRCMaster::OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len) {HXRCMaster::pInstance->OnDataRecv( mac, incomingData, len);};
 #elif defined (ESP32)
-void HXRCTransmitter::OnDataSentStatic(const uint8_t *mac_addr, esp_now_send_status_t status) {HXRCTransmitter::pInstance->OnDataSent( mac_addr, status );};
-void HXRCTransmitter::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData, int len) {HXRCTransmitter::pInstance->OnDataRecv( mac, incomingData, len);};
+void HXRCMaster::OnDataSentStatic(const uint8_t *mac_addr, esp_now_send_status_t status) {HXRCMaster::pInstance->OnDataSent( mac_addr, status );};
+void HXRCMaster::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData, int len) {HXRCMaster::pInstance->OnDataRecv( mac, incomingData, len);};
 #endif
 
 //=====================================================================
 //=====================================================================
-HXRCTransmitter::HXRCTransmitter()
+HXRCMaster::HXRCMaster()
 {
     pInstance = this;
 }
 
 //=====================================================================
 //=====================================================================
-HXRCTransmitter::~HXRCTransmitter()
+HXRCMaster::~HXRCMaster()
 {
 }
 
@@ -27,9 +27,9 @@ HXRCTransmitter::~HXRCTransmitter()
 //=====================================================================
 // Callback when data is sent
 #if defined(ESP8266)
-void HXRCTransmitter::OnDataSent(uint8_t *mac_addr, uint8_t status)
+void HXRCMaster::OnDataSent(uint8_t *mac_addr, uint8_t status)
 #elif defined(ESP32)
-void HXRCTransmitter::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+void HXRCMaster::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 #endif
 {
     if( status == ESP_NOW_SEND_SUCCESS )
@@ -48,9 +48,9 @@ void HXRCTransmitter::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t 
 //=====================================================================
 // Callback when data is received
 #if defined(ESP8266)
-void HXRCTransmitter::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
+void HXRCMaster::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
 #elif defined (ESP32)
-void HXRCTransmitter::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
+void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 #endif
 {
     const HXRCPayloadSlave* pPayload = ( const HXRCPayloadSlave*) incomingData;
@@ -74,7 +74,7 @@ void HXRCTransmitter::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData
 
 //=====================================================================
 //=====================================================================
-bool HXRCTransmitter::init( HXRCConfig config )
+bool HXRCMaster::init( HXRCConfig config )
 {
     this->config = config;
 
@@ -103,7 +103,7 @@ bool HXRCTransmitter::init( HXRCConfig config )
 
 //=====================================================================
 //=====================================================================
-void HXRCTransmitter::loop()
+void HXRCMaster::loop()
 {
     unsigned long t = millis();
     unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
@@ -146,28 +146,28 @@ void HXRCTransmitter::loop()
 
 //=====================================================================
 //=====================================================================
-void HXRCTransmitter::setChannelValue(uint8_t index, uint16_t data)
+void HXRCMaster::setChannelValue(uint8_t index, uint16_t data)
 {
     this->channels.setChannelValue( index, data );
 }
 
 //=====================================================================
 //=====================================================================
-HXRCTransmitterStats& HXRCTransmitter::getTransmitterStats() 
+HXRCTransmitterStats& HXRCMaster::getTransmitterStats() 
 {
     return transmitterStats;
 }
 
 //=====================================================================
 //=====================================================================
-HXRCReceiverStats& HXRCTransmitter::getReceiverStats() 
+HXRCReceiverStats& HXRCMaster::getReceiverStats() 
 {
     return receiverStats;
 }
 
 //=====================================================================
 //=====================================================================
-void HXRCTransmitter::updateLed()
+void HXRCMaster::updateLed()
 {
     if ( config.ledPin == -1) return;
 
@@ -183,14 +183,14 @@ void HXRCTransmitter::updateLed()
 
 //=====================================================================
 //=====================================================================
-uint16_t HXRCTransmitter::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
+uint16_t HXRCMaster::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
 {
     return this->incomingTelemetryBuffer.receiveUpTo( maxSize, pBuffer);
 }
 
 //=====================================================================
 //=====================================================================
-bool HXRCTransmitter::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
+bool HXRCMaster::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
 {
     return this->outgoingTelemetryBuffer.send( ptr, size );
 }

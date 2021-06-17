@@ -9,13 +9,13 @@
 
 //=====================================================================
 //=====================================================================
-class HXRCReceiver
+class HXRCSlave
 {
 private:
 
     HXRCConfig config;
 
-    static HXRCReceiver* pInstance;
+    static HXRCSlave* pInstance;
 
     HXRCTransmitterStats transmitterStats;
     HXRCReceiverStats receiverStats;
@@ -51,8 +51,8 @@ public:
 //Receiver MAC address
 //channel
 
-    HXRCReceiver();
-    ~HXRCReceiver();
+    HXRCSlave();
+    ~HXRCSlave();
 
     bool init( HXRCConfig config );
     void loop();

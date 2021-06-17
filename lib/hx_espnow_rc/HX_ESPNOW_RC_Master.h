@@ -9,13 +9,13 @@
 
 //=====================================================================
 //=====================================================================
-class HXRCTransmitter
+class HXRCMaster
 {
 private:
 
     HXRCConfig config;
 
-    static HXRCTransmitter* pInstance;
+    static HXRCMaster* pInstance;
 
     HXRCTransmitterStats transmitterStats;
     HXRCReceiverStats receiverStats;
@@ -44,14 +44,14 @@ private:
 
 public:
 
-    HXRCTransmitter();
-    ~HXRCTransmitter();
+    HXRCMaster();
+    ~HXRCMaster();
 
     bool init(HXRCConfig config);
     void loop();
 
-    void addIncomingTelemetryCallback( void (*callback)(void* parm, HXRCTransmitter& transmitter), void* parm);
-    void addOutgoingTelemetryCallback( void (*callback)(void* parm, HXRCTransmitter& transmitter), void* parm);
+    void addIncomingTelemetryCallback( void (*callback)(void* parm, HXRCMaster& transmitter), void* parm);
+    void addOutgoingTelemetryCallback( void (*callback)(void* parm, HXRCMaster& transmitter), void* parm);
 
     //index = 0..15
     //data = 1000...2000

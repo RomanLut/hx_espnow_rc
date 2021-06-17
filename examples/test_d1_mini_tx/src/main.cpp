@@ -1,11 +1,11 @@
 #include <Arduino.h>
-#include "HX_ESPNOW_RC_Transmitter.h"
+#include "HX_ESPNOW_RC_Master.h"
 
 #define USE_WIFI_CHANNEL 3
 
 #define TELEMETRY_RATE  4192  // keep rate b/sec
 
-HXRCTransmitter hxrcTransmitter;
+HXRCMaster hxrcTransmitter;
 
 unsigned long lastStats = millis();
 

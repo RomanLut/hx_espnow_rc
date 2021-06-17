@@ -2,23 +2,23 @@
 #include <interrupts.h>
 #endif
 
-#include "HX_ESPNOW_RC_Receiver.h"
+#include "HX_ESPNOW_RC_Slave.h"
 
-HXRCReceiver* HXRCReceiver::pInstance;
+HXRCSlave* HXRCSlave::pInstance;
 
 #if defined(ESP8266)
-void HXRCReceiver::OnDataSentStatic(uint8_t *mac_addr, uint8_t status) {HXRCReceiver::pInstance->OnDataSent( mac_addr, status );};
-void HXRCReceiver::OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len) {HXRCReceiver::pInstance->OnDataRecv( mac, incomingData, len);};
+void HXRCSlave::OnDataSentStatic(uint8_t *mac_addr, uint8_t status) {HXRCSlave::pInstance->OnDataSent( mac_addr, status );};
+void HXRCSlave::OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len) {HXRCSlave::pInstance->OnDataRecv( mac, incomingData, len);};
 #elif defined (ESP32)
-void HXRCReceiver::OnDataSentStatic(const uint8_t *mac_addr, esp_now_send_status_t status) {HXRCReceiver::pInstance->OnDataSent( mac_addr, status );};
-void HXRCReceiver::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData, int len) {HXRCReceiver::pInstance->OnDataRecv( mac, incomingData, len);};
+void HXRCSlave::OnDataSentStatic(const uint8_t *mac_addr, esp_now_send_status_t status) {HXRCSlave::pInstance->OnDataSent( mac_addr, status );};
+void HXRCSlave::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData, int len) {HXRCSlave::pInstance->OnDataRecv( mac, incomingData, len);};
 #endif
 
 //=====================================================================
 //=====================================================================
-HXRCReceiver::HXRCReceiver()
+HXRCSlave::HXRCSlave()
 {
-    HXRCReceiver::pInstance = this;
+    HXRCSlave::pInstance = this;
 #if defined(ESP32)
     this->channelsMutex = xSemaphoreCreateMutex();
     if( this->channelsMutex == NULL )
@@ -30,7 +30,7 @@ HXRCReceiver::HXRCReceiver()
 
 //=====================================================================
 //=====================================================================
-HXRCReceiver::~HXRCReceiver()
+HXRCSlave::~HXRCSlave()
 {
 #if defined (ESP32)
     vSemaphoreDelete(this->channelsMutex);
@@ -42,9 +42,9 @@ HXRCReceiver::~HXRCReceiver()
 //=====================================================================
 // Callback when data is sent
 #if defined(ESP8266)
-void HXRCReceiver::OnDataSent(uint8_t *mac_addr, uint8_t status)
+void HXRCSlave::OnDataSent(uint8_t *mac_addr, uint8_t status)
 #elif defined (ESP32)
-void HXRCReceiver::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
+void HXRCSlave::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 #endif
 {
     if( status == ESP_NOW_SEND_SUCCESS )
@@ -65,9 +65,9 @@ void HXRCReceiver::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t sta
 //This function wokrs in Wifi task, which may run on the second core parallel to loop task.
 //We have to use thread-safe ring buffer and mutex.
 #if defined(ESP8266)
-void HXRCReceiver::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
+void HXRCSlave::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
 #elif defined (ESP32)
-void HXRCReceiver::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
+void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 #endif
 {
     if ( len >= HXRC_MASTER_PAYLOAD_SIZE_BASE )
@@ -104,7 +104,7 @@ void HXRCReceiver::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, i
 
 //=====================================================================
 //=====================================================================
-bool HXRCReceiver::init( HXRCConfig config )
+bool HXRCSlave::init( HXRCConfig config )
 {
     this->config = config;
 
@@ -131,7 +131,7 @@ bool HXRCReceiver::init( HXRCConfig config )
 
 //=====================================================================
 //=====================================================================
-void HXRCReceiver::loop()
+void HXRCSlave::loop()
 {
     unsigned long t = millis();
 
@@ -166,7 +166,7 @@ void HXRCReceiver::loop()
 
 //=====================================================================
 //=====================================================================
-HXRCChannels HXRCReceiver::getChannels()
+HXRCChannels HXRCSlave::getChannels()
 {
     HXRCChannels ret;
 
@@ -189,21 +189,21 @@ HXRCChannels HXRCReceiver::getChannels()
 
 //=====================================================================
 //=====================================================================
-HXRCReceiverStats& HXRCReceiver::getReceiverStats() 
+HXRCReceiverStats& HXRCSlave::getReceiverStats() 
 {
     return receiverStats;
 }
 
 //=====================================================================
 //=====================================================================
-HXRCTransmitterStats& HXRCReceiver::getTransmitterStats() 
+HXRCTransmitterStats& HXRCSlave::getTransmitterStats() 
 {
     return transmitterStats;
 }
 
 //=====================================================================
 //=====================================================================
-void HXRCReceiver::updateLed()
+void HXRCSlave::updateLed()
 {
     if ( config.ledPin == -1) return;
 
@@ -219,14 +219,14 @@ void HXRCReceiver::updateLed()
 
 //=====================================================================
 //=====================================================================
-uint16_t HXRCReceiver::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
+uint16_t HXRCSlave::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
 {
     return this->incomingTelemetryBuffer.receiveUpTo( maxSize, pBuffer);
 }
 
 //=====================================================================
 //=====================================================================
-bool HXRCReceiver::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
+bool HXRCSlave::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
 {
     return outgoingTelemetryBuffer.send( ptr, size );
 }

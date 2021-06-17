@@ -19,8 +19,8 @@ private:
 
     void update();
 
-    friend class HXRCTransmitter;
-    friend class HXRCReceiver;
+    friend class HXRCMaster;
+    friend class HXRCSlave;
 
 public:
     uint16_t packetsSentTotal;
