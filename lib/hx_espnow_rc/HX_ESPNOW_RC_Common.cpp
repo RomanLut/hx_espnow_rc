@@ -1,7 +1,5 @@
 #include "HX_ESPNOW_RC_Common.h"
 
-static const char* pmk = "HXRC_KEY_V_01.00";  //16 bytes
-
 //=====================================================================
 //=====================================================================
 void HXRCChannels::init()
@@ -126,6 +124,12 @@ void HXRCInitLedPin( const HXRCConfig& config )
 //=====================================================================
 bool HXRCInitEspNow( HXRCConfig& config )
 {
+    uint8_t pmk[ESP_NOW_KEY_LEN];
+    for ( int i = 0; i < ESP_NOW_KEY_LEN; i++ )
+    {
+        pmk[i] = config.key[i] ^ HXRC_VERSION; 
+    }
+
 #if defined(ESP8266)
     
     WiFi.mode(WIFI_STA);
@@ -161,7 +165,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
         return false;
     }
 
-    if ( esp_now_set_kok( (uint8_t *)pmk, ESP_NOW_KEY_LEN ) != ESP_OK )
+    if ( esp_now_set_kok( pmk, ESP_NOW_KEY_LEN ) != ESP_OK )
     {
         Serial.println("HXESPNOWRC: Error: Failed to set pmk");
         return false;
@@ -221,7 +225,7 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
         return false;
     }
 
-    if ( esp_now_set_pmk((uint8_t *)pmk) != ESP_OK )
+    if ( esp_now_set_pmk(pmk) != ESP_OK )
     {
         Serial.println("HXESPNOWRC: Error: Failed to set pmk");
         return false;

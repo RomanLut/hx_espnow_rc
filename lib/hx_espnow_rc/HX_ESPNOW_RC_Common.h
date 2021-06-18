@@ -24,6 +24,8 @@
 
 #endif
 
+#define HXRC_VERSION 1
+
 #define PACKET_SEND_PERIOD_MS   100      //10Hz    
 #define FAILSAFE_PERIOD_MS      1000
 
