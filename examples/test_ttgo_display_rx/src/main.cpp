@@ -4,8 +4,12 @@
 #include "HX_ESPNOW_RC_Slave.h"
 
 #define USE_WIFI_CHANNEL 3
-#define LED_BUILTIN 33
+//uint8_t peer_mac[6] = {0x7c, 0x9e, 0xbd, 0xf4, 0xC2, 0x28}; //devkit STA 1
+uint8_t peer_mac[6] = {0x98, 0xf4, 0xAB, 0xfb, 0x11, 0x44};  //d1 mini sta
+//uint8_t peer_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};  //broadcast
+const char* key = "HXRC_DEFAULT_KEY"; //16 bytes
 
+#define LED_BUILTIN 33
 
 HXRCSlave hxrcReceiver;
 
@@ -113,14 +117,11 @@ void setup()
   tft.setTextDatum(ML_DATUM);
   tft.setRotation(0);
 
-  //uint8_t peer_mac[6] = {0x7c, 0x9e, 0xbd, 0xf4, 0xC2, 0x28}; //devkit STA 1
-  uint8_t peer_mac[6] = {0x98, 0xf4, 0xAB, 0xfb, 0x11, 0x44};  //d1 mini sta
-  //uint8_t peer_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};  //broadcast
-
   hxrcReceiver.init(
       HXRCConfig(
           USE_WIFI_CHANNEL,
           peer_mac,
+          key,
           false,
           LED_BUILTIN, false));
 

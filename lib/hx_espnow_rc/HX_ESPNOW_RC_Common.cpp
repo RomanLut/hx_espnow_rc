@@ -1,5 +1,7 @@
 #include "HX_ESPNOW_RC_Common.h"
 
+static const char* pmk = "HXRC_KEY_V_01.00";  //16 bytes
+
 //=====================================================================
 //=====================================================================
 void HXRCChannels::init()
@@ -122,7 +124,7 @@ void HXRCInitLedPin( const HXRCConfig& config )
 
 //=====================================================================
 //=====================================================================
-bool HXRCInitEspNow( HXRCConfig& config, const char* ssid )
+bool HXRCInitEspNow( HXRCConfig& config )
 {
 #if defined(ESP8266)
     
@@ -153,13 +155,20 @@ bool HXRCInitEspNow( HXRCConfig& config, const char* ssid )
         return false;
     }
 
-    if ( esp_now_set_self_role(ESP_NOW_ROLE_COMBO) != ESP_OK )
+    if ( esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER) != ESP_OK )
     {
         Serial.println("HXRC: Error: Failed to set role");
         return false;
     }
 
-    if ( esp_now_add_peer(config.peer_mac, ESP_NOW_ROLE_COMBO, config.wifi_channel, NULL, 0) != ESP_OK )
+    if ( esp_now_set_kok( (uint8_t *)pmk, ESP_NOW_KEY_LEN ) != ESP_OK )
+    {
+        Serial.println("HXESPNOWRC: Error: Failed to set pmk");
+        return false;
+    }
+
+    if ( esp_now_add_peer(config.peer_mac, ESP_NOW_ROLE_COMBO, config.wifi_channel, config.key, ESP_NOW_KEY_LEN) != ESP_OK )
+    //if ( esp_now_add_peer(config.peer_mac, ESP_NOW_ROLE_COMBO, config.wifi_channel, NULL, 0) != ESP_OK )
     {
         Serial.println("HXRC: Error: Failed to add peer");
         return false;
@@ -206,16 +215,23 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
     Serial.print("HXESPNOWRC: Info: Board MAC address(AP): ");
     Serial.println(WiFi.softAPmacAddress());
 
-    if (esp_now_init() != ESP_OK)
+    if ( esp_now_init() != ESP_OK )
     {
         Serial.println("HXESPNOWRC: Error: Error initializing ESP-NOW");
+        return false;
+    }
+
+    if ( esp_now_set_pmk((uint8_t *)pmk) != ESP_OK )
+    {
+        Serial.println("HXESPNOWRC: Error: Failed to set pmk");
         return false;
     }
 
     esp_now_peer_info_t peerInfo;
     memcpy(peerInfo.peer_addr, config.peer_mac, 6);
     peerInfo.channel = config.wifi_channel;
-    peerInfo.encrypt = false;
+    memcpy(peerInfo.lmk, config.key, ESP_NOW_KEY_LEN);
+    peerInfo.encrypt = true;
     peerInfo.ifidx = WIFI_IF_STA;
 
     if (esp_now_add_peer(&peerInfo) != ESP_OK)
@@ -223,7 +239,10 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
         Serial.println("HXRC: Error: Failed to add peer");
         return false;
     }
+
 #endif
+
+
 
     return true;
 }

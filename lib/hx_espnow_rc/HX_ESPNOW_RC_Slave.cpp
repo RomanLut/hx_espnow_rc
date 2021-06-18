@@ -118,7 +118,7 @@ bool HXRCSlave::init( HXRCConfig config )
 
     senderState = HXRCSS_READY_TO_SEND;
 
-    if ( !HXRCInitEspNow( config, "hxrcr"))
+    if ( !HXRCInitEspNow( config ))
     {
         return false;
     }

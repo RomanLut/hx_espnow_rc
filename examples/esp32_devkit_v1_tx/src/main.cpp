@@ -2,6 +2,9 @@
 #include "HX_ESPNOW_RC_Master.h"
 
 #define USE_WIFI_CHANNEL 3
+//uint8_t peer_mac[6] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5}; //quad ap
+uint8_t peer_mac[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDC}; //ttgo display sta
+const char* key = "HXRC_DEFAULT_KEY"; //16 bytes
 
 #define TELEMETRY_RATE  4192  // keep rate b/sec
 
@@ -109,13 +112,11 @@ void setup()
   Serial.begin(115200);
   Serial.println("Start");
 
-  //uint8_t peer_mac[6] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB5}; //quad ap
-  uint8_t peer_mac[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDC}; //ttgo display sta
-
   hxrcTransmitter.init(
       HXRCConfig(
           USE_WIFI_CHANNEL,
           peer_mac,
+          key,
           false,
           -1, false));
 

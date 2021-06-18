@@ -14,6 +14,8 @@
 //#define esp_now_send_status_t uint8_t
 #define ESP_NOW_SEND_SUCCESS 0
 
+#define ESP_NOW_KEY_LEN 16
+
 #elif defined(ESP32)
 
 #include <esp_now.h>
@@ -36,6 +38,7 @@ class HXRCConfig
 public:
     uint8_t wifi_channel;
     uint8_t peer_mac[6];
+    uint8_t key[ESP_NOW_KEY_LEN];
     bool LRMode;
     int8_t ledPin;
     int8_t ledPinInverted;
@@ -44,6 +47,7 @@ public:
     {
         wifi_channel = 1;
         memset( this->peer_mac, 0xff, 6 );
+        memset( this->key, 0, ESP_NOW_KEY_LEN);
         this->LRMode = false;
         this->ledPin = -1;
         this->ledPinInverted = false;
@@ -52,6 +56,7 @@ public:
     HXRCConfig(
         uint8_t wifi_channel,
         uint8_t peer_mac[6],
+        const char* key,  
         bool LRMode,
         int8_t ledPin,
         bool ledPinInverted
@@ -59,6 +64,7 @@ public:
     {
         this->wifi_channel = wifi_channel;
         memcpy( this->peer_mac, peer_mac, 6 );
+        memcpy( this->key, key, ESP_NOW_KEY_LEN );
         this->LRMode = LRMode;
         this->ledPin = ledPin;
         this-> ledPinInverted = ledPinInverted;
@@ -146,4 +152,4 @@ typedef enum
 //=====================================================================
 //=====================================================================
 extern void HXRCInitLedPin( const HXRCConfig& config );
-extern bool HXRCInitEspNow( HXRCConfig& config, const char* ssid );
+extern bool HXRCInitEspNow( HXRCConfig& config );

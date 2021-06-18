@@ -90,7 +90,7 @@ bool HXRCMaster::init( HXRCConfig config )
     }
     senderState = HXRCSS_READY_TO_SEND;
 
-    if ( !HXRCInitEspNow( config, "hxrct" ) )
+    if ( !HXRCInitEspNow( config ) )
     {
         return false;
     }

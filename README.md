@@ -38,7 +38,7 @@ F.e. 9A:F4:AB:Fb:11:24 (AP) - > 98:F4:AB:Fb:11:24 (STA)
 
 # Wifi channel setting
 
-Wifi channel is global setting for ESP. If you need to start AP for your needs, initializese it after HXRC*::Inint( config ) on the same wifi channel:
+Wifi channel is global setting for ESP. If you need to start AP for your needs, initialiese it after HXRC*::Inint( config ) on the same wifi channel:
 
 WiFi.softAP("ssid", "password", config.wifi_channel );
 
@@ -67,4 +67,16 @@ If Ack paket is not recevied, erorr is returned. So sender knows that packet is 
 Opposite is not true. If API call returns error, packet still may have been delivered, but sender did not hear Ack packet.
 
 If peer address is set to broadcast address (ff:ff:ff:ff:ff:ff), ESP does not wait for Ack packet and returns no error. This fact can be used to send one-way packets in some scenarios(OpenHD-like video transmission?)
+
+# ESP-NOW encription
+
+With ESP-NOW encription (pmk and lmk keys) enabled, slave will still receive unencripted packets from broadcast or spoofed MAC address. 
+
+Checking MAC address is useless because it can be spoofed.
+
+Thus is it required to protect data with some kind of CRC to discard mailformed packets. Encription still should be used to disallow attacker to gather packets and crack CRC algorithm.
+
+If encripted packet is sent to peer with non-matching pmk/lmk, API returns success, but peer does not see packet.
+
+
 
