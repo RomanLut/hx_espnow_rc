@@ -3,6 +3,9 @@
 #include <Arduino.h>
 
 #include "HX_ESPNOW_RC_Common.h"
+#include "HX_ESPNOW_RC_Config.h"
+#include "HX_ESPNOW_RC_SlavePayload.h"
+#include "HX_ESPNOW_RC_MasterPayload.h"
 #include "HX_ESPNOW_RC_RingBuffer.h"
 #include "HX_ESPNOW_RC_ReceiverStats.h"
 #include "HX_ESPNOW_RC_TransmitterStats.h"
@@ -30,7 +33,7 @@ private:
 #endif    
     HXRCChannels receivedChannels;
 
-    HXRCPayloadSlave outgoingTelemetry;
+    HXRCSlavePayload outgoingData;
 #if defined(ESP8266)
     static void OnDataSentStatic(uint8_t *mac_addr, uint8_t status);
     static void OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len);

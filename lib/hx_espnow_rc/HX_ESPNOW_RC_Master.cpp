@@ -53,22 +53,30 @@ void HXRCMaster::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
 void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 #endif
 {
-    const HXRCPayloadSlave* pPayload = ( const HXRCPayloadSlave*) incomingData;
+    const HXRCSlavePayload* pPayload = ( const HXRCSlavePayload*) incomingData;
 
-    if ( ( len >= HXRC_SLAVE_PAYLOAD_SIZE_BASE ) &&  ( len == HXRC_SLAVE_PAYLOAD_SIZE_BASE + pPayload->length ) )
+    if ( ( len >= HXRC_SLAVE_PAYLOAD_SIZE_BASE ) && ( len == HXRC_SLAVE_PAYLOAD_SIZE_BASE + pPayload->length ) )
     {
-        if ( receiverStats.onPacketReceived( pPayload->sequenceId, pPayload->rssi, pPayload->length ) )
+        if ( pPayload->checkCRC( this->config) )
         {
-             if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )
-             {
-                receiverStats.onTelemetryOverflow();
-             }
+            if ( receiverStats.onPacketReceived( pPayload->sequenceId, pPayload->rssi, pPayload->length ) )
+            {
+                if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )
+                {
+                    receiverStats.onTelemetryOverflow();
+                }
+            }
+        }
+        else
+        {
+            receiverStats.onPacketCRCError();
         }
     }
     else
     {
         //ignore too short payload
-        Serial.println("HXRC: Error: invalid payload length");
+        //Serial.println("HXRC: Error: invalid payload length");
+        receiverStats.onInvalidLengthPacket();
     }
 }
 
@@ -126,6 +134,7 @@ void HXRCMaster::loop()
     {
         memcpy( &outgoingData.channels, &channels, sizeof (HXRCChannels));
 
+        outgoingData.setCRC( this->config );
         transmitterStats.onPacketSend( t );
         esp_err_t result = esp_now_send(this->config.peer_mac, (uint8_t *) &outgoingData, HXRC_MASTER_PAYLOAD_SIZE_BASE + outgoingData.length );
         if (result == ESP_OK) 

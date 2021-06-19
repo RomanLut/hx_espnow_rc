@@ -40,6 +40,9 @@ public:
     //it might happend that we got packet but sender did not got ack
     //wei gnore such packets
     uint16_t packetsRetransmit;
+
+    uint16_t packetsCRCError;
+    uint16_t packetsInvalidLength;
     uint32_t telemetryBytesReceivedTotal;
 
     uint32_t lastTelemetryBytesReceivedSpeed;
@@ -56,5 +59,8 @@ public:
     void printStats();
     
     uint32_t getTelemetryReceivedSpeed();
+
+    void onInvalidLengthPacket();
+    void onPacketCRCError();
 
 };

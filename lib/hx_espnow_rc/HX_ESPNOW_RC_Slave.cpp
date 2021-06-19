@@ -49,7 +49,7 @@ void HXRCSlave::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status
 {
     if( status == ESP_NOW_SEND_SUCCESS )
     {
-        transmitterStats.onPacketSendSuccess( outgoingTelemetry.length );
+        transmitterStats.onPacketSendSuccess( outgoingData.length );
         senderState = HXRCSS_READY_TO_SEND;
     }
     else    
@@ -70,35 +70,43 @@ void HXRCSlave::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
 void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 #endif
 {
-    if ( len >= HXRC_MASTER_PAYLOAD_SIZE_BASE )
+    const HXRCMasterPayload* pPayload = (const HXRCMasterPayload*) incomingData;
+
+    if ( ( len >= HXRC_MASTER_PAYLOAD_SIZE_BASE ) && ( len == HXRC_MASTER_PAYLOAD_SIZE_BASE + pPayload->length ) )
     {
-        const HXRCPayloadMaster* pPayload = (const HXRCPayloadMaster*) incomingData;
+        if ( pPayload->checkCRC( this->config) )
+        {
 #if defined(ESP8266)
-    {
-        esp8266::InterruptLock lock;
-        memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
-    }
-#elif(ESP32)
-        if ( xSemaphoreTake( this->channelsMutex,  (TickType_t) 100) == pdTRUE );
-        {
-            memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
-            xSemaphoreGive( this->channelsMutex);
-        }
-#endif
-        
-        if ( receiverStats.onPacketReceived( pPayload->sequenceId, -2, pPayload->length ) )
-        {
-            if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )  //length = 0 is ok
             {
-                receiverStats.onTelemetryOverflow();
+                esp8266::InterruptLock lock;
+                memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
             }
+#elif(ESP32)
+            if ( xSemaphoreTake( this->channelsMutex,  (TickType_t) 100) == pdTRUE );
+            {
+                memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
+                xSemaphoreGive( this->channelsMutex);
+            }
+#endif
+            if ( receiverStats.onPacketReceived( pPayload->sequenceId, -2, pPayload->length ) )
+            {
+                if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )  //length = 0 is ok
+                {
+                    receiverStats.onTelemetryOverflow();
+                }
+            }
+        }
+        else
+        {
+            receiverStats.onPacketCRCError();
         }
     }
     else
     {
         //ignore unknown packet, too short
-        Serial.print("Unknown packet length:");
-        Serial.println(len);
+        //Serial.print("Unknown packet length:");
+        //Serial.println(len);
+        receiverStats.onInvalidLengthPacket();
     }
 }
 
@@ -113,7 +121,7 @@ bool HXRCSlave::init( HXRCConfig config )
 
     HXRCInitLedPin(config);
 
-    outgoingTelemetry.sequenceId = 0;
+    outgoingData.sequenceId = 0;
     receivedChannels.init();
 
     senderState = HXRCSS_READY_TO_SEND;
@@ -137,17 +145,18 @@ void HXRCSlave::loop()
 
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
-        outgoingTelemetry.sequenceId++;
-        outgoingTelemetry.length = outgoingTelemetryBuffer.receiveUpTo( HXRC_SLAVE_TELEMETRY_SIZE_MAX, outgoingTelemetry.data );
+        outgoingData.sequenceId++;
+        outgoingData.length = outgoingTelemetryBuffer.receiveUpTo( HXRC_SLAVE_TELEMETRY_SIZE_MAX, outgoingData.data );
     }
 
     //if state is senderState == HXRCSS_RETRY_SEND, send the same telemetry data again
     if ( senderState == HXRCSS_READY_TO_SEND || senderState == HXRCSS_RETRY_SEND )
     {
-        outgoingTelemetry.rssi = receiverStats.getRSSI();
+        outgoingData.rssi = receiverStats.getRSSI();
 
+        outgoingData.setCRC(this->config);
         transmitterStats.onPacketSend( t );
-        esp_err_t result = esp_now_send(this->config.peer_mac, (uint8_t *) &outgoingTelemetry, HXRC_SLAVE_PAYLOAD_SIZE_BASE + outgoingTelemetry.length );
+        esp_err_t result = esp_now_send(this->config.peer_mac, (uint8_t *) &outgoingData, HXRC_SLAVE_PAYLOAD_SIZE_BASE + outgoingData.length );
         if (result == ESP_OK) 
         {
             senderState = HXRCSS_WAITING_CONFIRMATION;

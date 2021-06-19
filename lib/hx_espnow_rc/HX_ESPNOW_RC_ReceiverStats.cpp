@@ -28,6 +28,8 @@ void HXRCReceiverStats::reset()
     this->remoteReceiverRSSI = -1;
     this->telemetryBytesReceivedTotal = 0;
     this->packetsRetransmit = 0;
+    this->packetsCRCError = 0;
+    this->packetsInvalidLength = 0;
 
     this->lastTelemetryBytesReceivedSpeed = 0;
     this->lastTelemetryBytesReceivedTotal = 0;
@@ -144,8 +146,9 @@ void HXRCReceiverStats::printStats()
     Serial.printf("Failsafe: %d\n", isFailsafe()?1:0);
     Serial.printf("RSSI: %d\n", getRSSI() );
     Serial.printf("Remote receiver RSSI: %i\n", getRemoteReceiverRSSI() );
-    Serial.printf("Packets received: %u(%u)\n", packetsSuccess, packetsRetransmit);
+    Serial.printf("Packets received(retransmitted): %u(%u)\n", packetsSuccess, packetsRetransmit);
     Serial.printf("Packets missed: %u\n", packetsError);
+    Serial.printf("Packets invalid length/crc: %u/%u\n", packetsInvalidLength, packetsCRCError);
     Serial.printf("Telemetry overflow count: %u\n", telemetryOverflowCount);
     Serial.printf("In telemetry: %d b/s\n", getTelemetryReceivedSpeed());
 }
@@ -155,4 +158,18 @@ void HXRCReceiverStats::printStats()
 void HXRCReceiverStats::onTelemetryOverflow()
 {
     this->telemetryOverflowCount++;  
+}
+
+//=====================================================================
+//=====================================================================
+void HXRCReceiverStats::onInvalidLengthPacket()
+{
+    this->packetsInvalidLength++;
+}
+
+//=====================================================================
+//=====================================================================
+void HXRCReceiverStats::onPacketCRCError()
+{
+    this->packetsCRCError++;
 }

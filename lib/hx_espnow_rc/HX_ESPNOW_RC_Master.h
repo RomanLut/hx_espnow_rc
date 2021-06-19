@@ -3,6 +3,9 @@
 #include <Arduino.h>
 
 #include "HX_ESPNOW_RC_Common.h"
+#include "HX_ESPNOW_RC_Config.h"
+#include "HX_ESPNOW_RC_SlavePayload.h"
+#include "HX_ESPNOW_RC_MasterPayload.h"
 #include "HX_ESPNOW_RC_RingBuffer.h"
 #include "HX_ESPNOW_RC_TransmitterStats.h"
 #include "HX_ESPNOW_RC_ReceiverStats.h"
@@ -22,7 +25,7 @@ private:
     
     volatile HXRCSenderStateEnum senderState;
 
-    HXRCPayloadMaster outgoingData;
+    HXRCMasterPayload outgoingData;
     HXRCChannels channels;
 
     HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBuffer;
