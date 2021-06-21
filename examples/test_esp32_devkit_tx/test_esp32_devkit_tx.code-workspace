@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			name: "esp32_devkit_v1_rx",
+			"name": "test_esp32_devkit_tx",
 			"path": "."
 		},
 		{
