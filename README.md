@@ -17,7 +17,7 @@ PCB antenal provide range less then 200m.
 (TODO: test)
 
 # Naming
-Singe telemetry-enabled RC contains both receiver and transmitter on both ends, we will name RC Controller/ GC  a Master, and UAV/vechicle a Slave to avoid confusion.
+Singe telemetry-enabled RC contains both receiver and transmitter on both ends, we will name RC Controller/GC  a Master, and UAV/vechicle a Slave to avoid confusion.
 
 
 # Peer mac address
@@ -29,20 +29,20 @@ ESP-NOW communication is done on Station(STA) interface. HXRCConfig should be pa
 Note that mac address you can see in Wifi analyser is AP address.
 
 Mac address of Station can be easily determined from AP address.
-For ESP32, subscribe 1 from the last number.
+For ESP32, substract 1 from the last number.
 F.e. 24:62:5B:CA:AA:DD (AP) -> 24:62:5B:CA:AA:DC (STA) 
 
-For esp8266, subscribe 2 from first number.
+For esp8266, substruct 2 from first number.
 F.e. 9A:F4:AB:Fb:11:24 (AP) - > 98:F4:AB:Fb:11:24 (STA)
 
 
 # Wifi channel setting
 
-Wifi channel is global setting for ESP. If you need to start AP for your needs, initialiese it after HXRC*::Inint( config ) on the same wifi channel:
+Wifi channel is global setting for ESP. If you need to start AP for your needs, initialise it after HXRC*::Init() on the same wifi channel:
 
 WiFi.softAP("ssid", "password", config.wifi_channel );
 
-Otherwise channel will be changed to default (1), there will be no ESP-NOW communication.
+Otherwise channel will be changed to default (1).
 
 # Communication between ESP32 and ESP8266
 
@@ -50,12 +50,12 @@ Communication is possible ( not in LR mode, see below ).
 
 # LR mode 
 
-(Long Range ) mode is special mode introduces by expressif. This mode can be enabled on ESP32. This options is ignored on ESP8266. 
+(Long Range ) mode is special mode introduced by Expressif. This mode can be enabled on ESP32. This options is ignored on ESP8266. 
 Theoretically it should provide 2x better range, in practice difference is subtle. 
 
 ESP32 in LR mode can not communicate to ESP8266.
 
-LR mode is not compatible with normal devices. It is not possible to use SoftAP on ESP32 in LR mode, because beacon is sent in LR mode. AP will be invisible to normal devices.
+It is not possible to use SoftAP on ESP32 in LR mode, because beacon is sent in LR mode. AP will be invisible for normal devices.
 
 LR mode is global setting for AP and STA. It is not possible to configure modes on interfaces separately.
 

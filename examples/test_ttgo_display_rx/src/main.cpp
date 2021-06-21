@@ -162,7 +162,9 @@ void loop()
     hxrcReceiver.getTransmitterStats().printStats();
     hxrcReceiver.getReceiverStats().printStats();
     Serial.print("Errors: ");
-    Serial.println(errorCountRC);
+    Serial.print(errorCountRC);
+    Serial.print(",");
+    Serial.println(errorCountTelemetry);
  }
 
   y = 0;

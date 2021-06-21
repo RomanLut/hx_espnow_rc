@@ -3,6 +3,8 @@
 #include "HX_ESPNOW_RC_Slave.h"
 
 #define USE_WIFI_CHANNEL 3
+const char* key = "HXRC_DEFAULT_KEY"; //16 bytes
+uint8_t peer_mac[6] = {0x98, 0xf4, 0xAB, 0xfb, 0x11, 0x44};  //d1 mini sta
 
 HXRCSlave hxrcReceiver;
 
@@ -103,6 +105,7 @@ void setup()
       HXRCConfig(
           USE_WIFI_CHANNEL,
           peer_mac,
+          key,
           false,
           LED_BUILTIN, false));
 
@@ -125,7 +128,9 @@ void loop()
     hxrcReceiver.getTransmitterStats().printStats();
     hxrcReceiver.getReceiverStats().printStats();
     Serial.print("Errors: ");
-    Serial.println(errorCountRC);
+    Serial.print(errorCountRC);
+    Serial.print(",");
+    Serial.println(errorCountTelemetry);
  }
  
 }
