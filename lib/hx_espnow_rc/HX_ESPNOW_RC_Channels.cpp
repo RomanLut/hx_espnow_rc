@@ -14,37 +14,37 @@ uint16_t HXRCChannels::getChannelValue( uint8_t index ) const
     switch( index )
     {
         case 0:
-            return ch1 + 1000;
+            return ch1;
         case 1:
-            return ch2 + 1000;
+            return ch2;
         case 2:
-            return ch3 + 1000;
+            return ch3;
         case 3:
-            return ch4 + 1000;
+            return ch4;
         case 4:
-            return ch5 + 1000;
+            return ch5;
         case 5:
-            return ch6 + 1000;
+            return ch6;
         case 6:
-            return ch7 + 1000;
+            return ch7;
         case 7:
-            return ch8 + 1000;
+            return ch8;
         case 8:
-            return ch9 + 1000;
+            return ch9;
         case 9:
-            return ch10 + 1000;
+            return ch10;
         case 10:
-            return ch11 + 1000;
+            return ch11;
         case 11:
-            return ch12 + 1000;
+            return ch12;
         case 12:
-            return ch13 + 1000;
+            return ch13;
         case 13:
-            return ch14 + 1000;
+            return ch14;
         case 14:
-            return ch15 + 1000;
+            return ch15;
         case 15:
-            return ch16 + 1000;
+            return ch16;
         default:
             return 1000;
     }
@@ -54,7 +54,6 @@ uint16_t HXRCChannels::getChannelValue( uint8_t index ) const
 //=====================================================================
 void HXRCChannels::setChannelValue( uint8_t index, uint16_t data )
 {
-    data -= 1000;
     switch( index )
     {
         case 0:
