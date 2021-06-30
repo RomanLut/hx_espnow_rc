@@ -51,14 +51,10 @@ void fillOutgoingTelemetry()
 //=====================================================================
 void setChannels()
 {
-  //15 channels
-  for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
+  if (!sbusDecoder.isFailsafe())
   {
-    if (sbusDecoder.isOutOfSync())
-    {
-      hxrcTransmitter.setChannelValue( i, 1000 );
-    }
-    else
+    //15 channels
+    for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
     {
       uint16_t r = sbusDecoder.getChannelValueInRange( i, 1000, 2000 );
       //if ( i == 3 ) Serial.println(r);
@@ -67,7 +63,7 @@ void setChannels()
   }
 
   //use channel 16 to transmit failsafe flag
-  hxrcTransmitter.setChannelValue( 15, sbusDecoder.isOutOfSync() ? 1 : 0 );
+  hxrcTransmitter.setChannelValue( 15, sbusDecoder.isFailsafe() ? 1 : 0 );
 }
 
 //=====================================================================
