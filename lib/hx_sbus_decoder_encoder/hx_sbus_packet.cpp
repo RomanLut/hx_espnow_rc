@@ -1,15 +1,23 @@
-#include "HX_ESPNOW_RC_Channels.h"
+#include "hx_sbus_packet.h"
+
 
 //=====================================================================
 //=====================================================================
-void HXRCChannels::init()
+void HXSBUSPacket::init()
 {
+    header = SBUS_HEADER;
     ch1 = ch2 = ch3 = ch4 = ch5 = ch6 = ch7 = ch8 = ch9 = ch10 = ch11 = ch12 = ch13 = ch14 = ch15 = ch16 = 1000;
+    reserved = 0;
+    failsafe = 0;
+    frameLost = 0;
+    ch18 = 0;
+    ch17  = 0;
+    footer = SBUS_FOOTER;
 }
 
 //=====================================================================
 //=====================================================================
-uint16_t HXRCChannels::getChannelValue( uint8_t index ) const
+uint16_t HXSBUSPacket::getChannelValue( uint8_t index ) const
 {
     switch( index )
     {
@@ -45,6 +53,10 @@ uint16_t HXRCChannels::getChannelValue( uint8_t index ) const
             return ch15;
         case 15:
             return ch16;
+        case 16:
+            return ch17 == 1 ? 2000: 1000;
+        case 17:
+            return ch18 == 1 ? 2000: 1000;
         default:
             return 1000;
     }
@@ -52,7 +64,7 @@ uint16_t HXRCChannels::getChannelValue( uint8_t index ) const
 
 //=====================================================================
 //=====================================================================
-void HXRCChannels::setChannelValue( uint8_t index, uint16_t data )
+void HXSBUSPacket::setChannelValue( uint8_t index, uint16_t data )
 {
     switch( index )
     {
@@ -104,5 +116,12 @@ void HXRCChannels::setChannelValue( uint8_t index, uint16_t data )
         case 15:
             ch16 = data;
             break;
+        case 16:
+            ch17 = data > 1500 ? 1: 0;
+            break;
+        case 17:
+            ch18 = data > 1500 ? 1: 0;
+            break;
     }
 }
+

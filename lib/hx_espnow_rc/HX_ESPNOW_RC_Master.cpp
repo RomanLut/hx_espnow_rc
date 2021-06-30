@@ -12,7 +12,7 @@ void HXRCMaster::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingDat
 
 //=====================================================================
 //=====================================================================
-HXRCMaster::HXRCMaster()
+HXRCMaster::HXRCMaster() : HXRCBase()
 {
     pInstance = this;
 }
@@ -84,19 +84,10 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
 //=====================================================================
 bool HXRCMaster::init( HXRCConfig config )
 {
-    this->config = config;
+    if ( !HXRCBase::init( config ) ) return false;
 
-    transmitterStats.reset();
-    receiverStats.reset();
-
-    HXRCInitLedPin(config);
-
+    this->channels.init();
     outgoingData.sequenceId = 0;
-    for ( int i = 0; i < HXRC_CHANNELS; i++ )
-    {
-        setChannelValue( i, 1000);
-    }
-    senderState = HXRCSS_READY_TO_SEND;
 
     if ( !HXRCInitEspNow( config ) )
     {
@@ -118,7 +109,7 @@ void HXRCMaster::loop()
 
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
-        int count = deltaT / PACKET_SEND_PERIOD_MS;
+        int count = deltaT / DEFAULT_PACKET_SEND_PERIOD_MS;
         if ( count > 1)
         {
             outgoingData.sequenceId += count - 1;
@@ -147,10 +138,7 @@ void HXRCMaster::loop()
         }            
     }
 
-    transmitterStats.update();
-    receiverStats.update();
-
-    updateLed();
+    HXRCBase::loop();
 }
 
 //=====================================================================
@@ -158,49 +146,5 @@ void HXRCMaster::loop()
 void HXRCMaster::setChannelValue(uint8_t index, uint16_t data)
 {
     this->channels.setChannelValue( index, data );
-}
-
-//=====================================================================
-//=====================================================================
-HXRCTransmitterStats& HXRCMaster::getTransmitterStats() 
-{
-    return transmitterStats;
-}
-
-//=====================================================================
-//=====================================================================
-HXRCReceiverStats& HXRCMaster::getReceiverStats() 
-{
-    return receiverStats;
-}
-
-//=====================================================================
-//=====================================================================
-void HXRCMaster::updateLed()
-{
-    if ( config.ledPin == -1) return;
-
-    if ( getTransmitterStats().isFailsafe())
-    {
-        digitalWrite(this->config.ledPin, this->config.ledPinInverted ? HIGH : LOW );
-    }
-    else
-    {
-        digitalWrite(config.ledPin,(millis() & 32) ? HIGH : LOW );
-    }
-}
-
-//=====================================================================
-//=====================================================================
-uint16_t HXRCMaster::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
-{
-    return this->incomingTelemetryBuffer.receiveUpTo( maxSize, pBuffer);
-}
-
-//=====================================================================
-//=====================================================================
-bool HXRCMaster::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
-{
-    return this->outgoingTelemetryBuffer.send( ptr, size );
 }
 

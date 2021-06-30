@@ -16,6 +16,7 @@ private:
     bool onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize );
     void onTelemetryOverflow();
 
+    friend class HXRCBase;
     friend class HXRCMaster;
     friend class HXRCSlave;
 

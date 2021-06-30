@@ -16,7 +16,7 @@ void HXRCSlave::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData
 
 //=====================================================================
 //=====================================================================
-HXRCSlave::HXRCSlave()
+HXRCSlave::HXRCSlave() : HXRCBase()
 {
     HXRCSlave::pInstance = this;
 #if defined(ESP32)
@@ -114,17 +114,10 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
 //=====================================================================
 bool HXRCSlave::init( HXRCConfig config )
 {
-    this->config = config;
-
-    transmitterStats.reset();
-    receiverStats.reset();
-
-    HXRCInitLedPin(config);
+    if ( !HXRCBase::init( config ) ) return false;
 
     outgoingData.sequenceId = 0;
     receivedChannels.init();
-
-    senderState = HXRCSS_READY_TO_SEND;
 
     if ( !HXRCInitEspNow( config ))
     {
@@ -167,10 +160,7 @@ void HXRCSlave::loop()
         }            
     }
 
-    transmitterStats.update();
-    receiverStats.update();
-
-    updateLed();
+    HXRCBase::loop();
 }
 
 //=====================================================================
@@ -196,46 +186,3 @@ HXRCChannels HXRCSlave::getChannels()
     return ret;
 }
 
-//=====================================================================
-//=====================================================================
-HXRCReceiverStats& HXRCSlave::getReceiverStats() 
-{
-    return receiverStats;
-}
-
-//=====================================================================
-//=====================================================================
-HXRCTransmitterStats& HXRCSlave::getTransmitterStats() 
-{
-    return transmitterStats;
-}
-
-//=====================================================================
-//=====================================================================
-void HXRCSlave::updateLed()
-{
-    if ( config.ledPin == -1) return;
-
-    if ( getTransmitterStats().isFailsafe())
-    {
-        digitalWrite(this->config.ledPin, this->config.ledPinInverted ? HIGH : LOW );
-    }
-    else
-    {
-        digitalWrite(config.ledPin,(millis() & 32) ? HIGH : LOW );
-    }
-}
-
-//=====================================================================
-//=====================================================================
-uint16_t HXRCSlave::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
-{
-    return this->incomingTelemetryBuffer.receiveUpTo( maxSize, pBuffer);
-}
-
-//=====================================================================
-//=====================================================================
-bool HXRCSlave::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
-{
-    return outgoingTelemetryBuffer.send( ptr, size );
-}

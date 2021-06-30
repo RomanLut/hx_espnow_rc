@@ -2,31 +2,15 @@
 
 #include <Arduino.h>
 
-#include "HX_ESPNOW_RC_Common.h"
-#include "HX_ESPNOW_RC_Config.h"
-#include "HX_ESPNOW_RC_SlavePayload.h"
-#include "HX_ESPNOW_RC_MasterPayload.h"
-#include "HX_ESPNOW_RC_RingBuffer.h"
-#include "HX_ESPNOW_RC_ReceiverStats.h"
-#include "HX_ESPNOW_RC_TransmitterStats.h"
+#include "HX_ESPNOW_RC_Base.h"
 
 //=====================================================================
 //=====================================================================
-class HXRCSlave
+class HXRCSlave : public HXRCBase
 {
 private:
 
-    HXRCConfig config;
-
     static HXRCSlave* pInstance;
-
-    HXRCTransmitterStats transmitterStats;
-    HXRCReceiverStats receiverStats;
-
-    volatile HXRCSenderStateEnum senderState;
-
-    HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBuffer;
-    HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBuffer;
 
 #if defined(ESP32)
     SemaphoreHandle_t channelsMutex;
@@ -46,36 +30,16 @@ private:
     void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len);
 #endif
 
-    void updateLed();
-
 public:
 
-//TODO: settings:
-//Receiver MAC address
-//channel
-
     HXRCSlave();
-    ~HXRCSlave();
+    virtual ~HXRCSlave();
 
-    bool init( HXRCConfig config );
-    void loop();
+    virtual bool init( HXRCConfig config ) override;
+    virtual void loop() override;
 
     //index = 0..15
     //data = 1000...2000
     HXRCChannels getChannels();
-
-    //return portion of incoming telemetry into buffer pBuffer which has size maxSize
-    //returns size of returned data
-    uint16_t getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer);
-    
-    //add size byter from *ptr buffer to outgoing telemetry stream
-    //returns true if bytes where added sucessfully
-    //return false if buffer is overflown
-    //As packet sensing is done from loop thread, 
-    //we can send at most HXRC_SLAVE_TELEMETRY_SIZE_MAX every loop.
-    bool sendOutgoingTelemetry( uint8_t* ptr, uint16_t size );
-
-    HXRCReceiverStats& getReceiverStats();
-    HXRCTransmitterStats& getTransmitterStats();
 };
 

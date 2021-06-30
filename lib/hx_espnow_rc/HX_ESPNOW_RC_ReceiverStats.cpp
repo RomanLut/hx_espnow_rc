@@ -14,7 +14,7 @@ void HXRCReceiverStats::reset()
 {
     unsigned long t = millis();
     
-    this->lastReceivedTimeMs = t - FAILSAFE_PERIOD_MS;
+    this->lastReceivedTimeMs = t - DEFAULT_FAILSAFE_PERIOD_MS;
 
     this->prevSequenceId = 0;
     this->packetsSuccess = 0;
@@ -43,7 +43,7 @@ void HXRCReceiverStats::reset()
 bool HXRCReceiverStats::isFailsafe()    
 {
     unsigned long delta = millis() - this->lastReceivedTimeMs;
-    return delta >= FAILSAFE_PERIOD_MS;
+    return delta >= DEFAULT_FAILSAFE_PERIOD_MS;
 }
 
 //=====================================================================

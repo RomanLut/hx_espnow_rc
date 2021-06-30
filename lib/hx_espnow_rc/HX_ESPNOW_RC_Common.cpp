@@ -76,13 +76,13 @@ bool HXRCInitEspNow( HXRCConfig& config )
 
     WiFi.mode(WIFI_STA);
 
-    //esp_wifi_set_promiscuous(true); 
+    esp_wifi_set_promiscuous(true); //promiscous mode is required to set channel on older SDK
     if ( esp_wifi_set_channel( config.wifi_channel, WIFI_SECOND_CHAN_NONE) != ESP_OK )
     {
         Serial.println("HXRC: Error: Failed to set channel");
         return false;
     }
-    //esp_wifi_set_promiscuous(false); 
+    esp_wifi_set_promiscuous(false); 
 
     if ( esp_wifi_set_protocol (WIFI_IF_STA, config.LRMode ? WIFI_PROTOCOL_LR : ( WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G | WIFI_PROTOCOL_11N ) ) != ESP_OK)
     {

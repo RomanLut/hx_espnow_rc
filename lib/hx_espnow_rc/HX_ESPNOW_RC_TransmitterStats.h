@@ -19,6 +19,7 @@ private:
 
     void update();
 
+    friend class HXRCBase;
     friend class HXRCMaster;
     friend class HXRCSlave;
 

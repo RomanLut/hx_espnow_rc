@@ -19,7 +19,7 @@ void HXRCTransmitterStats::reset()
     this->packetsNotSentInTime = 0;
 
     this->lastSendTimeMs = t;
-    this->lastSuccessfulPacketMs = t - FAILSAFE_PERIOD_MS;
+    this->lastSuccessfulPacketMs = t - DEFAULT_FAILSAFE_PERIOD_MS;
 
     this->RSSIPacketsSentSuccess = 0;
     this->RSSIPacketsSentError = 0;
@@ -38,7 +38,7 @@ void HXRCTransmitterStats::reset()
 bool HXRCTransmitterStats::isFailsafe()    
 {
     unsigned long delta = millis() - this->lastSuccessfulPacketMs;
-    return delta >= FAILSAFE_PERIOD_MS;
+    return delta >= DEFAULT_FAILSAFE_PERIOD_MS;
 }
 
 //=====================================================================

@@ -8,11 +8,22 @@
 
 #include <Arduino.h>
 
+//=====================================================================
+//=====================================================================
+class HXRCRingBufferInterface
+{
+    public:
+        virtual bool send( const void* data, uint16_t lenToWrite ) = 0;
+        virtual uint16_t receiveUpTo( uint16_t maxLen, uint8_t* toPtr ) = 0;
+};
+
+
 #if defined(ESP8266)
 
 //=====================================================================
 //=====================================================================
-template<int Size> class HXRCRingBuffer
+template<int Size> 
+class HXRCRingBuffer : public HXRCRingBufferInterface
 {
 private:
 
@@ -116,7 +127,8 @@ public:
 
 //=====================================================================
 //=====================================================================
-template<int Size> class HXRCRingBuffer
+template<int Size> 
+class HXRCRingBuffer : public HXRCRingBufferInterface
 {
 private:
 

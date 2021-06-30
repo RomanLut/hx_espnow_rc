@@ -19,7 +19,7 @@ typedef struct
     uint16_t crc;
 
     //sequenceId increments with each sent packet
-    //and each packet which was not sent in time ( transmitter is required to keep PACKET_SEND_PERIOD_MS miminum rate)
+    //and each packet which was not sent in time ( transmitter is required to keep DEFAULT_PACKET_SEND_PERIOD_MS miminum rate)
     uint16_t sequenceId;
 
     HXRCChannels channels;

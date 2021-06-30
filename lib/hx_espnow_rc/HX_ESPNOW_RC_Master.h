@@ -2,34 +2,18 @@
 
 #include <Arduino.h>
 
-#include "HX_ESPNOW_RC_Common.h"
-#include "HX_ESPNOW_RC_Config.h"
-#include "HX_ESPNOW_RC_SlavePayload.h"
-#include "HX_ESPNOW_RC_MasterPayload.h"
-#include "HX_ESPNOW_RC_RingBuffer.h"
-#include "HX_ESPNOW_RC_TransmitterStats.h"
-#include "HX_ESPNOW_RC_ReceiverStats.h"
+#include "HX_ESPNOW_RC_Base.h"
 
 //=====================================================================
 //=====================================================================
-class HXRCMaster
+class HXRCMaster : public HXRCBase
 {
 private:
 
-    HXRCConfig config;
-
     static HXRCMaster* pInstance;
-
-    HXRCTransmitterStats transmitterStats;
-    HXRCReceiverStats receiverStats;
-    
-    volatile HXRCSenderStateEnum senderState;
 
     HXRCMasterPayload outgoingData;
     HXRCChannels channels;
-
-    HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBuffer;
-    HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBuffer;
 
 #if defined(ESP8266)
     static void OnDataSentStatic(uint8_t *mac_addr, uint8_t status);
@@ -43,35 +27,16 @@ private:
     void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len);
 #endif
 
-    void updateLed();
-
 public:
 
     HXRCMaster();
-    ~HXRCMaster();
+    virtual ~HXRCMaster() override; 
 
-    bool init(HXRCConfig config);
-    void loop();
-
-    void addIncomingTelemetryCallback( void (*callback)(void* parm, HXRCMaster& transmitter), void* parm);
-    void addOutgoingTelemetryCallback( void (*callback)(void* parm, HXRCMaster& transmitter), void* parm);
+    virtual bool init(HXRCConfig config) override;
+    virtual void loop() override;
 
     //index = 0..15
     //data = 1000...2000
     void setChannelValue( uint8_t index, uint16_t data);
-
-    //return portion of incoming telemetry into buffer pBuffer which has size maxSize
-    //returns size of returned data
-    uint16_t getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer);
-
-    //add size byter from *ptr buffer to outgoing telemetry stream
-    //returns true if bytes where added sucessfully
-    //return false if buffer is overflown
-    //As packet sensing is done from loop thread, 
-    //we can send at most HXRC_MASTER_TELEMETRY_SIZE_MAX bytes every loop.
-    bool sendOutgoingTelemetry( uint8_t* ptr, uint16_t size );
-
-    HXRCTransmitterStats& getTransmitterStats();
-    HXRCReceiverStats& getReceiverStats();
 };
 

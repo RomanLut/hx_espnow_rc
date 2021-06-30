@@ -26,8 +26,8 @@
 
 #define HXRC_VERSION 1
 
-#define PACKET_SEND_PERIOD_MS   100      //10Hz    
-#define FAILSAFE_PERIOD_MS      1000
+#define DEFAULT_PACKET_SEND_PERIOD_MS   100      //10Hz    
+#define DEFAULT_FAILSAFE_PERIOD_MS      1000
 
 #define HXRC_CHANNELS 16
 
