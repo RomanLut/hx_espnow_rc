@@ -51,6 +51,7 @@ void fillOutgoingTelemetry()
 //=====================================================================
 void setChannels()
 {
+  //15 channels
   for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
   {
     if (sbusDecoder.isOutOfSync())
@@ -64,6 +65,9 @@ void setChannels()
       hxrcTransmitter.setChannelValue( i, r );
     }
   }
+
+  //use channel 16 to transmit failsafe flag
+  hxrcTransmitter.setChannelValue( 15, sbusDecoder.isOutOfSync() ? 1 : 0 );
 }
 
 //=====================================================================
@@ -97,6 +101,16 @@ void setup()
 
   Serial2.begin(57600, SERIAL_8N1, -1, USE_SERIAL2_TX_PIN, true );  //SPORT
 
+  if ( !SerialBT.begin("HXRC") ) 
+  {
+    Serial.println("An error occurred initializing Bluetooth");
+  }
+
+  if ( !SerialBT.setPin("1234") ) 
+  {
+    Serial.println("An error occurred setting Bluetooth pin");
+  }
+
   hxrcTransmitter.init(
       HXRCConfig(
           USE_WIFI_CHANNEL,
@@ -106,6 +120,7 @@ void setup()
           -1, false));
 
   WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL);
+
 }
 
 //=====================================================================
@@ -120,7 +135,6 @@ void loop()
   fillOutgoingTelemetry();
 
   hxrcTransmitter.loop();
-
 
   if (millis() - lastStats > 1000)
   {

@@ -102,7 +102,10 @@ If you want to use esp_wifi_internal_set_fix_rate, please disable WiFi AMPDU TX 
 
 make menuconfig => components => Wi-Fi => Disable TX AMPDU.
 */
-    if ( esp_wifi_set_ps(WIFI_PS_NONE) != ESP_OK )
+    //Note: Wifi sleep should not be disabled if Wifi and Bluetooth coexist
+    //https://github.com/espressif/arduino-esp32/issues/4965
+    //https://github.com/espressif/esp-idf/issues/5759
+    if ( esp_wifi_set_ps(WIFI_PS_MIN_MODEM) != ESP_OK )
     {
         Serial.println("HXRC: Error: Failed to set power mode");
         return false;

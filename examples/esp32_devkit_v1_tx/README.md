@@ -1,8 +1,8 @@
 [Work in progress]
 
-Transmitter module for Jumper T-Lite ( or any X-Lite cocket)
+Transmitter module for Jumper T-Lite ( or any X-Lite socket)
 
-Boot and Reset buttons will not be accessible. If entering boot more is not reliable, add 1uF capacitor from the EN to GND pin.
+Boot and Reset buttons will not be accessible. If entering boot mome is not reliable, add 1uF capacitor from the EN to GND pin.
 
 
  Brief: 
