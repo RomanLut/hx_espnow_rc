@@ -63,10 +63,10 @@ LR mode is global setting for AP and STA. It is not possible to configure modes 
 
 # ESP-NOW technical details
 ESP-NOW packets are vendor-specific packets. ESP sends packet and waits for confirmation packet from peer mac address.
-If Ack paket is not recevied, erorr is returned. So sender knows that packet is not delivered successfully. 
+If Ack packet is not received, erorr is returned. So sender knows that packet is not delivered successfully. 
 Opposite is not true. If API call returns error, packet still may have been delivered, but sender did not hear Ack packet.
 
-If peer address is set to broadcast address (ff:ff:ff:ff:ff:ff), ESP does not wait for Ack packet and returns no error. This fact can be used to send one-way packets in some scenarios(OpenHD-like video transmission?)
+If peer address is set to broadcast address (ff:ff:ff:ff:ff:ff), ESP does not wait for Ack packet and returns no error (Update: API still returns error sometimes?). This address can be used to send one-way, "fire and foget" packets without confirmation and delay.
 
 # ESP-NOW encription
 
@@ -74,9 +74,19 @@ With ESP-NOW encription (pmk and lmk keys) enabled, slave will still receive une
 
 Checking MAC address is useless because it can be spoofed.
 
-Thus is it required to protect data with some kind of CRC to discard mailformed packets. Encription still should be used to disallow attacker to gather packets and crack CRC algorithm.
+Thus is it required to protect data with some kind of software-layer encription to discard mailformed packets. Simple CRC32 XORed with a key, combined with encription-enabled packets should give enough protection.
 
-If encripted packet is sent to peer with non-matching pmk/lmk, API returns success, but peer does not see packet.
+If encripted packet is sent to peer with non-matching pmk/lmk, API returns success, but peer does not see packet at software layer.
+
+Brosdcast packets do not support encription.
 
 
+# ESP-NOW and Bluetooth coexistence
 
+ESP32 has single radio which is shared between Wifi, Bluetooth Classic and Bluetooth LE.
+
+Peer with active ESP-NOW and Bluetooth Classic communications is able to receive ESP-NOW packets and reply with ACK packets. But is has a problem with sending ESP-NOW packets to the peer because it can not listen for ACK packets successfully. Successfull packet rate dropd to 10-20/sec, sometimes no packets can be sent successfully in one second.
+
+# ESP-NOW usage in HXRC library
+
+Packets are sent to broadcast address. This allows to implement fast, ACKless, newest data communication. All peers on the same Wifi channel will recevie packets and discard foreight packets by sequenceId(quick reject) and CRC32 (CRC32 of data + key).

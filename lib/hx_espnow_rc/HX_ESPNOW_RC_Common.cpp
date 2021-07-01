@@ -1,6 +1,8 @@
 #include "HX_ESPNOW_RC_Common.h"
 #include "HX_ESPNOW_RC_Config.h"
 
+#include <esp_coexist.h>
+
 
 //=====================================================================
 //=====================================================================
@@ -132,7 +134,8 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
     memcpy(peerInfo.peer_addr, config.peer_mac, 6);
     peerInfo.channel = config.wifi_channel;
     memcpy(peerInfo.lmk, config.key, ESP_NOW_KEY_LEN);
-    peerInfo.encrypt = true;
+    //peerInfo.encrypt = true;
+    peerInfo.encrypt = false;
     peerInfo.ifidx = WIFI_IF_STA;
 
     if (esp_now_add_peer(&peerInfo) != ESP_OK)
@@ -143,7 +146,10 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
 
 #endif
 
-
+  if ( esp_coex_preference_set(ESP_COEX_PREFER_WIFI) != ESP_OK )
+  {
+    Serial.println("An error occurred initializing coexist setting");
+  }
 
     return true;
 }

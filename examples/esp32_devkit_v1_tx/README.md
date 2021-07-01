@@ -23,3 +23,7 @@ Boot and Reset buttons will not be accessible. If entering boot mome is not reli
   NPN Base through 10kOhm -> X-Lite SBUS pin
 
   GPIO18 (Serial 2 TX) -> X-Lite SPort through 100 Ohm
+
+
+Bluetooth and Wifi simultaneously
+https://esp32.com/viewtopic.php?f=13&t=6707&start=20

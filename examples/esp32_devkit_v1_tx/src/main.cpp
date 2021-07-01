@@ -12,7 +12,8 @@
 
 #define USE_WIFI_CHANNEL 3
 //uint8_t peer_mac[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDC}; //ttgo display sta
-uint8_t peer_mac[6] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB4};
+//uint8_t peer_mac[6] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB4};
+uint8_t peer_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 const char* key = "HXRC_DEFAULT_KEY"; //16 bytes
 
 HXRCMaster hxrcTransmitter;
@@ -116,7 +117,6 @@ void setup()
           -1, false));
 
   WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL);
-
 }
 
 //=====================================================================
