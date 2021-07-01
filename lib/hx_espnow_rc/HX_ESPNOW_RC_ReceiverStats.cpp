@@ -23,6 +23,7 @@ void HXRCReceiverStats::reset()
     this->RSSIUpdateMs = t;
     this->RSSIPacketsSuccess = 0;
     this->RSSIPacketsError = 0;
+    this->RSSIPacketsRetransmit = 0;
     this->RSSILast = 0;
 
     this->remoteReceiverRSSI = -1;
@@ -59,11 +60,13 @@ uint8_t HXRCReceiverStats::getRSSI()
     {
         uint16_t packetsSuccessCount = this->packetsSuccess - this->RSSIPacketsSuccess;
         uint16_t packetsErrorCount = this->packetsError - this->RSSIPacketsError;
-        uint16_t totalPackets = packetsSuccessCount + packetsErrorCount;
+        uint16_t packetsRetransmitCount = this->packetsRetransmit - this->RSSIPacketsRetransmit;
+        uint16_t totalPackets = packetsSuccessCount + packetsErrorCount + packetsRetransmitCount;
 
         this->RSSILast = ( totalPackets > 0 ) ? (((uint32_t)packetsSuccessCount) * 100 / totalPackets) : 0;
         this->RSSIPacketsSuccess = this->packetsSuccess;
         this->RSSIPacketsError = this->packetsError;
+        this->RSSIPacketsRetransmit = this->packetsRetransmit;
         this->RSSIUpdateMs = t; 
     }
     return this->RSSILast;

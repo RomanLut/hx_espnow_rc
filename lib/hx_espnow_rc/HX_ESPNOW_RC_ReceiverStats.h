@@ -27,7 +27,7 @@ public:
     uint16_t packetsSuccess;
     uint16_t packetsError;
 
-    //receiver RSSI of other size ( value is received with telemetry)
+    //receiver RSSI of other side (value is received with telemetry)
     //-1 if is unknown because we are not receiving telemetry from peer
     //-2 on Slave ( this parameter is not sent from master to slave ).
     int8_t remoteReceiverRSSI;
@@ -35,11 +35,12 @@ public:
     unsigned long RSSIUpdateMs;
     uint16_t RSSIPacketsSuccess;
     uint16_t RSSIPacketsError;
+    uint16_t RSSIPacketsRetransmit;
     uint8_t RSSILast;
 
     //number of packers with non-increased sequense id   
     //it might happend that we got packet but sender did not got ack
-    //wei gnore such packets
+    //we gnore such packets
     uint16_t packetsRetransmit;
 
     uint16_t packetsCRCError;
