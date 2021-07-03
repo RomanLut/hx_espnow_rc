@@ -12,9 +12,24 @@
 
 //=====================================================================
 //=====================================================================
+typedef enum
+{
+    HXRCSS_INIT                 = 0,
+    HXRCSS_READY_TO_SEND        = 1,
+    HXRCSS_WAIT_SEND_FINISH     = 2,
+} HXRCSenderStateEnum;
+
+//=====================================================================
+//=====================================================================
 class HXRCBase
 {
 protected:
+
+    //last received sequenceId
+    uint16_t receivedSequenceId;
+
+    //waiting for ack?
+    bool waitAck;
 
     HXRCConfig config;
 

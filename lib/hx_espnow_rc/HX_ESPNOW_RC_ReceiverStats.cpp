@@ -16,21 +16,20 @@ void HXRCReceiverStats::reset()
     
     this->lastReceivedTimeMs = t - DEFAULT_FAILSAFE_PERIOD_MS;
 
-    this->prevSequenceId = 0;
-    this->packetsSuccess = 0;
-    this->packetsError = 0;
+    this->prevPacketId = 0xffff;
+    this->prevSequenceId = 0xffff;
+    this->packetsReceived = 0;
+    this->packetsLost = 0;
 
     this->RSSIUpdateMs = t;
-    this->RSSIPacketsSuccess = 0;
-    this->RSSIPacketsError = 0;
-    this->RSSIPacketsRetransmit = 0;
+    this->RSSIPacketsReceived = 0;
+    this->RSSIPacketsLost = 0;
     this->RSSILast = 0;
 
-    this->remoteReceiverRSSI = -1;
     this->telemetryBytesReceivedTotal = 0;
     this->packetsRetransmit = 0;
     this->packetsCRCError = 0;
-    this->packetsInvalidLength = 0;
+    this->packetsInvalid = 0;
 
     this->lastTelemetryBytesReceivedSpeed = 0;
     this->lastTelemetryBytesReceivedTotal = 0;
@@ -58,15 +57,13 @@ uint8_t HXRCReceiverStats::getRSSI()
 
     if ( delta > 1000)
     {
-        uint16_t packetsSuccessCount = this->packetsSuccess - this->RSSIPacketsSuccess;
-        uint16_t packetsErrorCount = this->packetsError - this->RSSIPacketsError;
-        uint16_t packetsRetransmitCount = this->packetsRetransmit - this->RSSIPacketsRetransmit;
-        uint16_t totalPackets = packetsSuccessCount + packetsErrorCount + packetsRetransmitCount;
+        uint16_t packetsSuccessCount = this->packetsReceived - this->RSSIPacketsReceived;
+        uint16_t packetsLostCount = this->packetsLost - this->RSSIPacketsLost;
+        uint16_t packetsTotalCount = packetsSuccessCount + packetsLostCount;
 
-        this->RSSILast = ( totalPackets > 0 ) ? (((uint32_t)packetsSuccessCount) * 100 / totalPackets) : 0;
-        this->RSSIPacketsSuccess = this->packetsSuccess;
-        this->RSSIPacketsError = this->packetsError;
-        this->RSSIPacketsRetransmit = this->packetsRetransmit;
+        this->RSSILast = ( packetsTotalCount > 0 ) ? (((uint32_t)packetsSuccessCount) * 100 / packetsTotalCount) : 0;
+        this->RSSIPacketsReceived = this->packetsReceived;
+        this->RSSIPacketsLost = this->packetsLost;
         this->RSSIUpdateMs = t; 
     }
     return this->RSSILast;
@@ -76,43 +73,31 @@ uint8_t HXRCReceiverStats::getRSSI()
 
 //=====================================================================
 //=====================================================================
-int8_t HXRCReceiverStats::getRemoteReceiverRSSI()
+bool HXRCReceiverStats::onPacketReceived( uint16_t packetId, uint16_t sequenceId, uint8_t telemetrySize )
 {
-    if ( isFailsafe() )
+    this->packetsReceived++;
+
+    bool res = sequenceId != this->prevSequenceId;
+    if ( res )
     {
-        return -1;
+        this->telemetryBytesReceivedTotal += telemetrySize;
     }
-
-    return this->remoteReceiverRSSI;
-}
-
-
-//=====================================================================
-//=====================================================================
-bool HXRCReceiverStats::onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize )
-{
-    uint16_t seqDelta = sequenceId - this->prevSequenceId;
-
-    if ( seqDelta == 0 )
+    else
     {
         this->packetsRetransmit++;
-        return false;
     }
 
-    this->remoteReceiverRSSI = rssi;
-    this->telemetryBytesReceivedTotal += telemetrySize;
-
-    if ( (seqDelta > 1) && ( this->prevSequenceId!=0 ) )
+    uint16_t delta = packetId - this->prevPacketId;
+    if ( delta > 1 )
     {
-        this->packetsError += seqDelta - 1;
+        this->packetsLost += delta-1;
     }
-    
-    this->packetsSuccess++;
 
+    this->prevPacketId = packetId;
     this->prevSequenceId = sequenceId;
     this->lastReceivedTimeMs = millis();
 
-    return true;
+    return res;
 }
 
 //=====================================================================
@@ -148,10 +133,9 @@ void HXRCReceiverStats::printStats()
     Serial.printf("Receiver stats: -----------\n");
     Serial.printf("Failsafe: %d\n", isFailsafe()?1:0);
     Serial.printf("RSSI: %d\n", getRSSI() );
-    Serial.printf("Remote receiver RSSI: %i\n", getRemoteReceiverRSSI() );
-    Serial.printf("Packets received(retransmitted): %u(%u)\n", packetsSuccess, packetsRetransmit);
-    Serial.printf("Packets missed: %u\n", packetsError);
-    Serial.printf("Packets invalid length/crc: %u/%u\n", packetsInvalidLength, packetsCRCError);
+    Serial.printf("Packets received(retransmitted): %u(%u)\n", packetsReceived, packetsRetransmit);
+    Serial.printf("Packets lost: %u\n", packetsLost);
+    Serial.printf("Packets invalid/crc: %u/%u\n", packetsInvalid, packetsCRCError);
     Serial.printf("Telemetry overflow count: %u\n", telemetryOverflowCount);
     Serial.printf("In telemetry: %d b/s\n", getTelemetryReceivedSpeed());
 }
@@ -165,9 +149,9 @@ void HXRCReceiverStats::onTelemetryOverflow()
 
 //=====================================================================
 //=====================================================================
-void HXRCReceiverStats::onInvalidLengthPacket()
+void HXRCReceiverStats::onInvalidPacket()
 {
-    this->packetsInvalidLength++;
+    this->packetsInvalid++;
 }
 
 //=====================================================================

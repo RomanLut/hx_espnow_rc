@@ -3,10 +3,9 @@
 #include "HX_ESPNOW_RC_Slave.h"
 
 #define USE_WIFI_CHANNEL 3
-const char* key = "HXRC_DEFAULT_KEY"; //16 bytes
-uint8_t peer_mac[6] = {0x98, 0xf4, 0xAB, 0xfb, 0x11, 0x44};  //d1 mini sta
+#define USE_KEY 0
 
-HXRCSlave hxrcReceiver;
+HXRCSlave hxrcSlave;
 
 unsigned long lastStats = millis();
 uint16_t errorCountRC = 0;
@@ -28,7 +27,7 @@ void processIncomingTelemetry()
   //otherwise we will sit here forewer processing fast incoming telemetry stream
   for ( int j = 0; j < 10; j++ )
   {
-    uint16_t returnedSize = hxrcReceiver.getIncomingTelemetry( 100, buffer );
+    uint16_t returnedSize = hxrcSlave.getIncomingTelemetry( 100, buffer );
     if ( returnedSize == 0 ) break;
 
     uint8_t* ptr = buffer;
@@ -60,7 +59,7 @@ void fillOutgoingTelemetry()
   //fill stream with increasing numbers
   for ( int i = 0; i < len; i++ ) buffer[i] = v++;
   
-  if ( hxrcReceiver.sendOutgoingTelemetry( buffer, len ))
+  if ( hxrcSlave.sendOutgoingTelemetry( buffer, len ))
   {
     outgoingTelVal = v;
   }
@@ -71,9 +70,9 @@ void fillOutgoingTelemetry()
 void checkChannels()
 {
   //no sense to check channels before first packet is received
-  if ( hxrcReceiver.getReceiverStats().isFailsafe()) return;
+  if ( hxrcSlave.getReceiverStats().isFailsafe()) return;
 
-  HXRCChannels channels = hxrcReceiver.getChannels();
+  HXRCChannels channels = hxrcSlave.getChannels();
 
   uint16_t sum = 0;
   for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
@@ -97,15 +96,10 @@ void setup()
   Serial.begin(115200);
   Serial.println("Start");
 
-  //uint8_t peer_mac[6] = {0x7c, 0x9e, 0xbd, 0xf4, 0xC2, 0x28}; //devkit STA 1
-  uint8_t peer_mac[6] = {0x98, 0xf4, 0xAB, 0xfb, 0x11, 0x44};  //d1 mini sta
-  //uint8_t peer_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};  //broadcast
-
-  hxrcReceiver.init(
+  hxrcSlave.init(
       HXRCConfig(
           USE_WIFI_CHANNEL,
-          peer_mac,
-          key,
+          USE_KEY,
           false,
           LED_BUILTIN, false));
 
@@ -120,13 +114,13 @@ void loop()
   processIncomingTelemetry();
   fillOutgoingTelemetry();
 
-  hxrcReceiver.loop();
+  hxrcSlave.loop();
 
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
-    hxrcReceiver.getTransmitterStats().printStats();
-    hxrcReceiver.getReceiverStats().printStats();
+    hxrcSlave.getTransmitterStats().printStats();
+    hxrcSlave.getReceiverStats().printStats();
     Serial.print("Errors: ");
     Serial.print(errorCountRC);
     Serial.print(",");

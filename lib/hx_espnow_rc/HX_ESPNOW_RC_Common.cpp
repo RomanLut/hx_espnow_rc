@@ -1,8 +1,16 @@
 #include "HX_ESPNOW_RC_Common.h"
 #include "HX_ESPNOW_RC_Config.h"
 
-#include <esp_coexist.h>
+#define COEXIST
 
+#ifdef COEXIST
+#include <esp_coexist.h>
+#endif
+
+uint8_t BROADCAST_MAC[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+
+#define CRC32_POLYNOMIAL 0xEDB88320
+static uint32_t Crc32Lookup[256];
 
 //=====================================================================
 //=====================================================================
@@ -20,12 +28,6 @@ void HXRCInitLedPin( const HXRCConfig& config )
 //=====================================================================
 bool HXRCInitEspNow( HXRCConfig& config )
 {
-    uint8_t pmk[ESP_NOW_KEY_LEN];
-    for ( int i = 0; i < ESP_NOW_KEY_LEN; i++ )
-    {
-        pmk[i] = config.key[i] ^ HXRC_VERSION; 
-    }
-
 #if defined(ESP8266)
     
     WiFi.mode(WIFI_STA);
@@ -61,14 +63,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
         return false;
     }
 
-    if ( esp_now_set_kok( pmk, ESP_NOW_KEY_LEN ) != ESP_OK )
-    {
-        Serial.println("HXESPNOWRC: Error: Failed to set pmk");
-        return false;
-    }
-
-    if ( esp_now_add_peer(config.peer_mac, ESP_NOW_ROLE_COMBO, config.wifi_channel, config.key, ESP_NOW_KEY_LEN) != ESP_OK )
-    //if ( esp_now_add_peer(config.peer_mac, ESP_NOW_ROLE_COMBO, config.wifi_channel, NULL, 0) != ESP_OK )
+    if ( esp_now_add_peer(BROADCAST_MAC, ESP_NOW_ROLE_COMBO, config.wifi_channel, NULL, 0) != ESP_OK )
     {
         Serial.println("HXRC: Error: Failed to add peer");
         return false;
@@ -124,17 +119,10 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
         return false;
     }
 
-    if ( esp_now_set_pmk(pmk) != ESP_OK )
-    {
-        Serial.println("HXESPNOWRC: Error: Failed to set pmk");
-        return false;
-    }
-
     esp_now_peer_info_t peerInfo;
-    memcpy(peerInfo.peer_addr, config.peer_mac, 6);
+    memcpy(peerInfo.peer_addr, BROADCAST_MAC, 6);
     peerInfo.channel = config.wifi_channel;
-    memcpy(peerInfo.lmk, config.key, ESP_NOW_KEY_LEN);
-    //peerInfo.encrypt = true;
+    memset(peerInfo.lmk, 0, ESP_NOW_KEY_LEN);
     peerInfo.encrypt = false;
     peerInfo.ifidx = WIFI_IF_STA;
 
@@ -144,38 +132,39 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
         return false;
     }
 
-#endif
-
+#ifdef COEXIST
   if ( esp_coex_preference_set(ESP_COEX_PREFER_WIFI) != ESP_OK )
   {
     Serial.println("An error occurred initializing coexist setting");
   }
+#endif
+
+
+#endif
 
     return true;
 }
 
 //=====================================================================
 //=====================================================================
-void HXRC_crc16_update( uint16_t* crc, uint8_t a )
+void HXRC_crc32_init()
 {
-    (*crc) ^= a;
-    for ( uint8_t i = 0; i < 8; ++i )
+    for (unsigned int i = 0; i <= 0xFF; i++)
     {
-        if ( (*crc) & 1 )
-        {
-            (*crc) = ( (*crc) >> 1 ) ^ 0xA001;
-        }
-        else
-        {
-            (*crc) = ( (*crc) >> 1 );
-        }
-    }       
+        uint32_t crc = i;
+        for (unsigned int j = 0; j < 8; j++)
+            crc = (crc >> 1) ^ (-int(crc & 1) & CRC32_POLYNOMIAL);
+        Crc32Lookup[i] = crc;
+    }
 }
 
 //=====================================================================
 //=====================================================================
-void HXRC_crc16_update_buffer( uint16_t* crc, uint8_t* ptr, uint16_t len )
+uint32_t HXRC_crc32(const void* data, size_t length, uint32_t previousCrc32)
 {
-    while ( len-- > 0 ) HXRC_crc16_update( crc, *ptr++);
+  uint32_t crc = ~previousCrc32;
+  unsigned char* current = (unsigned char*) data;
+  while (length--)
+    crc = (crc >> 8) ^ Crc32Lookup[(crc & 0xFF) ^ *current++];
+  return ~crc;
 }
-

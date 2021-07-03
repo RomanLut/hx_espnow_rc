@@ -4,18 +4,20 @@
 
 //=====================================================================
 //=====================================================================
-void HXRCSlavePayload::setCRC( HXRCConfig& config )
+void HXRCSlavePayload::setCRC()
 {
-    this->crc = config.keyCRC;
-    HXRC_crc16_update_buffer( &this->crc, (uint8_t*)&this->sequenceId, HXRC_SLAVE_PAYLOAD_SIZE_BASE + this->length - 2);
+    uint32_t c = HXRC_crc32( (uint8_t*)&this->key, HXRC_SLAVE_PAYLOAD_SIZE_BASE + this->length - 4);
+    uint8_t v = HXRC_PROTOCOL_VERSION;
+    this->crc = HXRC_crc32( (uint8_t*)&v, 1, c );
 }
 
 //=====================================================================
 //=====================================================================
-bool HXRCSlavePayload::checkCRC( HXRCConfig& config ) const
+bool HXRCSlavePayload::checkCRC() const
 {
-    uint16_t crc = config.keyCRC;
-    HXRC_crc16_update_buffer( &crc, (uint8_t*)&this->sequenceId, HXRC_SLAVE_PAYLOAD_SIZE_BASE + this->length - 2);
-    return crc == this->crc;
+    uint32_t c = HXRC_crc32( (uint8_t*)&this->key, HXRC_SLAVE_PAYLOAD_SIZE_BASE + this->length - 4);
+    uint8_t v = HXRC_PROTOCOL_VERSION;
+    c = HXRC_crc32( (uint8_t*)&v, 1, c );
+    return c == this->crc;
 }
 

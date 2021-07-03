@@ -12,8 +12,7 @@ private:
     void reset();
     void update();
 
-    //returns false if sequence id did not increase (it is retransmission)
-    bool onPacketReceived( uint16_t sequenceId, int8_t rssi, uint8_t telemetrySize );
+    bool onPacketReceived( uint16_t packetId, uint16_t sequenceId, uint8_t telemetrySize );
     void onTelemetryOverflow();
 
     friend class HXRCBase;
@@ -23,28 +22,23 @@ private:
 public:
     unsigned long lastReceivedTimeMs;
 
+    uint16_t prevPacketId;
     uint16_t prevSequenceId;
-    uint16_t packetsSuccess;
-    uint16_t packetsError;
-
-    //receiver RSSI of other side (value is received with telemetry)
-    //-1 if is unknown because we are not receiving telemetry from peer
-    //-2 on Slave ( this parameter is not sent from master to slave ).
-    int8_t remoteReceiverRSSI;
+    //total number of packets recevied (excluding invalid/crc)
+    uint16_t packetsReceived; 
+    //total number of packets not recevied (we find it out from packetId)
+    uint16_t packetsLost;
 
     unsigned long RSSIUpdateMs;
-    uint16_t RSSIPacketsSuccess;
-    uint16_t RSSIPacketsError;
-    uint16_t RSSIPacketsRetransmit;
+    uint16_t RSSIPacketsReceived;
+    uint16_t RSSIPacketsLost;
     uint8_t RSSILast;
 
     //number of packers with non-increased sequense id   
-    //it might happend that we got packet but sender did not got ack
-    //we gnore such packets
     uint16_t packetsRetransmit;
 
     uint16_t packetsCRCError;
-    uint16_t packetsInvalidLength;
+    uint16_t packetsInvalid;
     uint32_t telemetryBytesReceivedTotal;
 
     uint32_t lastTelemetryBytesReceivedSpeed;
@@ -57,12 +51,11 @@ public:
 
     bool isFailsafe();
     uint8_t getRSSI();
-    int8_t getRemoteReceiverRSSI();
     void printStats();
     
     uint32_t getTelemetryReceivedSpeed();
 
-    void onInvalidLengthPacket();
+    void onInvalidPacket();
     void onPacketCRCError();
 
 };

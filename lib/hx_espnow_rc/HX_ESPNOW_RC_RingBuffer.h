@@ -27,11 +27,11 @@ class HXRCRingBuffer : public HXRCRingBufferInterface
 {
 private:
 
-    uint8_t* pIn;
-    uint8_t* pOut;
-    uint8_t* pStart;
-    uint8_t* pEnd; 
-    uint16_t count;
+    volatile uint8_t* pIn;
+    volatile uint8_t* pOut;
+    volatile uint8_t* pStart;
+    volatile uint8_t* pEnd; 
+    volatile uint16_t count;
 
     uint8_t buffer[Size];
 
@@ -97,6 +97,11 @@ public:
         this->count  = 0;
     }
 
+    bool hasData() const
+    {
+        return this->count != 0;
+    }
+
     bool send( const void* data, uint16_t lenToWrite )
     {
         {     
@@ -108,7 +113,7 @@ public:
     }
 
     //returns number of bytes received
-    uint16_t receiveUpTo( uint16_t maxLen, void* toPtr )
+    uint16_t receiveUpTo( uint16_t maxLen, uint8_t* toPtr )
     {
         {     
             esp8266::InterruptLock lock;
@@ -133,15 +138,23 @@ class HXRCRingBuffer : public HXRCRingBufferInterface
 private:
 
     RingbufHandle_t buffferHandle;
+    volatile bool bHasData;
 
 public:
     HXRCRingBuffer() 
     {
+        this->bHasData = false;
         this->buffferHandle = xRingbufferCreate(Size, RINGBUF_TYPE_BYTEBUF);
         if ( this->buffferHandle == NULL) 
         {
             Serial.print("HXRC: Failed create ring buffer");
         }    
+    }
+
+    //(may_ have data in buffer
+    bool hasData() const
+    {
+        return this->bHasData;
     }
 
     ~HXRCRingBuffer() 
@@ -152,6 +165,7 @@ public:
     bool send( const void* data, uint16_t lenToWrite )
     {
         if ( lenToWrite == 0) return true;
+        this->bHasData = true;
         return xRingbufferSend( this->buffferHandle, data, lenToWrite, (TickType_t)0 ) == pdTRUE;
     }
 
@@ -164,7 +178,11 @@ public:
             size_t returnedSize = 0;
             //two calls to xRingbufferReceiveUpTo() are required for retrieve data which wraps around
             void* ptr = xRingbufferReceiveUpTo( this->buffferHandle, &returnedSize, (TickType_t)0, maxLen );
-            if ( ptr == NULL ) break;
+            if ( ptr == NULL ) 
+            {
+                this->bHasData = false;
+                break;
+            }
             memcpy( toPtr, ptr, returnedSize );
             vRingbufferReturnItem( this->buffferHandle, ptr );
             toPtr += returnedSize;

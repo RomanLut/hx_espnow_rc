@@ -4,16 +4,16 @@
 #include "HX_ESPNOW_RC_Slave.h"
 
 #define USE_WIFI_CHANNEL 3
-//uint8_t peer_mac[6] = {0x7c, 0x9e, 0xbd, 0xf4, 0xC2, 0x28}; //devkit STA 1
-uint8_t peer_mac[6] = {0x98, 0xf4, 0xAB, 0xfb, 0x11, 0x44};  //d1 mini sta
-//uint8_t peer_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};  //broadcast
-const char* key = "HXRC_DEFAULT_KEY"; //16 bytes
+
+#define USE_KEY   0
 
 #define LED_BUILTIN 33
 
-HXRCSlave hxrcReceiver;
+HXRCSlave hxrcSlave;
 
-unsigned long lastStats = millis();
+unsigned long lastStats1 = millis();
+unsigned long lastStats2 = millis() + 300;
+unsigned long lastStats3 = millis() + 600;
 
 TFT_eSPI tft = TFT_eSPI(135, 240);
 
@@ -40,7 +40,7 @@ void processIncomingTelemetry()
   //otherwise we will sit here forewer processing fast incoming telemetry stream
   for ( int j = 0; j < 10; j++ )
   {
-    uint16_t returnedSize = hxrcReceiver.getIncomingTelemetry( 100, buffer );
+    uint16_t returnedSize = hxrcSlave.getIncomingTelemetry( 100, buffer );
     if ( returnedSize == 0 ) break;
 
     uint8_t* ptr = buffer;
@@ -72,7 +72,7 @@ void fillOutgoingTelemetry()
   //fill stream with increasing numbers
   for ( int i = 0; i < len; i++ ) buffer[i] = v++;
   
-  if ( hxrcReceiver.sendOutgoingTelemetry( buffer, len ))
+  if ( hxrcSlave.sendOutgoingTelemetry( buffer, len ))
   {
     outgoingTelVal = v;
   }
@@ -83,9 +83,9 @@ void fillOutgoingTelemetry()
 void checkChannels()
 {
   //no sense to check channels before first packet is received
-  if ( hxrcReceiver.getReceiverStats().isFailsafe()) return;
+  if ( hxrcSlave.getReceiverStats().isFailsafe()) return;
 
-  HXRCChannels channels = hxrcReceiver.getChannels();
+  HXRCChannels channels = hxrcSlave.getChannels();
 
   uint16_t sum = 0;
   for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
@@ -117,11 +117,10 @@ void setup()
   tft.setTextDatum(ML_DATUM);
   tft.setRotation(0);
 
-  hxrcReceiver.init(
+  hxrcSlave.init(
       HXRCConfig(
           USE_WIFI_CHANNEL,
-          peer_mac,
-          key,
+          USE_KEY,
           false,
           LED_BUILTIN, false));
 
@@ -154,46 +153,63 @@ void loop()
   processIncomingTelemetry();
   fillOutgoingTelemetry();
 
-  hxrcReceiver.loop();
+  hxrcSlave.loop();
 
-  if (millis() - lastStats > 1000)
+  unsigned long t = millis();
+
+  if (t - lastStats1 > 1000)
   {
-    lastStats = millis();
-    hxrcReceiver.getTransmitterStats().printStats();
-    hxrcReceiver.getReceiverStats().printStats();
+    lastStats1 = t;
+    hxrcSlave.getTransmitterStats().printStats();
+    hxrcSlave.getReceiverStats().printStats();
     Serial.print("Errors: ");
     Serial.print(errorCountRC);
     Serial.print(",");
     Serial.println(errorCountTelemetry);
  }
 
-  y = 0;
 
-  HXRCTransmitterStats& ptStats = hxrcReceiver.getTransmitterStats();
-  drawLine("Transmitter Failsafe: %d     ", ptStats.isFailsafe() ? 1 : 0);
-  drawLine("Transmitter RSSI: %d     ", ptStats.getRSSI());
-  drawLine("Packets sent: %u     ", ptStats.packetsSentTotal);
-  drawLine("Packets success: %u     ", ptStats.packetsSentSuccess);
-  drawLine("Packets Error: %u     ", ptStats.packetsSentError);
-  drawLine("Packets missed: %u     ", ptStats.packetsNotSentInTime);
-  drawLine("Out tel.: %ub/s     ", ptStats.getTelemetrySendSpeed());
+  if (t - lastStats2 > 1000)
+  {
+    lastStats2 = t;
 
-  y += 14;
+    HXRCTransmitterStats& ptStats = hxrcSlave.getTransmitterStats();
+    
+    y = 0;
+    drawLine("Transmitter Failsafe: %d ", ptStats.isFailsafe() ? 1 : 0);
+    drawLine("RSSI: %d     ", ptStats.getRSSI());
+    drawLine("Sent: %u     ", ptStats.packetsSentTotal);
+    drawLine("Ack: %u     ", ptStats.packetsAcknowledged);
+    drawLine("Error: %u     ", ptStats.packetsSentError);
+    drawLine("Missed: %u     ", ptStats.packetsNotSentInTime);
+    drawLine("Out tel.: %ub/s     ", ptStats.getTelemetrySendSpeed());
+  }
 
-  HXRCReceiverStats& prStats = hxrcReceiver.getReceiverStats();
-  drawLine("Receiver Failsafe: %d     ", prStats.isFailsafe() ? 1 : 0);
-  drawLine("Receiver RSSI: %d     ", prStats.getRSSI());
-  drawLineI("Remote RSSI: %i     ", prStats.getRemoteReceiverRSSI());
+  if (t - lastStats3 > 1000)
+  {
+    lastStats3 = t;
 
-  sprintf(buff, "Packets received: %u(%u)     ", prStats.packetsSuccess, prStats.packetsRetransmit);
-  tft.drawString(buff, 0, y);
-  y += 14;
+    HXRCReceiverStats& prStats = hxrcSlave.getReceiverStats();
 
-  drawLine("Packets missed: %u     ", prStats.packetsError);
-  drawLine("Tel. overflow: %u     ", prStats.telemetryOverflowCount);
-  drawLine("In tel.: %ub/s     ", prStats.getTelemetryReceivedSpeed());
+    y = 9*14;
+    drawLine("Receiver Failsafe: %d ", prStats.isFailsafe() ? 1 : 0);
+    drawLine("RSSI: %d     ", prStats.getRSSI());
 
-  sprintf(buff, "Errors: %u, %u     ", errorCountRC, errorCountTelemetry);
-  tft.drawString(buff, 0, y);
+    sprintf(buff, "Recv(rty):%u(%u)       ", prStats.packetsReceived, prStats.packetsRetransmit);
+    tft.drawString(buff, 0, y);
+    y += 14;
+
+    drawLine("Lost: %u     ", prStats.packetsLost);
+
+    sprintf(buff, "Invalid/crc: %u(%u)     ", prStats.packetsInvalid, prStats.packetsCRCError);
+    tft.drawString(buff, 0, y);
+    y += 14;
+
+    drawLine("Tel. overflow: %u     ", prStats.telemetryOverflowCount);
+    drawLine("In tel.: %ub/s     ", prStats.getTelemetryReceivedSpeed());
+
+    sprintf(buff, "Errors: %u, %u     ", errorCountRC, errorCountTelemetry);
+    tft.drawString(buff, 0, y);
+  }
  
 }

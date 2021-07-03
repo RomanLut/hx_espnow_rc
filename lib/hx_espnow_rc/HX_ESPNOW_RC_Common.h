@@ -24,9 +24,7 @@
 
 #endif
 
-#define HXRC_VERSION 1
-
-#define DEFAULT_PACKET_SEND_PERIOD_MS   100      //10Hz    
+#define DEFAULT_PACKET_SEND_PERIOD_MS   25      //40Hz    
 #define DEFAULT_FAILSAFE_PERIOD_MS      1000
 
 #define HXRC_CHANNELS 16
@@ -35,21 +33,17 @@
 
 #define HXRC_PAYLOAD_SIZE_MAX 250
 
-//=====================================================================
-//=====================================================================
-typedef enum
-{
-    HXRCSS_READY_TO_SEND        = 0,
-    HXRCSS_RETRY_SEND           = 1,
-    HXRCSS_WAITING_CONFIRMATION = 2
-} HXRCSenderStateEnum;
+#define HXRC_PROTOCOL_VERSION 1
 
 class HXRCConfig;
+
+extern uint8_t BROADCAST_MAC[6];
 
 //=====================================================================
 //=====================================================================
 extern void HXRCInitLedPin( const HXRCConfig& config );
 extern bool HXRCInitEspNow( HXRCConfig& config );
-extern void HXRC_crc16_update( uint16_t* crc, uint8_t a );
-extern void HXRC_crc16_update_buffer( uint16_t* crc, uint8_t* ptr, uint16_t len );
+
+extern void HXRC_crc32_init();
+extern uint32_t HXRC_crc32(const void* data, size_t length, uint32_t previousCrc32 = 0);
 

@@ -47,22 +47,17 @@ void HXRCSlave::OnDataSent(uint8_t *mac_addr, uint8_t status)
 void HXRCSlave::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 #endif
 {
-    if( status == ESP_NOW_SEND_SUCCESS )
-    {
-        transmitterStats.onPacketSendSuccess( outgoingData.length );
-        senderState = HXRCSS_READY_TO_SEND;
-    }
-    else    
+    if( status != ESP_NOW_SEND_SUCCESS )
     {
         transmitterStats.onPacketSendError();
-        senderState = HXRCSS_RETRY_SEND;
     }
+    senderState = HXRCSS_READY_TO_SEND;
 }
 
 //=====================================================================
 //=====================================================================
 // Callback when data is received
-//This function wokrs in Wifi task, which may run on the second core parallel to loop task.
+//This function works in Wifi task, which may run on the second core parallel to loop task.
 //We have to use thread-safe ring buffer and mutex.
 #if defined(ESP8266)
 void HXRCSlave::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
@@ -72,9 +67,13 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
 {
     const HXRCMasterPayload* pPayload = (const HXRCMasterPayload*) incomingData;
 
-    if ( ( len >= HXRC_MASTER_PAYLOAD_SIZE_BASE ) && ( len == HXRC_MASTER_PAYLOAD_SIZE_BASE + pPayload->length ) )
+    if ( 
+        ( len >= HXRC_MASTER_PAYLOAD_SIZE_BASE ) && 
+        ( len == HXRC_MASTER_PAYLOAD_SIZE_BASE + pPayload->length ) &&
+        ( pPayload->key == config.key ) 
+    )
     {
-        if ( pPayload->checkCRC( this->config) )
+        if ( pPayload->checkCRC() )
         {
 #if defined(ESP8266)
             {
@@ -88,12 +87,19 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
                 xSemaphoreGive( this->channelsMutex);
             }
 #endif
-            if ( receiverStats.onPacketReceived( pPayload->sequenceId, -2, pPayload->length ) )
+            if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length ) )
             {
                 if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )  //length = 0 is ok
                 {
                     receiverStats.onTelemetryOverflow();
                 }
+            }
+            this->receivedSequenceId = pPayload->sequenceId;
+
+            if ( this->waitAck && ( outgoingData.sequenceId == pPayload->ackSequenceId ) )
+            {
+                this->waitAck = false;
+                this->transmitterStats.onPacketAck( outgoingData.length );
             }
         }
         else
@@ -106,7 +112,7 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
         //ignore unknown packet, too short
         //Serial.print("Unknown packet length:");
         //Serial.println(len);
-        receiverStats.onInvalidLengthPacket();
+        receiverStats.onInvalidPacket();
     }
 }
 
@@ -116,7 +122,11 @@ bool HXRCSlave::init( HXRCConfig config )
 {
     if ( !HXRCBase::init( config ) ) return false;
 
+    outgoingData.key = config.key;
+    outgoingData.packetId = 0;
     outgoingData.sequenceId = 0;
+    outgoingData.length = 0;
+
     receivedChannels.init();
 
     if ( !HXRCInitEspNow( config ))
@@ -134,30 +144,39 @@ bool HXRCSlave::init( HXRCConfig config )
 //=====================================================================
 void HXRCSlave::loop()
 {
-    unsigned long t = millis();
-
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
-        outgoingData.sequenceId++;
-        outgoingData.length = outgoingTelemetryBuffer.receiveUpTo( HXRC_SLAVE_TELEMETRY_SIZE_MAX, outgoingData.data );
-    }
+        unsigned long t = millis();
+        unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
-    //if state is senderState == HXRCSS_RETRY_SEND, send the same telemetry data again
-    if ( senderState == HXRCSS_READY_TO_SEND || senderState == HXRCSS_RETRY_SEND )
-    {
-        outgoingData.rssi = receiverStats.getRSSI();
+        int count = deltaT / DEFAULT_PACKET_SEND_PERIOD_MS;
 
-        outgoingData.setCRC(this->config);
-        transmitterStats.onPacketSend( t );
-        esp_err_t result = esp_now_send(this->config.peer_mac, (uint8_t *) &outgoingData, HXRC_SLAVE_PAYLOAD_SIZE_BASE + outgoingData.length );
-        if (result == ESP_OK) 
+        if ( count > 0 )
         {
-            senderState = HXRCSS_WAITING_CONFIRMATION;
+            outgoingData.packetId++;
+
+            if ( !this->waitAck )
+            {
+                outgoingData.sequenceId++;
+                outgoingData.length = outgoingTelemetryBuffer.receiveUpTo( HXRC_SLAVE_TELEMETRY_SIZE_MAX, outgoingData.data );
+                this->waitAck = true;
+            }
+
+            outgoingData.ackSequenceId = receivedSequenceId;
+
+            outgoingData.setCRC();
+            transmitterStats.onPacketSend( t );
+            esp_err_t result = esp_now_send(BROADCAST_MAC, (uint8_t *) &outgoingData, HXRC_SLAVE_PAYLOAD_SIZE_BASE + outgoingData.length );
+            if (result == ESP_OK) 
+            {
+                senderState = HXRCSS_WAIT_SEND_FINISH;
+            }
+            else
+            {
+                transmitterStats.onPacketSendError();
+            }            
         }
-        else 
-        {
-            transmitterStats.onPacketSendError();
-        }            
+
     }
 
     HXRCBase::loop();

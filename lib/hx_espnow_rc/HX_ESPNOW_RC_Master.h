@@ -9,6 +9,11 @@
 class HXRCMaster : public HXRCBase
 {
 private:
+    //when last packet received
+    unsigned long lastReceived;
+    
+    //average delta between packet received and ack sent
+    uint32_t delta256;
 
     static HXRCMaster* pInstance;
 
@@ -38,5 +43,7 @@ public:
     //index = 0..15
     //data = 1000...2000
     void setChannelValue( uint8_t index, uint16_t data);
+
+    void printDelta();
 };
 

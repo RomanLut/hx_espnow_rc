@@ -11,13 +11,10 @@
 
 
 #define USE_WIFI_CHANNEL 3
-//uint8_t peer_mac[] = {0x24, 0x62, 0xAB, 0xCA, 0xAA, 0xDC}; //ttgo display sta
-//uint8_t peer_mac[6] = {0x30, 0xAE, 0xA4, 0x99, 0x28, 0xB4};
-uint8_t peer_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-const char* key = "HXRC_DEFAULT_KEY"; //16 bytes
+#define USE_KEY 0
 
-HXRCMaster hxrcTransmitter;
-HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcTransmitter );
+HXRCMaster hxrcMaster;
+HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcMaster );
 HXSBUSDecoder sbusDecoder;
 
 static BluetoothSerial SerialBT;
@@ -59,12 +56,12 @@ void setChannels()
     {
       uint16_t r = sbusDecoder.getChannelValueInRange( i, 1000, 2000 );
       //if ( i == 3 ) Serial.println(r);
-      hxrcTransmitter.setChannelValue( i, r );
+      hxrcMaster.setChannelValue( i, r );
     }
   }
 
   //use channel 16 to transmit failsafe flag
-  hxrcTransmitter.setChannelValue( 15, sbusDecoder.isFailsafe() ? 1 : 0 );
+  hxrcMaster.setChannelValue( 15, sbusDecoder.isFailsafe() ? 1 : 0 );
 }
 
 //=====================================================================
@@ -108,11 +105,10 @@ void setup()
     Serial.println("An error occurred setting Bluetooth pin");
   }
 
-  hxrcTransmitter.init(
+  hxrcMaster.init(
       HXRCConfig(
           USE_WIFI_CHANNEL,
-          peer_mac,
-          key,
+          USE_KEY,
           false,
           -1, false));
 
@@ -130,13 +126,13 @@ void loop()
   processIncomingTelemetry();
   fillOutgoingTelemetry();
 
-  hxrcTransmitter.loop();
+  hxrcMaster.loop();
 
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
-    hxrcTransmitter.getTransmitterStats().printStats();
-    hxrcTransmitter.getReceiverStats().printStats();
+    hxrcMaster.getTransmitterStats().printStats();
+    hxrcMaster.getReceiverStats().printStats();
   }
 
 

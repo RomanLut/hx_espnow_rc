@@ -12,10 +12,10 @@ private:
 
     void reset();
     
-    void onPacketSendSuccess( uint8_t telemetryLength );
     void onPacketSendError();
     void onPacketSend( unsigned long timeMs );
     void onPacketSendMiss( uint16_t missedPackets );
+    void onPacketAck( uint8_t telemetryLength );
 
     void update();
 
@@ -24,17 +24,20 @@ private:
     friend class HXRCSlave;
 
 public:
+    //number of packets send, including not sent due to API error
     uint16_t packetsSentTotal;
-    uint16_t packetsSentSuccess;
+    uint16_t packetsAcknowledged;
+    //API error
     uint16_t packetsSentError;
-    uint16_t packetsNotSentInTime;  //packets not sent in time because HXRCLoop() was not called in time
+    //packets not sent in time because HXRCLoop() was not called in time
+    uint16_t packetsNotSentInTime;  
 
     unsigned long lastSendTimeMs;
-    unsigned long lastSuccessfulPacketMs;
+    unsigned long lastAcknowledgedPacketMs;
 
-    uint16_t RSSIPacketsSentSuccess;
-    uint16_t RSSIPacketsSentError;
-    unsigned long RSSIupdateMs;
+    uint16_t RSSIPacketsAcknowledged;
+    uint16_t RSSIPacketsTotal;
+    unsigned long RSSIUpdateMs;
     uint8_t RSSIlast;
 
     uint32_t telemetryBytesSentTotal;

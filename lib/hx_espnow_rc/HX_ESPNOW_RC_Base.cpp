@@ -4,6 +4,10 @@
 //=====================================================================
 HXRCBase::HXRCBase()
 {
+    HXRC_crc32_init();
+    senderState = HXRCSS_INIT;
+    receivedSequenceId = 0xffff;    
+    waitAck = false;
 }
 
 //=====================================================================

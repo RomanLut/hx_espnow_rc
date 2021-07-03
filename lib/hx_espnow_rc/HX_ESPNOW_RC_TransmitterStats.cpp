@@ -14,16 +14,16 @@ void HXRCTransmitterStats::reset()
     unsigned long t = millis();
 
     this->packetsSentTotal = 0;
-    this->packetsSentSuccess = 0;
+    this->packetsAcknowledged = 0;  //acknowledged packets
     this->packetsSentError = 0;
     this->packetsNotSentInTime = 0;
 
     this->lastSendTimeMs = t;
-    this->lastSuccessfulPacketMs = t - DEFAULT_FAILSAFE_PERIOD_MS;
+    this->lastAcknowledgedPacketMs = t - DEFAULT_FAILSAFE_PERIOD_MS;
 
-    this->RSSIPacketsSentSuccess = 0;
-    this->RSSIPacketsSentError = 0;
-    this->RSSIupdateMs = t; 
+    this->RSSIPacketsAcknowledged = 0;
+    this->RSSIPacketsTotal = 0;
+    this->RSSIUpdateMs = t; 
     this->RSSIlast = 0;
 
     this->telemetryBytesSentTotal = 0;
@@ -37,7 +37,7 @@ void HXRCTransmitterStats::reset()
 //=====================================================================
 bool HXRCTransmitterStats::isFailsafe()    
 {
-    unsigned long delta = millis() - this->lastSuccessfulPacketMs;
+    unsigned long delta = millis() - this->lastAcknowledgedPacketMs;
     return delta >= DEFAULT_FAILSAFE_PERIOD_MS;
 }
 
@@ -47,29 +47,30 @@ bool HXRCTransmitterStats::isFailsafe()
 uint8_t HXRCTransmitterStats::getRSSI()
 {
     unsigned long t = millis();
-    unsigned long delta = t - this->RSSIupdateMs;
+    unsigned long delta = t - this->RSSIUpdateMs;
 
     if ( delta > 1000)
     {
-        uint16_t packetsSuccessCount = this->packetsSentSuccess - this->RSSIPacketsSentSuccess;
-        uint16_t packetsErrorCount = this->packetsSentError + this->packetsNotSentInTime - this->RSSIPacketsSentError;
-        uint16_t totalPackets = packetsSuccessCount + packetsErrorCount;
+        uint16_t packetsSuccessCount = this->packetsAcknowledged - this->RSSIPacketsAcknowledged;
+        uint16_t packetsTotalCount = this->packetsSentTotal + this->packetsNotSentInTime - this->RSSIPacketsTotal; 
 
-        this->RSSIlast = ( totalPackets > 0 ) ? (((uint32_t)packetsSuccessCount) * 100 / totalPackets) : 0;
-        this->RSSIPacketsSentSuccess = this->packetsSentSuccess;
-        this->RSSIPacketsSentError = this->packetsSentError + this->packetsNotSentInTime;
-        this->RSSIupdateMs = t; 
+        this->RSSIlast = ( packetsTotalCount > 0 ) ? (((uint32_t)packetsSuccessCount) * 100 / packetsTotalCount) : 0;
+        
+        this->RSSIPacketsAcknowledged = this->packetsAcknowledged;
+        this->RSSIPacketsTotal = this->packetsSentTotal + this->packetsNotSentInTime;
+        
+        this->RSSIUpdateMs = t; 
     }
     return this->RSSIlast;
 }
 
 //=====================================================================
 //=====================================================================
-void HXRCTransmitterStats::onPacketSendSuccess( uint8_t telemetryLength )
+void HXRCTransmitterStats::onPacketAck( uint8_t telemetryLength )
 {
-    this->packetsSentSuccess++;
+    this->packetsAcknowledged++;
     this->telemetryBytesSentTotal += telemetryLength;
-    this->lastSuccessfulPacketMs = millis();
+    this->lastAcknowledgedPacketMs = millis();
 }
 
 //=====================================================================
@@ -94,6 +95,8 @@ void HXRCTransmitterStats::onPacketSendMiss( uint16_t missedPackets )
     this->packetsNotSentInTime += missedPackets;
 }
 
+//=====================================================================
+//=====================================================================
 //telemetry send speed stats, bytes/sec
 uint32_t HXRCTransmitterStats::getTelemetrySendSpeed()
 {
@@ -126,9 +129,9 @@ void HXRCTransmitterStats::printStats()
     Serial.printf("Failsafe: %d\n", isFailsafe()?1:0);
     Serial.printf("RSSI: %d\n", getRSSI() );
     Serial.printf("Packets sent total: %u\n", packetsSentTotal);
-    Serial.printf("Packets success: %u\n", packetsSentSuccess);
+    Serial.printf("Packets ack: %u\n", packetsAcknowledged);
     Serial.printf("Packets error: %u\n", packetsSentError);
-    Serial.printf("Packets missed: %u\n", packetsNotSentInTime);
+    Serial.printf("Packets missed time: %u\n", packetsNotSentInTime);
     Serial.printf("Out telemetry: %u b/s\n", getTelemetrySendSpeed());
 }
 
