@@ -1,7 +1,7 @@
 #include "HX_ESPNOW_RC_Common.h"
 #include "HX_ESPNOW_RC_Config.h"
 
-#define COEXIST
+//#define COEXIST
 
 #ifdef COEXIST
 #include <esp_coexist.h>

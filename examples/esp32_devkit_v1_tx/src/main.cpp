@@ -1,9 +1,10 @@
 #include <Arduino.h>
-#include <BluetoothSerial.h>
+//#include <BluetoothSerial.h>
 
 #include "HX_ESPNOW_RC_Master.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
 #include "hx_sbus_decoder.h"
+#include "HC06Interface.h"
 
 #define LED_PIN  2
 #define USE_SERIAL1_RX_PIN    13
@@ -17,7 +18,9 @@ HXRCMaster hxrcMaster;
 HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcMaster );
 HXSBUSDecoder sbusDecoder;
 
-static BluetoothSerial SerialBT;
+//static BLESerial SerialBT;
+//static BluetoothSerial SerialBT;
+static HC06Interface externalBTSerial;
 
 unsigned long lastStats = millis();
 
@@ -28,7 +31,7 @@ void processIncomingTelemetry()
   while ( hxrcTelemetrySerial.getAvailable() > 0 )
   {
     uint8_t c = hxrcTelemetrySerial.peek();
-    if ( SerialBT.write( c ) == 0 ) break;
+    if ( externalBTSerial.write( c ) == 0 ) break;
     hxrcTelemetrySerial.read();
   }
 }
@@ -37,11 +40,13 @@ void processIncomingTelemetry()
 //=====================================================================
 void fillOutgoingTelemetry()
 {
-  while ( (SerialBT.available() > 0) && (hxrcTelemetrySerial.getAvailableForWrite() > 0) )
+  
+  while ( (externalBTSerial.available() > 0) && (hxrcTelemetrySerial.getAvailableForWrite() > 0) )
   {
-    uint8_t c = SerialBT.read();
+    uint8_t c = externalBTSerial.read();
     hxrcTelemetrySerial.write(c);
   }
+  
 }
 
 
@@ -95,15 +100,13 @@ void setup()
 
   Serial2.begin(57600, SERIAL_8N1, -1, USE_SERIAL2_TX_PIN, true );  //SPORT
 
-  if ( !SerialBT.begin("HXRC") ) 
-  {
-    Serial.println("An error occurred initializing Bluetooth");
-  }
+  externalBTSerial.init();
 
+/*
   if ( !SerialBT.setPin("1234") ) 
   {
     Serial.println("An error occurred setting Bluetooth pin");
-  }
+  }*/
 
   hxrcMaster.init(
       HXRCConfig(
@@ -113,6 +116,14 @@ void setup()
           -1, false));
 
   WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL);
+
+  /*
+  if ( !SerialBT.begin("HXRCBLE") ) 
+  {
+    Serial.println("An error occurred initializing Bluetooth");
+  }
+  */
+
 }
 
 //=====================================================================
