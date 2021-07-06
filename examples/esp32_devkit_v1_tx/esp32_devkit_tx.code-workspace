@@ -25,7 +25,9 @@
 			"new": "cpp",
 			"ostream": "cpp",
 			"sstream": "cpp",
-			"streambuf": "cpp"
+			"streambuf": "cpp",
+			"istream": "cpp",
+			"limits": "cpp"
 		}
 	}
 }

@@ -12,6 +12,22 @@ uint8_t BROADCAST_MAC[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 #define CRC32_POLYNOMIAL 0xEDB88320
 static uint32_t Crc32Lookup[256];
 
+static Stream* HXRCLOGStream = NULL;
+
+//=====================================================================
+//=====================================================================
+Stream* HXRCGetLogStream()
+{
+    return HXRCLOGStream ? HXRCLOGStream : &Serial;
+}
+
+//=====================================================================
+//=====================================================================
+void HXRCSetLogStream( Stream* value )
+{
+    HXRCLOGStream = value;
+}
+
 //=====================================================================
 //=====================================================================
 void HXRCInitLedPin( const HXRCConfig& config )

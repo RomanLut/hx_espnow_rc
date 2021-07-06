@@ -24,6 +24,8 @@
 
 #endif
 
+#define HXRCLOG (*HXRCGetLogStream())
+
 #define DEFAULT_PACKET_SEND_PERIOD_MS   25      //40Hz    
 #define DEFAULT_FAILSAFE_PERIOD_MS      1000
 
@@ -41,9 +43,12 @@ extern uint8_t BROADCAST_MAC[6];
 
 //=====================================================================
 //=====================================================================
+
+extern Stream* HXRCGetLogStream();
+void HXRCSetLogStream( Stream* value );
+
 extern void HXRCInitLedPin( const HXRCConfig& config );
 extern bool HXRCInitEspNow( HXRCConfig& config );
 
 extern void HXRC_crc32_init();
 extern uint32_t HXRC_crc32(const void* data, size_t length, uint32_t previousCrc32 = 0);
-

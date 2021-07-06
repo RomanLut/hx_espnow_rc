@@ -125,13 +125,13 @@ void HXRCTransmitterStats::update()
 //=====================================================================
 void HXRCTransmitterStats::printStats()
 {
-    Serial.printf("Transmitter stats: -----------\n");
-    Serial.printf("Failsafe: %d\n", isFailsafe()?1:0);
-    Serial.printf("RSSI: %d\n", getRSSI() );
-    Serial.printf("Packets sent total: %u\n", packetsSentTotal);
-    Serial.printf("Packets ack: %u\n", packetsAcknowledged);
-    Serial.printf("Packets error: %u\n", packetsSentError);
-    Serial.printf("Packets missed time: %u\n", packetsNotSentInTime);
-    Serial.printf("Out telemetry: %u b/s\n", getTelemetrySendSpeed());
+    HXRCLOG.print("Transmitter");
+    HXRCLOG.printf(" | FS: %d", isFailsafe()?1:0);
+    HXRCLOG.printf(" | RSSI: %d", getRSSI() );
+    HXRCLOG.printf(" | Total: %u", packetsSentTotal);
+    HXRCLOG.printf(" | Ack: %u", packetsAcknowledged);
+    HXRCLOG.printf(" | Error: %u", packetsSentError);
+    HXRCLOG.printf(" | Missed time: %u", packetsNotSentInTime);
+    HXRCLOG.printf(" | Out telemetry: %u b/s\n", getTelemetrySendSpeed());
 }
 

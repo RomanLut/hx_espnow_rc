@@ -1,14 +1,13 @@
 #include "HC06Interface.h"
 
-#define HC06_BAUD_RATE 57600
-//#define HC06_BAUD_RATE 9600
+#define HC06_BAUD_RATE 115200
 
 #define RX_PIN  35
 #define TX_PIN  32
 
 //=====================================================================
 //=====================================================================
-HC06Interface::HC06Interface()
+HC06Interface::HC06Interface(int UART) : serial(UART)
 {
 
 }
@@ -28,29 +27,25 @@ void HC06Interface::flushResponse()
 //=====================================================================
 void HC06Interface::init()
 {
+    
     /*
-    //Uncomment to initialize once if requred
+    //Uncomment to initialize once if requred,one command at at time
     //Commands for HC-06 SPP 3 module: no need for crlf, type quickly, pause 1 second
-    //Comands may vary by with version
+    //Comands may vary with version
     //Default baud rate is 9600
     
-    this->serial.begin(57600, SWSERIAL_8N1, RX_PIN, TX_PIN );
+    this->serial.begin(57600, SERIAL_8N1, RX_PIN, TX_PIN );
     delay(100);
     //this->serial.print( "AT+VERSION" );
-
     //this->serial.print( "AT+NAMEHXRC" );
-
     //this->serial.print("AT+PIN1234");
-    //this->serial.print("\n\r");
-    //this->flushResponse();
-
-    this->serial.print("AT+BAUD7");  //4-9600, 7-57600
+    this->serial.print("AT+BAUD8");  //4-9600, 7-57600, 8 -115200
 
     delay(1100);
     this->flushResponse();
     */
 
-    this->serial.begin(HC06_BAUD_RATE, SWSERIAL_8N1, RX_PIN, TX_PIN );
+    this->serial.begin(HC06_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN );
 }
 
 

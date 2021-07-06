@@ -38,11 +38,13 @@ public:
 
     uint16_t getAvailable() 
     {
+        if ( this->inCount == 0 ) flushIn();
         return this->inCount;
     }
     
     uint16_t getAvailableForWrite() 
     {
+        if ( Size ==  this->outCount ) flushOut();
         return Size - this->outCount;
     }
 
@@ -55,21 +57,23 @@ public:
         return res;
     }
 
+/*
     uint8_t peek()
     {
         if ( this->inCount == 0) return 0;
         return inBuffer[inHead];
     }
-
+*/
     void write(uint8_t c)
     {
+        if ( outCount == Size ) flushOut();
         if ( outCount == Size ) return;
         outBuffer[outHead] = c;
         if ( outHead++ == Size ) outHead = 0;
         outCount++;
     }
 
-    void flush()
+    void flushOut()
     {
         while ( outCount > 0 )
         {
@@ -80,7 +84,7 @@ public:
             if ( this->base->sendOutgoingTelemetry( &outBuffer[p], c) )
             {
                 outHead += c;
-                if ( outHead >= Size) outHead -= Size;
+                if ( outHead == Size) outHead = 0;
                 outCount -= c;
             }
             else
@@ -88,7 +92,10 @@ public:
                 break;
             }
         }
+    }
 
+    void flushIn()
+    {
         while( inCount < Size )
         {
             int p = inHead + inCount;
@@ -102,6 +109,12 @@ public:
             if ( a == 0 ) break;
             inCount += a;
         }
+    }
+
+    void flush()
+    {
+        flushOut();
+        flushIn();
     }
 
 

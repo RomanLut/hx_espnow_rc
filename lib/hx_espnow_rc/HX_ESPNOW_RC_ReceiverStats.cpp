@@ -130,14 +130,14 @@ void HXRCReceiverStats::update()
 //=====================================================================
 void HXRCReceiverStats::printStats()
 {
-    Serial.printf("Receiver stats: -----------\n");
-    Serial.printf("Failsafe: %d\n", isFailsafe()?1:0);
-    Serial.printf("RSSI: %d\n", getRSSI() );
-    Serial.printf("Packets received(retransmitted): %u(%u)\n", packetsReceived, packetsRetransmit);
-    Serial.printf("Packets lost: %u\n", packetsLost);
-    Serial.printf("Packets invalid/crc: %u/%u\n", packetsInvalid, packetsCRCError);
-    Serial.printf("Telemetry overflow count: %u\n", telemetryOverflowCount);
-    Serial.printf("In telemetry: %d b/s\n", getTelemetryReceivedSpeed());
+    HXRCLOG.printf("Receiver   ");
+    HXRCLOG.printf(" | FS: %d", isFailsafe()?1:0);
+    HXRCLOG.printf(" | RSSI: %d", getRSSI() );
+    HXRCLOG.printf(" | Recv(retransm): %u(%u)", packetsReceived, packetsRetransmit);
+    HXRCLOG.printf(" | Lost: %u", packetsLost);
+    HXRCLOG.printf(" | Invalid/CRC: %u/%u", packetsInvalid, packetsCRCError);
+    HXRCLOG.printf(" | Tel. overflow: %u", telemetryOverflowCount);
+    HXRCLOG.printf(" | In telemetry: %d b/s\n", getTelemetryReceivedSpeed());
 }
 
 //=====================================================================
