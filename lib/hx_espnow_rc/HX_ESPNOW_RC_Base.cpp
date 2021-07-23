@@ -39,7 +39,7 @@ void HXRCBase::loop()
     transmitterStats.update();
     receiverStats.update();
 
-    updateLed();
+    updateLed( this->config.ledPin, this->config.ledPinInverted);
 }
 
 //=====================================================================
@@ -58,24 +58,24 @@ HXRCReceiverStats& HXRCBase::getReceiverStats()
 
 //=====================================================================
 //=====================================================================
-void HXRCBase::updateLed()
+void HXRCBase::updateLed( int8_t ledPin, bool ledPinInverted )
 {
-    if ( config.ledPin == -1) return;
+    if ( ledPin == -1) return;
 
     if ( getTransmitterStats().isFailsafe())
     {
-        digitalWrite(this->config.ledPin, this->config.ledPinInverted ? HIGH : LOW );
+        digitalWrite(ledPin, ledPinInverted ? HIGH : LOW );
     }
     else
     {
         unsigned long dt = millis() - this->receiverStats.lastReceivedTimeMs;
         if ( dt < 300 )
         {
-            digitalWrite(config.ledPin,(millis() & 32) ? HIGH : LOW );
+            digitalWrite(ledPin,(millis() & 32) ? HIGH : LOW );
         }
         else
         {
-            digitalWrite(this->config.ledPin, this->config.ledPinInverted ? LOW : HIGH );
+            digitalWrite(ledPin, ledPinInverted ? LOW : HIGH );
         }
     }
 }

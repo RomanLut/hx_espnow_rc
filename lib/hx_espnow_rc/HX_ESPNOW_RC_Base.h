@@ -41,8 +41,6 @@ protected:
     HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> incomingTelemetryBuffer;
     HXRCRingBuffer<HXRC_TELEMETRY_BUFFER_SIZE> outgoingTelemetryBuffer;
 
-    void updateLed();
-
 public:
 
     HXRCBase();
@@ -64,5 +62,7 @@ public:
 
     HXRCTransmitterStats& getTransmitterStats();
     HXRCReceiverStats& getReceiverStats();
+
+    void updateLed(int8_t ledPin, bool ledPinInverted);
 };
 

@@ -13,7 +13,7 @@ public:
     uint8_t wifi_channel;
     bool LRMode;
     int8_t ledPin;
-    int8_t ledPinInverted;
+    bool ledPinInverted;
     uint16_t key;
 
     HXRCConfig();

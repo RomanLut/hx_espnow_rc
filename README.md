@@ -9,6 +9,8 @@ Transmits 16 channels and bidirectional telemetry.
 Can be used as chip RC for LOS flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
+See external module for Jumpter T-Lite: doc/transmitter.md  
+
 
 # Range
 PCB antenal provide range less then 200m.

@@ -12,13 +12,16 @@
 #include "tx_config.h"
 #include "HC06Interface.h"
 
+#include "smartport.h"
+
 HXRCMaster hxrcMaster;
 HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcMaster );
 HXSBUSDecoder sbusDecoder;
-static HC06Interface externalBTSerial(2);
+static HC06Interface externalBTSerial(&Serial2);
 
 #ifdef USE_SPORT  
 SoftwareSerial softwareSerial;
+Smartport sport( &Serial );
 #endif
 
 unsigned long lastStats = millis();
@@ -146,18 +149,16 @@ void test()
 void setup()
 {
 #ifdef USE_SPORT  
-  Serial.begin(57600, SERIAL_8N1, -1, SPORT_PIN );  
-  softwareSerial.begin( 115200, SWSERIAL_8N1, -1, CP2102_RX_PIN );
-  //softwareSerial.begin( 115200, SWSERIAL_8N1, -1, 12 );
+  sport.init();
 
+  softwareSerial.begin( 115200, SWSERIAL_8N1, -1, CP2102_RX_PIN );
   softwareSerial.enableIntTx(true);
-  
   //esp_log_level_set("*", ESP_LOG_DEBUG);    
   esp_log_set_vprintf(&log_vprintf);
-
   HXRCSetLogStream( &softwareSerial );
 #else
   Serial.begin(115200, SERIAL_8N1);  
+  pinMode(SPORT_PIN,INPUT);
 #endif
 
 //test();
@@ -168,7 +169,7 @@ void setup()
 
   sbusDecoder.init(USE_SERIAL1_RX_PIN);
 
-  setLed(true);
+  setLed(false);
 
   externalBTSerial.init();
 
@@ -208,15 +209,21 @@ void loop()
   fillOutgoingTelemetry();
 
   hxrcMaster.loop();
+  hxrcMaster.updateLed( LED_PIN, false );
 
+/*
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
     hxrcMaster.getTransmitterStats().printStats();
     hxrcMaster.getReceiverStats().printStats();
-    if ( sbusDecoder.isFailsafe()) HXRCLOG.print("SBUS FS!");
-  }
+    if ( sbusDecoder.isFailsafe()) HXRCLOG.print("SBUS FS!\n");
+  }*/
 
+#ifdef USE_SPORT  
+  sport.setRSSI( hxrcMaster.getTransmitterStats().getRSSI());
+  sport.loop();
+#endif
  }
 
 

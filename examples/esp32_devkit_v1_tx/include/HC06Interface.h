@@ -9,11 +9,11 @@
 class HC06Interface 
 {
 private:
-    HardwareSerial serial;
+    HardwareSerial* serial;
     void flushResponse();
 public:
 
-    HC06Interface( int UART);
+    HC06Interface( HardwareSerial* serial );
 
     void init();
 

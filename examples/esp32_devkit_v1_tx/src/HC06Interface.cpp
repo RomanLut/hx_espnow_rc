@@ -7,18 +7,18 @@
 
 //=====================================================================
 //=====================================================================
-HC06Interface::HC06Interface(int UART) : serial(UART)
+HC06Interface::HC06Interface(HardwareSerial* serial) 
 {
-
+    this->serial = serial;
 }
 
 //=====================================================================
 //=====================================================================
 void HC06Interface::flushResponse()
 {
-    while ( this->serial.available())
+    while ( this->serial->available())
     {
-        char c = this->serial.read();
+        char c = this->serial->read();
         Serial.print(c);
     }
 }
@@ -29,9 +29,11 @@ void HC06Interface::init()
 {
     
     /*
+	//HC-06 initialization
     //Uncomment to initialize once if requred,one command at at time
+	//
     //Commands for HC-06 SPP 3 module: no need for crlf, type quickly, pause 1 second
-    //Comands may vary with version
+    //Comands may vary with HC-06 module version
     //Default baud rate is 9600
     
     this->serial.begin(57600, SERIAL_8N1, RX_PIN, TX_PIN );
@@ -45,7 +47,7 @@ void HC06Interface::init()
     this->flushResponse();
     */
 
-    this->serial.begin(HC06_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN );
+    this->serial->begin(HC06_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN );
 }
 
 
@@ -53,7 +55,7 @@ void HC06Interface::init()
 //=====================================================================
 int HC06Interface::available()
 {
-    return this->serial.available();
+    return this->serial->available();
 }
 
 
@@ -61,19 +63,19 @@ int HC06Interface::available()
 //=====================================================================
 int HC06Interface::read()
 {
-    return this->serial.read();
+    return this->serial->read();
 }
 
 //=====================================================================
 //=====================================================================
 int HC06Interface::availableForWrite()
 {
-    return this->serial.availableForWrite();
+    return this->serial->availableForWrite();
 }
 //=====================================================================
 //=====================================================================
 size_t HC06Interface::write(uint8_t c)
 {
-    return this->serial.write(c);
+    return this->serial->write(c);
 }
 
