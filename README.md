@@ -2,14 +2,17 @@
 
 
 # hx_espnow_rc
+
 Remote control library based on ESP-NOW (PlatformIO, ESP32 and ESP8266)
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Build step")
 
 Transmits 16 channels and bidirectional telemetry.
 
 Can be used as chip RC for LOS flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
-See external module for Jumpter T-Lite: doc/transmitter.md  
+See external module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
 
 
 # Range
@@ -22,20 +25,9 @@ PCB antenal provide range less then 200m.
 Singe telemetry-enabled RC contains both receiver and transmitter on both ends, we will name RC Controller/GC  a Master, and UAV/vechicle a Slave to avoid confusion.
 
 
-# Peer mac address
-
-ESP has two interfaces(AP and STA) with different mac addresses.
-
-ESP-NOW communication is done on Station(STA) interface. HXRCConfig should be passed Station mac address.
-
-Note that mac address you can see in Wifi analyser is AP address.
-
-Mac address of Station can be easily determined from AP address.
-For ESP32, substract 1 from the last number.
-F.e. 24:62:5B:CA:AA:DD (AP) -> 24:62:5B:CA:AA:DC (STA) 
-
-For esp8266, substruct 2 from first number.
-F.e. 9A:F4:AB:Fb:11:24 (AP) - > 98:F4:AB:Fb:11:24 (STA)
+# Key and channel
+                                                                                  
+There is not bind procedure. Devices should be flahsed with same USE_KEY and WIFI_CHANNEL.
 
 
 # Wifi channel setting
