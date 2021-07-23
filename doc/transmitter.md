@@ -5,13 +5,12 @@ In general, can be built for any RC controller with SBUS output.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Transmitter module")
 
-#How to build
+# How to build
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/transmitter_connections.jpg "Transmitter module connections")
 
 
-
-Parts list
+# Parts list
 - 3D Printed parts  thingiverse.com
 - ESP32 DevkitC U32 or ESP32 Devkit V1 
 - HC-06 bluetooth module
@@ -24,6 +23,7 @@ Parts list
 - 4x M2.5x3 bolts
 
 
+# Building guide
 Print main part and two insets:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build1.jpg "Build step")

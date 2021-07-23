@@ -9,10 +9,10 @@ Remote control library based on ESP-NOW (PlatformIO, ESP32 and ESP8266)
 
 Transmits 16 channels and bidirectional telemetry.
 
-Can be used as chip RC for LOS flights.
+Can be used as cheap RC for LOS flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
-See external module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
+See external module for Jumpter T-Lite building guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
 
 
 # Range
