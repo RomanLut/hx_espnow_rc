@@ -60,6 +60,9 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
         {
             this->lastReceived = millis();
 
+            this->A1 = pPayload->A1;
+            this->A2 = pPayload->A2;
+
             if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length ) )
             {
                 if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )
@@ -202,6 +205,20 @@ void HXRCMaster::printDelta()
     int16_t d = DEFAULT_PACKET_SEND_PERIOD_MS / 2 - (this->delta256 >> 8 );
     Serial.print("Delta: ");
     Serial.println(d);
+}
+
+//=====================================================================
+//=====================================================================
+uint32_t HXRCMaster::getA1()
+{
+    return this->A1;
+}
+
+//=====================================================================
+//=====================================================================
+uint32_t HXRCMaster::getA2()
+{
+    return this->A2;
 }
 
 

@@ -45,5 +45,8 @@ public:
     void setChannelValue( uint8_t index, uint16_t data);
 
     void printDelta();
+
+    uint32_t getA1();
+    uint32_t getA2();
 };
 

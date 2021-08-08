@@ -18,7 +18,7 @@
 #define USE_SPORT
 
 //= Dependent definitions ========================================================
-#ifdef USE_SPORT
+#ifdef USE_SPORT 
 #else
 #endif
 
@@ -38,3 +38,45 @@ void HXRCGetLogStream(const char *fmt, va_list args)
 }
 
 */
+
+//=====================================================================
+//=====================================================================
+typedef enum 
+{
+  TM_ESPNOW = 0,            
+  TM_BLUETOOTH_GAMEPAD = 1
+  //TODO: other modes - Wifi RC, bluetooth RC, BLE RC 
+
+} TransmitterMode;
+
+//=====================================================================
+//=====================================================================
+typedef enum 
+{
+  SPE_RSSI = 0,         //output RSSI only
+  SPE_PATHTHROUGH = 1,  //pass incoming telemetry to the SPORT pin
+  //TODO: SPT_MAVLINK  mavlink to sport encoding
+
+} SportTelemetryEncoder;
+
+//=====================================================================
+//=====================================================================
+class TXConfigProfile
+{
+public:
+
+  TransmitterMode transmitterMode;
+
+  SportTelemetryEncoder sportTelemetryEncoder;
+
+  uint16_t espnow_key;
+  uint8_t espnow_channel;
+  bool espnow_lrMode;
+
+  const char* ap_name;     //NULL - no AP
+  const char* ap_password;  //NULL - no password
+};
+
+extern TXConfigProfile currentProfile;
+
+extern void initConfig();

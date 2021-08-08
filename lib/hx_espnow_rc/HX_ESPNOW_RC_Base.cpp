@@ -27,6 +27,9 @@ bool HXRCBase::init( HXRCConfig config )
 
     HXRCInitLedPin(config);
 
+    this->A1 = 0;
+    this->A2 = 0;
+
     senderState = HXRCSS_READY_TO_SEND;
 
     return true;

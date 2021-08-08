@@ -100,6 +100,8 @@ int log_vprintf(const char *fmt, va_list args)
 }
 #endif
 
+//=====================================================================
+//=====================================================================
 unsigned char reverse(unsigned char b) {
    b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
    b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
@@ -107,6 +109,8 @@ unsigned char reverse(unsigned char b) {
    return b;
 }
 
+//=====================================================================
+//=====================================================================
 void test()
 {
   pinMode( 1, OUTPUT );
@@ -148,6 +152,8 @@ void test()
 //=====================================================================
 void setup()
 {
+  initConfig();
+
 #ifdef USE_SPORT  
   sport.init();
 
@@ -179,14 +185,20 @@ void setup()
     Serial.println("An error occurred setting Bluetooth pin");
   }*/
 
-  hxrcMaster.init(
-      HXRCConfig(
-          USE_WIFI_CHANNEL,
-          USE_KEY,
-          false,
-          -1, false));
-
-  WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL);
+  if ( currentProfile.transmitterMode == TM_ESPNOW )
+  {
+    hxrcMaster.init(
+        HXRCConfig(
+            currentProfile.espnow_channel,
+            currentProfile.espnow_key,
+            currentProfile.espnow_lrMode,
+            -1, false));
+  }
+  
+  if ( currentProfile.ap_name )
+  {
+    WiFi.softAP(currentProfile.ap_name, currentProfile.ap_password, currentProfile.espnow_channel);  //for ESPNOW RC mode, have to use channel configured from espnow rc
+  }
 
   /*
   if ( !SerialBT.begin("HXRCBLE") ) 
@@ -218,10 +230,13 @@ void loop()
     hxrcMaster.getTransmitterStats().printStats();
     hxrcMaster.getReceiverStats().printStats();
     if ( sbusDecoder.isFailsafe()) HXRCLOG.print("SBUS FS!\n");
-  }*/
+  }
+*/
 
 #ifdef USE_SPORT  
   sport.setRSSI( hxrcMaster.getTransmitterStats().getRSSI());
+  sport.setA1(hxrcMaster.getA1());
+  sport.setA2(hxrcMaster.getA2());
   sport.loop();
 #endif
  }

@@ -71,13 +71,15 @@
 Smartport::Smartport(HardwareSerial* serial) 
 {
     this->serial = serial;
+    this->RSSI = 0;
+    this->A1 = 0;
+    this->A2 = 0;
 }
 
 //=====================================================================
 //=====================================================================
 void Smartport::init()
 {
-    //this->serial->begin(57600, SERIAL_8N1, SPORT_PIN, SPORT_PIN, true );  
     this->serial->begin(57600, SERIAL_8N1, -1, SPORT_PIN, true );  
     pinMode(SPORT_PIN, OUTPUT);  //call after serial->begin()
 	this->lastSend = millis();
@@ -139,9 +141,17 @@ void Smartport::sendRSSI()
 
 //=====================================================================
 //=====================================================================
-void Smartport::sendA2voltage()
+void Smartport::sendA1Voltage()
 {
-	uint32_t opentx_val = (255.0 * (float)(4.2 / (float)FRSKY_SPORT_A2_MAX));
+	uint32_t opentx_val = this->A1;
+	this->sendValue(FRSKY_SPORT_ADC1_ID, (opentx_val));
+}
+
+//=====================================================================
+//=====================================================================
+void Smartport::sendA2Value()
+{
+	uint32_t opentx_val = this->A2;
 	this->sendValue(FRSKY_SPORT_ADC2_ID, (opentx_val));
 }
 
@@ -186,7 +196,22 @@ this->serial->write( 0x00 );
 this->serial->write( 0x5e );   
 this->serial->write( 0x6c );   
 */
+            break;
 
+        case 1:
+
+            this->serial->write( FRSKY_START_STOP ); //0x7e
+            this->serial->write( FRSKY_SPORT_DEVICE_4); //0xe4
+
+            this->sendA1Voltage();
+            break;
+
+        case 2:
+
+            this->serial->write( FRSKY_START_STOP ); //0x7e
+            this->serial->write( FRSKY_SPORT_DEVICE_4); //0xe4
+
+            this->sendA2Value();
             break;
 
             /*
@@ -219,6 +244,12 @@ this->serial->write( 0x6c );
             break;
             */
         }
+
+        this->lastSensor++;
+        if ( this->lastSensor == 3 )
+        {
+            this->lastSensor = 0;
+        }
     }
 }
 
@@ -228,5 +259,20 @@ void Smartport::setRSSI(uint8_t value)
 {
     this->RSSI = value;
 }
+
+//=====================================================================
+//=====================================================================
+void Smartport::setA1(uint32_t value)
+{
+    this->A1 = value;
+}
+
+//=====================================================================
+//=====================================================================
+void Smartport::setA2(uint32_t value)
+{
+    this->A2 = value;
+}
+
 
 

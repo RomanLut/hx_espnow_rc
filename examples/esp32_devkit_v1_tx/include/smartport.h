@@ -8,9 +8,10 @@ class Smartport
 {
 private:
     unsigned long lastSend;
-    unsigned long lastSensor;
+    uint8_t lastSensor;
 
     uint8_t RSSI;
+    uint32_t A1,A2;
 
     unsigned short crc;
 
@@ -20,7 +21,8 @@ private:
     void sendCrc();
     void sendValue(uint16_t id, uint32_t value);
     void sendRSSI();
-    void sendA2voltage();
+    void sendA1Voltage();
+    void sendA2Value();
     void sendHeading();
 
 public:
@@ -33,5 +35,7 @@ public:
 
     //value in dbm, 0..100
     void setRSSI( uint8_t value); 
+    void setA1( uint32_t value); 
+    void setA2( uint32_t value); 
 };
 

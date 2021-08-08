@@ -67,6 +67,9 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
 {
     const HXRCMasterPayload* pPayload = (const HXRCMasterPayload*) incomingData;
 
+    pinMode( 4, OUTPUT );
+    digitalWrite( 4, HIGH );
+
     if ( 
         ( len >= HXRC_MASTER_PAYLOAD_SIZE_BASE ) && 
         ( len == HXRC_MASTER_PAYLOAD_SIZE_BASE + pPayload->length ) &&
@@ -114,6 +117,9 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
         //Serial.println(len);
         receiverStats.onInvalidPacket();
     }
+
+    digitalWrite( 4, LOW );
+
 }
 
 //=====================================================================
@@ -163,6 +169,8 @@ void HXRCSlave::loop()
             }
 
             outgoingData.ackSequenceId = receivedSequenceId;
+            outgoingData.A1 = A1;
+            outgoingData.A2 = A2;
 
             outgoingData.setCRC();
             transmitterStats.onPacketSend( t );
@@ -203,5 +211,20 @@ HXRCChannels HXRCSlave::getChannels()
 #endif
 
     return ret;
+}
+
+
+//=====================================================================
+//=====================================================================
+void HXRCSlave::setA1(uint32_t value)
+{
+    this->A1 = value;
+}
+
+//=====================================================================
+//=====================================================================
+void HXRCSlave::setA2(uint32_t value)
+{
+    this->A2 = value;
 }
 

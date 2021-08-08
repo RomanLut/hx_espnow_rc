@@ -3,7 +3,7 @@
 
 # hx_espnow_rc
 
-Remote control library based on ESP-NOW (PlatformIO, ESP32 and ESP8266)
+Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Build step")
 
@@ -12,7 +12,10 @@ Transmits 16 channels and bidirectional telemetry.
 Can be used as cheap RC for LOS flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
-See external module for Jumpter T-Lite building guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
+See building guides:
+
+- External module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
+- standalone receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
 
 
 # Range
@@ -27,7 +30,7 @@ Singe telemetry-enabled RC contains both receiver and transmitter on both ends, 
 
 # Key and channel
                                                                                   
-There is not bind procedure. Devices should be flahsed with same USE_KEY and WIFI_CHANNEL.
+There is not bind procedure. Devices should be flashed with same USE_KEY and WIFI_CHANNEL.
 
 
 # Wifi channel setting
@@ -79,8 +82,8 @@ Brosdcast packets do not support encription.
 
 ESP32 has single radio which is shared between Wifi, Bluetooth Classic and Bluetooth LE.
 
-Peer with active ESP-NOW and Bluetooth Classic communications is able to receive ESP-NOW packets and reply with ACK packets. But is has a problem with sending ESP-NOW packets to the peer because it can not listen for ACK packets successfully. Successfull packet rate dropd to 10-20/sec, sometimes no packets can be sent successfully in one second.
+Peer with active ESP-NOW and Bluetooth Classic communications is able to receive ESP-NOW packets and reply with ACK packets. But is has a problem with sending ESP-NOW packets to the peer because it can not listen for ACK packets successfully. Successfull packet rate drop to 10-20/sec, sometimes no packets can be sent successfully in one second.
 
 # ESP-NOW usage in HXRC library
 
-Packets are sent to broadcast address. This allows to implement fast, ACKless, newest data communication. All peers on the same Wifi channel will recevie packets and discard foreight packets by sequenceId(quick reject) and CRC32 (CRC32 of data + key).
+Packets are sent to broadcast address. This allows to implement fast, ACKless, newest data communication. All peers on the same Wifi channel will receive packets and discard foreign packets by sequenceId(quick reject) and CRC32 (CRC32 of data + key).

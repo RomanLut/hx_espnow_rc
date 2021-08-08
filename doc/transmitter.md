@@ -98,6 +98,7 @@ Double-check all connections. Use m2.5 bolts to fix cover on the main part:
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build18.jpg "Build step")
 
 Flash module with Examples/esp32_devkit_v1_tx/
+Configure T-Lite to output SBUS (inverted).
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build19.jpg "Build step")
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Build step")

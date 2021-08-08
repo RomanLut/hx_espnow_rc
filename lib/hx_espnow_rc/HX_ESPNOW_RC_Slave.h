@@ -41,5 +41,9 @@ public:
     //index = 0..15
     //data = 1000...2000
     HXRCChannels getChannels();
+
+    void setA1( uint32_t value);
+    void setA2( uint32_t value);
+
 };
 
