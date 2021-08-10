@@ -75,16 +75,22 @@ public:
 
     void flushOut()
     {
+        // 1)
+        //--------DDDDDDDD-----------
+        //        |       h
+        //        h-c                  
+        // 2)
+        //DDDDD-----------------DDD
+        //     h                |  
+        //                      h-c+SIZE
         while ( outCount > 0 )
         {
             int p = outHead - outCount;
             if ( p < 0 ) p += Size;
-            int countEnd = Size - outHead;
+            int countEnd = Size - p;
             int c = outCount < countEnd ? outCount : countEnd;
             if ( this->base->sendOutgoingTelemetry( &outBuffer[p], c) )
             {
-                outHead += c;
-                if ( outHead == Size) outHead = 0;
                 outCount -= c;
             }
             else
@@ -96,6 +102,15 @@ public:
 
     void flushIn()
     {
+        //1)
+        //---------DDDDDDDD------
+        //         h       |
+        //                 h+c
+        //2)
+        //DDDDDDDD-------DDDDDDDD
+        //        |      h       
+        //        h+c-Size         
+
         while( inCount < Size )
         {
             int p = inHead + inCount;
