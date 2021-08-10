@@ -104,6 +104,15 @@ void checkChannels()
 
 //=====================================================================
 //=====================================================================
+void setSimpleTelemetry()
+{
+  uint32_t r = rand();
+  hxrcSlave.setA1(r);
+  hxrcSlave.setA2(~r);
+}
+
+//=====================================================================
+//=====================================================================
 void setup()
 {
   Serial.begin(115200);
@@ -152,6 +161,7 @@ void loop()
   checkChannels();
   processIncomingTelemetry();
   fillOutgoingTelemetry();
+  setSimpleTelemetry();
 
   hxrcSlave.loop();
 
