@@ -82,12 +82,12 @@ Prepare bluetooth module. We need naked HC-06 module:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build14.jpg "Build step")
 
-Prepare DC-DC module. Set output voplate to 5V before soldering everything together.
+Prepare DC-DC module. Set output voltage to 5V before soldering everything together.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build15.jpg "Build step")
 
 Solder everything together according to connections diagram. Use capton type to isolate parts. 
-Place alluminium foil to the cover and isolate with capton type to avoid pastic melting by DC-DC and linear regulators.
+Place alluminium foil to the cover and isolate with capton type to avoid plastic melting by DC-DC and linear regulators.
 
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build16.jpg "Build step")
@@ -98,8 +98,11 @@ Double-check all connections. Use m2.5 bolts to fix cover on the main part:
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build18.jpg "Build step")
 
 Flash module with Examples/esp32_devkit_v1_tx/
+
 Configure T-Lite to output SBUS (inverted).
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build19.jpg "Build step")
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Build step")
 
+
+TODO: configuration in XML, web page for configuration.
