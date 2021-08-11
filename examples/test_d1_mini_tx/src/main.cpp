@@ -1,8 +1,11 @@
 #include <Arduino.h>
 #include "HX_ESPNOW_RC_Master.h"
+#include "HX_ESPNOW_RC_SerialBuffer.h"
 
 #define USE_WIFI_CHANNEL 3
 #define USE_KEY 0 
+
+#define TEST_SERIALBUFFER
 
 #define TELEMETRY_RATE  4192  // keep rate b/sec
 
@@ -19,6 +22,10 @@ uint8_t outgoingTelVal = 0;
 unsigned long rateTime = millis();
 uint16_t rateCounter = 0;
 
+#ifdef TEST_SERIALBUFFER
+HXRCSerialBuffer<256> hxrcTelemetrySerial( &hxrcMaster );
+#endif
+
 //=====================================================================
 //=====================================================================
 void processIncomingTelemetry()
@@ -31,7 +38,15 @@ void processIncomingTelemetry()
   //otherwise we will sit here forewer processinf fast incoming telemetry stream
   for ( int j = 0; j < 10; j++ )
   {
+#ifdef TEST_SERIALBUFFER
+    uint16_t returnedSize = min( 100, (int)hxrcTelemetrySerial.getAvailable() );
+    for ( int i = 0; i < returnedSize; i++)
+    {
+      buffer[i] = hxrcTelemetrySerial.read();
+    }
+#else
     uint16_t returnedSize = hxrcMaster.getIncomingTelemetry( 100, buffer );
+#endif    
     if ( returnedSize == 0 ) break;
 
     uint8_t* ptr = buffer;
@@ -46,6 +61,18 @@ void processIncomingTelemetry()
       ptr++;
       incomingTelVal++;
     }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void processSimpleTelemetry()
+{
+  if ( hxrcMaster.getReceiverStats().isFailsafe() ) return;
+
+  if ( hxrcMaster.getA1() != ~hxrcMaster.getA2() )
+  {
+    errorCountTelemetry++;
   }
 }
 
@@ -75,11 +102,20 @@ void fillOutgoingTelemetry()
   //fill stream with increasing numbers
   for ( int i = 0; i < len; i++ ) buffer[i] = v++;
   
+#ifdef TEST_SERIALBUFFER
+  if ( hxrcTelemetrySerial.getAvailableForWrite() >= len )
+  {
+    for ( int i = 0; i < len; i++ ) hxrcTelemetrySerial.write(buffer[i]);
+    outgoingTelVal = v;
+    rateCounter += len;
+  }
+#else
   if ( hxrcMaster.sendOutgoingTelemetry( buffer, len ))
   {
     outgoingTelVal = v;
     rateCounter += len;
   }
+#endif  
 }
 
 
@@ -135,7 +171,14 @@ void loop()
 {
   setChannels();
   processIncomingTelemetry();
+  processSimpleTelemetry();
   fillOutgoingTelemetry();
+
+/*
+ #ifdef TEST_SERIALBUFFER
+  hxrcTelemetrySerial.flush();
+ #endif 
+*/
 
   hxrcMaster.loop();
 

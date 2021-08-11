@@ -2,12 +2,15 @@
 #include <TFT_eSPI.h>
 
 #include "HX_ESPNOW_RC_Slave.h"
+#include "HX_ESPNOW_RC_SerialBuffer.h"
 
 #define USE_WIFI_CHANNEL 3
 
 #define USE_KEY   0
 
 #define LED_BUILTIN 33
+
+#define TEST_SERIALBUFFER
 
 HXRCSlave hxrcSlave;
 
@@ -28,6 +31,10 @@ bool gotSync = false;
 uint8_t incomingTelVal = 0;
 uint8_t outgoingTelVal = 0;
 
+#ifdef TEST_SERIALBUFFER
+HXRCSerialBuffer<256> hxrcTelemetrySerial( &hxrcSlave );
+#endif
+
 //=====================================================================
 //=====================================================================
 void processIncomingTelemetry()
@@ -40,7 +47,15 @@ void processIncomingTelemetry()
   //otherwise we will sit here forewer processing fast incoming telemetry stream
   for ( int j = 0; j < 10; j++ )
   {
+#ifdef TEST_SERIALBUFFER
+    uint16_t returnedSize = min( 100, (int)hxrcTelemetrySerial.getAvailable() );
+    for ( int i = 0; i < returnedSize; i++)
+    {
+      buffer[i] = hxrcTelemetrySerial.read();
+    }
+#else
     uint16_t returnedSize = hxrcSlave.getIncomingTelemetry( 100, buffer );
+#endif    
     if ( returnedSize == 0 ) break;
 
     uint8_t* ptr = buffer;
@@ -72,10 +87,18 @@ void fillOutgoingTelemetry()
   //fill stream with increasing numbers
   for ( int i = 0; i < len; i++ ) buffer[i] = v++;
   
+#ifdef TEST_SERIALBUFFER
+  if ( hxrcTelemetrySerial.getAvailableForWrite() >= len )
+  {
+    for ( int i = 0; i < len; i++ ) hxrcTelemetrySerial.write(buffer[i]);
+    outgoingTelVal = v;
+  }
+#else
   if ( hxrcSlave.sendOutgoingTelemetry( buffer, len ))
   {
     outgoingTelVal = v;
   }
+#endif  
 }
 
 //=====================================================================
@@ -133,7 +156,7 @@ void setup()
           false,
           LED_BUILTIN, false));
 
-    WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL );
+  WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL );
 }
 
 //=====================================================================
@@ -162,6 +185,12 @@ void loop()
   processIncomingTelemetry();
   fillOutgoingTelemetry();
   setSimpleTelemetry();
+
+/*
+ #ifdef TEST_SERIALBUFFER
+  hxrcTelemetrySerial.flush();
+ #endif 
+*/
 
   hxrcSlave.loop();
 

@@ -23,7 +23,7 @@ unsigned long rateTime = millis();
 uint16_t rateCounter = 0;
 
 #ifdef TEST_SERIALBUFFER
-HXRCSerialBuffer<128> hxrcTelemetrySerial( &hxrcMaster );
+HXRCSerialBuffer<256> hxrcTelemetrySerial( &hxrcMaster );
 #endif
 
 //=====================================================================
@@ -40,9 +40,9 @@ void processIncomingTelemetry()
   {
 #ifdef TEST_SERIALBUFFER
     uint16_t returnedSize = min( 100, (int)hxrcTelemetrySerial.getAvailable() );
-    for ( int j = 0; j < returnedSize; j++)
+    for ( int i = 0; i < returnedSize; i++)
     {
-      buffer[j] = hxrcTelemetrySerial.read();
+      buffer[i] = hxrcTelemetrySerial.read();
     }
 #else
     uint16_t returnedSize = hxrcMaster.getIncomingTelemetry( 100, buffer );
@@ -173,6 +173,12 @@ void loop()
   processIncomingTelemetry();
   processSimpleTelemetry();
   fillOutgoingTelemetry();
+
+/*
+ #ifdef TEST_SERIALBUFFER
+  hxrcTelemetrySerial.flush();
+ #endif 
+*/
 
   hxrcMaster.loop();
 

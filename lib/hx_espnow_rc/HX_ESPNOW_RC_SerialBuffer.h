@@ -52,7 +52,7 @@ public:
     {
         if ( this->inCount == 0) return 0;
         uint8_t res = inBuffer[inHead];
-        if ( inHead++ == Size) inHead = 0;
+        if ( ++inHead == Size) inHead = 0;
         inCount--;
         return res;
     }
@@ -69,7 +69,7 @@ public:
         if ( outCount == Size ) flushOut();
         if ( outCount == Size ) return;
         outBuffer[outHead] = c;
-        if ( outHead++ == Size ) outHead = 0;
+        if ( ++outHead == Size ) outHead = 0;
         outCount++;
     }
 
