@@ -2,14 +2,20 @@
 
  Projects are built using PlatformIO https://platformio.org/
 
- test_* projects are used to test library. Flash one board with tx and other with rx, with same wifi channel and key (or leave settings by default). Statistic is output to console. On TTGO Display board statistic is also output on screen.
+ test_* projects are used to test the library. Flash one board with *_tx and other with *_rx project, with same wifi channel and key (or leave settings by default). Statistic is output to console. On TTGO Display board statistic is also output on the screen.
 
  dx_mini_rx_standalone https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md - PWM output receiver with telemetry
+
  esp32_devkit_v1_tx - external module for Jumper T-Lite transmitter
+
  test_d1_mini_tx - Master(transmitter) test on D1 Mini board
+
  test_esp32_devkit_rx - Slave(receiver) test on ESP32 Devkit V1 board or similar
+
  test_esp32_devkit_tx - Master(transmitter) test on ESP32 Devkit V1 board or similar
+
  test_ttgo_display_rx - Slave(receiver) test on TTGO Display board 
+
 
  See classes reference: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/classes.md
  
@@ -31,9 +37,9 @@ Thus is it required to protect data with some kind of software-layer encription 
 
 If encripted packet is sent to peer with non-matching pmk/lmk, API returns success, but peer does not see packet at software layer.
 
-Brosdcast packets do not support encription.
+Broadcast packets do not support encription.
 
-ESP-NOW encription is not used by this library due to low benefits for RC library.  
+ESP-NOW encription is not used by this library due to low benefits for RC library.
 
 
 # ESP-NOW and Bluetooth coexistence
@@ -44,7 +50,7 @@ Peer with active ESP-NOW and Bluetooth Classic communications is able to receive
 
 # ESP-NOW usage in HXRC library
 
-Packets are sent to broadcast address. This allows to implement fast, ACKless, newest data communication. All peers on the same Wifi channel will receive packets and discard foreign packets by sequenceId(quick reject) and CRC32 (CRC32 of data + key). Key used to reject foreign packets only, not for protection.
+Packets are sent to broadcast address. This allows to implement fast, ACKless, newest data communication. All peers on the same Wifi channel will receive packets and discard foreign packets by sequenceId(quick reject) and CRC32 (CRC32 of data + key). Key is used to reject foreign packets only, not for protection.
 
 # Binding 
                                                                                   
@@ -56,11 +62,11 @@ There is no bind procedure. Devices have to be flashed with same USE_KEY and WIF
 
 # Hacking protection
 
-Protection is not implemented. Considering very small RC range, it is better to not complicate library.
+Protection is not implemented. Considering very small RC range, it is better to not complicate the library.
 
 # Notes on Wifi channel setting
 
-Wifi channel is global setting for ESP. If you need to start AP for your needs, initialise it after HXRC*::Init() on the same wifi channel:
+Wifi channel is global setting for ESP. If you need to start AP for your needs, initialize it after HXRC*::Init() on the same wifi channel:
 
 WiFi.softAP("ssid", "password", config.wifi_channel );
 
@@ -72,8 +78,8 @@ Communication is possible ( not in LR mode, see below ).
 
 # LR mode 
 
-(Long Range ) mode is special mode introduced by Expressif. This mode can be enabled on ESP32. This options is ignored on ESP8266. 
-Theoretically it should provide 2x better range, in practice difference is subtle. 
+(Long Range ) mode is special mode introduced by Espressif Systems. This mode can be enabled on ESP32. This options is ignored on ESP8266. 
+Theoretically it should provide 2x better range, in practice the difference is subtle. 
 
 ESP32 in LR mode can not communicate to ESP8266.
 
