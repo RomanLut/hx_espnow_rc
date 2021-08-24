@@ -1,5 +1,15 @@
 [Work in progress]
 
+Goals:
+- transmit 16 RC channels (done)
+- transmit RSII, A1, A2 telemetry (done)
+- transmit bidirectional telemetry stream (done)
+- build external module for Jumper T-Lite (done)
+- build D1 Mini PWM output receiver (done)
+- build ESP-01 based SBUS output receiver 
+- external module for Jumper T-Lite: multiple configurations in xml file
+- external module for Jumper T-Lite: select active configuration by CH16 value
+- external module for Jumper T-Lite: bluetooth gamepad mode
 
 # hx_espnow_rc
 
@@ -7,83 +17,46 @@ Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Build step")
 
-Transmits 16 channels and bidirectional telemetry.
+Transmits 16 channels, bidirectional telemetry(transparent stream) + RSSI, A1, A2.
 
 Can be used as cheap RC for LOS flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
+Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/mahowii
+
+You can build transmitter external module and SBUS/PWM receiver using guides below.
+
 See building guides:
 
-- External module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
-- standalone receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
-
+- external module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
+- external module for Radiomaster TX16s [todo]
+- standalone PWM output receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
+- ESP-01 based SBUS receiver: [todo]
+- development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 
 # Range
-PCB antenal provide range less then 200m.
+2 dbi dipole antenna on transmitter with:
+ - PCB antenal provide range less then 150m.
+ - whip antenna with stripping write provide range ~300m
+ - 2dbi Dipole antena whould provide range ~400m (todo: test)
+TODO: Test with FRSKY directional patch 7db.
 
-2dbi Dipole antenas on both devices provide range ~500m.
-(TODO: test)
+# Telemetry
+Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distorion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
 
-# Naming
-Singe telemetry-enabled RC contains both receiver and transmitter on both ends, we will name RC Controller/GC  a Master, and UAV/vechicle a Slave to avoid confusion.
+# Building and Flashing
+Currently pre-build firmware is not provided. You have to build firmware yourself and flash ESP32 modules using PlatformIO https://platformio.org/
 
+If you do not know what PlatformIO, than this project is not for you at the current stage. Later I may try to provide pre-build binaries and detailed instructions for flashing and configuring tranmitter and receviers.
 
-# Key and channel
-                                                                                  
-There is not bind procedure. Devices should be flashed with same USE_KEY and WIFI_CHANNEL.
+See development guide: https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/development.md
 
+# Quick start
 
-# Wifi channel setting
+- get two ESP32 Devkit boards
+- flash one with test_esp32_devkit_rx project
+- flash second with test_esp32_devkit_tx project
+- see statistic in terminal
 
-Wifi channel is global setting for ESP. If you need to start AP for your needs, initialise it after HXRC*::Init() on the same wifi channel:
+Continue with development guide: https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/development.md
 
-WiFi.softAP("ssid", "password", config.wifi_channel );
-
-Otherwise channel will be changed to default (1).
-
-# Communication between ESP32 and ESP8266
-
-Communication is possible ( not in LR mode, see below ).
-
-# LR mode 
-
-(Long Range ) mode is special mode introduced by Expressif. This mode can be enabled on ESP32. This options is ignored on ESP8266. 
-Theoretically it should provide 2x better range, in practice difference is subtle. 
-
-ESP32 in LR mode can not communicate to ESP8266.
-
-It is not possible to use SoftAP on ESP32 in LR mode, because beacon is sent in LR mode. AP will be invisible for normal devices.
-
-LR mode is global setting for AP and STA. It is not possible to configure modes on interfaces separately.
-
-
-
-# ESP-NOW technical details
-ESP-NOW packets are vendor-specific packets. ESP sends packet and waits for confirmation packet from peer mac address.
-If Ack packet is not received, erorr is returned. So sender knows that packet is not delivered successfully. 
-Opposite is not true. If API call returns error, packet still may have been delivered, but sender did not hear Ack packet.
-
-If peer address is set to broadcast address (ff:ff:ff:ff:ff:ff), ESP does not wait for Ack packet and returns no error (Update: API still returns error sometimes?). This address can be used to send one-way, "fire and foget" packets without confirmation and delay.
-
-# ESP-NOW encription
-
-With ESP-NOW encription (pmk and lmk keys) enabled, slave will still receive unencripted packets from broadcast or spoofed MAC address. 
-
-Checking MAC address is useless because it can be spoofed.
-
-Thus is it required to protect data with some kind of software-layer encription to discard mailformed packets. Simple CRC32 XORed with a key, combined with encription-enabled packets should give enough protection.
-
-If encripted packet is sent to peer with non-matching pmk/lmk, API returns success, but peer does not see packet at software layer.
-
-Brosdcast packets do not support encription.
-
-
-# ESP-NOW and Bluetooth coexistence
-
-ESP32 has single radio which is shared between Wifi, Bluetooth Classic and Bluetooth LE.
-
-Peer with active ESP-NOW and Bluetooth Classic communications is able to receive ESP-NOW packets and reply with ACK packets. But is has a problem with sending ESP-NOW packets to the peer because it can not listen for ACK packets successfully. Successfull packet rate drop to 10-20/sec, sometimes no packets can be sent successfully in one second.
-
-# ESP-NOW usage in HXRC library
-
-Packets are sent to broadcast address. This allows to implement fast, ACKless, newest data communication. All peers on the same Wifi channel will receive packets and discard foreign packets by sequenceId(quick reject) and CRC32 (CRC32 of data + key).
