@@ -8,11 +8,15 @@ HXRCSlave hxrcSlave;
 
 unsigned long lastStats = millis();
 unsigned long telemetryTime = millis();
+unsigned long analogReadTime = millis();
 
-Servo channelServo[TOTAL_CHANNELS];
-uint8_t channelPin[TOTAL_CHANNELS] = CHANNEL_PINS;
+bool servoOutputsAttached = false;
+Servo servos[TOTAL_CHANNELS];
 
-bool attached = false;
+uint8_t servoPins[TOTAL_CHANNELS] = SERVO_PINS;
+uint8_t pwmPins[TOTAL_CHANNELS] = PWM_PINS;
+uint8_t discretePins[TOTAL_CHANNELS] = DISCRETE_PINS;
+
 
 //=====================================================================
 //=====================================================================
@@ -39,36 +43,86 @@ void fillOutgoingTelemetry()
     telemetryTime = t;
   
     /*
-    //TODO: write SPORT packets
+    //write outgoing teemetry here
     if ( hxrcSlave.sendOutgoingTelemetry( buffer, len ))
     {
       outgoingTelVal = v;
       rateCounter += len;
     }
     */
-
-  }
-
-}
-
-//=====================================================================
-//=====================================================================
-void detach()
-{
-  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
-  {
-    channelServo[i].detach();
-    digitalWrite(channelPin[i], LOW );  
   }
 }
 
 //=====================================================================
 //=====================================================================
-void attach()
+void attachServoOutputs()
 {
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
-    channelServo[i].attach(channelPin[i]);
+    if (servoPins[i] != NOPIN)
+    {
+      servos[i].attach(servoPins[i]);
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void detachServoOutputs()
+{
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if (servoPins[i] != NOPIN)
+    {
+      servos[i].detach();
+      digitalWrite(servoPins[i], LOW );  
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void updateServoOutputs()
+{
+  static uint8_t counter = 0;
+
+  if ( hxrcSlave.getReceiverStats().isFailsafe() )
+  {
+    if ( servoOutputsAttached )
+    {
+      detachServoOutputs();
+      servoOutputsAttached = false;
+    }
+  }
+  else
+  {
+    if ( !servoOutputsAttached )
+    {
+      attachServoOutputs();
+      servoOutputsAttached = true;
+    }
+
+    HXRCChannels channels = hxrcSlave.getChannels();
+    
+    for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+    {
+      counter++;
+      if (counter == TOTAL_CHANNELS) counter = 0;
+
+      if (servoPins[counter] != NOPIN)
+      {
+        //calling Servo.writeMicroseconds() continuously will produce delay up to 20ms on each call,
+        //because waveform generator will wait until previous settings are applied.
+        //so avoid redundand calls to writeMicroseconds()
+        if ( servos[counter].readMicroseconds() != channels.getChannelValue(counter) )
+        {
+          servos[counter].writeMicroseconds(channels.getChannelValue(counter));
+
+          //in any case, update up to 1 servo at a time. 20 ms per servo is quite slow.
+          break;
+        }
+      }
+    }
   }
 }
 
@@ -76,7 +130,7 @@ void attach()
 //=====================================================================
 void calibrateESCs()
 {
-  bool flags[] = CALIBRATE_ESC_CHANNELS;
+  bool flags[] = CALIBRATE_ESC_PINS;
 
   bool anyFlagSet = false;
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
@@ -88,8 +142,8 @@ void calibrateESCs()
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
     if ( !flags[i] ) continue;
-    channelServo[i].attach(channelPin[i]);
-    channelServo[i].write(2000);
+    servos[i].attach(servoPins[i]);
+    servos[i].write(2000);
   }
 
   delay(5000);
@@ -97,13 +151,84 @@ void calibrateESCs()
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
     if ( !flags[i] ) continue;
-    channelServo[i].attach(channelPin[i]);
-    channelServo[i].write(1000);
+    servos[i].attach(servoPins[i]);
+    servos[i].write(1000);
   }
 
   delay(1000);
 }
 
+//=====================================================================
+//=====================================================================
+void attachPWMPins()
+{
+  analogWriteFreq( 8192);
+  analogWriteResolution(10);
+  
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if ((pwmPins[i] != NOPIN))
+    {
+      analogWrite( pwmPins[i], 0);
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void updatePWMOutputs()
+{
+  bool fs = hxrcSlave.getReceiverStats().isFailsafe();
+
+  HXRCChannels channels = hxrcSlave.getChannels();
+
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if (pwmPins[i] != NOPIN)
+    {
+      if ( fs ) 
+      {
+        analogWrite(pwmPins[i], 0 );  
+      }
+      else
+      {
+        analogWrite(pwmPins[i], map( constrain( channels.getChannelValue(i), 1000, 2000), 1000, 2000, 0, 1023 ) );  
+      }
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void updateDiscreteOutputs()
+{
+  if( hxrcSlave.getReceiverStats().isFailsafe() ) return;
+
+  HXRCChannels channels = hxrcSlave.getChannels();
+
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if (discretePins[i] != NOPIN)
+    {
+      digitalWrite(discretePins[i], channels.getChannelValue(i)>1200? HIGH : LOW );  
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+//write zeros to all outputs
+void zeroOutputs()
+{
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if ((servoPins[i] != NOPIN) || (pwmPins[i] != NOPIN) || (discretePins[i] != NOPIN))
+    {
+      pinMode(servoPins[i], OUTPUT );  
+      digitalWrite(servoPins[i], LOW );  
+    }
+  }
+}
 
 //=====================================================================
 //=====================================================================
@@ -114,11 +239,7 @@ void setup()
     digitalWrite(DEBUG_LOOP_PIN, LOW );  
 #endif
 
-  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
-  {
-    pinMode(channelPin[i], OUTPUT );  
-    digitalWrite(channelPin[i], LOW );  
-  }
+  zeroOutputs();
 
   Serial.begin(115200);
   Serial.println("Start");
@@ -134,50 +255,7 @@ void setup()
   WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL);
 
   calibrateESCs();
-}
-
-//=====================================================================
-//=====================================================================
-void setOutputs()
-{
-  static uint8_t counter = 0;
-
-  if ( hxrcSlave.getReceiverStats().isFailsafe() )
-  {
-    if ( attached )
-    {
-      detach();
-      attached = false;
-    }
-  }
-  else
-  {
-    if ( !attached )
-    {
-      attach();
-      attached = true;
-    }
-
-    HXRCChannels channels = hxrcSlave.getChannels();
-    
-    for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
-    {
-      counter++;
-      if (counter == TOTAL_CHANNELS) counter = 0;
-
-      //calling Servo.writeMicroseconds() with same value continuously with high frequency will produce delay up to 20ms on each call,
-      //because waveform generator will wait untill previous settins are applied.
-      //so avoid redundand calls to writeMicroseconds()
-	    if ( channelServo[counter].readMicroseconds() != channels.getChannelValue(counter) )
-      {
-	      channelServo[counter].writeMicroseconds(channels.getChannelValue(counter));
-
-        //in any case, update up to 1 servo at a time. 20 ms per servo is quaite slow.
-        break;
-      }
-    }
-
-  }
+  attachPWMPins();
 }
 
 //=====================================================================
@@ -193,6 +271,13 @@ void loop()
   processIncomingTelemetry();
   fillOutgoingTelemetry();
 
+  if ( millis() > analogReadTime )
+  {
+    //should not read ADC with high frequency. It will kill Wifi.
+    analogReadTime = millis() + 1000;
+    hxrcSlave.setA1( analogRead(0) );
+  }
+
   hxrcSlave.loop();
 
   if (millis() - lastStats > 1000)
@@ -202,7 +287,9 @@ void loop()
     hxrcSlave.getReceiverStats().printStats();
   }
 
-  setOutputs();
+  updateServoOutputs();
+  updatePWMOutputs();
+  updateDiscreteOutputs();
 
 #if defined(DEBUG_LOOP_PIN)
     digitalWrite(DEBUG_LOOP_PIN, LOW );  

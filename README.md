@@ -38,7 +38,7 @@ See building guides:
 2 dbi dipole antenna on transmitter with:
  - PCB antenal provide range less then 150m.
  - whip antenna with stripping wire provide range ~300m
- - 2dbi dipole antenna whould provide range ~400m (todo: test)
+ - 2dbi dipole antenna should provide range ~400m (todo: test)
 
 TODO: Test with FRSKY directional patch 7db.
 
