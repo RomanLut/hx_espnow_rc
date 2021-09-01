@@ -7,7 +7,10 @@
  No pulses on Failsafe. Discrete outputs keep last values.
 
  Transmits telementry: RSSI, battery voltage.
- Can be powered directly from 5V source or 1s battery: (4.2V-3.1V).
+ Voltage range in 3.1...6V.
+ It can be powered from 5V BEC or directly from 1s battery: (4.2V-3.1V).
+
+ Peak power consumption is ~230mA.
 
 # Measuring battery voltage
  
@@ -68,9 +71,11 @@ Remove PCB antena with dremel leaving only two solder pads for GND and signal. S
 
 4 Servo outputs: AERT. ESC calibration is enabled on Channel 4.
 
-3 Discrete outputs.
+4 Discrete outputs.
 
-[todo: connection diagram]
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini1connections_brushless.jpg  "D1 Mini twin brushless")
+
+*for 2S and higher battery, 5V Beck is required to power servos and receiver.
  
 # Receiver configuration 2: Brushed plane
 
@@ -79,9 +84,9 @@ Remove PCB antena with dremel leaving only two solder pads for GND and signal. S
 
 Channel 4 outputs PWM for simple brushed ESC.
 
-3 Discrete outputs.
+4 Discrete outputs.
 
-[todo: connection diagram]
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini1connections_brushed.jpg  "D1 Mini twin brushed")
 
 # Receiver configuration 3: Twin motor brushed plane
 
@@ -89,7 +94,7 @@ Channel 4 outputs PWM for simple brushed ESC.
 
 Channels 3 and 4 output PWM for simple brushed ESCs.
 
-3 Discrete outputs.
+4 Discrete outputs.
 
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini1connections_twin_brushed.jpg  "D1 Mini twin brushed connections")
@@ -101,7 +106,7 @@ Channels 3 and 4 output PWM for simple brushed ESCs.
 - configure receiver pins 
 - flash examples/d1_mini_rx_standalone/ to D1 Mini board
 
-#Reference: D1 Mini pinout
+# Reference: D1 Mini pinout
 
 https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 
