@@ -9,8 +9,10 @@ HXRCSlave hxrcSlave;
 unsigned long lastStats = millis();
 unsigned long telemetryTime = millis();
 unsigned long analogReadTime = millis();
+uint16_t battSum = 0;
 
 bool servoOutputsAttached = false;
+bool PWMOutputsAttached = false;
 Servo servos[TOTAL_CHANNELS];
 
 uint8_t servoPins[TOTAL_CHANNELS] = SERVO_PINS;
@@ -162,7 +164,10 @@ void calibrateESCs()
 //=====================================================================
 void attachPWMPins()
 {
-  analogWriteFreq( 8192);
+  if ( PWMOutputsAttached ) return;
+  PWMOutputsAttached = true;
+  
+  analogWriteFreq( 8192 );
   analogWriteResolution(10);
   
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
@@ -176,26 +181,105 @@ void attachPWMPins()
 
 //=====================================================================
 //=====================================================================
-void updatePWMOutputs()
+void attachPWMPinsBeep()
 {
-  bool fs = hxrcSlave.getReceiverStats().isFailsafe();
+  if ( !PWMOutputsAttached ) return;
+  PWMOutputsAttached = false;
+  
+  analogWriteFreq( BEEP_FREQ );
+  analogWriteResolution(10);
+  
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if ((pwmPins[i] != NOPIN))
+    {
+      analogWrite( pwmPins[i], 0);
+    }
+  }
+}
 
-  HXRCChannels channels = hxrcSlave.getChannels();
+//=====================================================================
+//=====================================================================
+void processBeep()
+{
+  bool b = false;
+
+  bool fs = hxrcSlave.getReceiverStats().isFailsafe();
+  
+  if ( !fs && (MOTOR_BEEPER_CH >= 0) )
+  {
+    HXRCChannels channels = hxrcSlave.getChannels();
+    if ( channels.getChannelValue(MOTOR_BEEPER_CH) >= 1750) b = true;
+  }
+
+  if (!b)
+  {
+    //TODO timeout before beep
+    if ( hxrcSlave.getReceiverStats().isFailsafe() ) 
+    {
+      if ( (millis() % 3000) < 100 ) 
+      {
+        b = true;
+      }
+    }
+  }
 
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
     if (pwmPins[i] != NOPIN)
     {
-      if ( fs ) 
+      analogWrite(pwmPins[i], b ? BEEP_DUTY_VALUE:0);
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void updatePWMOutputs()
+{
+  bool fs = hxrcSlave.getReceiverStats().isFailsafe();
+  HXRCChannels channels = hxrcSlave.getChannels();
+
+  bool canBeep = true;
+
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if (pwmPins[i] != NOPIN)
+    {
+      if ( !fs && (channels.getChannelValue(i) >= PWM_CH_MIN )) 
       {
-        analogWrite(pwmPins[i], 0 );  
-      }
-      else
-      {
-        analogWrite(pwmPins[i], map( constrain( channels.getChannelValue(i), 1000, 2000), 1000, 2000, 0, 1023 ) );  
+        canBeep = false;
+        break;
       }
     }
   }
+
+  if ( canBeep )
+  {
+    attachPWMPinsBeep();
+
+    processBeep();
+  }
+  else
+  {
+    attachPWMPins();
+
+    for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+    {
+      if (pwmPins[i] != NOPIN)
+      {
+        if ( channels.getChannelValue(i) < PWM_CH_MIN ) 
+        {
+          analogWrite(pwmPins[i], 0 );  
+        }
+        else
+        {
+          analogWrite(pwmPins[i], map( constrain( channels.getChannelValue(i), 1000, 2000), 1000, 2000, 0, 1023 ) );  
+        }
+      }
+    }
+  }
+
 }
 
 //=====================================================================
@@ -260,6 +344,26 @@ void setup()
 
 //=====================================================================
 //=====================================================================
+//returns true if all PWM outputs are at minimum OR failsafe
+bool isThrottleLow() 
+{
+  if ( hxrcSlave.getReceiverStats().isFailsafe() ) return true;
+
+  HXRCChannels channels = hxrcSlave.getChannels();
+  
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if (pwmPins[i] != NOPIN)
+    {
+      if ( channels.getChannelValue(i) >= PWM_CH_MIN ) return false;
+    }
+  }
+
+  return true;
+}
+
+//=====================================================================
+//=====================================================================
 void loop()
 {
   //unsigned long t = millis();
@@ -271,11 +375,24 @@ void loop()
   processIncomingTelemetry();
   fillOutgoingTelemetry();
 
-  if ( millis() > analogReadTime )
+  if ( (millis() - analogReadTime) > 500 )
   {
     //should not read ADC with high frequency. It will kill Wifi.
-    analogReadTime = millis() + 1000;
-    hxrcSlave.setA1( analogRead(0) );
+    analogReadTime = millis();
+
+    //without filter, A1 = ( analogRead(0) + 2 ) >> 2
+
+    uint16_t v = analogRead(0);
+    if ( battSum == 0 ) 
+    {
+      battSum = v << 1;
+    }
+    else
+    {
+      battSum = battSum - (( battSum + 4 ) >> 3) + ((v + 2) >> 2);
+    }
+
+    hxrcSlave.setA1( (battSum + 4 ) >> 3);
   }
 
   hxrcSlave.loop();

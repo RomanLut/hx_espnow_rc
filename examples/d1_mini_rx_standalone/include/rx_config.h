@@ -23,6 +23,8 @@ PWM_PINS - Pins for PWM output (8192Hz PWM, duty cycle 0-100%). GPIO id for each
 
 DISCRETE_PINS - Pins for discrete output: 1000 -> 0, >1250-> 1. GPIO id for each RC channel. Set to NOPIN to skip channel.
 
+MOTOR_BEEPER_CH - channel to enable beep with PWM mottor. Value >1250 - motors with zero throttle value will start beeping. 
+
 Failsafe:
  Servo pins - no pulses
  PWM pins - no pulses
@@ -31,6 +33,19 @@ Failsafe:
 
 #define NOPIN 255
 //#define DEBUG_LOOP_PIN  0
+
+//beep (with motor) after period of inactivity
+#define IDLE_BEEP_DELAY_MS (5*60*1000)   
+
+//PWM beep frequence
+#define BEEP_FREQ 1000
+
+//PWM duty value to beep with motors
+#define BEEP_DUTY_VALUE 15
+
+//if channel values is less then PWM_CH_MIN, pwm output is zero
+#define PWM_CH_MIN 1050 
+
 
 //=============================================================================
 //Receiver binding
@@ -41,7 +56,7 @@ Failsafe:
 //==========================================================================================
 //4 servo outputs: D5,D6,D7,D8 for RC channels 1,2,3,4
 //ESC calibration on channel 3 
-//3 discrete outputs: D1, D2, D0 - for RC channels 5,6,7
+//3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
 //A0 - ADC input
 
 //#define TOTAL_CHANNELS   8
@@ -49,6 +64,7 @@ Failsafe:
 //#define CALIBRATE_ESC_PINS {false, false, false, true, false, false, false, false}
 //#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
+//#define MOTOR_BEEPER_CH -1
 //==========================================================================================
 
 
@@ -56,14 +72,15 @@ Failsafe:
 //==========================================================================================
 //3 servo outputs: D5,D6,D8 for RC channels 1,2,4
 //1 PWM output for RC channel 3
-//3 discrete outputs: D1, D2, D0 - for RC channels 5,6,7
+//3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
 //A0 - ADC input
 
-//#define TOTAL_CHANNELS   8
-//#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, NOPIN, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN}
-//#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false}
-//#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-//#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
+//#define TOTAL_CHANNELS   9
+//#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+//#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
+//#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+//#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
+#define MOTOR_BEEPER_CH 8 //zero-based CH number
 //==========================================================================================
 
 
@@ -71,19 +88,20 @@ Failsafe:
 //==========================================================================================
 //2 servo outputs: D5,D6,D8 for RC channels 1,2
 //2 PWM outputs for RC channels 3,4
-//3 discrete outputs: D1, D2, D0 - for RC channels 5,6,7
+//3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
 //A0 - ADC input
 
-#define TOTAL_CHANNELS   8
-#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false}
-#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN}
-#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
+#define TOTAL_CHANNELS   9
+#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
+#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
+#define MOTOR_BEEPER_CH 8 //zero-based CH number
 //==========================================================================================
 
 //Notes: 
 //5 - D1- SCL, 4 -  D2- SDA
 //13,15 - alternative UART1
 //2 - D4 - LED
-//16 - no pwm or interrupts
+//16 - no pwm or interrupts possible
 
