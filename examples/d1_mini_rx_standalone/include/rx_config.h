@@ -34,16 +34,19 @@ Failsafe:
 #define NOPIN 255
 //#define DEBUG_LOOP_PIN  0
 
-//beep (with motor) after period of inactivity
+//beep (with brushed motors) after period of inactivity (PWM outputs low)
 #define IDLE_BEEP_DELAY_MS (5*60*1000)   
 
-//PWM beep frequence
+//beep (with brushed motors) in failsafe
+#define FAILSAFE_BEEP_DELAY_MS (5*1000)   
+
+//beep frequency
 #define BEEP_FREQ 1000
 
-//PWM duty value to beep with motors
+//PWM duty value to beep with brushed motors
 #define BEEP_DUTY_VALUE 15
 
-//if channel values is less then PWM_CH_MIN, pwm output is zero
+//if channel value is less then PWM_CH_MIN, pwm output is zero
 #define PWM_CH_MIN 1050 
 
 

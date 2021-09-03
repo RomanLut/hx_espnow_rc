@@ -9,6 +9,8 @@ HXRCSlave hxrcSlave;
 unsigned long lastStats = millis();
 unsigned long telemetryTime = millis();
 unsigned long analogReadTime = millis();
+unsigned long failsafeStart = 0;
+unsigned long idleStart = 0;
 uint16_t battSum = 0;
 
 bool servoOutputsAttached = false;
@@ -200,30 +202,8 @@ void attachPWMPinsBeep()
 
 //=====================================================================
 //=====================================================================
-void processBeep()
+void writeBeepDutyValue( bool b )
 {
-  bool b = false;
-
-  bool fs = hxrcSlave.getReceiverStats().isFailsafe();
-  
-  if ( !fs && (MOTOR_BEEPER_CH >= 0) )
-  {
-    HXRCChannels channels = hxrcSlave.getChannels();
-    if ( channels.getChannelValue(MOTOR_BEEPER_CH) >= 1750) b = true;
-  }
-
-  if (!b)
-  {
-    //TODO timeout before beep
-    if ( hxrcSlave.getReceiverStats().isFailsafe() ) 
-    {
-      if ( (millis() % 3000) < 100 ) 
-      {
-        b = true;
-      }
-    }
-  }
-
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
     if (pwmPins[i] != NOPIN)
@@ -231,6 +211,57 @@ void processBeep()
       analogWrite(pwmPins[i], b ? BEEP_DUTY_VALUE:0);
     }
   }
+}
+
+//=====================================================================
+//=====================================================================
+void processBeep()
+{
+  bool b = false;
+
+  bool fs = hxrcSlave.getReceiverStats().isFailsafe();
+  
+  if ( hxrcSlave.getReceiverStats().isFailsafe() ) 
+  {
+    if ( failsafeStart == 0 ) 
+    {
+      failsafeStart = millis();
+    } 
+
+    if ((millis() - failsafeStart) >= FAILSAFE_BEEP_DELAY_MS)
+    {
+      if ( (millis() % 3000) < 100 ) 
+      {
+        b = true;
+      }
+    }
+  }
+  else
+  {
+    failsafeStart = 0;
+  }
+
+  if ( (idleStart != 0) && ((millis() - idleStart) > IDLE_BEEP_DELAY_MS))
+  {
+      if ( (millis() % 3000) < 100 ) 
+      {
+        b |= true;
+      }
+  }
+
+  if ( !fs && (MOTOR_BEEPER_CH >= 0) )
+  {
+    HXRCChannels channels = hxrcSlave.getChannels();
+    if ( channels.getChannelValue(MOTOR_BEEPER_CH) >= 1750) 
+    {
+      if ( (millis() % 3000) < 100 ) 
+      {
+        b |= true;
+      }
+    }
+  }
+
+  writeBeepDutyValue(b);
 }
 
 //=====================================================================
@@ -256,8 +287,11 @@ void updatePWMOutputs()
 
   if ( canBeep )
   {
+    if ( idleStart == 0 )
+    {
+      idleStart = millis(); 
+    }
     attachPWMPinsBeep();
-
     processBeep();
   }
   else
@@ -339,6 +373,15 @@ void setup()
   WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL);
 
   calibrateESCs();
+
+  attachPWMPinsBeep();
+  writeBeepDutyValue(true);
+  delay(100);
+  writeBeepDutyValue(false);
+  delay(100);
+  writeBeepDutyValue(true);
+  delay(100);
+  writeBeepDutyValue(false);
   attachPWMPins();
 }
 
