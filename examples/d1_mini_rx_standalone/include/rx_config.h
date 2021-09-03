@@ -41,7 +41,7 @@ Failsafe:
 #define FAILSAFE_BEEP_DELAY_MS (5*1000)   
 
 //beep frequency
-#define BEEP_FREQ 1000
+#define BEEP_FREQ 900
 
 //PWM duty value to beep with brushed motors
 #define BEEP_DUTY_VALUE 15

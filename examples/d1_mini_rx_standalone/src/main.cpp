@@ -59,8 +59,11 @@ void fillOutgoingTelemetry()
 
 //=====================================================================
 //=====================================================================
-void attachServoOutputs()
+void attachServoOutputs(bool force)
 {
+  if ( !force && servoOutputsAttached ) return;
+  servoOutputsAttached = true;
+
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
     if (servoPins[i] != NOPIN)
@@ -74,6 +77,9 @@ void attachServoOutputs()
 //=====================================================================
 void detachServoOutputs()
 {
+  if ( !servoOutputsAttached ) return;
+  servoOutputsAttached = false;
+
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
     if (servoPins[i] != NOPIN)
@@ -100,11 +106,8 @@ void updateServoOutputs()
   }
   else
   {
-    if ( !servoOutputsAttached )
-    {
-      attachServoOutputs();
-      servoOutputsAttached = true;
-    }
+    bool b = servoOutputsAttached;
+    attachServoOutputs(false);
 
     HXRCChannels channels = hxrcSlave.getChannels();
     
@@ -123,7 +126,8 @@ void updateServoOutputs()
           servos[counter].writeMicroseconds(channels.getChannelValue(counter));
 
           //in any case, update up to 1 servo at a time. 20 ms per servo is quite slow.
-          break;
+          //but if we just attached all servos after failsave (b == false), write all.
+          if ( b ) break;
         }
       }
     }
@@ -183,9 +187,9 @@ void attachPWMPins()
 
 //=====================================================================
 //=====================================================================
-void attachPWMPinsBeep()
+void attachPWMPinsBeep( bool force )
 {
-  if ( !PWMOutputsAttached ) return;
+  if ( !force && !PWMOutputsAttached ) return;
   PWMOutputsAttached = false;
   
   analogWriteFreq( BEEP_FREQ );
@@ -287,15 +291,17 @@ void updatePWMOutputs()
 
   if ( canBeep )
   {
-    if ( idleStart == 0 )
+    if ( !fs && (idleStart == 0) )
     {
       idleStart = millis(); 
     }
-    attachPWMPinsBeep();
+    attachPWMPinsBeep(false);
     processBeep();
   }
   else
   {
+    idleStart = 0;
+
     attachPWMPins();
 
     for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
@@ -374,7 +380,7 @@ void setup()
 
   calibrateESCs();
 
-  attachPWMPinsBeep();
+  attachPWMPinsBeep(true);
   writeBeepDutyValue(true);
   delay(100);
   writeBeepDutyValue(false);
