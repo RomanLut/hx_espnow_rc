@@ -11,7 +11,7 @@ In general, can be built for any RC controller with SBUS output.
 
 
 # Parts list
-- 3D Printed parts  thingiverse.com
+- 3D Printed parts https://www.thingiverse.com/thing:4948833
 - ESP32 DevkitC U32 or ESP32 Devkit V1 
 - HC-06 bluetooth module
 - DC-DC Mini360 module

@@ -7,7 +7,7 @@
 
  "Servo outputs" output 50Hz 1-2ms pulses.
 
- "PWM outputs" output 8192Hz PWM signal, duty ratio 0...100.
+ "PWM outputs" output 8192Hz PWM signal, duty ratio 0...100. Usually used to connect brushed motors with simple ESCs which require PWM signal.
 
  "Discrete outputs" output 1 (3.3V) or 0 (0V).
                                            
@@ -20,6 +20,8 @@
 # Failsave
 
  No pulses on Failsafe (Servo, PWM). Discrete outputs keep last values.
+
+ Onboard LED (D4 pin) is blinking if connection is estabilished. LED is disabled in failsafe mode.
 
 # Measuring battery voltage
  
@@ -60,7 +62,7 @@ Remove PCB antena with dremel leaving only two solder pads for GND and signal. S
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini_dipole.jpg "D1 Mini dipole antenna")
 
-# Removing diode
+# Removing VBUS diode
 
 Diode D2 (see schematics below), from VBUS to +5V rail has to be removed.
 
@@ -87,8 +89,8 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
 # Beeping with brushed motors.
 
  Receiver supports beeping using brushed motors.
- Obviously, it is possible to beep when motors throttle is down.
- Receiver will enabled beep beacon: 
+ Obviously, beeping is possible when motor throttle is down only.
+ Receiver will enable beep beacon: 
  - if MOTOR_BEEPER_CH(zero-based channel number) has value > 1750
  - after FILSAFE_BEEP_DELAY_MS delay in failsafe mode
  - after IDLE_BEEP_DELAY_MS delay with throttle down.
