@@ -4,13 +4,22 @@
 
  Standalone receiver. To be used for manual flights.
  Number of Servo, PWM and discrete outputs can be configured.
- No pulses on Failsafe. Discrete outputs keep last values.
 
+ "Servo outputs" output 50Hz 1-2ms pulses.
+
+ "PWM outputs" output 8192Hz PWM signal, duty ratio 0...100.
+
+ "Discrete outputs" output 1 (3.3V) or 0 (0V).
+                                           
  Transmits telementry: RSSI, battery voltage.
  Voltage range is 3.1...6V.
  It can be powered from 5V BEC or directly from 1S battery: (4.2V-3.1V).
 
  Peak power consumption is ~300mA.
+
+# Failsave
+
+ No pulses on Failsafe (Servo, PWM). Discrete outputs keep last values.
 
 # Measuring battery voltage
  
@@ -74,7 +83,6 @@ Motors generate a lot of noise. If board reboots or terminal looses connection, 
 Anternatively, repace 1uF capacitor on board with 20uF capacitor:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini_cap_33v.jpg "D1 Mini VBUS diode")
-
 
 # Beeping with brushed motors.
 

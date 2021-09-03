@@ -5,7 +5,7 @@ Goals:
 - transmit RSSI, A1, A2 telemetry (done)
 - transmit bidirectional telemetry stream (done)
 - build external module for Jumper T-Lite (done)
-- build D1 Mini PWM output receiver (done)
+- build receiver based on Wemos D1 Mini board (Servo/PWM outputs) (done)
 - build ESP-01 based SBUS output receiver 
 - external module for Jumper T-Lite: multiple configurations in xml file
 - external module for Jumper T-Lite: select active configuration by CH16 value
@@ -30,7 +30,7 @@ See building guides:
 
 - external module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
 - external module for Radiomaster TX16s [todo]
-- standalone PWM output receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
+- standalone Servo/PWM output receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
 - ESP-01 based SBUS receiver: [todo]
 - development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 
