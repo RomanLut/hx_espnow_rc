@@ -154,6 +154,6 @@ Module based on cp2104:
 
 Module based on CH340C:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1_mini_ch340c.png "D1 Mini schematics ch340C")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1_mini_ch340c.jpg "D1 Mini schematics ch340C")
 
 There are also modules based on CH340G. 

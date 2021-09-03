@@ -6,7 +6,7 @@
 
  dx_mini_rx_standalone https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md - PWM output receiver with telemetry
 
- esp32_devkit_v1_tx - external module for Jumper T-Lite transmitter
+ esp32_devkit_v1_tx - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md - external module for Jumper T-Lite transmitter
 
  test_d1_mini_tx - Master(transmitter) test on D1 Mini board
 
@@ -21,7 +21,7 @@
  
 
 # ESP-NOW technical details
-ESP-NOW packets are vendor-specific packets. ESP sends packet and waits for confirmation packet from peer mac address.
+ESP-NOW packets are vendor-specific Wifi packets. ESP sends packet and waits for confirmation packet from peer mac address.
 If Ack packet is not received, erorr is returned. So sender knows that packet is not delivered successfully. 
 Opposite is not true. If API call returns error, packet still may have been delivered, but sender did not hear Ack packet.
 
@@ -78,7 +78,7 @@ Communication is possible ( not in LR mode, see below ).
 
 # LR mode 
 
-(Long Range ) mode is special mode introduced by Espressif Systems. This mode can be enabled on ESP32. This options is ignored on ESP8266. 
+(Long Range ) mode is special mode introduced by Espressif Systems. This mode can be enabled on ESP32. This option is ignored on ESP8266. 
 Theoretically it should provide 2x better range, in practice the difference is subtle. 
 
 ESP32 in LR mode can not communicate to ESP8266.
