@@ -4,7 +4,7 @@
 
  test_* projects are used to test the library. Flash one board with *_tx and other with *_rx project, with same wifi channel and key (or leave settings by default). Statistic is output to console. On TTGO Display board statistic is also output on the screen.
 
- dx_mini_rx_standalone https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md - PWM output receiver with telemetry
+ dx_mini_rx_standalone https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md - Servo/PWM/Discrete output receiver with telemetry
 
  esp32_devkit_v1_tx - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md - external module for Jumper T-Lite transmitter
 
