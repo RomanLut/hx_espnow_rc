@@ -44,7 +44,11 @@ Failsafe:
 #define BEEP_FREQ 900
 
 //PWM duty value to beep with brushed motors
+//idle beep
 #define BEEP_DUTY_VALUE 15
+//high volume beep duty value, used when MOTOR_BEEPER_CH is enabled.
+//This value can turn motors a little.
+#define BEEP_DUTY_VALUE_HIGH 35
 
 //if channel value is less then PWM_CH_MIN, pwm output is zero
 #define PWM_CH_MIN 1050 

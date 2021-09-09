@@ -206,13 +206,13 @@ void attachPWMPinsBeep( bool force )
 
 //=====================================================================
 //=====================================================================
-void writeBeepDutyValue( bool b )
+void writeBeepDutyValue( bool b, bool highVolume )
 {
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
     if (pwmPins[i] != NOPIN)
     {
-      analogWrite(pwmPins[i], b ? BEEP_DUTY_VALUE:0);
+      analogWrite(pwmPins[i], b ? (highVolume? BEEP_DUTY_VALUE_HIGH : BEEP_DUTY_VALUE):0);
     }
   }
 }
@@ -222,6 +222,7 @@ void writeBeepDutyValue( bool b )
 void processBeep()
 {
   bool b = false;
+  bool high = false;
 
   bool fs = hxrcSlave.getReceiverStats().isFailsafe();
   
@@ -261,11 +262,12 @@ void processBeep()
       if ( (millis() % 3000) < 100 ) 
       {
         b |= true;
+        high = true;
       }
     }
   }
 
-  writeBeepDutyValue(b);
+  writeBeepDutyValue(b, high);
 }
 
 //=====================================================================
@@ -381,13 +383,13 @@ void setup()
   calibrateESCs();
 
   attachPWMPinsBeep(true);
-  writeBeepDutyValue(true);
+  writeBeepDutyValue(true, false);
   delay(100);
-  writeBeepDutyValue(false);
+  writeBeepDutyValue(false, false);
   delay(100);
-  writeBeepDutyValue(true);
+  writeBeepDutyValue(true, false);
   delay(100);
-  writeBeepDutyValue(false);
+  writeBeepDutyValue(false, false);
   attachPWMPins();
 }
 

@@ -91,9 +91,9 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
  Receiver supports beeping using brushed motors.
  Obviously, beeping is possible when motor throttle is down only.
  Receiver will enable beep beacon: 
- - if MOTOR_BEEPER_CH(zero-based channel number) has value > 1750
- - after FILSAFE_BEEP_DELAY_MS delay in failsafe mode
+ - after FILSAFE_BEEP_DELAY_MS delay in failsafe mode.
  - after IDLE_BEEP_DELAY_MS delay with throttle down.
+ - if MOTOR_BEEPER_CH(zero-based channel number) has value>1750. In this mode motors beeps with high volume, and can turn a little.
  
  Beeping with brushless motors is not supported. Use BLHeli feature for idle beep beacon.
 
