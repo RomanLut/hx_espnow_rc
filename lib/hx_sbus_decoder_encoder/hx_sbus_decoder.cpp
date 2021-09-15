@@ -15,7 +15,12 @@ void HXSBUSDecoder::init(int gpio )
     lastPacket.failsafe = 1;
     lastPacketTime = millis();
 
+#if defined(ESP8266)
+    Serial1.begin(100000, SERIAL_8E2, SerialMode::SERIAL_RX_ONLY, gpio, false );  
+#elif defined (ESP32)
     Serial1.begin(100000, SERIAL_8E2, gpio, -1, false );  
+#endif
+
     pinMode(gpio,INPUT);
 
     state = 40;
