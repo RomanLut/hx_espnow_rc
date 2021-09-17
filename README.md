@@ -31,7 +31,7 @@ See building guides:
 - external module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
 - external module for Radiomaster TX16s [todo]
 - standalone Servo/PWM output receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
-- ESP-01 based SBUS receiver: [todo]
+- ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp01_sbus.md
 - development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 
 # Range
