@@ -7,7 +7,7 @@ Transmits bidirectional transparent telemetry stream (can be used for Mavlink, L
 
 RSSI is injected into channel 16.
 
-Can be powered from 5V BEC or directrly from 1S battery (3.0V...5.0V).
+Can be powered from 5V BEC or directly from 1S battery (3.0V...5.0V).
 
 Peak power consumption is ~170mA.
 
@@ -31,7 +31,7 @@ Failsafe flag is passed in SBUS packets. Channels retain last good values.
                                                
 SBUS output is GPIO2. If GPIO2 is pulled down, ESP board boot fails. Typical SBUS invertor schematix on flight controller includes 1k resistor to the base/gate of transistor and 10k pooldown resistor from base/gate to GND. Effectively, GPIO2 is grounded. The easiest way to solve this is to add 4k7 poolup resistor. Another option is to use inverted SBUS input on FC, which is not pulled down.
 
-If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then R1 value show be decreased, down to 1k.
+If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then R1 value show be decreased, down to 1k. Alternativelly, connect GPIO2 to FC through diode (cathode to ESP01).
 
 # Building steps
 
@@ -42,6 +42,10 @@ If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then
 3) Solder R1
 
 4) Glue 3.3V LDO or small PCB with 3.3 LDO to the back of ESP01. Connect according to connection diagram above.
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_33ldoboard.jpg "ESP01 LDO board")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_33ldocut.jpg "ESP01 LDO cut")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_ldo.jpg "ESP01 LDO")
 
@@ -70,7 +74,7 @@ If FC has BEC which can provide 3.3V 170mA, LDO may not be required.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_usbuart.jpg "ESP01 usbuart")
 
-3) Upload firware using PlatformIO.
+3) Plug USB-USB adapter while holding FLASH button. Upload firware using PlatformIO.
 
 Optionally, you can flash firmware before soldering anything using some ESP01 breakout board.
 
