@@ -5,6 +5,7 @@
 #include "HX_ESPNOW_RC_SerialBuffer.h"
 
 #include <servo.h>
+#include <ArduinoOTA.h>
 
 HXRCSlave hxrcSlave;
 HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcSlave );
@@ -47,30 +48,38 @@ void setup()
   Serial.begin(TELEMETRY_BAUDRATE);
 //  Serial.println("Start");
 
-  hxSBUSEncoder.init( Serial1, 2, !SBUS_INVERTED );
+  hxSBUSEncoder.init( Serial1, 2, SBUS_INVERTED );
 
   hxrcSlave.init(
       HXRCConfig(
           USE_WIFI_CHANNEL,
           USE_KEY,
           false,
-          LED_BUILTIN, true));
+          -1, false));
+
+  hxrcSlave.setA1(42);
 
   //REVIEW: receiver does not work if AP is not initialized?
-  WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL);
+  WiFi.softAP("hxrcrsbus", NULL, USE_WIFI_CHANNEL);
+
+  ArduinoOTA.begin();  
 }
 
 //=====================================================================
 //=====================================================================
 void updateSBUSOutput()
 {
-  bool failsafe = !hxrcSlave.getReceiverStats().isFailsafe();
+  //set failsafe flag
+  bool failsafe = hxrcSlave.getReceiverStats().isFailsafe();
   hxSBUSEncoder.setFailsafe( failsafe);
   
+  //inject RSSI into channel 16
+  hxSBUSEncoder.setChannelValue( HXRC_CHANNELS-1, 1000 + ((uint16_t)hxrcSlave.getReceiverStats().getRSSI())*10 );
+
   if ( !failsafe ) //keep last channel values on failsafe
   {
     HXRCChannels channels = hxrcSlave.getChannels();
-    for ( int i = 0; i < HXRC_CHANNELS; i++)
+    for ( int i = 0; i < HXRC_CHANNELS-1; i++)
     {
       hxSBUSEncoder.setChannelValue( i, channels.getChannelValue(i) );
     }
@@ -83,19 +92,25 @@ void updateSBUSOutput()
 //=====================================================================
 void loop()
 {
-  //unsigned long t = millis();
-
   processIncomingTelemetry();
   fillOutgoingTelemetry();
 
-  hxrcSlave.loop();
+  hxrcSlave.setA2(hxrcSlave.getReceiverStats().getRSSI());
 
+  hxrcSlave.loop();
+/*
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
     hxrcSlave.getTransmitterStats().printStats();
     hxrcSlave.getReceiverStats().printStats();
   }
+*/
 
   updateSBUSOutput();
+
+  if ( hxrcSlave.getReceiverStats().isFailsafe() )
+  {
+    ArduinoOTA.handle();  
+  }
 }
