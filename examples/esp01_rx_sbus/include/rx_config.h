@@ -18,6 +18,7 @@ https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 //inverted SBUS = true ===> normal UART
 #define SBUS_INVERTED  false
 
+//#define TELEMETRY_BAUDRATE 115200
 #define TELEMETRY_BAUDRATE 19200
 
 //=============================================================================
