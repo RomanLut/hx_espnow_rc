@@ -24,8 +24,10 @@ TODO: work as telemetry blackbox?
 - ESP01s (recommended) or ESP01 board
 - 3.3V LDO SOT223 (AMS1117-3.3, LM1117-3.3, LM3940 or other)
 - 1x 4k7 0804 or 1206 smd resistor
+- 2x 1206 10uf capacitors
 - 3x 10k 0804 smd resisors (not required for ESP01s)
 - dipole or whip antenna (optional)
+- a button
 - USB-uart convertor or ESP01 breakout board (for initial flashing)
 
 # Failsave
