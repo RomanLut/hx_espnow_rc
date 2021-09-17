@@ -3,6 +3,7 @@
 #include "rx_config.h"
 
 #include <servo.h>
+#include <ArduinoOTA.h>
 
 HXRCSlave hxrcSlave;
 
@@ -378,7 +379,9 @@ void setup()
           LED_BUILTIN, true));
 
   //REVIEW: receiver does not work if AP is not initialized?
-  WiFi.softAP("hxrct", NULL, USE_WIFI_CHANNEL);
+  WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL);
+
+  ArduinoOTA.begin();  
 
   calibrateESCs();
 
@@ -465,4 +468,8 @@ void loop()
 
   //Serial.println(millis()-t);
 
+  if ( hxrcSlave.getReceiverStats().isFailsafe() )
+  {
+    ArduinoOTA.handle();  
+  }
 }
