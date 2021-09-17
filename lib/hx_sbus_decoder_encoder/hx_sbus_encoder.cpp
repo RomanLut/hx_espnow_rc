@@ -1,5 +1,7 @@
 #include "hx_sbus_encoder.h"
 
+#include <esp8266_peri.h>
+
 //=====================================================================
 //=====================================================================
 HXSBUSEncoder::HXSBUSEncoder()
@@ -14,36 +16,50 @@ void HXSBUSEncoder::init( HardwareSerial& serial, uint8_t tx_pin, bool invert )
     lastPacket.failsafe = 1;
     lastPacketTime = millis();
 
-    serial.begin(100000, SERIAL_8E2, SerialMode::SERIAL_TX_ONLY, tx_pin, invert );  
-    pinMode(tx_pin,OUTPUT);
+    //FIXME: Arduino library does not contain code to invert Serial1.
+    //Sneak flags to SerialConfig
+    int serialConfig = SERIAL_8E2;
+    if  (!invert )
+    {
+        serialConfig |= BIT(UCTXI);
+    }
+
+    serial.begin(100000, (SerialConfig)serialConfig, SerialMode::SERIAL_TX_ONLY, tx_pin, !invert );  
 }
 
 //=====================================================================
 //=====================================================================
 void HXSBUSEncoder::loop( HardwareSerial& serial )
 {
-    if (Serial1.availableForWrite() < sizeof( this->lastPacket )) return;
+    if (serial.availableForWrite() < sizeof( HXSBUSPacket )) return;
 
     unsigned long t = millis();
-    if ( (t - this->lastPacketTime)  < SBUS_PERIOD_MS ) return;
+    if ( (t - this->lastPacketTime)  < SBUS_RATE_MS ) return;
 
     this->lastPacketTime = t;
 
-    serial.write( (const uint8_t*)&this->lastPacket, sizeof ( this->lastPacket ));
+    serial.write( (const uint8_t*)&this->lastPacket, sizeof ( HXSBUSPacket ));
 }
 
 //=====================================================================
 //=====================================================================
 void HXSBUSEncoder::setFailsafe( bool failsafe )
 {
-    this->lastPacket.failsafe = failsafe;
+    this->lastPacket.failsafe = failsafe?1:0;
 }
 
 //=====================================================================
 //=====================================================================
-void HXSBUSEncoder::setChannelValue( uint8_t index, uint16_t value )
+void HXSBUSEncoder::setChannelValueDirect( uint8_t index, uint16_t value )
 {
     this->lastPacket.setChannelValue( index, value );
 }
 
+//=====================================================================
+//=====================================================================
+//input value is in range 1000..2000
+void HXSBUSEncoder::setChannelValue( uint8_t index, uint16_t value ) 
+{
+    this->lastPacket.setChannelValue( index, constrain( map( value, 1000, 2000, SBUS_MIN, SBUS_MAX), 0, 2047) );
+}
 

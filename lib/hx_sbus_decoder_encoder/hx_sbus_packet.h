@@ -39,12 +39,13 @@ typedef struct
     uint16_t ch15 : 11;
     uint16_t ch16 : 11;
 
-
-    uint8_t reserved: 4;
-    uint8_t failsafe: 1;
-    uint8_t frameLost : 1;
-    uint8_t ch18 : 1;
+    //bit field filling is implementation dependent.
+    //ESP8266: ch17 is bit 7
     uint8_t ch17 : 1;
+    uint8_t ch18 : 1;
+    uint8_t frameLost : 1;
+    uint8_t failsafe: 1;
+    uint8_t reserved: 4;
 
     uint8_t footer;
 
