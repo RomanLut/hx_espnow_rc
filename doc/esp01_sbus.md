@@ -19,6 +19,15 @@ TODO: work as telemetry blackbox?
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_sbus_connections.jpg "ESP01 sbus connections")
 
+# Parts list
+
+- ESP01s (recommended) or ESP01 board
+- 3.3V LDO SOT223 (AMS1117-3.3, LM1117-3.3, LM3940 or other)
+- 1x 4k7 0804 or 1206 smd resistor
+- 3x 10k 0804 smd resisors (not required for ESP01s)
+- dipole or whip antenna (optional)
+- USB-uart convertor or ESP01 breakout board (for initial flashing)
+
 # Failsave
 
 Failsafe flag is passed in SBUS packets. Channels retain last good values.
@@ -67,8 +76,8 @@ If FC has BEC which can provide 3.3V 170mA, LDO may not be required.
 
 # Flashing first time
 
-1) Temporary solder flash button according to connection diagram above
-2) Connect to USB-UART adapter according the connection diagram below
+1) Temporary solder flash button according to connection diagram above.
+2) Connect to USB-UART adapter according the connection diagram below:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_usbuart_connection.jpg "ESP01 usbuart connection")
 
@@ -76,7 +85,7 @@ If FC has BEC which can provide 3.3V 170mA, LDO may not be required.
 
 3) Plug USB-USB adapter while holding FLASH button. Upload firware using PlatformIO.
 
-Optionally, you can flash firmware before soldering anything using some ESP01 breakout board.
+Optionally, you can flash firmware before soldering anything using some ESP01 breakout board OR using FC serialpathrough mode.
 
 After initial flashing, firmware can be updated wirelessly (OTA).
 

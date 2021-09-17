@@ -6,7 +6,7 @@ Goals:
 - transmit bidirectional telemetry stream (done)
 - build external module for Jumper T-Lite (done)
 - build receiver based on Wemos D1 Mini board (Servo/PWM outputs) (done)
-- build ESP-01 based SBUS output receiver 
+- build ESP-01 based SBUS output receiver (done)
 - external module for Jumper T-Lite: multiple configurations in xml file
 - external module for Jumper T-Lite: select active configuration by CH16 value
 - external module for Jumper T-Lite: bluetooth gamepad mode
