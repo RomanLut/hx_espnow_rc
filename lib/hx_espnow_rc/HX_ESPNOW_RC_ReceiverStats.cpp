@@ -49,7 +49,6 @@ bool HXRCReceiverStats::isFailsafe()
 //=====================================================================
 //=====================================================================
 //(percentage of packets received) 0...100
-//or -1 if not received for a long time
 uint8_t HXRCReceiverStats::getRSSI()
 {
     unsigned long t = millis();
