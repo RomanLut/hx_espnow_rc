@@ -32,7 +32,7 @@ public:
     unsigned long RSSIUpdateMs;
     uint16_t RSSIPacketsReceived;
     uint16_t RSSIPacketsLost;
-    uint8_t RSSILast;
+    uint16_t RSSILast4;  //filtered RSSI over 4 seconds
 
     //number of packers with non-increased sequense id   
     uint16_t packetsRetransmit;
