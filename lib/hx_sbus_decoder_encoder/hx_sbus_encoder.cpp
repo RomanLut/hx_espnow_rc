@@ -1,6 +1,9 @@
 #include "hx_sbus_encoder.h"
 
+#if defined(ESP8266)
 #include <esp8266_peri.h>
+#elif defined(ESP32)
+#endif
 
 //=====================================================================
 //=====================================================================
@@ -16,15 +19,19 @@ void HXSBUSEncoder::init( HardwareSerial& serial, uint8_t tx_pin, bool invert )
     lastPacket.failsafe = 1;
     lastPacketTime = millis();
 
-    //FIXME: Arduino library does not contain code to invert Serial1.
+#if defined(ESP8266)
+    //FIXME: Arduino library for ESP8266 does not contain code to invert Serial1.
     //Sneak flags to SerialConfig
     int serialConfig = SERIAL_8E2;
     if  (!invert )
     {
         serialConfig |= BIT(UCTXI);
     }
-
     serial.begin(100000, (SerialConfig)serialConfig, SerialMode::SERIAL_TX_ONLY, tx_pin, !invert );  
+#elif defined(ESP32)
+    serial.begin(100000, SERIAL_8E2, -1, tx_pin, !invert );  
+#endif
+
 }
 
 //=====================================================================
