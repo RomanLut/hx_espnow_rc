@@ -1,9 +1,12 @@
 #include <Arduino.h>
 //#include <BluetoothSerial.h>
 #include <SPI.h>
+#include <ArduinoOTA.h>
 
 #include <stdio.h>
 #include <stdarg.h>
+
+#include <esp_task_wdt.h>
 
 #include "HX_ESPNOW_RC_Master.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
@@ -13,6 +16,8 @@
 #include "HC06Interface.h"
 
 #include "smartport.h"
+
+#define WDT_TIMEOUT_SECONDS 3  
 
 HXRCMaster hxrcMaster;
 HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcMaster );
@@ -152,6 +157,9 @@ void test()
 //=====================================================================
 void setup()
 {
+  esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
+  esp_task_wdt_add(NULL); //add current thread to WDT watch
+
   initConfig();
 
 #ifdef USE_SPORT  
@@ -175,7 +183,7 @@ void setup()
 
   sbusDecoder.init(USE_SERIAL1_RX_PIN);
 
-  setLed(false);
+  setLed(true);
 
   externalBTSerial.init();
 
@@ -194,11 +202,16 @@ void setup()
             currentProfile.espnow_lrMode,
             -1, false));
   }
-  
+
+  esp_task_wdt_reset();
+
   if ( currentProfile.ap_name )
   {
     WiFi.softAP(currentProfile.ap_name, currentProfile.ap_password, currentProfile.espnow_channel);  //for ESPNOW RC mode, have to use channel configured from espnow rc
+    ArduinoOTA.begin();  
   }
+
+  esp_task_wdt_reset();
 
   /*
   if ( !SerialBT.begin("HXRCBLE") ) 
@@ -207,12 +220,16 @@ void setup()
   }
   */
 
+  esp_task_wdt_reset();
+
 }
 
 //=====================================================================
 //=====================================================================
 void loop()
 {
+  esp_task_wdt_reset();
+
   sbusDecoder.loop();
   setChannels();
 
@@ -221,7 +238,7 @@ void loop()
   fillOutgoingTelemetry();
 
   hxrcMaster.loop();
-  hxrcMaster.updateLed( LED_PIN, false );
+  hxrcMaster.updateLed( LED_PIN, true );  //LED_PIN is not inverted. Pass"inverted" flag so led is ON in idle mode
 
 /*
   if (millis() - lastStats > 1000)
@@ -239,6 +256,12 @@ void loop()
   sport.setA2(hxrcMaster.getA2());
   sport.loop();
 #endif
+
+  if ( hxrcMaster.getReceiverStats().isFailsafe() && currentProfile.ap_name )
+  {
+    ArduinoOTA.handle();  
+  }
+
  }
 
 
