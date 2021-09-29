@@ -1,6 +1,6 @@
 # SBUS output recevier with transparent telemetry stream based on ESP01/ESP01s board
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_sbus.jpg "ESP01 sbus connections")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_sbus2.jpg "ESP01 sbus2")
 
 Receiver to be used with flight controller. Receives 15 channels and outputs SBUS signal.
 Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP, Frsky etc.). 
@@ -106,6 +106,8 @@ lines in platformio.ini.
 
 3) Build and upload using PlatformIO IDE as usual.
 
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_sbus.jpg "ESP01 sbus")
 
 # Reference
 
