@@ -66,12 +66,12 @@ Failsafe:
 //3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
 //A0 - ADC input
 
-//#define TOTAL_CHANNELS   8
-//#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN}
-//#define CALIBRATE_ESC_PINS {false, false, false, true, false, false, false, false}
-//#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-//#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
-//#define MOTOR_BEEPER_CH -1
+#define TOTAL_CHANNELS   8
+#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN}
+#define CALIBRATE_ESC_PINS {false, false, false, true, false, false, false, false}
+#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
+#define MOTOR_BEEPER_CH -1
 //==========================================================================================
 
 
@@ -98,12 +98,12 @@ Failsafe:
 //3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
 //A0 - ADC input
 
-#define TOTAL_CHANNELS   9
-#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
-#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
-#define MOTOR_BEEPER_CH 8 //zero-based CH number
+//#define TOTAL_CHANNELS   9
+//#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+//#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
+//#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+//#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
+//#define MOTOR_BEEPER_CH 8 //zero-based CH number
 //==========================================================================================
 
 //Notes: 

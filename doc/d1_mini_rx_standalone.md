@@ -15,7 +15,7 @@
  Voltage range is 3.1...6V.
  It can be powered from 5V BEC or directly from 1S battery: (4.2V-3.1V).
 
- Peak power consumption is ~300mA.
+ Peak power consumption is ~170mA.
 
 # Failsave
 
@@ -56,7 +56,7 @@ Replacing 100k(R2) Resistor:
 
 # Replacing PCB antena
 
-PCB antena provides range < 200m. It can be replaced with dipole or whip antenna for better range (~300m).
+PCB antena provides range < 200m. It can be replaced with dipole or whip antenna for better range.
 
 Remove PCB antena with dremel leaving only two solder pads for GND and signal. Solder Dipole antenna according to picture below. 
 
@@ -111,7 +111,7 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
 Three example configurations are provided below.
 
 
-# Receiver configuration 1: Blushless plane
+# Receiver configuration 1: Brushless plane
 
 4 Servo outputs: AETR. ESC calibration is enabled on Channel 4.
 

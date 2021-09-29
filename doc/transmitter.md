@@ -24,11 +24,11 @@ In general, can be built for any RC controller with SBUS output.
 
 
 # Building guide
-Print main part and two insets:
+Print base and two insets:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build1.jpg "Build step")
 
-Glue insets inside main part:
+Glue insets inside base part:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build2.jpg "Build step")
 
@@ -41,7 +41,7 @@ Print main part and cover. Paint letters on cover:
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build4.jpg "Build step")
 
 
-Glue main part to cover:
+Glue main part to base:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build5.jpg "Build step")
 
@@ -99,7 +99,7 @@ Double-check all connections. Use m2.5 bolts to fix cover on the main part:
 
 Flash module with Examples/esp32_devkit_v1_tx/
 
-Configure T-Lite to output SBUS (inverted).
+Configure T-Lite to output SBUS (normal SBUS => inverted uart).
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build19.jpg "Build step")
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Build step")
