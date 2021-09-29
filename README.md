@@ -43,7 +43,8 @@ See building guides:
  - 2dbi dipole antenna provide range ~1Km (!)
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
-INAV 1.7.3 Naze32 flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS receiver.
+
+INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS receiver.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer.jpg "telemetryviewer")
 
