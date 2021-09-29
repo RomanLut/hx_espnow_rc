@@ -43,11 +43,14 @@ See building guides:
  - 2dbi dipole antenna provide range ~1Km (!)
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
+INAV 1.7.3 Naze32 flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS receiver.
+
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer.jpg "telemetryviewer")
 
 Range might be larger. Need better weather to test more. I have got first failsave at 950m and still could control plane at 1100m, but decided to return due to high wind. 1km might be a world record for brushed plane and ESP-NOW already :)
 
 TODO: Test with 5dbi antena.
+
 TODO: Test with FRSKY directional patch 7db.
 
 # Telemetry
