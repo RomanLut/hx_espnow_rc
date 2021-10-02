@@ -23,7 +23,7 @@ TODO: work as telemetry blackbox?
 
 - ESP01s (recommended) or ESP01 board
 - 3.3V LDO SOT223 (AMS1117-3.3, LM1117-3.3, LM3940 or other)
-- 1x 4k7 0804 or 1206 smd resistor
+- 1x 1k 0804/1206 smd resistor, or 1/8W resistor 
 - 2x 1206 10uf capacitors
 - 3x 10k 0804 smd resisors (not required for ESP01s)
 - dipole or whip antenna (optional)
@@ -38,9 +38,9 @@ Failsafe flag is passed in SBUS packets. Channels retain last good values.
 
 10K pullup resistors are not required for ESP01S board. Should be installed on ESP01 boards only.
 
-# 4k7 resistor (R1)
+# 1k resistor (R1)
                                                
-SBUS output is GPIO2. If GPIO2 is pulled down, ESP board boot fails. Typical SBUS invertor schematix on flight controller includes 1k resistor to the base/gate of transistor and 10k pooldown resistor from base/gate to GND. Effectively, GPIO2 is grounded. The easiest way to solve this is to add 4k7 poolup resistor. Another option is to use inverted SBUS input on FC, which is not pulled down.
+SBUS output is GPIO2. If GPIO2 is pulled down, ESP board boot fails. Typical SBUS invertor schematix on flight controller includes 1k resistor to the base/gate of transistor and 10k pulldown resistor from base/gate to GND. Effectively, GPIO2 is grounded. The easiest way to solve this is to add 1k pullup resistor. Another option is to use inverted SBUS input on FC, which is not pulled down.
 
 If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then R1 value show be decreased, down to 1k. Alternativelly, connect GPIO2 to FC through diode (cathode to ESP01).
 

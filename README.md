@@ -54,6 +54,8 @@ TODO: Test with 5dbi antena.
 
 TODO: Test with FRSKY directional patch 7db.
 
+TODO: Test LR mode.
+
 # Telemetry
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distorion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
 Additionally library transmits A1 and A2 (16-bit) values for simple telemetry.
@@ -74,3 +76,10 @@ See development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/de
 
 Continue with development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 
+
+# Other projects
+
+https://github.com/PepeTheFroggie/EspCopter
+https://github.com/PepeTheFroggie/EspCopter32
+https://github.com/Crypter/ESP-RCLink
+https://github.com/RomanLut/mahowii
