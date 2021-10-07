@@ -42,15 +42,19 @@ See building guides:
  - whip antenna with stripping wire provide range ~250m
  - 2dbi dipole antenna provide range ~1Km (!)
 
+Failsave period is set to 1 second (so there should be at least 1 acknowledged packet in 1 second). Note that range of actual communication is larger, but is not usefull for RC.
+
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
 
 INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS receiver.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer.jpg "telemetryviewer")
 
-Range might be larger. Need better weather to test more. I have got first failsave at 950m and still could control plane at 1100m, but decided to return due to high wind. 1km might be a world record for brushed plane and ESP-NOW already :)
+I have got first failsave at 950m and still could control plane at 1100m.
 
-TODO: Test with 5dbi antena.
+5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1250m.
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
 TODO: Test with FRSKY directional patch 7db.
 

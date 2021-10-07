@@ -78,14 +78,18 @@ If FC has BEC which can provide 3.3V 170mA, LDO may not be required.
 
 # Flashing first time
 
-1) Temporary solder flash button according to connection diagram above.
-2) Connect to USB-UART adapter according the connection diagram below:
+1) Edit receiver configuration: examples/esp01_rx_sbus/include/rx_config.h
+- configure key and wifi channel 
+- configure telemetry baudrate
+
+2) Temporary solder flash button according to connection diagram above.
+3) Connect to USB-UART adapter according the connection diagram below:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_usbuart_connection.jpg "ESP01 usbuart connection")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_usbuart.jpg "ESP01 usbuart")
 
-3) Plug USB-USB adapter while holding FLASH button. Upload firware using PlatformIO.
+4) Plug USB-USB adapter while holding FLASH button. Upload examples/esp01_rx_sbus/ project using PlatformIO.
 
 Optionally, you can flash firmware before soldering anything using some ESP01 breakout board OR using FC serialpathrough mode.
 
