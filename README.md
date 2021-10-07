@@ -46,13 +46,15 @@ Failsave period is set to 1 second (so there should be at least 1 acknowledged p
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
 
-INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS receiver.
+Tested with INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS Esp-01s based receiver:
+
+I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer.jpg "telemetryviewer")
 
-I have got first failsave at 950m and still could control plane at 1100m.
+5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1250m:
 
-5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1250m.
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/antenna_5dbi.jpg "antenna_5dbi")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
