@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+#include "HX_ESPNOW_RC_PromiscuousCapture.h"
+
 #if defined(ESP8266)
 
 #include <ESP8266WiFi.h>
@@ -42,6 +44,10 @@ class HXRCConfig;
 
 extern uint8_t BROADCAST_MAC[6];
 
+#if defined(ESP32)
+extern HXRCPromiscuousCapture capture;
+#endif
+
 //=====================================================================
 //=====================================================================
 
@@ -53,3 +59,5 @@ extern bool HXRCInitEspNow( HXRCConfig& config );
 
 extern void HXRC_crc32_init();
 extern uint32_t HXRC_crc32(const void* data, size_t length, uint32_t previousCrc32 = 0);
+
+extern void HXRCPrintMac( const uint8_t* mac );

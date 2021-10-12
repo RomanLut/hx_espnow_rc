@@ -11,6 +11,7 @@
 #define FRSKY_STUFF_MASK  0x20
 
 // FrSky data IDs (2 bytes)
+//https://github.com/yaapu/FrskyTelemetryScript/wiki/FrSky-SPort-protocol-specs
 #define FRSKY_SPORT_RSSI_ID           0xf101
 #define FRSKY_SPORT_ADC1_ID           0xf102 // A1
 #define FRSKY_SPORT_ADC2_ID           0xf103 // A2

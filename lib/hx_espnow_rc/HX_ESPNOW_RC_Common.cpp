@@ -39,6 +39,33 @@ void HXRCInitLedPin( const HXRCConfig& config )
     }
 }
 
+//=====================================================================
+//=====================================================================
+//https://esp32.com/viewtopic.php?t=13889
+#if defined(ESP32)
+HXRCPromiscuousCapture capture;
+
+static void ICACHE_RAM_ATTR sniffer_callback(void *buf, wifi_promiscuous_pkt_type_t type)
+{
+    if  (type != WIFI_PKT_MGMT) return;
+
+    static const uint8_t ACTION_SUBTYPE = 0xd0;
+
+    const wifi_promiscuous_pkt_t *ppkt = (wifi_promiscuous_pkt_t *)buf;
+    const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *)ppkt->payload;
+    const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
+
+    if ( 
+        (ACTION_SUBTYPE == (hdr->frame_ctrl & 0xFF) ) &&
+        (memcmp( hdr->addr2, capture.peerMac, 6 ) == 0 )  //mac is first 6 digits
+    )
+    {
+        capture.rssi = ppkt->rx_ctrl.rssi;
+        capture.noiseFloor = ppkt->rx_ctrl.noise_floor;
+        capture.packetsCount++;
+    }
+}
+#endif
 
 //=====================================================================
 //=====================================================================
@@ -60,6 +87,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
     wifi_promiscuous_enable(false);
 
     //review: do we need to disable wifi sleep somehow?
+    //https://www.esp32.com/viewtopic.php?t=12772
     //esp_wifi_set_ps(WIFI_PS_NONE);
 
     Serial.print("HXESPNOWRC: Info: Board MAC address(STA): ");
@@ -155,6 +183,8 @@ make menuconfig => components => Wi-Fi => Disable TX AMPDU.
   }
 #endif
 
+    esp_wifi_set_promiscuous_rx_cb(&sniffer_callback);
+    esp_wifi_set_promiscuous(true); 
 
 #endif
 
@@ -183,4 +213,16 @@ uint32_t HXRC_crc32(const void* data, size_t length, uint32_t previousCrc32)
   while (length--)
     crc = (crc >> 8) ^ Crc32Lookup[(crc & 0xFF) ^ *current++];
   return ~crc;
+}
+
+//=====================================================================
+//=====================================================================
+void HXRCPrintMac( const uint8_t* mac ) 
+{
+    for ( int i = 0; i < 6; i++ ) 
+    {
+        if ( mac[i]<16 ) HXRCLOG.print("0");
+        HXRCLOG.print(mac[i],HEX);
+        if ( i < 5 ) HXRCLOG.print(":");
+    }
 }

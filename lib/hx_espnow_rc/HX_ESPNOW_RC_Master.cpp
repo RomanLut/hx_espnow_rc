@@ -63,6 +63,11 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
             this->A1 = pPayload->A1;
             this->A2 = pPayload->A2;
 
+            memcpy( this->peerMac, mac, 6 );
+#if defined(ESP32)
+            memcpy( capture.peerMac, mac, 6 );
+#endif            
+
             if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length ) )
             {
                 if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )

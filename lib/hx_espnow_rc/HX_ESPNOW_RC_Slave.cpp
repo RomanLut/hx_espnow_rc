@@ -67,9 +67,6 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
 {
     const HXRCMasterPayload* pPayload = (const HXRCMasterPayload*) incomingData;
 
-    pinMode( 4, OUTPUT );
-    digitalWrite( 4, HIGH );
-
     if ( 
         ( len >= HXRC_MASTER_PAYLOAD_SIZE_BASE ) && 
         ( len == HXRC_MASTER_PAYLOAD_SIZE_BASE + pPayload->length ) &&
@@ -90,6 +87,11 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
                 xSemaphoreGive( this->channelsMutex);
             }
 #endif
+            memcpy( this->peerMac, mac, 6 );
+#if defined(ESP32)
+            memcpy( capture.peerMac, mac, 6 );
+#endif            
+
             if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length ) )
             {
                 if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )  //length = 0 is ok
@@ -117,8 +119,6 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
         //Serial.println(len);
         receiverStats.onInvalidPacket();
     }
-
-    digitalWrite( 4, LOW );
 
 }
 

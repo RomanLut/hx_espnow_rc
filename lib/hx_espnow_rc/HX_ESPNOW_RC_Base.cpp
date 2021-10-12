@@ -8,6 +8,7 @@ HXRCBase::HXRCBase()
     senderState = HXRCSS_INIT;
     receivedSequenceId = 0xffff;    
     waitAck = false;
+    memset(peerMac,0,6);
 }
 
 //=====================================================================
@@ -95,5 +96,12 @@ uint16_t HXRCBase::getIncomingTelemetry(uint16_t maxSize, uint8_t* pBuffer)
 bool HXRCBase::sendOutgoingTelemetry( uint8_t* ptr, uint16_t size )
 {
     return this->outgoingTelemetryBuffer.send( ptr, size );
+}
+
+//=====================================================================
+//=====================================================================
+const uint8_t* HXRCBase::getPeerMac() const
+{
+    return this->peerMac;
 }
 

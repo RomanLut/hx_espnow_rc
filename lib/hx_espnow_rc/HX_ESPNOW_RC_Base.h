@@ -37,6 +37,8 @@ protected:
 
     HXRCTransmitterStats transmitterStats;
     HXRCReceiverStats receiverStats;
+
+    uint8_t peerMac[6];
     
     volatile HXRCSenderStateEnum senderState;
 
@@ -66,5 +68,7 @@ public:
     HXRCReceiverStats& getReceiverStats();
 
     void updateLed(int8_t ledPin, bool ledPinInverted);
+
+    const uint8_t* getPeerMac() const;
 };
 

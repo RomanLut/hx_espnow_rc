@@ -158,6 +158,19 @@ void loop()
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
+
+    Serial.print("Peer:");
+    HXRCPrintMac(hxrcSlave.getPeerMac());
+    
+    Serial.print(" packets:");
+    Serial.print(capture.packetsCount);
+
+    Serial.print(" rssi:");
+    Serial.print(capture.rssi);
+
+    Serial.print(" noise_floor:");
+    Serial.println(capture.noiseFloor);
+    
     hxrcSlave.getTransmitterStats().printStats();
     hxrcSlave.getReceiverStats().printStats();
     Serial.print("Errors: ");
