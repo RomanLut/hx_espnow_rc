@@ -89,4 +89,12 @@ It is not possible to use SoftAP on ESP32 in LR mode, because beacon is sent in 
 
 LR mode is global setting for AP and STA. It is not possible to configure modes on interfaces separately.
 
+# RSSI calculation
 
+TODO: RSSI calculation
+
+# Harwdare RSSI and Noise level
+
+Harware RSSI and Noise level (in dBm) can be extracted from raw packet data only when device is put into promiscuous mode.
+Unfortunately this mode is usefull on ESP32 only. I was not able to setup working ESP-NOW communication on ESP8266 in promiscuous mode. 
+So harware rssi and noise level are available on ESP32 only.
