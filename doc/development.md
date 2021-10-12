@@ -72,6 +72,8 @@ WiFi.softAP("ssid", "password", config.wifi_channel );
 
 Otherwise channel will be changed to default (1).
 
+By default, library is initializing modules in STA mode.
+
 # Communication between ESP32 and ESP8266
 
 Communication is possible ( not in LR mode, see below ).
