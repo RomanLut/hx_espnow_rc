@@ -1,26 +1,54 @@
 #include "Smartport.h"
 #include "tx_config.h"
 
-TXConfigProfile currentProfile;
+TXConfigProfile TXConfigProfile::profiles[PROFILES_COUNT];
+int TXConfigProfile::currentProfileIndex = -1;
+
+//=====================================================================
+//=====================================================================
+TXConfigProfile::TXConfigProfile()
+{
+    this->transmitterMode = TM_ESPNOW;
+    
+    this->sportTelemetryEncoder = SPE_RSSI;
+    
+    this->espnow_key = 0;
+    this->espnow_channel = 3;
+    this->espnow_lrMode = false;
+
+    this->ap_name = "hxrct";
+    this->ap_password = NULL;
+}
 
 
 //=====================================================================
 //=====================================================================
-void initConfig()
+void TXConfigProfile::loadConfig()
 {
     //TODO: load profiles from filesystem
     //TODO: select current profile from CH16
 
-    currentProfile.transmitterMode = TM_ESPNOW;
-    
-    currentProfile.sportTelemetryEncoder = SPE_RSSI;
-    
-    currentProfile.espnow_key = 0;
-    currentProfile.espnow_channel = 3;
-    currentProfile.espnow_lrMode = false;
-
-    currentProfile.ap_name = "hxrct";
-    currentProfile.ap_password = NULL;
-
+    TXConfigProfile::profiles[1].espnow_lrMode = true;
+    TXConfigProfile::profiles[1].ap_name = "hxrct1";
 }
 
+//=====================================================================
+//=====================================================================
+const TXConfigProfile* TXConfigProfile::getCurrentProfile()
+{
+    return TXConfigProfile::currentProfileIndex < 0 ? NULL : &profiles[currentProfileIndex];
+}
+
+//=====================================================================
+//=====================================================================
+int TXConfigProfile::getCurrentProfileIndex()
+{
+    return TXConfigProfile::currentProfileIndex;
+}
+
+//=====================================================================
+//=====================================================================
+void TXConfigProfile::setCurrentProfileIndex(int index)
+{
+    TXConfigProfile::currentProfileIndex = index;
+}

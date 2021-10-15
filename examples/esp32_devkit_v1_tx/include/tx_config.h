@@ -6,9 +6,6 @@
 
 #define CP2102_RX_PIN  1
 
-#define USE_WIFI_CHANNEL 3
-#define USE_KEY 0
-
 //when SPORT support is enabled:
 //- UART0 TX and RX pins are remaped from USB to SPORT_PIN
 //- UART0 initialized to 57600 baud rate
@@ -22,6 +19,7 @@
 #else
 #endif
 
+#define PROFILES_COUNT 10
 
 /*
 //=====================================================================
@@ -63,6 +61,9 @@ typedef enum
 //=====================================================================
 class TXConfigProfile
 {
+private:
+  static int currentProfileIndex;
+  static TXConfigProfile profiles[PROFILES_COUNT];
 public:
 
   TransmitterMode transmitterMode;
@@ -75,8 +76,13 @@ public:
 
   const char* ap_name;     //NULL - no AP
   const char* ap_password;  //NULL - no password
+
+  TXConfigProfile();
+
+  static const TXConfigProfile* getCurrentProfile();
+  static int getCurrentProfileIndex();
+  static void setCurrentProfileIndex(int index);
+  static void loadConfig();
 };
 
-extern TXConfigProfile currentProfile;
 
-extern void initConfig();

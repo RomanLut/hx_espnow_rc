@@ -1,6 +1,5 @@
 #include <Arduino.h>
-//#include <BluetoothSerial.h>
-#include <SPI.h>
+//#include <SPI.h>
 #include <ArduinoOTA.h>
 
 #include <stdio.h>
@@ -17,64 +16,17 @@
 
 #include "smartport.h"
 
+#include "modeIdle.h"
+
 #define WDT_TIMEOUT_SECONDS 3  
 
-HXRCMaster hxrcMaster;
-HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcMaster );
-HXSBUSDecoder sbusDecoder;
+static HXSBUSDecoder sbusDecoder;
 static HC06Interface externalBTSerial(&Serial2);
 
 #ifdef USE_SPORT  
 SoftwareSerial softwareSerial;
 Smartport sport( &Serial );
 #endif
-
-unsigned long lastStats = millis();
-
-//=====================================================================
-//=====================================================================
-void processIncomingTelemetry()
-{
-  while ( hxrcTelemetrySerial.getAvailable() > 0 && externalBTSerial.availableForWrite() > 0)
-  {
-    uint8_t c = hxrcTelemetrySerial.read();
-    externalBTSerial.write( c );
-  }
-}
-
-//=====================================================================
-//=====================================================================
-void fillOutgoingTelemetry()
-{
-  
-  while ( (externalBTSerial.available() > 0) && (hxrcTelemetrySerial.getAvailableForWrite() > 0) )
-  {
-    uint8_t c = externalBTSerial.read();
-    //Serial.print(char(c));
-    hxrcTelemetrySerial.write(c);
-  }
-  
-}
-
-
-//=====================================================================
-//=====================================================================
-void setChannels()
-{
-  if (!sbusDecoder.isFailsafe())
-  {
-    //15 channels
-    for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
-    {
-      uint16_t r = sbusDecoder.getChannelValueInRange( i, 1000, 2000 );
-      //if ( i == 3 ) Serial.println(r);
-      hxrcMaster.setChannelValue( i, r );
-    }
-  }
-
-  //use channel 16 to transmit failsafe flag
-  hxrcMaster.setChannelValue( 15, sbusDecoder.isFailsafe() ? 1 : 0 );
-}
 
 //=====================================================================
 //=====================================================================
@@ -107,60 +59,12 @@ int log_vprintf(const char *fmt, va_list args)
 
 //=====================================================================
 //=====================================================================
-unsigned char reverse(unsigned char b) {
-   b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
-   b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
-   b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
-   return b;
-}
-
-//=====================================================================
-//=====================================================================
-void test()
-{
-  pinMode( 1, OUTPUT );
-  digitalWrite(1,HIGH);
-
-  SPI.begin(-1, -1, 1, -1);
-
-  SPI.setFrequency(115200);
-  SPI.setDataMode(SPI_MODE0);
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setHwCs(false);
-
-
-  uint32_t c = reverse('D');
-  c= (c << 8);
-  c|=0xffff00fe;
-
-  SPI.write32(c);  
-  SPI.write32(c);  
-  SPI.write32(c);  
-  SPI.write32(c);  
-
-
-/*
-  SPI.beginTransaction(SPISettings( 115200, MSBFIRST, SPI_MODE0 ));
-  SPI.write32(c);  
-  SPI.endTransaction();
-  *
-
-  SPI.beginTransaction(SPISettings( 115200, MSBFIRST, SPI_MODE0 ));
-  SPI.write32(0xffffffff);  
-  SPI.endTransaction();
-  */
-  
-}
-
-
-//=====================================================================
-//=====================================================================
 void setup()
 {
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 
-  initConfig();
+  TXConfigProfile::loadConfig();
 
 #ifdef USE_SPORT  
   sport.init();
@@ -175,8 +79,6 @@ void setup()
   pinMode(SPORT_PIN,INPUT);
 #endif
 
-//test();
-
   HXRCLOG.println("Start");
 
   initLedPin();
@@ -187,41 +89,10 @@ void setup()
 
   externalBTSerial.init();
 
-/*
-  if ( !SerialBT.setPin("1234") ) 
-  {
-    Serial.println("An error occurred setting Bluetooth pin");
-  }*/
-
-  if ( currentProfile.transmitterMode == TM_ESPNOW )
-  {
-    hxrcMaster.init(
-        HXRCConfig(
-            currentProfile.espnow_channel,
-            currentProfile.espnow_key,
-            currentProfile.espnow_lrMode,
-            -1, false));
-  }
+  ModeBase::currentModeHandler = &ModeIdle::instance;
+  ModeBase::currentModeHandler->start();
 
   esp_task_wdt_reset();
-
-  if ( currentProfile.ap_name )
-  {
-    WiFi.softAP(currentProfile.ap_name, currentProfile.ap_password, currentProfile.espnow_channel);  //for ESPNOW RC mode, have to use channel configured from espnow rc
-    ArduinoOTA.begin();  
-  }
-
-  esp_task_wdt_reset();
-
-  /*
-  if ( !SerialBT.begin("HXRCBLE") ) 
-  {
-    Serial.println("An error occurred initializing Bluetooth");
-  }
-  */
-
-  esp_task_wdt_reset();
-
 }
 
 //=====================================================================
@@ -231,37 +102,12 @@ void loop()
   esp_task_wdt_reset();
 
   sbusDecoder.loop();
-  setChannels();
 
-  hxrcTelemetrySerial.flush();
-  processIncomingTelemetry();
-  fillOutgoingTelemetry();
-
-  hxrcMaster.loop();
-  hxrcMaster.updateLed( LED_PIN, true );  //LED_PIN is not inverted. Pass"inverted" flag so led is ON in idle mode
-
-/*
-  if (millis() - lastStats > 1000)
-  {
-    lastStats = millis();
-    hxrcMaster.getTransmitterStats().printStats();
-    hxrcMaster.getReceiverStats().printStats();
-    if ( sbusDecoder.isFailsafe()) HXRCLOG.print("SBUS FS!\n");
-  }
-*/
-
-#ifdef USE_SPORT  
-  sport.setRSSI( hxrcMaster.getTransmitterStats().getRSSI());
-  sport.setA1(hxrcMaster.getA1());
-  sport.setA2(hxrcMaster.getA2());
-  sport.loop();
-#endif
-
-  if ( hxrcMaster.getReceiverStats().isFailsafe() && currentProfile.ap_name )
-  {
-    ArduinoOTA.handle();  
-  }
-
- }
+#ifdef USE_SPORT
+  ModeBase::currentModeHandler->loop( &sbusDecoder, & externalBTSerial, &sport );
+#else
+  ModeBase::currentModeHandler->loop( &sbusDecoder, & externalBTSerial, NULL );
+#endif  
+}
 
 

@@ -150,7 +150,7 @@ void setup()
       HXRCConfig(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          false,
+          false, //LR mode
           -1, false));
 
   //init SoftAp after HXRC
@@ -185,6 +185,22 @@ void loop()
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
+    
+    Serial.print("Peer:");
+    HXRCPrintMac(hxrcMaster.getPeerMac());
+    
+    Serial.print(" packets:");
+    Serial.print(capture.packetsCount);
+
+    Serial.print(" rssi:");
+    Serial.print(capture.rssi);
+
+    Serial.print(" noise_floor:");
+    Serial.print(capture.noiseFloor);
+
+    Serial.print(" rate:");
+    Serial.println(capture.rate);
+
     hxrcMaster.getTransmitterStats().printStats();
     hxrcMaster.printDelta();
     hxrcMaster.getReceiverStats().printStats();

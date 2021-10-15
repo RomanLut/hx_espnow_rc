@@ -132,7 +132,7 @@ void setup()
       HXRCConfig(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          false,
+          false,  //LR Mode
           LED_BUILTIN, false));
 
     WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL );
@@ -169,7 +169,10 @@ void loop()
     Serial.print(capture.rssi);
 
     Serial.print(" noise_floor:");
-    Serial.println(capture.noiseFloor);
+    Serial.print(capture.noiseFloor);
+
+    Serial.print(" rate:");
+    Serial.println(capture.rate);
     
     hxrcSlave.getTransmitterStats().printStats();
     hxrcSlave.getReceiverStats().printStats();

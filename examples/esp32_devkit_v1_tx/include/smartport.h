@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#define SPORT_DIY_VALUES 3
+
 //=====================================================================
 //=====================================================================
 class Smartport
@@ -12,6 +14,8 @@ private:
 
     uint8_t RSSI;
     uint32_t A1,A2;
+
+    uint8_t diy[SPORT_DIY_VALUES];
 
     unsigned short crc;
 
@@ -24,6 +28,7 @@ private:
     void sendA1Voltage();
     void sendA2Value();
     void sendHeading();
+    void sendDIYValue(int sensorId, int index);
 
 public:
 
@@ -37,5 +42,6 @@ public:
     void setRSSI( uint8_t value); 
     void setA1( uint32_t value); 
     void setA2( uint32_t value); 
+    void setDIYValue( int index, uint8_t value);
 };
 

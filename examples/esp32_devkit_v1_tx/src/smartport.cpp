@@ -34,6 +34,8 @@
 #define FRSKY_SPORT_GPS_SPEED_ID      0x0830
 #define FRSKY_SPORT_GPS_COURS_ID      0x0840
 #define FRSKY_SPORT_GPS_TIME_DATE_ID  0x0850
+#define FRSKY_SPORT_DIY_FIRST_ID      0x5000
+#define FRSKY_SPORT_DIY_LAST_ID       0x52ff
 
 // FrSky sensor IDs (this also happens to be the order in which they're broadcast from an X8R)
 // NOTE: As FrSky puts out more sensors let's try to add comments here indicating which is which
@@ -75,6 +77,7 @@ Smartport::Smartport(HardwareSerial* serial)
     this->RSSI = 0;
     this->A1 = 0;
     this->A2 = 0;
+    for (int i = 0; i < SPORT_DIY_VALUES; i++ ) this->diy[i] = 0;
 }
 
 //=====================================================================
@@ -156,6 +159,13 @@ void Smartport::sendA2Value()
 	this->sendValue(FRSKY_SPORT_ADC2_ID, (opentx_val));
 }
 
+//=====================================================================
+//=====================================================================
+void Smartport::sendDIYValue(int sensorId, int index)
+{
+	uint32_t opentx_val = this->diy[index];
+	this->sendValue(sensorId, (opentx_val));
+}
 
 //=====================================================================
 //=====================================================================
@@ -215,6 +225,30 @@ this->serial->write( 0x6c );
             this->sendA2Value();
             break;
 
+        case 3:
+
+            this->serial->write( FRSKY_START_STOP ); //0x7e
+            this->serial->write( FRSKY_SPORT_DEVICE_10); 
+
+            this->sendDIYValue(FRSKY_SPORT_ACCX_ID, 0);
+            break;
+
+        case 4:
+
+            this->serial->write( FRSKY_START_STOP ); //0x7e
+            this->serial->write( FRSKY_SPORT_DEVICE_10); 
+
+            this->sendDIYValue(FRSKY_SPORT_ACCY_ID, 1);
+            break;
+
+        case 5:
+
+            this->serial->write( FRSKY_START_STOP ); //0x7e
+            this->serial->write( FRSKY_SPORT_DEVICE_10); 
+
+            this->sendDIYValue(FRSKY_SPORT_ACCZ_ID, 2);
+            break;
+
             /*
             case FRSKY_SPORT_DEVICE_8:
             FrSkySport_sendACCX();
@@ -247,7 +281,7 @@ this->serial->write( 0x6c );
         }
 
         this->lastSensor++;
-        if ( this->lastSensor == 3 )
+        if ( this->lastSensor == (3+SPORT_DIY_VALUES) )
         {
             this->lastSensor = 0;
         }
@@ -273,6 +307,13 @@ void Smartport::setA1(uint32_t value)
 void Smartport::setA2(uint32_t value)
 {
     this->A2 = value;
+}
+
+//=====================================================================
+//=====================================================================
+void Smartport::setDIYValue(int index, uint8_t value)
+{
+    this->diy[index] = value;
 }
 
 

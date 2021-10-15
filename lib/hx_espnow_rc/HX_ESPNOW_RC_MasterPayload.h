@@ -5,7 +5,7 @@
 
 #define HXRC_MASTER_PAYLOAD_SIZE_BASE (4 + 2 + 2 + 2 + 2 + 22 + 1 )  
 //#define HXRC_MASTER_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_MASTER_PAYLOAD_SIZE_BASE )
-#define HXRC_MASTER_TELEMETRY_SIZE_MAX 64  //limit packet size to improve chances of success delivery
+#define HXRC_MASTER_TELEMETRY_SIZE_MAX 64  //limit packet size to improve chances of successfull delivery
 
 #pragma pack (push)
 #pragma pack (1)
