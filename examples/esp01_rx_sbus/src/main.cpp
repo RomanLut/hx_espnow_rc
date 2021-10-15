@@ -4,7 +4,6 @@
 #include "hx_sbus_encoder.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
 
-#include <servo.h>
 #include <ArduinoOTA.h>
 
 HXRCSlave hxrcSlave;
@@ -12,11 +11,6 @@ HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcSlave );
 HXSBUSEncoder hxSBUSEncoder;
 
 unsigned long lastStats = millis();
-unsigned long telemetryTime = millis();
-unsigned long analogReadTime = millis();
-unsigned long failsafeStart = 0;
-unsigned long idleStart = 0;
-
 
 //=====================================================================
 //=====================================================================
