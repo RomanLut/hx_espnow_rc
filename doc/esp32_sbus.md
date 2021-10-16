@@ -1,9 +1,6 @@
-[Work in progress]
-
-
 # SBUS output recevier with transparent telemetry stream based on ESP32-WROOM-32 naked module
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_sbus.jpg "ESP32 sbus")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_wroom_32.jpg "ESP32-WROOM-32")
 
 Receiver to be used with flight controller. Receives 15 channels and outputs SBUS signal.
 Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP, Frsky etc.). 
@@ -11,7 +8,7 @@ Transmits bidirectional transparent telemetry stream (can be used for Mavlink, L
 RSSI is injected into channel 16.
 
 Can be powered from 5V BEC or directly from 1S battery (3.0V...5.0V).
-If you are going to power it from 1S battery, linear regulator should be low-drop one (0.2...0.3V at 170mAh). ESP32 will operate stable down to 2.7V, allowing dischaging battery down to 3V.
+If you are going to power it from 1S battery, linear regulator should be low-drop one (0.2...0.3V at 340mAh). ESP32 will operate stable down to 2.7V, allowing dischaging battery down to 3V.
 
 Peak power consumption is ~340mA.
 
@@ -22,26 +19,26 @@ TODO: support sensors pooling for Smartport telemetry.
 
 TODO: work as telemetry blackbox?
 
+# Failsave
+
+Failsafe flag is passed in SBUS packets. Channels retain last good values.
+
 # Connection diagram
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_sbus_connections.jpg "ESP32 sbus connections")
 
 # Parts list
 
-- ESP32-WROOM-32 module 
+- ESP32-WROOM-32 or ESP32-WROOM-32U (recommended) module 
 - 3.3V LDO SOT223 (AMS1117-3.3, LM1117-3.3, LM3940 or other)
 - 2x 10k 0804 smd resistors
 - 2x 1206 10uf capacitors
 - dipole or whip antenna (optional)
 - USB-UART-TTL adapter (for initial flashing)
 
-# Failsave
-
-Failsafe flag is passed in SBUS packets. Channels retain last good values.
-
 # Building steps
 
-1) Glue 3.3V LDO or small PCB with 3.3 LDO to the back of ESP32. Connect according to connection diagram above.
+1) Glue small PCB with 3.3 LDO to the back of ESP32. Connect according to connection diagram above.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_33ldocut.jpg "ESP32 LDO cut")
 
@@ -72,7 +69,7 @@ Failsafe flag is passed in SBUS packets. Channels retain last good values.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_usbuart.jpg "ESP32 usbuart")
 
-3) Plug USB-USB adapter while shorting two wires as shown above with a tweezers. Upload examples/esp32_rx_sbus/ project using PlatformIO.
+3) Plug USB-UART adapter while shorting two wires as shown above with a tweezers. Upload examples/esp32_rx_sbus/ project using PlatformIO.
 
 After initial flashing, firmware can be updated wirelessly (OTA).
 

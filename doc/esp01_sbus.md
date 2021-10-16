@@ -16,6 +16,10 @@ TODO: support sensors pooling for Smartport telemetry.
 
 TODO: work as telemetry blackbox?
 
+# Failsave
+
+Failsafe flag is passed in SBUS packets. Channels retain last good values.
+
 # Connection diagram
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_sbus_connections.jpg "ESP01 sbus connections")
@@ -30,10 +34,6 @@ TODO: work as telemetry blackbox?
 - dipole or whip antenna (optional)
 - a button
 - USB-UART-TLL convertor or ESP01 breakout board (for initial flashing)
-
-# Failsave
-
-Failsafe flag is passed in SBUS packets. Channels retain last good values.
 
 # 10k Resistors (R2...R4)
 
