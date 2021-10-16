@@ -7,6 +7,7 @@ Goals:
 - build external module for Jumper T-Lite (done)
 - build receiver based on Wemos D1 Mini board (Servo/PWM outputs) (done)
 - build ESP-01 based SBUS output receiver (done)
+- build ESP32 based SBUS output receiver, LR mode
 - external module for Jumper T-Lite: multiple configurations in xml file
 - external module for Jumper T-Lite: select active configuration by CH16 value
 - external module for Jumper T-Lite: bluetooth gamepad mode
@@ -52,11 +53,20 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer.jpg "telemetryviewer")
 
-5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1250m:
+5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1364m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/antenna_5dbi.jpg "antenna_5dbi")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
+
+5dbi TP-Link antena with RP-SMA-SMA adapter, ESP32 based SBUS receiver, LR mode provide range up to 1886m(!):
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/dfminispirit.jpg "dfminispirit")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi_lr.jpg "telemetryviewer_5dbi_lr")
+
+However, this result is not reliable. When I made second attempt, I was able to flight to 1400m only.
+Overall, you can expect up to 1Km range of stable connection.
 
 TODO: Test with FRSKY directional patch 7db.
 
