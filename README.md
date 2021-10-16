@@ -74,11 +74,11 @@ I also tested with Frsky direction patch 7dbi antenna clone, and I was not able 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatch.jpg "frskypatch")
 
 I am not sure if this is caused by poor clone quality, my ability to point in the right direction, or poor antena SWR.
-I know I have to open the clone and rorate inner part in the right direction).
+(I know I have to open the clone and rotate inner part in the right direction).
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatchinside.jpg "frskypatchinside")
 
-Event DIY dipole works better (it similar to standart 2dbi antenna which code with Jumner T-Lite):
+Even DIY dipole has better results (it similar to standart 2dbi antenna which is included with Jumper T-Lite):
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_dipole.jpg "diy_dipole")
 
