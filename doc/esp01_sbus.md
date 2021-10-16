@@ -29,7 +29,7 @@ TODO: work as telemetry blackbox?
 - 3x 10k 0804 smd resisors (not required for ESP01s)
 - dipole or whip antenna (optional)
 - a button
-- USB-uart convertor or ESP01 breakout board (for initial flashing)
+- USB-UART-TLL convertor or ESP01 breakout board (for initial flashing)
 
 # Failsave
 
