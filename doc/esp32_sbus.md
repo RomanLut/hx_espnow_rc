@@ -12,7 +12,7 @@ If you are going to power it from 1S battery, linear regulator should be low-dro
 
 Peak power consumption is ~340mA.
 
-Compared to ESP01 based receiver, ESP32 allows to use LR (long range) mode of ESP32. However, I can not prove major benefits of LR mode currently.
+Compared to ESP01 based receiver, ESP32 allows to use LR (long range) mode. LR mode is special mode introduced by Espressif Systems with ESP32. Theoretically it should provide 2x better range, in practice the difference is subtle. I can not prove major benefits of LR mode currently.
 
 
 TODO: support sensors pooling for Smartport telemetry.
