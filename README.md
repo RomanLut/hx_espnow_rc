@@ -59,13 +59,14 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
-5dbi TP-Link antena with RP-SMA-SMA adapter, ESP32 based SBUS receiver, LR mode provide range up to 1886m(!):
+Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based receiver, LR mode.
+5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1886m(!):
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/dfminispirit.jpg "dfminispirit")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi_lr.jpg "telemetryviewer_5dbi_lr")
 
-However, this result is not reliable. When I made second attempt, I was able to flight to 1400m only.
+However, this result is not reliable. When I made a second attempt, I was able to flight up to 1400m only.
 Overall, you can expect up to 1Km range of stable connection.
 
 TODO: Test with FRSKY directional patch 7db.
