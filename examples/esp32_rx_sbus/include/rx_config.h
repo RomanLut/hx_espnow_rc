@@ -21,7 +21,7 @@ https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 #define SBUS_PIN 22
 
 //#define TELEMETRY_BAUDRATE 115200
-#define TELEMETRY_BAUDRATE 9600
+#define TELEMETRY_BAUDRATE 57600
 
 //=============================================================================
 //Receiver binding
