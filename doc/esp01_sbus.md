@@ -8,6 +8,7 @@ Transmits bidirectional transparent telemetry stream (can be used for Mavlink, L
 RSSI is injected into channel 16.
 
 Can be powered from 5V BEC or directly from 1S battery (3.0V...5.0V).
+If you are going to power it from 1S battery, linear regulator should be low-drop one (0.2...0.3V at 170mAh). ESP8266 will operate stable down to 2.7V, allowing dischaging battery down to 3V.
 
 Peak power consumption is ~170mA.
 
