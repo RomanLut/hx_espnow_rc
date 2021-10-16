@@ -153,6 +153,14 @@ bool HXRCInitEspNow( HXRCConfig& config )
         return false;
     }
 
+    //set bandwidth to 20Mhz to decrease noise floor by 3dbm
+    //review: does it have any effect?
+    if ( esp_wifi_set_bandwidth(WIFI_IF_STA, WIFI_BW_HT20) != ESP_OK )
+    {
+        Serial.println("HXRC: Error: Failed to set bandwidth");
+        return false;
+    } 
+
     //Note: Wifi sleep should not be disabled if Wifi and Bluetooth coexist
     //https://github.com/espressif/arduino-esp32/issues/4965
     //https://github.com/espressif/esp-idf/issues/5759
