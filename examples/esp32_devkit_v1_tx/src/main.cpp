@@ -1,6 +1,4 @@
 #include <Arduino.h>
-//#include <SPI.h>
-#include <ArduinoOTA.h>
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -59,6 +57,13 @@ int log_vprintf(const char *fmt, va_list args)
 
 //=====================================================================
 //=====================================================================
+void onOTAprogress( uint a, uint b )  
+{
+  esp_task_wdt_reset();
+}
+
+//=====================================================================
+//=====================================================================
 void setup()
 {
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
@@ -108,6 +113,7 @@ void loop()
 #else
   ModeBase::currentModeHandler->loop( &sbusDecoder, & externalBTSerial, NULL );
 #endif  
+
 }
 
 
