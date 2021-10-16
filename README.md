@@ -39,7 +39,7 @@ See building guides:
 
 # Range
 2 dbi dipole antenna on transmitter with:
- - PCB antenal provide range less then 150m.
+ - PCB antennl provide range less then 150m.
  - whip antenna with stripping wire provide range ~250m
  - 2dbi dipole antenna provide range ~1Km (!)
 
@@ -59,7 +59,7 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
-Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based receiver, LR mode.
+Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode.
 5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1886m(!):
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/dfminispirit.jpg "dfminispirit")
@@ -69,9 +69,19 @@ Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based receiver, LR m
 However, this result is not reliable. When I made a second attempt, I was able to flight up to 1400m only.
 Overall, you can expect up to 1Km range of stable connection.
 
-TODO: Test with FRSKY directional patch 7db.
+I also tested with Frsky direction patch 7dbi antenna clone, and I was not able to get any good result with it. I got a lot of failsafe events at 700m already.
 
-TODO: Test LR mode.
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatch.jpg "frskypatch")
+
+I am not sure if this is caused by poor clone quality, my ability to point in the right direction, or poor antena SWR.
+I know I have to open the clone and rorate inner part in the right direction).
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatchinside.jpg "frskypatchinside")
+
+Event DIY dipole works better (it similar to standart 2dbi antenna which code with Jumner T-Lite):
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_dipole.jpg "diy_dipole")
+
 
 # Telemetry
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distorion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
