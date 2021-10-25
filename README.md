@@ -7,9 +7,9 @@ Goals:
 - build external module for Jumper T-Lite (done)
 - build receiver based on Wemos D1 Mini board (Servo/PWM outputs) (done)
 - build ESP-01 based SBUS output receiver (done)
-- build ESP32 based SBUS output receiver, LR mode
+- build ESP32 based SBUS output receiver, LR mode (done)
+- external module for Jumper T-Lite: select active configuration by CH16 value (done)
 - external module for Jumper T-Lite: multiple configurations in xml file
-- external module for Jumper T-Lite: select active configuration by CH16 value
 - external module for Jumper T-Lite: bluetooth gamepad mode
 - external module for Jumper T-Lite: telemetry bridge ( A1,A2,RSSI -> SPORT pin translate, SPORT stream -> SPORT pin, Mavlink stream -> SPORT pin translate)
 - external module for Jumper T-Lite: SPORT telemetry quering
@@ -22,10 +22,11 @@ Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 Transmits 16 channels at 25 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
-Can be used as cheap RC for LOS flights.
+Can be used as cheap RC for LOS flights or up to 1km flight.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
 Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/mahowii
+Used in DIY ESP8266 plane: https://www.youtube.com/watch?v=c9dDOX0IzME
 
 You can build transmitter external module and SBUS/PWM receiver using guides below.
 
@@ -40,11 +41,11 @@ See building guides:
 
 # Range
 2 dbi dipole antenna on transmitter with:
- - PCB antennl provide range less then 150m.
+ - PCB antenna provide range less then 150m.
  - whip antenna with stripping wire provide range ~250m
  - 2dbi dipole antenna provide range ~1Km (!)
 
-Failsave period is set to 1 second (so there should be at least 1 acknowledged packet in 1 second). Note that range of actual communication is larger, but is not usefull for RC.
+Failsave period is set to 1 second (so there should be at least 1 successfult packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
 
@@ -54,14 +55,14 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer.jpg "telemetryviewer")
 
-5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1364m:
+5dbi TP-Link antenna with RP-SMA-SMA adapter provide range up to 1364m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/antenna_5dbi.jpg "antenna_5dbi")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
 Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode.
-5dbi TP-Link antena with RP-SMA-SMA adapter provide range up to 1886m(!):
+5dbi TP-Link antenna with RP-SMA-SMA adapter provide range up to 1886m(!):
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/dfminispirit.jpg "dfminispirit")
 
@@ -70,7 +71,7 @@ Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver,
 However, this result is not reliable. When I made a second attempt, I was able to flight up to 1400m only.
 Overall, you can expect up to 1Km range of stable connection.
 
-I also tested with Frsky direction patch 7dbi antenna clone, and I was not able to get any good result with it. I got a lot of failsafe events at 700m already.
+I also tested with Frsky directional patch 7dbi antenna clone, and I was not able to get any good result with it. I got a lot of failsafe events at 700m already.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatch.jpg "frskypatch")
 
