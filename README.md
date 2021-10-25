@@ -26,6 +26,7 @@ Can be used as cheap RC for LOS flights or up to 1km flight.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
 Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/mahowii
+
 Used in DIY ESP8266 plane: https://www.youtube.com/watch?v=c9dDOX0IzME
 
 You can build transmitter external module and SBUS/PWM receiver using guides below.

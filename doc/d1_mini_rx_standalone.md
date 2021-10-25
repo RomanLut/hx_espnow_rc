@@ -4,6 +4,7 @@
 
  Standalone receiver. To be used for manual flights.
  Number of Servo, PWM and discrete outputs can be configured.
+
  See "ESP8266 plane" video: https://www.youtube.com/watch?v=c9dDOX0IzME
 
  "Servo outputs" output 50Hz 1-2ms pulses.
