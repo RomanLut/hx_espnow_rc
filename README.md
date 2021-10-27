@@ -18,7 +18,9 @@ Goals:
 
 Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Build step")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "External module")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diagram.jpg "Diagram")
 
 Transmits 16 channels at 25 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
