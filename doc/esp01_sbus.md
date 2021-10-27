@@ -12,6 +12,8 @@ If you are going to power it from 1S battery, linear regulator should be low-dro
 
 Peak power consumption is ~170mA.
 
+See testing with INAV 1.7.3 flying wing: https://www.youtube.com/watch?v=UptvxsFHDFA
+
 TODO: support sensors pooling for Smartport telemetry.
 
 TODO: work as telemetry blackbox?

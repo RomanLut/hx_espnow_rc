@@ -31,6 +31,8 @@ Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/mahowii
 
 Used in DIY ESP8266 plane: https://www.youtube.com/watch?v=c9dDOX0IzME
 
+Used in INAV 1.7.3 plane: https://www.youtube.com/watch?v=UptvxsFHDFA
+
 You can build transmitter external module and SBUS/PWM receiver using guides below.
 
 See building guides:
@@ -52,7 +54,7 @@ Failsave period is set to 1 second (so there should be at least 1 successfult pa
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
 
-Tested with INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS Esp-01s based receiver:
+Tested with INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS Esp-01s based receiver https://www.youtube.com/watch?v=UptvxsFHDFA :
 
 I have got first failsave event at 950m and still could control plane at 1100m:
 
