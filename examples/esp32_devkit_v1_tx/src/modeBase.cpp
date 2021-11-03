@@ -4,6 +4,7 @@
 #include "HX_ESPNOW_RC_Master.h"
 
 #include "modeEspNowRC.h"
+#include "modeXiroMini.h"
 
 ModeBase* ModeBase::currentModeHandler;
 
@@ -82,6 +83,11 @@ void ModeBase::startRequestedProfile()
         case TM_BLUETOOTH_GAMEPAD:
             //ModeBase::currentModeHandler = ModeEspNowRC::instance;
             break;
+
+        case TM_XIRO_MINI:
+            ModeBase::currentModeHandler = &ModeXiroMini::instance;
+            break;
+
     }
 
     ModeBase::currentModeHandler->start();
