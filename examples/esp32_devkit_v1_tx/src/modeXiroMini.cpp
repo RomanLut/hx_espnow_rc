@@ -73,11 +73,11 @@ void ModeXiroMini::udpWriteWithChecksum( uint8_t value, uint8_t* checksum )
 
 //=====================================================================
 //=====================================================================
-void ModeXiroMini::udpWriteSwitchWithChecksum( HXSBUSDecoder* sbusDecoder, uint8_t channelIndex, uint8_t* checksum )
+void ModeXiroMini::udpWriteSwitchWithChecksum( HXSBUSDecoder* sbusDecoder, uint8_t channelIndex, uint16_t minValue, uint8_t* checksum )
 {
     uint16_t r = sbusDecoder->getChannelValueInRange( channelIndex , 1000, 2000 );
 
-    if( r < 1250 ) r = 1000;
+    if( r < 1250 ) r = minValue;
     else if ( r > 1750 ) r = 2000;
     else r = 1500;
 
@@ -114,29 +114,52 @@ void ModeXiroMini::sendChannels( HXSBUSDecoder* sbusDecoder )
         this->udpWriteWithChecksum( r & 0xff, &checksum);
     }
 
-    //this->udpWriteWithChecksum( 0x03, &checksum);  //5 - ???  headless? ioc?
+	//5 - headless/ioc
+	//Xiro app: 03E8			
+	//FligtGo: 05dc
+    //this->udpWriteWithChecksum( 0x03, &checksum);  
     //this->udpWriteWithChecksum( 0xE8, &checksum);
-    this->udpWriteSwitchWithChecksum(  sbusDecoder, 5-1,  &checksum);
+    this->udpWriteSwitchWithChecksum(  sbusDecoder, 5-1, 0x3e8,  &checksum);
 
-    //this->udpWriteWithChecksum( 0x03, &checksum);  //6 - rth?
+	//6 - rth?
+	//Xiro App: 03e8
+	//Flight Go: 00dc 
+    //this->udpWriteWithChecksum( 0x03, &checksum);  
     //this->udpWriteWithChecksum( 0xE8, &checksum);
-    this->udpWriteSwitchWithChecksum(  sbusDecoder, 6-1,  &checksum);
+    this->udpWriteSwitchWithChecksum(  sbusDecoder, 6-1, 0x00dc, &checksum);
 
-    //this->udpWriteWithChecksum( 0x05, &checksum);  //7 - wheel r   PTZ  up+ dn-
+	//7 - wheel r   PTZ  up+ dn-
+	//Xiro App: 05dc
+	//FlihgtGo: 05dc
+    //this->udpWriteWithChecksum( 0x05, &checksum);  
     //this->udpWriteWithChecksum( 0xDC, &checksum);
-    this->udpWriteSwitchWithChecksum(  sbusDecoder, 7-1,  &checksum);
+    this->udpWriteSwitchWithChecksum(  sbusDecoder, 7-1, 0x3e8,  &checksum);
 
-    //this->udpWriteWithChecksum( 0x05, &checksum);  //8 - wheel l+  photo/video on/off
+	//8 - wheel l+  photo/video on/off
+	//Xiro app: 05dc
+	//Flightgo: 0003	
+    //this->udpWriteWithChecksum( 0x05, &checksum);  
     //this->udpWriteWithChecksum( 0xDC, &checksum);
-    this->udpWriteSwitchWithChecksum(  sbusDecoder, 8-1,  &checksum);
 
-    //this->udpWriteWithChecksum( 0x03, &checksum);   //9 - takeof landing?
+    this->udpWriteWithChecksum( 0x00, &checksum);  
+    this->udpWriteWithChecksum( 0x03, &checksum);
+
+    //this->udpWriteSwitchWithChecksum(  sbusDecoder, 8-1, 0x03e8,  &checksum);
+
+
+	//9 - takeof landing?
+	//Xiro app: 03e8
+	//FlightGo: 05dc
+    //this->udpWriteWithChecksum( 0x03, &checksum);   
     //this->udpWriteWithChecksum( 0xE8, &checksum);
-    this->udpWriteSwitchWithChecksum(  sbusDecoder, 9-1,  &checksum);
+    this->udpWriteSwitchWithChecksum(  sbusDecoder, 9-1, 0x3e8, &checksum);
 
-    //this->udpWriteWithChecksum( 0x07, &checksum);  //10 -  ???  rates? poshold?  mode 1 - 2000(slow) mode 2,3(fast) - 1500
+	//10 -  ???  rates? poshold?  mode 1 - 2000(slow) mode 2,3(fast) - 1500
+	//Xiro app: 07dc
+	//FlihgtGo: 05dc
+    //this->udpWriteWithChecksum( 0x07, &checksum);  
     //this->udpWriteWithChecksum( 0xD0, &checksum);
-    this->udpWriteSwitchWithChecksum(  sbusDecoder, 10-1,  &checksum);
+    this->udpWriteSwitchWithChecksum(  sbusDecoder, 10-1, 0x3e8, &checksum);
 
     udp.write( checksum );
 

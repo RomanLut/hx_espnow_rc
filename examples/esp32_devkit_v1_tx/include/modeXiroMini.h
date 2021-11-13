@@ -24,7 +24,7 @@ private:
     void processIncomingTelemetry(HC06Interface* externalBTSerial);
     void readPackets();
     void udpWriteWithChecksum( uint8_t value, uint8_t* checksum );
-    void udpWriteSwitchWithChecksum( HXSBUSDecoder* sbusDecoder, uint8_t channelIndex, uint8_t* checksum );
+    void udpWriteSwitchWithChecksum( HXSBUSDecoder* sbusDecoder, uint8_t channelIndex, uint16_t minValue, uint8_t* checksum );
 
 public:
     static ModeXiroMini instance;
