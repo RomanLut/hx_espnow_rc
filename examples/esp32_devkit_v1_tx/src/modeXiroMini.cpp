@@ -11,11 +11,16 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
-#define UDP_PORT 7088
+#include <esp_wifi.h>
+#include "esp_wifi_internal.h" 
+
+#define UDP_CMD_PORT 7088
+#define UDP_RTP_PORT 7078
 
 ModeXiroMini ModeXiroMini::instance;
 
-static WiFiUDP udp;
+static WiFiUDP udpCMD;
+static WiFiUDP udpRTP;
 
 //=====================================================================
 //=====================================================================
@@ -23,6 +28,31 @@ ModeXiroMini::ModeXiroMini()
 {
 
 }
+
+//=====================================================================
+//=====================================================================
+static void ICACHE_RAM_ATTR sniffer_callback(void *buf, wifi_promiscuous_pkt_type_t type)
+{
+    if  (type != WIFI_PKT_MGMT) return;
+
+    static const uint8_t ACTION_SUBTYPE = 0xd0;
+
+    const wifi_promiscuous_pkt_t *ppkt = (wifi_promiscuous_pkt_t *)buf;
+    const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *)ppkt->payload;
+    const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
+
+    if ( 
+        (ACTION_SUBTYPE == (hdr->frame_ctrl & 0xFF) ) &&
+        (memcmp( hdr->addr2, capture.peerMac, 6 ) == 0 )  //mac is first 6 digits
+    )
+    {
+        capture.rssi = ppkt->rx_ctrl.rssi;
+        capture.noiseFloor = ppkt->rx_ctrl.noise_floor;
+        capture.rate = ppkt->rx_ctrl.rate;
+        capture.packetsCount++;
+    }
+}
+
 
 //=====================================================================
 //=====================================================================
@@ -37,13 +67,42 @@ void ModeXiroMini::start()
 
     this->connected = false;
 
-    WiFi.mode(WIFI_STA);
-    esp_wifi_set_protocol (WIFI_IF_STA, WIFI_PROTOCOL_11B );
+    WiFi.mode(WIFI_AP_STA);
+    esp_wifi_set_protocol (WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N );
+    esp_wifi_set_protocol (WIFI_IF_AP, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N );
 
+    const IPAddress local(192, 168, 4, 1);
+    const IPAddress dns(192,168,4,1);
+    const IPAddress gateway(192,168,4,1); 
+    const IPAddress netmask(255, 255, 255, 0);
+    WiFi.softAPConfig(local, dns, netmask);
+
+    //access point part
+    WiFi.softAP("XIRO_RC","XIRO1234",3,0,3);
+    HXRCLOG.print("AP IP:\n");
+    HXRCLOG.println(WiFi.softAPIP());
+
+    //station part
     WiFi.begin("XPLORER_Mini_0b4a41", "XIRO1234");    
+
+    delay(1000);
+
+    //udpCMD.begin( UDP_CMD_PORT );
+    //udpCMD.begin( IPAddress( 192,168,4,1), UDP_CMD_PORT );
+    //udpRTP.begin( UDP_RTP_PORT );
+
+    //esp_wifi_set_promiscuous_rx_cb(&sniffer_callback);
+    //esp_wifi_set_promiscuous(true); 
 
     this->lastStats = millis();
     this->lastPacketTime = millis();
+    this->lastRTPPacketTime = millis();
+
+    this->cmdPacketsSent = 0;
+    this->cmdPacketsReceived = 0;
+    this->rtpPacketsTotal = 0;
+    this->cmdPacketsMirrored = 0;
+    this->rtpPacketsMirrored = 0;
 
     this->batPercentage = 0;
     this->height = 0;
@@ -67,7 +126,7 @@ void ModeXiroMini::fillOutgoingTelemetry(HC06Interface* externalBTSerial)
 //=====================================================================
 void ModeXiroMini::udpWriteWithChecksum( uint8_t value, uint8_t* checksum )
 {
-    udp.write( value );
+    udpCMD.write( value );
     *checksum += value; 
 }
 
@@ -94,7 +153,7 @@ void ModeXiroMini::sendChannels( HXSBUSDecoder* sbusDecoder )
 
     uint16_t r;
 
-    udp.beginPacket("192.168.1.1", UDP_PORT);
+    udpCMD.beginPacket("192.168.1.1", UDP_CMD_PORT);
 
     uint8_t checksum = 0;
 
@@ -144,7 +203,7 @@ void ModeXiroMini::sendChannels( HXSBUSDecoder* sbusDecoder )
     this->udpWriteWithChecksum( 0x00, &checksum);  
     this->udpWriteWithChecksum( 0x03, &checksum);
 
-    //this->udpWriteSwitchWithChecksum(  sbusDecoder, 8-1, 0x03e8,  &checksum);
+    //this->udpWriteSwitchWithChecksum(  sbusDecoder, 8-1, 0x0003,  &checksum);
 
 
 	//9 - takeof landing?
@@ -161,9 +220,11 @@ void ModeXiroMini::sendChannels( HXSBUSDecoder* sbusDecoder )
     //this->udpWriteWithChecksum( 0xD0, &checksum);
     this->udpWriteSwitchWithChecksum(  sbusDecoder, 10-1, 0x3e8, &checksum);
 
-    udp.write( checksum );
+    udpCMD.write( checksum );
 
-    udp.endPacket();    
+    udpCMD.endPacket();    
+
+    this->cmdPacketsSent++;
 }
 
 //=====================================================================
@@ -231,13 +292,18 @@ void ModeXiroMini::readPackets()
         this.version = C3265bk.m8940a(C3265bk.m8947a(bArr, 95, 2), 2);
 */
 
-    int packetSize = udp.parsePacket();
+    int packetSize = udpCMD.parsePacket();
     if (packetSize)
     {
-        //HXRCLOG.printf("Received %d bytes from %s, port %d\n", packetSize, udp.remoteIP().toString().c_str(), udp.remotePort());
+        this->cmdPacketsReceived++;
+
+        //if ( packetSize == 9 )
+        {
+            //HXRCLOG.printf("Received %d bytes from %s, to port %d\n", packetSize, udpCMD.remoteIP().toString().c_str(), UDP_CMD_PORT);
+        }
         
         char incomingPacket[255];
-        int len = udp.read(incomingPacket, 255);
+        int len = udpCMD.read(incomingPacket, 255);
         if (len >= 98 && incomingPacket[0]== 0x0a && incomingPacket[1]== 0x62 && incomingPacket[2]== 0x01)
         {
             this->batPercentage = incomingPacket[52];
@@ -245,7 +311,52 @@ void ModeXiroMini::readPackets()
             this->height = incomingPacket[47] + (((uint16_t)incomingPacket[48]) << 8 );
             //todo
         }
+
+        udpCMD.beginPacket("192.168.4.2", UDP_CMD_PORT);
+        udpCMD.write((const uint8_t*)incomingPacket, len);
+        if ( udpCMD.endPacket() > 0 )
+        {
+            this->cmdPacketsMirrored++;
+        }
     } 
+
+    packetSize = udpRTP.parsePacket();
+    if (packetSize)
+    {
+        this->rtpPacketsTotal++;
+
+        //HXRCLOG.printf("Received %d bytes from %s, to port %d from port %d\n", packetSize, udpRTP.remoteIP().toString().c_str(), 7078, udpRTP.remotePort());
+        
+        lastRTPPacketTime = millis();
+
+        char incomingPacket[1460];
+        int len = udpRTP.read(incomingPacket, 1460);
+
+        udpRTP.beginPacket("192.168.4.2", UDP_RTP_PORT);
+        udpRTP.write((const uint8_t*)incomingPacket, len);
+        if ( udpRTP.endPacket() > 0 )
+        {
+            this->rtpPacketsMirrored++;
+        }
+
+    } 
+}
+
+//=====================================================================
+//=====================================================================
+void ModeXiroMini::startVideo()
+{
+    udpCMD.beginPacket("192.168.1.1", UDP_CMD_PORT);
+        udpCMD.write( 0xa0 );
+        udpCMD.write( 0x09 );
+        udpCMD.write( 0xe1 );
+        udpCMD.write( 0x01 );
+        udpCMD.write( 0x51 );
+        udpCMD.write( 0x28 );
+        udpCMD.write( 0xa6 );
+        udpCMD.write( 0x1b );
+        udpCMD.write( 0xc5 );
+    udpCMD.endPacket();
 }
 
 //=====================================================================
@@ -263,7 +374,6 @@ void ModeXiroMini::loop(
         digitalWrite(LED_PIN, LOW );
         if ( this->connected == true )
         {
-            udp.stop();
             this->connected = false;
         }
     }
@@ -272,8 +382,9 @@ void ModeXiroMini::loop(
         digitalWrite(LED_PIN, HIGH );
         if ( this->connected == true )
         {
-            udp.stop();
             this->connected = false;
+            udpCMD.stop();
+            udpRTP.stop();
         }
     }
     else
@@ -282,22 +393,42 @@ void ModeXiroMini::loop(
         if ( this->connected == false )
         {
             this->connected = true;
-            udp.begin( UDP_PORT );
+            udpCMD.begin( WiFi.localIP(), UDP_CMD_PORT );
+            udpRTP.begin( UDP_RTP_PORT );
+            HXRCLOG.println("Station IP:\n");      
+            HXRCLOG.println(WiFi.localIP());      
         }
 
-        this->sendChannels(sbusDecoder);
+        if ((millis() - lastPacketTime) > 100)
+        {
+            lastPacketTime = millis();
+            this->sendChannels(sbusDecoder);
+        }
 
-        this->readPackets();
+        if ((millis() - lastRTPPacketTime) > 5000)
+        {
+            lastRTPPacketTime = millis();
+            udpRTP.stop();
+            udpRTP.begin( UDP_RTP_PORT );
+            this->startVideo();
+        }
+
     }
+
+    this->readPackets();
 
     processIncomingTelemetry(externalBTSerial);
     fillOutgoingTelemetry( externalBTSerial);
 
-    if (millis() - lastStats > 1000)
+    if (millis() - lastStats > 3000)
     {
         lastStats = millis();
         if ( sbusDecoder->isFailsafe()) HXRCLOG.print("SBUS FS!\n");
-        HXRCLOG.println(WiFi.status() == WL_CONNECTED ? "Connected" : "Connecting");
+        HXRCLOG.print(WiFi.status() == WL_CONNECTED ? "Connected " : "Connecting ");
+        HXRCLOG.printf("cmdOut: %d cmdIn:%d/%d, RTP: %d/%d\n", 
+        this->cmdPacketsSent, 
+        this->cmdPacketsReceived, this->cmdPacketsMirrored, 
+        this->rtpPacketsTotal, this->rtpPacketsMirrored );
         //sbusDecoder->dump();
         //HXRCLOG.printf("RSSI:%d\n", WiFi.RSSI());
     }
