@@ -13,39 +13,52 @@ NKPPMEncoder::NKPPMEncoder()
 
 //=====================================================================
 //=====================================================================
-void NKPPMEncoder::init( HardwareSerial& serial, uint8_t tx_pin, bool invert )
+void NKPPMEncoder::init(uint8_t tx_pin, bool invert )
 {
     lastPacket.init();
     lastPacket.failsafe = 1;
     lastPacketTime = millis();
 
 #if defined(ESP8266)
-    //FIXME: Arduino library for ESP8266 does not contain code to invert Serial1.
-    //Sneak flags to SerialConfig
-    int serialConfig = SERIAL_8E2;
-    if  (!invert )
-    {
-        serialConfig |= BIT(UCTXI);
-    }
-    serial.begin(100000, (SerialConfig)serialConfig, SerialMode::SERIAL_TX_ONLY, tx_pin, !invert );  
+//nothing to see here
 #elif defined(ESP32)
-    serial.begin(100000, SERIAL_8E2, -1, tx_pin, !invert );  
+//nothing to see here
 #endif
 
 }
 
 //=====================================================================
 //=====================================================================
-void NKPPMEncoder::loop( HardwareSerial& serial )
+void NKPPMEncoder::loop()
 {
-    if (serial.availableForWrite() < sizeof( NKPPMPacket )) return;
+    static boolean state = true;
+    static unsigned long next = ESP.getCycleCount();
+    if (next >= ESP.getCycleCount()){
+        if (state) {  //start pulse
+            digitalWrite(PPM_SIG_PIN, PPM_INVERTED);
+            next = next + (PPM_PULSE_LENGTH * PPM_CPU_MHZ);
+            state = false;
+    //        alivecount++;
+        } else {  //end pulse and calculate when to start the next pulse
+            static byte cur_chan_numb;
+            static unsigned int calc_rest;
 
-    unsigned long t = millis();
-    if ( (t - this->lastPacketTime)  < PPM_RATE_MS ) return;
+            digitalWrite(PPM_SIG_PIN, !PPM_INVERTED);
+            state = true;
 
-    this->lastPacketTime = t;
-
-    serial.write( (const uint8_t*)&this->lastPacket, sizeof ( NKPPMPacket ));
+            if (cur_chan_numb >= PPM_CHANNEL_NUMBER) {
+                cur_chan_numb = 0;
+                calc_rest = calc_rest + PPM_PULSE_LENGTH;//
+                next = next + ((PPM_FRAME_LENGTH - calc_rest) * PPM_CPU_MHZ);
+                calc_rest = 0;
+    //            digitalWrite(DEBUGPIN, !digitalRead(DEBUGPIN));
+            } else {
+                next = next + ((ppm[cur_chan_numb] - PPM_PULSE_LENGTH) * PPM_CPU_MHZ);
+                calc_rest = calc_rest + ppm[cur_chan_numb];
+                cur_chan_numb++;
+            }
+        }
+    }
 }
 
 //=====================================================================

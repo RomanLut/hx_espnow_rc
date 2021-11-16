@@ -41,7 +41,7 @@ void setup()
   Serial.begin(TELEMETRY_BAUDRATE);
 //  Serial.println("Start");
 
-  nkPPMEncoder.init( Serial1, 2, SBUS_INVERTED );
+  nkPPMEncoder.init(PPM_SIG_PIN, PPM_INVERTED );
 
   hxrcSlave.init(
       HXRCConfig(
@@ -60,7 +60,7 @@ void setup()
 
 //=====================================================================
 //=====================================================================
-void updateSBUSOutput()
+void updatePPMOutput()
 {
   //set failsafe flag
   bool failsafe = hxrcSlave.getReceiverStats().isFailsafe();
@@ -78,7 +78,7 @@ void updateSBUSOutput()
     }
   }
 
-  nkPPMEncoder.loop( Serial1 );
+  nkPPMEncoder.loop();
 }
 
 //=====================================================================
@@ -100,7 +100,7 @@ void loop()
   }
 */
 
-  updateSBUSOutput();
+  updatePPMOutput();
 
   if ( hxrcSlave.getReceiverStats().isFailsafe() )
   {
