@@ -88,7 +88,7 @@ void setup()
 
   initLedPin();
 
-  ppmDecoder.init(USE_SERIAL1_RX_PIN);
+  ppmDecoder.init((gpio_num_t) 27);
 
   setLed(true);
 
