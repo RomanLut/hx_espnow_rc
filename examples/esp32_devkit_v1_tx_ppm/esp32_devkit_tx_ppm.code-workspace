@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"name": "esp32_devkit_v1_tx",
+			"path": "."
+		},
+		{
+			"name": "hx_espnow_rc",
+			"path": "../../lib"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"array": "cpp",
+			"deque": "cpp",
+			"string": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"vector": "cpp",
+			"initializer_list": "cpp",
+			"*.tcc": "cpp",
+			"exception": "cpp",
+			"fstream": "cpp",
+			"iosfwd": "cpp",
+			"new": "cpp",
+			"ostream": "cpp",
+			"sstream": "cpp",
+			"streambuf": "cpp",
+			"istream": "cpp",
+			"limits": "cpp",
+			"algorithm": "cpp"
+		}
+	}
+}

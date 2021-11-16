@@ -7,7 +7,7 @@
 
 #include "HX_ESPNOW_RC_Master.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
-#include "hx_sbus_decoder.h"
+#include "nk_ppm_decoder.h"
 
 #include "tx_config.h"
 #include "HC06Interface.h"
@@ -88,7 +88,7 @@ void setup()
 
   initLedPin();
 
-  sbusDecoder.init(USE_SERIAL1_RX_PIN);
+  ppmDecoder.init(USE_SERIAL1_RX_PIN);
 
   setLed(true);
 
@@ -106,12 +106,12 @@ void loop()
 {
   esp_task_wdt_reset();
 
-  sbusDecoder.loop();
+  ppmDecoder.loop();
 
 #ifdef USE_SPORT
-  ModeBase::currentModeHandler->loop( &sbusDecoder, & externalBTSerial, &sport );
+  ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, &sport );
 #else
-  ModeBase::currentModeHandler->loop( &sbusDecoder, & externalBTSerial, NULL );
+  ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, NULL );
 #endif  
 
 }
