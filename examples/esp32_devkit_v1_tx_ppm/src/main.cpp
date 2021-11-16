@@ -8,6 +8,7 @@
 #include "HX_ESPNOW_RC_Master.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
 #include "nk_ppm_decoder.h"
+#include "espRCPpm.h"
 
 #include "tx_config.h"
 #include "HC06Interface.h"
