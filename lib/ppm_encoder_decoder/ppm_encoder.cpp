@@ -21,6 +21,7 @@ void PPMEncoder::init(uint8_t tx_pin, bool invert )
 
 #if defined(ESP8266)
 //nothing to see here
+HXRCLOG.println("PPMEncoder::init()");
 #elif defined(ESP32)
 //nothing to see here
 #endif
@@ -58,6 +59,7 @@ void PPMEncoder::loop()
                 cur_chan_numb++;
             }
         }
+        HXRCLOG.println("loop");
     }
 }
 

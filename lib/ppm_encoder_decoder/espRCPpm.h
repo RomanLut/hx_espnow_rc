@@ -22,7 +22,9 @@
 #include <Arduino.h>
 
 #include "espRCControls.h"
+#if defined(ESP8266)
 
+#elif defined (ESP32)
 class RCPpmIn : public RCControlsIn{
 public:
 	RCPpmIn(uint8_t pin, uint8_t timer, uint8_t numChannel = 8, uint16_t neutral = 3000);
@@ -40,5 +42,6 @@ protected:
 	portMUX_TYPE _mux;
 	int8_t _currentCh;
 };
+#endif
 
 #endif

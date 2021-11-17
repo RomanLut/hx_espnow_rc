@@ -17,7 +17,11 @@
  */
 
 #include "espRCPpm.h"
+//include for HXRCLOG usage
+#include "HX_ESPNOW_RC_Common.h"
+#if defined(ESP8266)
 
+#elif defined (ESP32)
 RCPpmIn* RCPpmIn::_pInstance = nullptr;
 
 RCPpmIn::RCPpmIn(uint8_t pin, uint8_t timer, uint8_t numChannel, uint16_t neutral){
@@ -43,6 +47,7 @@ RCPpmIn::RCPpmIn(uint8_t pin, uint8_t timer, uint8_t numChannel, uint16_t neutra
 
 	_timer = timerBegin(timer, 40, true);
 	attachInterrupt(pin, _isrStatic, RISING);
+	    HXRCLOG.println("init complete");
 
 }
 
@@ -52,6 +57,7 @@ RCPpmIn::~RCPpmIn(){
 }
 
 bool RCPpmIn::update(){
+
 	if(!_hasNew) return false;
 	_hasNew = false;
 
@@ -68,6 +74,7 @@ bool RCPpmIn::update(){
 
 void RCPpmIn::_isrStatic(){
 	if(_pInstance == nullptr) return;
+	   // HXRCLOG.println("RCPpmIn::_isrStatic()");
 
 	_pInstance->_isr();
 }
@@ -88,3 +95,4 @@ void RCPpmIn::_isr(){
 	}
 
 }
+#endif

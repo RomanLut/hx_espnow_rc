@@ -1,4 +1,5 @@
 #pragma once
+#if defined(ESP32) 
 
 #include <Arduino.h>
 #include <stdint.h>
@@ -7,7 +8,7 @@
 //include for HXRCLOG usage
 #include "HX_ESPNOW_RC_Common.h"
 #define PPM_SYNC_FAILSAFE_MS            200
-#define PPM_CHANNEL_NUMBER 18  //set the number of chanels
+#define PPM_CHANNEL_NUMBER 16  //set the number of chanels
 #define PPM_TIMER 0
 #define PPM_PIN 27
 #define PPM_NEUTRAL 1500 
@@ -62,3 +63,4 @@ public:
 
 
 
+#endif

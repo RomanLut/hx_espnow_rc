@@ -1,6 +1,7 @@
 #include "ppm_decoder.h"
 
 #define SYNC_COUNT  5
+#if defined(ESP32) 
 //=====================================================================
 //=====================================================================
 PPMDecoder::PPMDecoder()
@@ -15,12 +16,6 @@ void PPMDecoder::init(gpio_num_t gpio )
     lastPacket.failsafe = 1;
     lastPacketTime = millis();
 
-#if defined(ESP8266)
-    //Serial1.begin(100000, SERIAL_8E2, SerialMode::SERIAL_RX_ONLY, gpio, false );  
-#elif defined (ESP32)
-    //Serial1.begin(100000, SERIAL_8E2, gpio, -1, false );  
-#endif
-
     //pinMode(gpio,INPUT);
 
     state = 40;
@@ -30,6 +25,7 @@ void PPMDecoder::init(gpio_num_t gpio )
     resyncCount = 0;
     failsafeCount = 0;
     failsafeState = false;
+    HXRCLOG.printf("PPMDecoder::init()");
 }
 
 //=====================================================================
@@ -39,13 +35,15 @@ void PPMDecoder::loop()
     if (this->_decoder.update()){
 
         for(uint8_t i = 0; i < PPM_CHANNEL_NUMBER; ++i){
-            HXRCLOG.printf("rc:\t%i\t", this->_decoder.getChannel(i));
+            HXRCLOG.printf("%i,", this->_decoder.getChannel(i));
             packet.setChannelValue(i,this->_decoder.getChannel(i)) ;
         }
         HXRCLOG.println();
         packet.failsafe = 1 ;
         packet.frameLost = 0 ;
         parsePacket();
+    }else{
+        //HXRCLOG.printf("no update");
     }
     
     updateFailsafe();
@@ -166,3 +164,4 @@ uint16_t PPMDecoder::getChannelValueInRange( uint8_t index, uint16_t from, uint1
 {
     return map( constrain( this->getChannelValue(index), PPM_MIN, PPM_MAX ), PPM_MIN, PPM_MAX, from, to );
 }
+#endif
