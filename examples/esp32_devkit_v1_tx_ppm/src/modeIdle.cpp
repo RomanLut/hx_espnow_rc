@@ -12,7 +12,7 @@ void ModeIdle::start()
 //=====================================================================
 //=====================================================================
 void ModeIdle::loop(
-        NKPPMDecoder* ppmDecoder,
+        PPMDecoder* ppmDecoder,
         HC06Interface* externalBTSerial,
         Smartport* sport
 )

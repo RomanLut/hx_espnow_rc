@@ -12,7 +12,7 @@ public:
     void start();
 
     void loop(
-        NKPPMDecoder* ppmDecoder,
+        PPMDecoder* ppmDecoder,
         HC06Interface* externalBTSerial,
         Smartport* sport
     );

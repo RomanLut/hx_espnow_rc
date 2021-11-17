@@ -52,6 +52,6 @@ typedef struct
     void init();
     uint16_t getChannelValue( uint8_t index ) const;
     void setChannelValue( uint8_t index, uint16_t data );
-} NKPPMPacket;
+} PPMPacket;
 
 #pragma pack (pop)

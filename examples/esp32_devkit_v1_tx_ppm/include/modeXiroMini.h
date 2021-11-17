@@ -26,12 +26,12 @@ private:
     uint32_t cmdPacketsMirrored;
     uint32_t rtpPacketsMirrored;
 
-    void sendChannels(NKPPMDecoder* ppmDecoder);
+    void sendChannels(PPMDecoder* ppmDecoder);
     void fillOutgoingTelemetry(HC06Interface* externalBTSerial);
     void processIncomingTelemetry(HC06Interface* externalBTSerial);
     void readPackets();
     void udpWriteWithChecksum( uint8_t value, uint8_t* checksum );
-    void udpWriteSwitchWithChecksum( NKPPMDecoder* ppmDecoder, uint8_t channelIndex, uint16_t minValue, uint8_t* checksum );
+    void udpWriteSwitchWithChecksum( PPMDecoder* ppmDecoder, uint8_t channelIndex, uint16_t minValue, uint8_t* checksum );
     void startVideo();
 
 public:
@@ -42,7 +42,7 @@ public:
     void start();
 
     void loop(
-        NKPPMDecoder* ppmDecoder,
+        PPMDecoder* ppmDecoder,
         HC06Interface* externalBTSerial,
         Smartport* sport
     );

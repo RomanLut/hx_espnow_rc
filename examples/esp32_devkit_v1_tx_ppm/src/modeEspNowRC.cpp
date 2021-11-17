@@ -74,7 +74,7 @@ void ModeEspNowRC::fillOutgoingTelemetry(HC06Interface* externalBTSerial)
 
 //=====================================================================
 //=====================================================================
-void ModeEspNowRC::setChannels( NKPPMDecoder* ppmDecoder )
+void ModeEspNowRC::setChannels( PPMDecoder* ppmDecoder )
 {
     if (!ppmDecoder->isFailsafe())
     {
@@ -96,7 +96,7 @@ void ModeEspNowRC::setChannels( NKPPMDecoder* ppmDecoder )
 //=====================================================================
 //=====================================================================
 void ModeEspNowRC::loop(
-        NKPPMDecoder* ppmDecoder,
+        PPMDecoder* ppmDecoder,
         HC06Interface* externalBTSerial,
         Smartport* sport
     )

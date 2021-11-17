@@ -1,15 +1,15 @@
-#include "nk_ppm_decoder.h"
+#include "ppm_decoder.h"
 
 #define SYNC_COUNT  5
 //=====================================================================
 //=====================================================================
-NKPPMDecoder::NKPPMDecoder()
+PPMDecoder::PPMDecoder()
 {
 }
 
 //=====================================================================
 //=====================================================================
-void NKPPMDecoder::init(gpio_num_t gpio )
+void PPMDecoder::init(gpio_num_t gpio )
 {
     lastPacket.init();
     lastPacket.failsafe = 1;
@@ -30,35 +30,30 @@ void NKPPMDecoder::init(gpio_num_t gpio )
     resyncCount = 0;
     failsafeCount = 0;
     failsafeState = false;
-
-    rmt_config_t config;
-    config.rmt_mode = RMT_MODE_RX;
-    config.channel = RMT_CHANNEL_0;
-    config.clk_div = 80;   //80MHZ APB clock to the 1MHZ target frequency
-    config.gpio_num = gpio;
-    config.mem_block_num = 2; //each block could store 64 pulses
-    config.rx_config.filter_en = true;
-    config.rx_config.filter_ticks_thresh = 8;
-    config.rx_config.idle_threshold = idle_threshold;
-
-    rmt_config(&config);
-    rmt_driver_install(config.channel, max_pulses * 8, 0);
-    rmt_get_ringbuf_handle(config.channel, &handle);
-    rmt_rx_start(config.channel, true);
 }
 
 //=====================================================================
 //=====================================================================
-void NKPPMDecoder::loop()
+void PPMDecoder::loop()
 {
+    if (this->_decoder.update()){
 
-
+        for(uint8_t i = 0; i < PPM_CHANNEL_NUMBER; ++i){
+            HXRCLOG.printf("rc:\t%i\t", this->_decoder.getChannel(i));
+            packet.setChannelValue(i,this->_decoder.getChannel(i)) ;
+        }
+        HXRCLOG.println();
+        packet.failsafe = 1 ;
+        packet.frameLost = 0 ;
+        parsePacket();
+    }
+    
     updateFailsafe();
 }
 
 //=====================================================================
 //=====================================================================
-void NKPPMDecoder::parsePacket()
+void PPMDecoder::parsePacket()
 {
     this->lastPacket = packet;
     this->lastPacketTime = millis();
@@ -70,28 +65,28 @@ void NKPPMDecoder::parsePacket()
 
 //=====================================================================
 //=====================================================================
-uint16_t NKPPMDecoder::getChannelValue( uint8_t index ) const
+uint16_t PPMDecoder::getChannelValue( uint8_t index )
 {
-    return this->lastPacket.getChannelValue( index );
+    return this->_decoder.getChannel(index) ;
 }
 
 //=====================================================================
 //=====================================================================
-bool NKPPMDecoder::isOutOfSync() const
+bool PPMDecoder::isOutOfSync() 
 {
     return (this->syncCount < SYNC_COUNT) || this->lastPacket.failsafe;
 }
 
 //=====================================================================
 //=====================================================================
-bool NKPPMDecoder::isFailsafe() const
+bool PPMDecoder::isFailsafe() 
 {
     return this->failsafeState;
 }
 
 //=====================================================================
 //=====================================================================
-void NKPPMDecoder::updateFailsafe()
+void PPMDecoder::updateFailsafe()
 {
     bool res = this->lastPacket.failsafe;
 
@@ -115,7 +110,7 @@ void NKPPMDecoder::updateFailsafe()
 
 //=====================================================================
 //=====================================================================
-void NKPPMDecoder::dump() const
+void PPMDecoder::dump()
 {
     Serial.print("Failsafe: ");
     Serial.print(this->isFailsafe()?1: 0);
@@ -143,7 +138,7 @@ void NKPPMDecoder::dump() const
 
 //=====================================================================
 //=====================================================================
-void NKPPMDecoder::dumpPacket() const
+void PPMDecoder::dumpPacket() 
 {
     uint8_t* p = ((uint8_t*)&packet);
     for ( int i = 0; i < PPM_PACKET_SIZE; i++ ) 
@@ -157,7 +152,7 @@ void NKPPMDecoder::dumpPacket() const
 
 //=====================================================================
 //=====================================================================
-void NKPPMDecoder::resync()
+void PPMDecoder::resync()
 {
     resyncSkipCount++;
     if ( resyncSkipCount > 10 ) resyncSkipCount  = 0;
@@ -167,7 +162,7 @@ void NKPPMDecoder::resync()
 
 //=====================================================================
 //=====================================================================
-uint16_t NKPPMDecoder::getChannelValueInRange( uint8_t index, uint16_t from, uint16_t to ) const  
+uint16_t PPMDecoder::getChannelValueInRange( uint8_t index, uint16_t from, uint16_t to )
 {
     return map( constrain( this->getChannelValue(index), PPM_MIN, PPM_MAX ), PPM_MIN, PPM_MAX, from, to );
 }

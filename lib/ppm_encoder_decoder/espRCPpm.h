@@ -29,7 +29,7 @@ public:
 	~RCPpmIn();
 	
 	bool update();
-
+	
 protected:
     static void _isrStatic();
     void _isr();

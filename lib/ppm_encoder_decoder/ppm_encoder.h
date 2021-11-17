@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 
-#include "nk_ppm_packet.h"
+#include "ppm_packet.h"
 
 //write packet every ?ms
 #define PPM_RATE_MS            15
@@ -15,14 +15,14 @@
 #define PPM_CHANNEL_NUMBER 18  //set the number of chanels
 //=====================================================================
 //=====================================================================
-class NKPPMEncoder
+class PPMEncoder
 {
 private:
-    NKPPMPacket lastPacket;
+    PPMPacket lastPacket;
     unsigned long lastPacketTime;
     int ppm[PPM_CHANNEL_NUMBER];
 public:
-    NKPPMEncoder();
+    PPMEncoder();
 
     void init(uint8_t tx_pin, bool invert );
 

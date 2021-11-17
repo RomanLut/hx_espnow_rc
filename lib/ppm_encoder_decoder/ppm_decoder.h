@@ -2,15 +2,19 @@
 
 #include <Arduino.h>
 #include <stdint.h>
-
-#include "nk_ppm_packet.h"
-#include "driver/rmt.h"
+#include "espRCPpm.h"
+#include "ppm_packet.h"
+//include for HXRCLOG usage
+#include "HX_ESPNOW_RC_Common.h"
 #define PPM_SYNC_FAILSAFE_MS            200
-
+#define PPM_CHANNEL_NUMBER 18  //set the number of chanels
+#define PPM_TIMER 0
+#define PPM_PIN 27
+#define PPM_NEUTRAL 1500 
 
 //=====================================================================
 //=====================================================================
-class NKPPMDecoder
+class PPMDecoder
 {
 private:
     //40 - wait for packet footer( sync)
@@ -19,6 +23,7 @@ private:
     //1..23 - receive body
     //24 expect footer
     //25 expect header
+    RCPpmIn _decoder = RCPpmIn((uint8_t) PPM_PIN,(uint8_t) PPM_TIMER,(uint8_t) PPM_CHANNEL_NUMBER, (uint16_t) PPM_NEUTRAL);
     uint8_t state;
     uint8_t syncCount;
     uint16_t packetsCount;
@@ -27,38 +32,28 @@ private:
     uint16_t failsafeCount;
     bool failsafeState;
     
-    NKPPMPacket packet;
-    NKPPMPacket lastPacket;
+    PPMPacket packet;
+    PPMPacket lastPacket;
     unsigned long lastPacketTime;
 
     void parsePacket();
-    void dumpPacket() const;
+    void dumpPacket();
     void resync();
     void updateFailsafe();
-    bool add_item(uint32_t duration, bool level);
 
-    RingbufHandle_t handle;
-    rmt_item32_t* item;
-    size_t item_size;
-    size_t current_item;
-
-    uint32_t last_high;
-    uint32_t ready_high;
-    uint32_t ready_low;
-    bool pulse_ready;
 public:
-    NKPPMDecoder();
+    PPMDecoder();
 
     void init( gpio_num_t gpio );
 
-    uint16_t getChannelValue( uint8_t index ) const;
-    uint16_t getChannelValueInRange( uint8_t index, uint16_t from, uint16_t to ) const;
-    bool isOutOfSync() const;
-    bool isFailsafe() const;
+    uint16_t getChannelValue( uint8_t index );
+    uint16_t getChannelValueInRange( uint8_t index, uint16_t from, uint16_t to );
+    bool isOutOfSync();
+    bool isFailsafe();
 
     void loop();
 
-    void dump() const;
+    void dump();
     static const int frequency = 1000000;  //1MHZ
     static const int max_pulses = 128;
     static const int idle_threshold = 3000;  //we require at least 3ms gap between frames

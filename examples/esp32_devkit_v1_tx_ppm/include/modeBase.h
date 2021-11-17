@@ -7,7 +7,7 @@
 
 #include "smartport.h"
 #include "HC06Interface.h"
-#include "nk_ppm_decoder.h"
+#include "ppm_decoder.h"
 
 //=====================================================================
 //=====================================================================
@@ -28,7 +28,7 @@ public:
     virtual void start();
 
     virtual void loop(
-        NKPPMDecoder* ppmDecoder,
+        PPMDecoder* ppmDecoder,
         HC06Interface* externalBTSerial,
         Smartport* sport
     );

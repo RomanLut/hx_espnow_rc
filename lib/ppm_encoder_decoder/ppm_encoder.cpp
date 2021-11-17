@@ -1,4 +1,4 @@
-#include "nk_ppm_encoder.h"
+#include "ppm_encoder.h"
 
 #if defined(ESP8266)
 #include <esp8266_peri.h>
@@ -7,13 +7,13 @@
 
 //=====================================================================
 //=====================================================================
-NKPPMEncoder::NKPPMEncoder()
+PPMEncoder::PPMEncoder()
 {
 }
 
 //=====================================================================
 //=====================================================================
-void NKPPMEncoder::init(uint8_t tx_pin, bool invert )
+void PPMEncoder::init(uint8_t tx_pin, bool invert )
 {
     lastPacket.init();
     lastPacket.failsafe = 1;
@@ -29,7 +29,7 @@ void NKPPMEncoder::init(uint8_t tx_pin, bool invert )
 
 //=====================================================================
 //=====================================================================
-void NKPPMEncoder::loop()
+void PPMEncoder::loop()
 {
     static boolean state = true;
     static unsigned long next = ESP.getCycleCount();
@@ -63,14 +63,14 @@ void NKPPMEncoder::loop()
 
 //=====================================================================
 //=====================================================================
-void NKPPMEncoder::setFailsafe( bool failsafe )
+void PPMEncoder::setFailsafe( bool failsafe )
 {
     this->lastPacket.failsafe = failsafe?1:0;
 }
 
 //=====================================================================
 //=====================================================================
-void NKPPMEncoder::setChannelValueDirect( uint8_t index, uint16_t value )
+void PPMEncoder::setChannelValueDirect( uint8_t index, uint16_t value )
 {
     this->lastPacket.setChannelValue( index, value );
 }
@@ -78,7 +78,7 @@ void NKPPMEncoder::setChannelValueDirect( uint8_t index, uint16_t value )
 //=====================================================================
 //=====================================================================
 //input value is in range 1000..2000
-void NKPPMEncoder::setChannelValue( uint8_t index, uint16_t value ) 
+void PPMEncoder::setChannelValue( uint8_t index, uint16_t value ) 
 {
     this->lastPacket.setChannelValue( index, constrain( map( value, 1000, 2000, PPM_MIN, PPM_MAX), 0, 2047) );
 }

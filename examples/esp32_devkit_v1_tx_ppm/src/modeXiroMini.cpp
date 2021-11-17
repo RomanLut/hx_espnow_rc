@@ -132,7 +132,7 @@ void ModeXiroMini::udpWriteWithChecksum( uint8_t value, uint8_t* checksum )
 
 //=====================================================================
 //=====================================================================
-void ModeXiroMini::udpWriteSwitchWithChecksum( NKPPMDecoder* ppmDecoder, uint8_t channelIndex, uint16_t minValue, uint8_t* checksum )
+void ModeXiroMini::udpWriteSwitchWithChecksum( PPMDecoder* ppmDecoder, uint8_t channelIndex, uint16_t minValue, uint8_t* checksum )
 {
     uint16_t r = ppmDecoder->getChannelValueInRange( channelIndex , 1000, 2000 );
 
@@ -146,7 +146,7 @@ void ModeXiroMini::udpWriteSwitchWithChecksum( NKPPMDecoder* ppmDecoder, uint8_t
 
 //=====================================================================
 //=====================================================================
-void ModeXiroMini::sendChannels( NKPPMDecoder* ppmDecoder )
+void ModeXiroMini::sendChannels( PPMDecoder* ppmDecoder )
 {
     //Sending UDP on ESP32 in Station Mode
     //https://gist.github.com/santolucito/4016405f54850f7a216e9e453fe81803
@@ -362,7 +362,7 @@ void ModeXiroMini::startVideo()
 //=====================================================================
 //=====================================================================
 void ModeXiroMini::loop(
-        NKPPMDecoder* ppmDecoder,
+        PPMDecoder* ppmDecoder,
         HC06Interface* externalBTSerial,
         Smartport* sport
     )

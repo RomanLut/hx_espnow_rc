@@ -1,9 +1,9 @@
-#include "nk_ppm_packet.h"
+#include "ppm_packet.h"
 
 
 //=====================================================================
 //=====================================================================
-void NKPPMPacket::init()
+void PPMPacket::init()
 {
     header = PPM_HEADER;
     ch1 = ch2 = ch3 = ch4 = ch5 = ch6 = ch7 = ch8 = ch9 = ch10 = ch11 = ch12 = ch13 = ch14 = ch15 = ch16 = 1000;
@@ -17,7 +17,7 @@ void NKPPMPacket::init()
 
 //=====================================================================
 //=====================================================================
-uint16_t NKPPMPacket::getChannelValue( uint8_t index ) const
+uint16_t PPMPacket::getChannelValue( uint8_t index ) const
 {
     switch( index )
     {
@@ -64,7 +64,7 @@ uint16_t NKPPMPacket::getChannelValue( uint8_t index ) const
 
 //=====================================================================
 //=====================================================================
-void NKPPMPacket::setChannelValue( uint8_t index, uint16_t data )
+void PPMPacket::setChannelValue( uint8_t index, uint16_t data )
 {
     switch( index )
     {

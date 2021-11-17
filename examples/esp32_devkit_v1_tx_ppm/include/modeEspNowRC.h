@@ -20,7 +20,7 @@ private:
     HXRCMaster hxrcMaster;
     HXRCSerialBuffer<512> hxrcTelemetrySerial;
 
-    void setChannels(NKPPMDecoder* ppmDecoder);
+    void setChannels(PPMDecoder* ppmDecoder);
     void fillOutgoingTelemetry(HC06Interface* externalBTSerial);
     void processIncomingTelemetry(HC06Interface* externalBTSerial);
 
@@ -32,7 +32,7 @@ public:
     void start();
 
     void loop(
-        NKPPMDecoder* ppmDecoder,
+        PPMDecoder* ppmDecoder,
         HC06Interface* externalBTSerial,
         Smartport* sport
     );

@@ -21,7 +21,7 @@ void ModeBase::start()
 //=====================================================================
 //=====================================================================
 void ModeBase::loop(
-        NKPPMDecoder* ppmDecoder,
+        PPMDecoder* ppmDecoder,
         HC06Interface* externalBTSerial,
         Smartport* sport
 )

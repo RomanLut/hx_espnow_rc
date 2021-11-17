@@ -7,8 +7,8 @@
 
 #include "HX_ESPNOW_RC_Master.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
-#include "nk_ppm_decoder.h"
-#include "espRCPpm.h"
+#include "ppm_decoder.h"
+
 
 #include "tx_config.h"
 #include "HC06Interface.h"
@@ -19,7 +19,8 @@
 
 #define WDT_TIMEOUT_SECONDS 3  
 
-static NKPPMDecoder ppmDecoder;
+static PPMDecoder ppmDecoder;
+
 static HC06Interface externalBTSerial(&Serial2);
 
 #ifdef USE_SPORT  
@@ -89,8 +90,7 @@ void setup()
 
   initLedPin();
 
-  ppmDecoder.init((gpio_num_t) 27);
-
+  ppmDecoder.init((gpio_num_t) PPM_PIN);
   setLed(true);
 
   externalBTSerial.init();
@@ -108,11 +108,13 @@ void loop()
   esp_task_wdt_reset();
 
   ppmDecoder.loop();
+  
+
 
 #ifdef USE_SPORT
   ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, &sport );
 #else
-  ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, NULL );
+//  ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, NULL );
 #endif  
 
 }
