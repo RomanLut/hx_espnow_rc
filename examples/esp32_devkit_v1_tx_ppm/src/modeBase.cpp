@@ -16,6 +16,7 @@ void ModeBase::start()
     this->SBUSProfile = -1;
 
     HXRCLOG.println("Waiting for CH16 profile");
+    //this->currentModeHandler = &ModeEspNowRC::instance;
 }
 
 //=====================================================================
@@ -26,24 +27,8 @@ void ModeBase::loop(
         Smartport* sport
 )
 {
-    if ( !ppmDecoder->isFailsafe())
-    {
-        int s = getProfileIndexFromChannelValue(ppmDecoder->getChannelValueInRange( 15, 1000, 2000 ) );
-
-        if ( this->SBUSProfile != s )
-        {
-            HXRCLOG.print("Got profile:");
-            HXRCLOG.println(s);
-
-            this->SBUSProfile = s;
-            this->gotSBUSProfileTime = millis();
-        }
-    }
-    else
-    {
-        this->gotSBUSProfileTime = 0;
-    }
-
+    //HXRCLOG.println("loop");
+    //HXRCLOG.println(millis());
 #ifdef USE_SPORT  
     sport->setDIYValue(2, TXConfigProfile::getCurrentProfileIndex()>=0? TXConfigProfile::getCurrentProfileIndex() : 255);
     sport->loop();
@@ -55,14 +40,16 @@ void ModeBase::loop(
 //=====================================================================
 boolean ModeBase::haveStableSBUSProfileSelection()
 {
-    return (this->gotSBUSProfileTime!=0) && ((millis() - this->gotSBUSProfileTime)> 1000) && (this->SBUSProfile>=0);
+    return true;
+    //return (this->gotSBUSProfileTime!=0) && ((millis() - this->gotSBUSProfileTime)> 1000) && (this->SBUSProfile>=0);
 }
 
 //=====================================================================
 //=====================================================================
 boolean ModeBase::haveToChangeProfile()
 {
-    return this->haveStableSBUSProfileSelection() && (this->SBUSProfile != TXConfigProfile::getCurrentProfileIndex() );
+    return false;
+    //return this->haveStableSBUSProfileSelection() && (this->SBUSProfile != TXConfigProfile::getCurrentProfileIndex() );
 }
 
 //=====================================================================
@@ -70,11 +57,7 @@ boolean ModeBase::haveToChangeProfile()
 void ModeBase::startRequestedProfile()
 {
     HXRCLOG.print("Starting profile ");
-    HXRCLOG.println( SBUSProfile );
-
-    TXConfigProfile::setCurrentProfileIndex(SBUSProfile);
-
-    switch( TXConfigProfile::getCurrentProfile()->transmitterMode )
+    switch( TM_ESPNOW )
     {
         case TM_ESPNOW:
             ModeBase::currentModeHandler = &ModeEspNowRC::instance;

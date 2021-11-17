@@ -114,7 +114,7 @@ void loop()
 #ifdef USE_SPORT
   ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, &sport );
 #else
-//  ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, NULL );
+  ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, NULL );
 #endif  
 
 }

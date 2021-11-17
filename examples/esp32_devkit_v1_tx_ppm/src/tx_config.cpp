@@ -16,7 +16,7 @@ TXConfigProfile::TXConfigProfile()
     this->espnow_channel = 3;
     this->espnow_lrMode = false;
 
-    this->ap_name = "hxrct";
+    this->ap_name = "hxrcppm";
     this->ap_password = NULL;
 }
 
@@ -28,10 +28,10 @@ void TXConfigProfile::loadConfig()
     //TODO: load profiles from filesystem
     //TODO: select current profile from CH16
 
-    TXConfigProfile::profiles[1].espnow_lrMode = true;
-    TXConfigProfile::profiles[1].ap_name = "hxrct1";
+    TXConfigProfile::profiles[1].espnow_lrMode = false;
+    TXConfigProfile::profiles[1].ap_name = "hxrcppm";
 
-    TXConfigProfile::profiles[2].transmitterMode = TM_XIRO_MINI;
+    //TXConfigProfile::profiles[2].transmitterMode = TM_XIRO_MINI;
 }
 
 //=====================================================================
