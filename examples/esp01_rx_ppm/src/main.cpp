@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include "HX_ESPNOW_RC_Slave.h"
 #include "rx_config.h"
-#include "nk_ppm_encoder.h"
+#include "ppm_encoder.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
 #include <ArduinoOTA.h>
 
 HXRCSlave hxrcSlave;
 HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcSlave );
-NKPPMEncoder nkPPMEncoder;
+PPMEncoder PPMEncoder;
 
 unsigned long lastStats = millis();
 
@@ -41,7 +41,7 @@ void setup()
   Serial.begin(TELEMETRY_BAUDRATE);
 //  Serial.println("Start");
 
-  nkPPMEncoder.init(PPM_SIG_PIN, PPM_INVERTED );
+  PPMEncoder.init(PPM_SIG_PIN, PPM_INVERTED );
 
   hxrcSlave.init(
       HXRCConfig(
@@ -53,7 +53,7 @@ void setup()
   hxrcSlave.setA1(42);
 
   //REVIEW: receiver does not work if AP is not initialized?
-  WiFi.softAP("hxrcrsbus", NULL, USE_WIFI_CHANNEL);
+  WiFi.softAP("hxrcrppm", NULL, USE_WIFI_CHANNEL);
 
   ArduinoOTA.begin();  
 }
@@ -64,21 +64,22 @@ void updatePPMOutput()
 {
   //set failsafe flag
   bool failsafe = hxrcSlave.getReceiverStats().isFailsafe();
-  nkPPMEncoder.setFailsafe( failsafe);
+  PPMEncoder.setFailsafe( failsafe);
   
   //inject RSSI into channel 16
-  nkPPMEncoder.setChannelValue( HXRC_CHANNELS-1, 1000 + ((uint16_t)hxrcSlave.getReceiverStats().getRSSI())*10 );
+  PPMEncoder.setChannelValue( HXRC_CHANNELS-1, 1000 + ((uint16_t)hxrcSlave.getReceiverStats().getRSSI())*10 );
 
   if ( !failsafe ) //keep last channel values on failsafe
   {
     HXRCChannels channels = hxrcSlave.getChannels();
     for ( int i = 0; i < HXRC_CHANNELS-1; i++)
     {
-      nkPPMEncoder.setChannelValue( i, channels.getChannelValue(i) );
+      //PPMEncoder.setChannelValue( i, channels.getChannelValue(i) );
+      PPMEncoder.setChannelValue( i, i*10 );
     }
   }
 
-  nkPPMEncoder.loop();
+  PPMEncoder.loop();
 }
 
 //=====================================================================
