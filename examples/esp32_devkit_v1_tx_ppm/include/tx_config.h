@@ -1,10 +1,19 @@
 #pragma once
 
-#define LED_PIN 2
-#define USE_SERIAL1_RX_PIN 27
-#define SPORT_PIN 18
+#define MAVESP8266_BAUD_RATE 921600
+#define MAVESP8266_RX_PIN  26
+#define MAVESP8266_TX_PIN  12
 
+#define FRSKY_TX_BAUD_RATE 57600
+#define FRSKY_TX_RX_PIN  2
+#define FRSKY_TX_TX_PIN  13
+
+#define LED_PIN 32
+#define USE_SERIAL1_RX_PIN 0
 #define CP2102_RX_PIN  1
+
+//#define USE_SPORT FALSE
+#define SPORT_PIN 18
 
 //when SPORT support is enabled:
 //- UART0 TX and RX pins are remaped from USB to SPORT_PIN

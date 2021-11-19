@@ -21,8 +21,8 @@ private:
     HXRCSerialBuffer<512> hxrcTelemetrySerial;
 
     void setChannels(PPMDecoder* ppmDecoder);
-    void fillOutgoingTelemetry(HC06Interface* externalBTSerial);
-    void processIncomingTelemetry(HC06Interface* externalBTSerial);
+    void fillOutgoingTelemetry(MavEsp8266Interface* MavEsp8266Serial);
+    void processIncomingTelemetry(MavEsp8266Interface* MavEsp8266Serial, FrSkyTxTelemetryInterface* FrSkyTxSerial);
 
 public:
     static ModeEspNowRC instance;
@@ -33,8 +33,9 @@ public:
 
     void loop(
         PPMDecoder* ppmDecoder,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+        MavEsp8266Interface* MavEsp8266Serial,
+        Smartport* sport,
+        FrSkyTxTelemetryInterface* FrSkyTxSerial
     );
 };
 

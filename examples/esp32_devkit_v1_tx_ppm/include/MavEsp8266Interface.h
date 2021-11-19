@@ -1,19 +1,19 @@
 #pragma once
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
-
+#include <HardwareSerial.h>
+#include "tx_config.h"
 
 //=====================================================================
 //=====================================================================
-class HC06Interface 
+class MavEsp8266Interface 
 {
 private:
     HardwareSerial* serial;
     void flushResponse();
 public:
 
-    HC06Interface( HardwareSerial* serial );
+    MavEsp8266Interface( HardwareSerial* serial );
 
     void init();
 

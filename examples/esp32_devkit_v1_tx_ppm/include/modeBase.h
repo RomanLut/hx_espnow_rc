@@ -6,7 +6,8 @@
 #include <stdarg.h>
 
 #include "smartport.h"
-#include "HC06Interface.h"
+#include "MavEsp8266Interface.h"
+#include "FrSkyTxTelemetryInterface.h"
 #include "ppm_decoder.h"
 
 //=====================================================================
@@ -29,8 +30,10 @@ public:
 
     virtual void loop(
         PPMDecoder* ppmDecoder,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+        MavEsp8266Interface* MavEsp8266Serial,
+        Smartport* sport, 
+        FrSkyTxTelemetryInterface* FrSkyTxSerial
+        
     );
 
     //got stable value from SBUS CH16 for profile selection?

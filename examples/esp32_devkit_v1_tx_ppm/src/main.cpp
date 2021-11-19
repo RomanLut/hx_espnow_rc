@@ -11,7 +11,7 @@
 
 
 #include "tx_config.h"
-#include "HC06Interface.h"
+#include "MavEsp8266Interface.h"
 
 #include "smartport.h"
 
@@ -21,10 +21,12 @@
 
 static PPMDecoder ppmDecoder;
 
-static HC06Interface externalBTSerial(&Serial2);
+static MavEsp8266Interface MavEsp8266Serial(&Serial2);
+static HardwareSerial TxInterface(1) ;
+static FrSkyTxTelemetryInterface FrSkyTxSerial(&TxInterface);
 
 #ifdef USE_SPORT  
-SoftwareSerial softwareSerial;
+HardwareSerial HardwareSerial;
 Smartport sport( &Serial );
 #endif
 
@@ -52,7 +54,7 @@ int log_vprintf(const char *fmt, va_list args)
   char buffer[256];
   vsnprintf(buffer, 256, fmt, args);
   buffer[255] = 0;
-  softwareSerial.print (buffer);
+  HardwareSerial.print (buffer);
   return strlen(buffer);
 }
 #endif
@@ -76,11 +78,11 @@ void setup()
 #ifdef USE_SPORT  
   sport.init();
 
-  softwareSerial.begin( 115200, SWSERIAL_8N1, -1, CP2102_RX_PIN );
-  softwareSerial.enableIntTx(true);
+  HardwareSerial.begin( 115200, SWSERIAL_8N1, -1, CP2102_RX_PIN );
+  HardwareSerial.enableIntTx(true);
   //esp_log_level_set("*", ESP_LOG_DEBUG);    
   esp_log_set_vprintf(&log_vprintf);
-  HXRCSetLogStream( &softwareSerial );
+  HXRCSetLogStream( &HardwareSerial );
 #else
   Serial.begin(115200, SERIAL_8N1);  
   pinMode(SPORT_PIN,INPUT);
@@ -93,7 +95,7 @@ void setup()
   ppmDecoder.init((gpio_num_t) PPM_PIN);
   setLed(true);
 
-  externalBTSerial.init();
+  MavEsp8266Serial.init();
 
   ModeBase::currentModeHandler = &ModeIdle::instance;
   ModeBase::currentModeHandler->start();
@@ -108,13 +110,12 @@ void loop()
   esp_task_wdt_reset();
 
   ppmDecoder.loop();
-  
 
 
 #ifdef USE_SPORT
-  ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, &sport );
+  ModeBase::currentModeHandler->loop( &ppmDecoder, & MavEsp8266Serial, &sport );
 #else
-  ModeBase::currentModeHandler->loop( &ppmDecoder, & externalBTSerial, NULL );
+  ModeBase::currentModeHandler->loop( &ppmDecoder, &MavEsp8266Serial, NULL, &FrSkyTxSerial );
 #endif  
 
 }

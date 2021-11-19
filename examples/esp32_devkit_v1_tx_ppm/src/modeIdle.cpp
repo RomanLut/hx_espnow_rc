@@ -13,11 +13,12 @@ void ModeIdle::start()
 //=====================================================================
 void ModeIdle::loop(
         PPMDecoder* ppmDecoder,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+        MavEsp8266Interface* MavEsp8266Serial,
+        Smartport* sport,
+        FrSkyTxTelemetryInterface* FrSkyTxSerial
 )
 {
-    ModeBase::loop(ppmDecoder, externalBTSerial, sport);
+    ModeBase::loop(ppmDecoder, MavEsp8266Serial, sport, FrSkyTxSerial);
 
     if ( haveToChangeProfile() )
     {

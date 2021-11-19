@@ -10,7 +10,7 @@
 #define PPM_SYNC_FAILSAFE_MS            200
 #define PPM_CHANNEL_NUMBER 16  //set the number of chanels
 #define PPM_TIMER 0
-#define PPM_PIN 27
+#define PPM_PIN 14
 #define PPM_NEUTRAL 1500 
 
 //=====================================================================

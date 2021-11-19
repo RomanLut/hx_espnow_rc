@@ -27,8 +27,8 @@ private:
     uint32_t rtpPacketsMirrored;
 
     void sendChannels(PPMDecoder* ppmDecoder);
-    void fillOutgoingTelemetry(HC06Interface* externalBTSerial);
-    void processIncomingTelemetry(HC06Interface* externalBTSerial);
+    void fillOutgoingTelemetry(MavEsp8266Interface* MavEsp8266Serial);
+    void processIncomingTelemetry(MavEsp8266Interface* MavEsp8266Serial, FrSkyTxTelemetryInterface* FrSkyTxSerial);
     void readPackets();
     void udpWriteWithChecksum( uint8_t value, uint8_t* checksum );
     void udpWriteSwitchWithChecksum( PPMDecoder* ppmDecoder, uint8_t channelIndex, uint16_t minValue, uint8_t* checksum );
@@ -43,8 +43,9 @@ public:
 
     void loop(
         PPMDecoder* ppmDecoder,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+        MavEsp8266Interface* MavEsp8266Serial,
+        Smartport* sport, 
+        FrSkyTxTelemetryInterface* FrSkyTxSerial
     );
 };
 

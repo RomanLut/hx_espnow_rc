@@ -112,13 +112,13 @@ void ModeXiroMini::start()
 
 //=====================================================================
 //=====================================================================
-void ModeXiroMini::processIncomingTelemetry(HC06Interface* externalBTSerial)
+void ModeXiroMini::processIncomingTelemetry(MavEsp8266Interface* MavEsp8266Serial, FrSkyTxTelemetryInterface* FrSkyTxSerial)
 {
 }
 
 //=====================================================================
 //=====================================================================
-void ModeXiroMini::fillOutgoingTelemetry(HC06Interface* externalBTSerial)
+void ModeXiroMini::fillOutgoingTelemetry(MavEsp8266Interface* MavEsp8266Serial)
 {
 }
 
@@ -363,11 +363,12 @@ void ModeXiroMini::startVideo()
 //=====================================================================
 void ModeXiroMini::loop(
         PPMDecoder* ppmDecoder,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+        MavEsp8266Interface* MavEsp8266Serial,
+        Smartport* sport, 
+        FrSkyTxTelemetryInterface* FrSkyTxSerial
     )
 {
-    ModeBase::loop(ppmDecoder, externalBTSerial, sport);
+    ModeBase::loop(ppmDecoder, MavEsp8266Serial, sport, FrSkyTxSerial);
 
     if (ppmDecoder->isFailsafe() ) 
     {
@@ -417,8 +418,8 @@ void ModeXiroMini::loop(
 
     this->readPackets();
 
-    processIncomingTelemetry(externalBTSerial);
-    fillOutgoingTelemetry( externalBTSerial);
+    processIncomingTelemetry(MavEsp8266Serial,FrSkyTxSerial);
+    fillOutgoingTelemetry( MavEsp8266Serial);
 
     if (millis() - lastStats > 3000)
     {

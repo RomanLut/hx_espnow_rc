@@ -23,8 +23,9 @@ void ModeBase::start()
 //=====================================================================
 void ModeBase::loop(
         PPMDecoder* ppmDecoder,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+        MavEsp8266Interface* MavEsp8266Serial,
+        Smartport* sport,
+        FrSkyTxTelemetryInterface* FrSkyTxSerial
 )
 {
     //HXRCLOG.println("loop");

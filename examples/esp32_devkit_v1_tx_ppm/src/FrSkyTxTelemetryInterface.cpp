@@ -1,20 +1,17 @@
-#include "HC06Interface.h"
+#include "FrSkyTxTelemetryInterface.h"
 
-#define HC06_BAUD_RATE 115200
 
-#define RX_PIN  35
-#define TX_PIN  32
 
 //=====================================================================
 //=====================================================================
-HC06Interface::HC06Interface(HardwareSerial* serial) 
+FrSkyTxTelemetryInterface::FrSkyTxTelemetryInterface(HardwareSerial* serial) 
 {
     this->serial = serial;
 }
 
 //=====================================================================
 //=====================================================================
-void HC06Interface::flushResponse()
+void FrSkyTxTelemetryInterface::flushResponse()
 {
     while ( this->serial->available())
     {
@@ -25,7 +22,7 @@ void HC06Interface::flushResponse()
 
 //=====================================================================
 //=====================================================================
-void HC06Interface::init()
+void FrSkyTxTelemetryInterface::init()
 {
     
     /*
@@ -47,13 +44,13 @@ void HC06Interface::init()
     this->flushResponse();
     */
 
-    this->serial->begin(HC06_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN );
+    this->serial->begin(FRSKY_TX_BAUD_RATE, SERIAL_8N1, FRSKY_TX_RX_PIN, FRSKY_TX_TX_PIN );
 }
 
 
 //=====================================================================
 //=====================================================================
-int HC06Interface::available()
+int FrSkyTxTelemetryInterface::available()
 {
     return this->serial->available();
 }
@@ -61,20 +58,20 @@ int HC06Interface::available()
 
 //=====================================================================
 //=====================================================================
-int HC06Interface::read()
+int FrSkyTxTelemetryInterface::read()
 {
     return this->serial->read();
 }
 
 //=====================================================================
 //=====================================================================
-int HC06Interface::availableForWrite()
+int FrSkyTxTelemetryInterface::availableForWrite()
 {
     return this->serial->availableForWrite();
 }
 //=====================================================================
 //=====================================================================
-size_t HC06Interface::write(uint8_t c)
+size_t FrSkyTxTelemetryInterface::write(uint8_t c)
 {
     return this->serial->write(c);
 }

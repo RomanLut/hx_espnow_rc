@@ -48,23 +48,23 @@ void ModeEspNowRC::start()
 
 //=====================================================================
 //=====================================================================
-void ModeEspNowRC::processIncomingTelemetry(HC06Interface* externalBTSerial)
+void ModeEspNowRC::processIncomingTelemetry(MavEsp8266Interface* MavEsp8266Serial, FrSkyTxTelemetryInterface* FrSkyTxSerial)
 {
-  while ( this->hxrcTelemetrySerial.getAvailable() > 0 && externalBTSerial->availableForWrite() > 0)
+  while ( this->hxrcTelemetrySerial.getAvailable() > 0 && MavEsp8266Serial->availableForWrite() > 0)
   {
     uint8_t c = hxrcTelemetrySerial.read();
-    externalBTSerial->write( c );
+    MavEsp8266Serial->write( c );
   }
 }
 
 //=====================================================================
 //=====================================================================
-void ModeEspNowRC::fillOutgoingTelemetry(HC06Interface* externalBTSerial)
+void ModeEspNowRC::fillOutgoingTelemetry(MavEsp8266Interface* MavEsp8266Serial)
 {
   
-  while ( (externalBTSerial->available() > 0) && (hxrcTelemetrySerial.getAvailableForWrite() > 0) )
+  while ( (MavEsp8266Serial->available() > 0) && (hxrcTelemetrySerial.getAvailableForWrite() > 0) )
   {
-    uint8_t c = externalBTSerial->read();
+    uint8_t c = MavEsp8266Serial->read();
     //Serial.print(char(c));
     hxrcTelemetrySerial.write(c);
   }
@@ -97,17 +97,18 @@ void ModeEspNowRC::setChannels( PPMDecoder* ppmDecoder )
 //=====================================================================
 void ModeEspNowRC::loop(
         PPMDecoder* ppmDecoder,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+        MavEsp8266Interface* MavEsp8266Serial,
+        Smartport* sport,
+        FrSkyTxTelemetryInterface* FrSkyTxSerial
     )
 {
-    ModeBase::loop(ppmDecoder, externalBTSerial, sport);
+    ModeBase::loop(ppmDecoder, MavEsp8266Serial, sport, FrSkyTxSerial);
 
     setChannels(ppmDecoder);
 
     hxrcTelemetrySerial.flush();
-    processIncomingTelemetry(externalBTSerial);
-    fillOutgoingTelemetry( externalBTSerial);
+    processIncomingTelemetry(MavEsp8266Serial, FrSkyTxSerial);
+    fillOutgoingTelemetry( MavEsp8266Serial);
 
     hxrcMaster.loop();
     hxrcMaster.updateLed( LED_PIN, true );  //LED_PIN is not inverted. Pass"inverted" flag so led is ON in idle mode

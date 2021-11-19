@@ -1,5 +1,6 @@
 #pragma once
 #include "modeBase.h"
+#include "tx_config.h"
 
 //=====================================================================
 //=====================================================================
@@ -13,8 +14,9 @@ public:
 
     void loop(
         PPMDecoder* ppmDecoder,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+        MavEsp8266Interface* MavEsp8266Serial,
+        Smartport* sport,
+        FrSkyTxTelemetryInterface* FrSkyTxSerial
     );
 };
 
