@@ -1,4 +1,4 @@
-#include "Smartport.h"
+#include "smartport.h"
 #include "tx_config.h"
 
 TXConfigProfile TXConfigProfile::profiles[PROFILES_COUNT];

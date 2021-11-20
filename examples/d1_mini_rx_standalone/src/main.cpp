@@ -2,7 +2,7 @@
 #include "HX_ESPNOW_RC_Slave.h"
 #include "rx_config.h"
 
-#include <servo.h>
+#include <Servo.h>
 #include <ArduinoOTA.h>
 
 HXRCSlave hxrcSlave;

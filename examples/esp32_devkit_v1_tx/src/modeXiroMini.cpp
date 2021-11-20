@@ -3,7 +3,7 @@
 #include <esp_task_wdt.h>
 
 //include for HXRCLOG usage
-#include "HX_ESPNOW_RC_COMMON.h"
+#include "HX_ESPNOW_RC_Common.h"
 
 #include "modeXiroMini.h"
 #include "tx_config.h"
