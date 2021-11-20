@@ -15,6 +15,7 @@ private:
     unsigned long lastStats;
     unsigned long lastPacketTime;
     unsigned long lastRTPPacketTime;
+    unsigned long  lastRTPTrigger;
     bool connected;
     uint8_t batPercentage;
     uint8_t numSats;

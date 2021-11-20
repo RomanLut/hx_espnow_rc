@@ -97,6 +97,7 @@ void ModeXiroMini::start()
     this->lastStats = millis();
     this->lastPacketTime = millis();
     this->lastRTPPacketTime = millis();
+    this->lastRTPTrigger = millis();
 
     this->cmdPacketsSent = 0;
     this->cmdPacketsReceived = 0;
@@ -410,6 +411,11 @@ void ModeXiroMini::loop(
             lastRTPPacketTime = millis();
             udpRTP.stop();
             udpRTP.begin( UDP_RTP_PORT );
+        }
+
+        if ((millis() - lastRTPTrigger) > 3000)
+        {
+            lastRTPTrigger = millis();
             this->startVideo();
         }
 
