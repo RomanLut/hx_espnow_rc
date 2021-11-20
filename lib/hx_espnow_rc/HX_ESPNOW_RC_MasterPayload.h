@@ -19,7 +19,7 @@ typedef struct
     //crc32 of the rest of a message
     uint32_t crc;  
 
-    //transmitter and receiver should have same address
+    //transmitter and receiver should have same key
     uint16_t key;  
 
     //increments with each packet sent and each packet which should have been sent, but was not sent because
