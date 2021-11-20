@@ -5,6 +5,8 @@
  Standalone receiver. To be used for manual flights.
  Number of Servo, PWM and discrete outputs can be configured.
 
+ See "ESP8266 plane" video: https://www.youtube.com/watch?v=c9dDOX0IzME
+
  "Servo outputs" output 50Hz 1-2ms pulses.
 
  "PWM outputs" output 8192Hz PWM signal, duty ratio 0...100. Usually used to connect brushed motors with simple ESCs which require PWM signal.

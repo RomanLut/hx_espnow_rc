@@ -1,10 +1,10 @@
-#include "Smartport.h"
+#include "smartport.h"
 #include "tx_config.h"
 
 //https://github.com/yaapu/FrskyTelemetryScript/wiki/FrSky-SPort-protocol-specs
 
 //include for HXRCLOG usage
-#include "HX_ESPNOW_RC_COMMON.h"
+#include "HX_ESPNOW_RC_Common.h"
 
 #define FRSKY_START_STOP  0x7e
 #define FRSKY_BYTESTUFF   0x7d

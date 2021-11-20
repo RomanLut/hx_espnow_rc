@@ -42,7 +42,8 @@ void HXRCGetLogStream(const char *fmt, va_list args)
 typedef enum 
 {
   TM_ESPNOW = 0,            
-  TM_BLUETOOTH_GAMEPAD = 1
+  TM_BLUETOOTH_GAMEPAD = 1,
+  TM_XIRO_MINI = 2
   //TODO: other modes - Wifi RC, bluetooth RC, BLE RC 
 
 } TransmitterMode;

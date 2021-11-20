@@ -1,4 +1,4 @@
-#include "Smartport.h"
+#include "smartport.h"
 #include "tx_config.h"
 
 TXConfigProfile TXConfigProfile::profiles[PROFILES_COUNT];
@@ -30,6 +30,8 @@ void TXConfigProfile::loadConfig()
 
     TXConfigProfile::profiles[1].espnow_lrMode = true;
     TXConfigProfile::profiles[1].ap_name = "hxrct1";
+
+    TXConfigProfile::profiles[2].transmitterMode = TM_XIRO_MINI;
 }
 
 //=====================================================================
