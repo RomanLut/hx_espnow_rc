@@ -50,4 +50,4 @@ Make sure preview resolution is set to 320x240. ESP32 can not handle more.
 
 # Xiro Mini reverse engeneering details
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/xiromini/xiromini_internals.jpg "Xiro Mini reverse engeneering details")
+https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/xiromini/xiromini_internals.md
