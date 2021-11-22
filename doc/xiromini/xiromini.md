@@ -13,6 +13,8 @@ Development is suspended due to loss of drone..
 Usage:
 Adjust Xiro Wifi network name and password in ModeXiroMini.cpp.
 
+# RC controller configuration
+
 On the RC controller, configure the following channels output:
 
 Channels 1-4: AETR
@@ -41,9 +43,11 @@ Channel 10: Distance limit  +100: 100m 0: 420m
 
 Channel 10 can be used as "GPS Rescue" feature. If limit is changed to 100m, quadcopter will fly back into 100m zone. Altitude is not changed (?Not comfirmed).
 
+# FPV video
+
 In order to see fpv video with Xiro App, first connect phone to drone directly and initiate conection. Than, without closing application, turn on RC controller and reconnect phone to XIRO_RC network.
 Make sure preview resolution is set to 320x240. ESP32 can not handle more.
 
-Xirom Mini reverse engeneering details:
+# Xiro Mini reverse engeneering details
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/xiromini/xiromini_internals.jpg "Xiro Mini reverse engeneering details")
