@@ -40,8 +40,9 @@ Channel 9: -
 
 Channel 10: Distance limit  +100: 100m 0: 420m
 
-
 Channel 10 can be used as "GPS Rescue" feature. If limit is changed to 100m, quadcopter will fly back into 100m zone. Altitude is not changed (?Not comfirmed).
+
+Channel 16: Channel 16 is used to select profile. Profiles are hardcoded in current implementation. Set output to -80% to enable Xiro Mini profile (profile number 3).
 
 # FPV video
 

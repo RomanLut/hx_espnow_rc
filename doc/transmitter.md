@@ -104,5 +104,20 @@ Configure T-Lite to output SBUS (normal SBUS => inverted uart).
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build19.jpg "Build step")
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Build step")
 
+# Profile selection
+
+Current firmware contains 3 hardcoded profiles:
+
+- hx_espnow_rc
+- hx_espnow_rc in LR mode
+- Xiro Xplorer Mini quadcopter  https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/xiromini/xiromini.md
+
+Active profile is selected from Channel 16:
+
+- 1000...1100 ( or -100%) - profile 1
+- 1100...1200 ( or -90%) - profile 2
+- 1200...1300 ( or -80%) - profile 3
+
+Configure RC controller to output corresponding value in channel 16.
 
 TODO: configuration in XML, web page for configuration.

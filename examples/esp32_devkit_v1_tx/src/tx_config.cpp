@@ -26,7 +26,6 @@ TXConfigProfile::TXConfigProfile()
 void TXConfigProfile::loadConfig()
 {
     //TODO: load profiles from filesystem
-    //TODO: select current profile from CH16
 
     TXConfigProfile::profiles[1].espnow_lrMode = true;
     TXConfigProfile::profiles[1].ap_name = "hxrct1";
