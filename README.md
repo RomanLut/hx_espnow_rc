@@ -61,7 +61,7 @@ Moxon antenna with:
 *Failsave period is set to 1 second (so there should be at least 1 successfull packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.*
 
 
-2dbi dipole antenna on transmitter <-> 2dbi dipole on receiver:
+2dbi dipole antenna on transmitter <-> 2dbi dipole on receiver provide range up to 1Km:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
 
@@ -71,13 +71,13 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer.jpg "telemetryviewer")
 
-5dbi TP-Link antenna with RP-SMA-SMA adapter on transmitter <-> 2dbi dipole on receiver provide range up to 1364m:
+5dbi TP-Link antenna with RP-SMA-SMA adapter on transmitter <-> 2dbi dipole on receiver provide range up to 1.3Km:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/antenna_5dbi.jpg "antenna_5dbi")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
-5dbi TP-Link antenna with RP-SMA-SMA adapter on transmitter <-> 2dbi dipole on receiver, ESP32 LR mode provide range up to 1886m(!):
+5dbi TP-Link antenna with RP-SMA-SMA adapter on transmitter <-> 2dbi dipole on receiver, ESP32 LR mode provide range up to 1.8Km(!):
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/dfminispirit.jpg "dfminispirit")
 
@@ -85,7 +85,7 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode.
 
-DIY Moxon antenna on transmitter https://www.thingiverse.com/thing:5148464 <-> 2dbi dipole or receiver provide range up to 1796m:
+DIY Moxon antenna on transmitter https://www.thingiverse.com/thing:5148464 <-> 2dbi dipole or receiver provide range up to 1.8Km:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/moxon.jpg "moxon")
 
