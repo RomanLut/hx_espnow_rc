@@ -43,6 +43,7 @@ See building guides:
 - ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp01_sbus.md
 - ESP32 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp32_sbus.md
 - development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
+- recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
 
 # Range
 2 dbi dipole antenna on transmitter with:
@@ -52,8 +53,6 @@ See building guides:
 
 5 dbi dipole antenna on transmitter with:
  - 2dbi dipole antenna provide range ~1.3Km (!)
-
-5 dbi dipole antenna on transmitter with:
  - 2dbi dipole antenna and ESP32 LR receiver provide range ~1.8Km (!)
 
 Moxon antenna with:
@@ -62,11 +61,11 @@ Moxon antenna with:
 *Failsave period is set to 1 second (so there should be at least 1 successfull packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.*
 
 
-2db dipole antenna:
+2dbi dipole antenna:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
 
-Tested with INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS Esp-01s based receiver https://www.youtube.com/watch?v=UptvxsFHDFA, 2dbi dipole antenna :
+Tested with INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS Esp-01s based receiver https://www.youtube.com/watch?v=UptvxsFHDFA, 2dbi dipole antenna.
 
 I have got first failsave event at 950m and still could control plane at 1100m:
 
@@ -78,12 +77,13 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
-Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode, 2dbi dipole antenna.
 5dbi TP-Link antenna with RP-SMA-SMA adapter provide range up to 1886m(!):
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/dfminispirit.jpg "dfminispirit")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi_lr.jpg "telemetryviewer_5dbi_lr")
+
+Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode, 2dbi dipole antenna.
 
 DIY Moxon antenna https://www.thingiverse.com/thing:5148464:
 
@@ -92,7 +92,7 @@ DIY Moxon antenna https://www.thingiverse.com/thing:5148464:
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_moxon_lr.jpg "telemetryviewer_moxon_lr")
 
 Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode, 2dbi dipole antenna.
-DYI moxon antenna perform similar to 5dbi antenna, while having compact size. **This antenna is recommened antenna for hx_espnow_rc project.**
+DYI moxon antenna perform similar to 5dbi antenna, while having compact size. **Moxon antenna is recommended antenna for hx_espnow_rc project.**
 
 I also tested with Frsky directional patch 7dbi antenna clone, and I was not able to get any good result with it. I got a lot of failsafe events at 700m already.
 
