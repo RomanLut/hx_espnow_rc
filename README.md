@@ -50,11 +50,23 @@ See building guides:
  - whip antenna with stripping wire provide range ~250m
  - 2dbi dipole antenna provide range ~1Km (!)
 
-Failsave period is set to 1 second (so there should be at least 1 successfult packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.
+5 dbi dipole antenna on transmitter with:
+ - 2dbi dipole antenna provide range ~1.3Km (!)
+
+5 dbi dipole antenna on transmitter with:
+ - 2dbi dipole antenna and ESP32 LR receiver provide range ~1.8Km (!)
+
+Moxon antenna with:
+ - 2dbi dipole antenna and ESP32 LR receiver provide range ~1.8Km (!)
+
+*Failsave period is set to 1 second (so there should be at least 1 successfull packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.*
+
+
+2db dipole antenna:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
 
-Tested with INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS Esp-01s based receiver https://www.youtube.com/watch?v=UptvxsFHDFA :
+Tested with INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS Esp-01s based receiver https://www.youtube.com/watch?v=UptvxsFHDFA, 2dbi dipole antenna :
 
 I have got first failsave event at 950m and still could control plane at 1100m:
 
@@ -66,15 +78,21 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
-Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode.
+Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode, 2dbi dipole antenna.
 5dbi TP-Link antenna with RP-SMA-SMA adapter provide range up to 1886m(!):
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/dfminispirit.jpg "dfminispirit")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi_lr.jpg "telemetryviewer_5dbi_lr")
 
-However, this result is not reliable. When I made a second attempt, I was able to flight up to 1400m only.
-Overall, you can expect up to 1Km range of stable connection.
+DIY Moxon antenna https://www.thingiverse.com/thing:5148464:
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/moxon.jpg "moxon")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_moxon_lr.jpg "telemetryviewer_moxon_lr")
+
+Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode, 2dbi dipole antenna.
+DYI moxon antenna perform similar to 5dbi antenna, while having compact size. **This antenna is recommened antenna for hx_espnow_rc project.**
 
 I also tested with Frsky directional patch 7dbi antenna clone, and I was not able to get any good result with it. I got a lot of failsafe events at 700m already.
 
@@ -84,11 +102,6 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 (I know I have to open the clone and rotate inner part in the right direction).
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatchinside.jpg "frskypatchinside")
-
-Even DIY dipole has better results (it similar to standart 2dbi antenna which is included with Jumper T-Lite):
-
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_dipole.jpg "diy_dipole")
-
 
 # Telemetry
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distorion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
