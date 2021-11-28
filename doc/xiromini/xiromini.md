@@ -1,5 +1,8 @@
 # Xiro mini profile
 
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/xiromini/xiromini.jpg "xiromini")
+
+
 Xiro mini profile allows to control Xiro Xplorer Mini quadcopter, and other drones based on Zerotech SDK, like Zerotech Hesper, Zerotech Dobby.
 
 Xiro mini was tested only.
