@@ -33,6 +33,8 @@ Used in DIY ESP8266 plane: https://www.youtube.com/watch?v=c9dDOX0IzME
 
 Used in INAV 1.7.3 plane: https://www.youtube.com/watch?v=UptvxsFHDFA
 
+Used in INAV 3.0.2 plane: https://youtu.be/GYB-UckucRA
+
 You can build transmitter external module and SBUS/PWM receiver using guides below.
 
 See building guides:
@@ -83,7 +85,7 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi_lr.jpg "telemetryviewer_5dbi_lr")
 
-Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode.
+Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode https://youtu.be/GYB-UckucRA
 
 DIY Moxon antenna on transmitter https://www.thingiverse.com/thing:5148464 <-> 2dbi dipole or receiver provide range up to 1.8Km:
 
@@ -130,6 +132,9 @@ Continue with development guide: https://github.com/RomanLut/hx_espnow_rc/blob/m
 # Other projects
 
 https://github.com/PepeTheFroggie/EspCopter
+
 https://github.com/PepeTheFroggie/EspCopter32
+
 https://github.com/Crypter/ESP-RCLink
+
 https://github.com/RomanLut/mahowii
