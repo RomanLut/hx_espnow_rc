@@ -58,7 +58,7 @@ See building guides:
  - 2dbi dipole antenna and ESP32 LR receiver provide range ~1.8Km (!)
 
 Moxon antenna with:
- - 2dbi dipole antenna and ESP32 LR receiver provide range ~1.8Km (!)
+ - 2dbi dipole antenna and ESP32 LR receiver provide range ~1.7Km (!)
 
 *Failsave period is set to 1 second (so there should be at least 1 successfull packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.*
 
