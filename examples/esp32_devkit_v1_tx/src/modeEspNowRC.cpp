@@ -123,15 +123,22 @@ void ModeEspNowRC::loop(
 */
 
 #ifdef USE_SPORT  
-    sport->setRSSI( hxrcMaster.getTransmitterStats().getRSSI());
-    //sport->setA1(hxrcMaster.getA1());
-    
-    //removeme
-    sport->setA1(capture.rate);
 
+    sport->setRSSI(hxrcMaster.getTransmitterStats().getRSSI());
+    sport->setRSSIDbm( hxrcMaster.getTransmitterStats().getRSSIDbm() );
+    sport->setNoiseFloor(hxrcMaster.getTransmitterStats().getNoiseFloor());
+    sport->setSNR(hxrcMaster.getTransmitterStats().getSNR());
+
+    sport->setRXRSSI(hxrcMaster.getReceiverStats().getRSSI());
+    sport->setRXRSSIDbm( hxrcMaster.getReceiverStats().getRemoteRSSIDbm() );
+    sport->setRXNoiseFloor(hxrcMaster.getReceiverStats().getRemoteNoiseFloor());
+    sport->setRXSNR(hxrcMaster.getReceiverStats().getRemoteSNR());
+
+    sport->setA1(hxrcMaster.getA1());
     sport->setA2(hxrcMaster.getA2());
-    sport->setDIYValue(0, -capture.rssi );
-    sport->setDIYValue(1, -capture.noiseFloor );
+
+    sport->setDebug2(hxrcMaster.getTransmitterStats().getRate()>=0? hxrcMaster.getTransmitterStats().getRate():255);
+
     sport->loop();
 #endif
 

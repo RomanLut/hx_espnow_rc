@@ -48,8 +48,16 @@ public:
     HXRCTransmitterStats();
 
     bool isFailsafe();
-    uint8_t getRSSI();
+    uint8_t getRSSI();  //0..100 computed link quality
+
+    // RSSIDbm, Noise floor, SNR and rate are available on ESP32 only. They are 0 on ESP8266 (rate is -1).
+    uint8_t getRSSIDbm();  //harware RSSI in dbm. 70 means -70dbm
+    uint8_t getNoiseFloor();  //noise floor in dbm. 90 means -90dbm
+    uint8_t getSNR();  //signal to noise ratio in db
+    int getRate();  //wifi rate, https://docs.espressif.com/projects/esp-idf/en/release-v3.3/api-reference/network/esp_wifi.html#_CPPv415wifi_phy_rate_t or -1 while not availabe
+
     void printStats();
+
     
     uint32_t getTelemetrySendSpeed();
 

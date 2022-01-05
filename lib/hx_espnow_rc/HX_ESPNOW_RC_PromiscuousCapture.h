@@ -33,7 +33,7 @@ class HXRCPromiscuousCapture
 public:
     uint8_t peerMac[6];
     int8_t rssi;   //Received Signal Strength Indicator(RSSI) of packet. unit: dBm
-    int8_t noiseFloor; //noise floor of Radio Frequency Module(RF). unit: 0.25dBm
+    int8_t noiseFloor; //noise floor of Radio Frequency Module(RF). unit: 0.25dBm. In practice: in dbm
     int rate;
     uint32_t packetsCount;
 

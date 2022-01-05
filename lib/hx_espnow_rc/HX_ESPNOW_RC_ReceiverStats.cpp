@@ -67,13 +67,32 @@ uint8_t HXRCReceiverStats::getRSSI()
         this->RSSIUpdateMs = t; 
     }
     return this->RSSILast4 >> 2;
-
-
 }
 
 //=====================================================================
 //=====================================================================
-bool HXRCReceiverStats::onPacketReceived( uint16_t packetId, uint16_t sequenceId, uint8_t telemetrySize )
+uint8_t HXRCReceiverStats::getRemoteRSSIDbm()
+{
+    return this->remoteRSSIDbm;
+}
+
+//=====================================================================
+//=====================================================================
+uint8_t HXRCReceiverStats::getRemoteNoiseFloor()
+{
+    return this->remoteNoiseFloor;
+}
+
+//=====================================================================
+//=====================================================================
+uint8_t HXRCReceiverStats::getRemoteSNR()
+{
+    return this->remoteNoiseFloor - this->remoteRSSIDbm;
+}
+
+//=====================================================================
+//=====================================================================
+bool HXRCReceiverStats::onPacketReceived( uint16_t packetId, uint16_t sequenceId, uint8_t telemetrySize, uint8_t RSSIDbm, uint8_t noiseFloor )
 {
     this->packetsReceived++;
 
@@ -96,6 +115,9 @@ bool HXRCReceiverStats::onPacketReceived( uint16_t packetId, uint16_t sequenceId
     this->prevPacketId = packetId;
     this->prevSequenceId = sequenceId;
     this->lastReceivedTimeMs = millis();
+
+    this->remoteRSSIDbm = RSSIDbm;
+    this->remoteNoiseFloor = noiseFloor;
 
     return res;
 }

@@ -44,8 +44,15 @@ void ModeBase::loop(
         this->gotSBUSProfileTime = 0;
     }
 
+    unsigned long t = millis();
+    unsigned long dt = t - this->lastCycleTime;
+    this->lastCycleTime = t;
+
 #ifdef USE_SPORT  
-    sport->setDIYValue(2, TXConfigProfile::getCurrentProfileIndex()>=0? TXConfigProfile::getCurrentProfileIndex() : 255);
+    sport->setR9PWR( 20 );
+    sport->setProfileId( TXConfigProfile::getCurrentProfileIndex()>=0? TXConfigProfile::getCurrentProfileIndex() : 255 );
+    sport->setDebug1( dt>5000? 5000 : 0 );
+
     sport->loop();
 #endif
 

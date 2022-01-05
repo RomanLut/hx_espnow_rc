@@ -92,7 +92,7 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
             memcpy( capture.peerMac, mac, 6 );
 #endif            
 
-            if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length ) )
+            if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length, 0, 0  ) )
             {
                 if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )  //length = 0 is ok
                 {
@@ -171,6 +171,8 @@ void HXRCSlave::loop()
             outgoingData.ackSequenceId = receivedSequenceId;
             outgoingData.A1 = A1;
             outgoingData.A2 = A2;
+            outgoingData.RSSIDbm = this->transmitterStats.getRSSIDbm();
+            outgoingData.NoiseFloor = this->transmitterStats.getNoiseFloor();
 
             outgoingData.setCRC();
             transmitterStats.onPacketSend( t );

@@ -20,6 +20,8 @@ private:
     
     int SBUSProfile = -1; 
 
+    unsigned long lastCycleTime = 0; 
+
     int getProfileIndexFromChannelValue( int value);
 
 public:

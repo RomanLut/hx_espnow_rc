@@ -12,7 +12,7 @@ private:
     void reset();
     void update();
 
-    bool onPacketReceived( uint16_t packetId, uint16_t sequenceId, uint8_t telemetrySize );
+    bool onPacketReceived( uint16_t packetId, uint16_t sequenceId, uint8_t telemetrySize, uint8_t RSSIDbm, uint8_t noiseFloor );
     void onTelemetryOverflow();
 
     friend class HXRCBase;
@@ -47,10 +47,21 @@ public:
 
     uint16_t telemetryOverflowCount;
 
+    uint8_t remoteRSSIDbm;
+    uint8_t remoteNoiseFloor;
+
     HXRCReceiverStats();
 
     bool isFailsafe();
     uint8_t getRSSI();
+    //The following values: 
+    //1) are awailable on Master only.
+    //2) are wailable only if slave is based on ESP32.
+    //3) are 0 if receiver is based on ESP8266
+    uint8_t getRemoteRSSIDbm();  //RSSI in Dbm on slave. 70 means -70Dbm
+    uint8_t getRemoteNoiseFloor();  //Noise floor on slave. 90 means - 90Dbm
+    uint8_t getRemoteSNR(); //Signal to noise ratio on slave in Db.
+
     void printStats();
     
     uint32_t getTelemetryReceivedSpeed();

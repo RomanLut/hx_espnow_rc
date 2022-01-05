@@ -66,6 +66,50 @@ uint8_t HXRCTransmitterStats::getRSSI()
 
 //=====================================================================
 //=====================================================================
+uint8_t HXRCTransmitterStats::getRSSIDbm()
+{
+#if defined (ESP32)    
+    return -capture.rssi;
+#else 
+    return 0;
+#endif    
+}
+
+//=====================================================================
+//=====================================================================
+uint8_t HXRCTransmitterStats::getNoiseFloor()
+{
+#if defined (ESP32)    
+    return -capture.noiseFloor;
+#else 
+    return 0;
+#endif    
+}
+
+//=====================================================================
+//=====================================================================
+uint8_t HXRCTransmitterStats::getSNR()
+{
+#if defined (ESP32)    
+    return (-capture.noiseFloor) - (-capture.rssi);
+#else 
+    return 0;
+#endif    
+}
+
+//=====================================================================
+//=====================================================================
+int HXRCTransmitterStats::getRate()
+{
+#if defined (ESP32)    
+    return capture.rate;
+#else 
+    return -1;
+#endif    
+}
+
+//=====================================================================
+//=====================================================================
 void HXRCTransmitterStats::onPacketAck( uint8_t telemetryLength )
 {
     this->packetsAcknowledged++;
@@ -133,5 +177,11 @@ void HXRCTransmitterStats::printStats()
     HXRCLOG.printf(" | Error: %u", packetsSentError);
     HXRCLOG.printf(" | Missed time: %u", packetsNotSentInTime);
     HXRCLOG.printf(" | Out telemetry: %u b/s\n", getTelemetrySendSpeed());
+#if defined(ESP32)
+    HXRCLOG.printf(" RSSIDBm: %dDbm", getRSSIDbm());
+    HXRCLOG.printf(" | Noise Floor: %dDbm", getNoiseFloor());
+    HXRCLOG.printf(" | SNR: %dDb", getSNR());
+    HXRCLOG.printf(" | Rate: %i\n", getRate());
+#endif    
 }
 

@@ -443,7 +443,7 @@ void ModeXiroMini::loop(
     sport->setRSSI( (WiFi.status() == WL_CONNECTED) ? -WiFi.RSSI(): 0 );
     sport->setA1( this->batPercentage );
     sport->setA2( this->numSats );
-    sport->setDIYValue( 0, this->height );
+    sport->setAltitude( (uint32_t)this->height*100 );
     sport->loop();
 #endif
 

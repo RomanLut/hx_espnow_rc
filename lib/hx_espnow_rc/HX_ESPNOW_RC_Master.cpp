@@ -68,7 +68,7 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
             memcpy( capture.peerMac, mac, 6 );
 #endif            
 
-            if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length ) )
+            if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length, pPayload->RSSIDbm, pPayload->NoiseFloor ) )
             {
                 if ( !this->incomingTelemetryBuffer.send( pPayload->data, pPayload->length ) )
                 {

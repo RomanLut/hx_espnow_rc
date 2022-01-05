@@ -11,7 +11,7 @@ With 5dbi antena, it is possible to fly up to 420m on the field, with fpv video 
 
 Sport telemetry includes: RSSI (in -db, lower is better), battery percentage, satellites count.
 
-Development is suspended due to loss of drone..
+Development is suspended due to loss of drone...
 
 Usage:
 Adjust Xiro Wifi network name and password in ModeXiroMini.cpp.
