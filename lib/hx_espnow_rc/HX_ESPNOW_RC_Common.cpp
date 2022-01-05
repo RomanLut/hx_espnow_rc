@@ -114,6 +114,8 @@ bool HXRCInitEspNow( HXRCConfig& config )
         return false;
     }
 
+    system_phy_set_max_tpw(82);
+
 #elif defined(ESP32)
 
     WiFi.mode(WIFI_STA);
@@ -204,6 +206,10 @@ bool HXRCInitEspNow( HXRCConfig& config )
     esp_wifi_set_promiscuous_rx_cb(&sniffer_callback);
     esp_wifi_set_promiscuous(true); 
 
+    if (  esp_wifi_set_max_tx_power(84) != ESP_OK )
+  {
+    Serial.println("An error occurred while setting TX power");
+  }
 #endif
 
     return true;
