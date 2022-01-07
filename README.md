@@ -23,7 +23,7 @@ Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diagram.jpg "Diagram")
 
-Transmits 16 channels at 25 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
+Transmits 16 channels at 40 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
 Can be used as cheap RC for LOS flights or up to 1km flight.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
@@ -111,12 +111,12 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 
 # Telemetry
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distorion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
-Additionally library transmits A1 and A2 (16-bit) values for simple telemetry.
+Additionally library transmits A1 and A2 (32-bit) values for simple telemetry.
 
 # Building and Flashing
-Currently pre-build firmware is not provided. You have to build firmware yourself and flash ESP32 modules using PlatformIO https://platformio.org/
+Currently pre-build firmware is not provided. You have to build firmware yourself and flash ESP32/ESP8266 modules using PlatformIO https://platformio.org/
 
-If you do not know what PlatformIO is, than this project is not for you at the current stage. Later I may try to provide pre-build binaries and detailed instructions for flashing and configuring tranmitter and receviers.
+If you do not know what PlatformIO is, than this project is not for you at the current stage. Later I may try to provide pre-build binaries and detailed instructions for flashing and configuring transmitter and receviers.
 
 See development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 
