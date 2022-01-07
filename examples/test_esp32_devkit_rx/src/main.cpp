@@ -159,20 +159,9 @@ void loop()
   {
     lastStats = millis();
 
-    Serial.print("Peer:");
+    Serial.print("=== Peer:");
     HXRCPrintMac(hxrcSlave.getPeerMac());
-    
-    Serial.print(" packets:");
-    Serial.print(capture.packetsCount);
-
-    Serial.print(" rssi:");
-    Serial.print(capture.rssi);
-
-    Serial.print(" noise_floor:");
-    Serial.print(capture.noiseFloor);
-
-    Serial.print(" rate:");
-    Serial.println(capture.rate);
+    Serial.print("\n");
     
     hxrcSlave.getTransmitterStats().printStats();
     hxrcSlave.getReceiverStats().printStats();

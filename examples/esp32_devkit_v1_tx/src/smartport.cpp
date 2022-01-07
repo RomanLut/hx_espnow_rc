@@ -67,11 +67,11 @@
 #define FRSKY_SPORT_DIY_RX_NOISE_FLOOR_ID   0x5254
 #define FRSKY_SPORT_DIY_RX_SNR_ID           0x5255
 
-#define FRSKY_SPORT_DIY_PROFILE_ID      0x5256
+#define FRSKY_SPORT_DIY_PROFILE_ID          0x5256
 
-#define FRSKY_SPORT_DIY_DEBUG_1_ID      0x5260
-#define FRSKY_SPORT_DIY_DEBUG_2_ID      0x5261
-
+#define FRSKY_SPORT_DIY_DEBUG_1_ID          0x5260
+#define FRSKY_SPORT_DIY_DEBUG_2_ID          0x5261
+#define FRSKY_SPORT_DIY_DEBUG_3_ID          0x5262
 
 #define FRSKY_SPORT_VALID_FRAME_RATE_ID 0xF010  //UNIT_PERCENT displayed as 100-data in OpenTX
 #define FRSKY_SPORT_RSSI_ID             0xf101  //low byte - rssi in dbm, 0x64 = 100dbm
@@ -279,6 +279,10 @@ void Smartport::loop()
 
         case SVI_DEBUG_2:
 	        this->sendDeviceValue(FRSKY_SPORT_DEVICE_24, FRSKY_SPORT_DIY_DEBUG_2_ID, this->values[this->lastSensor]);
+            break;
+
+        case SVI_DEBUG_3:
+	        this->sendDeviceValue(FRSKY_SPORT_DEVICE_24, FRSKY_SPORT_DIY_DEBUG_3_ID, this->values[this->lastSensor]);
             break;
 
         case SVI_A1:

@@ -12,13 +12,14 @@
 #define SVI_RX_SNR              7
 #define SVI_VALID_FRAME_RATE    8 
 #define SVI_R9_PWR_ID           9
-#define SVI_PROFILE_ID          11  
-#define SVI_A1                  12  
-#define SVI_A2                  13
-#define SVI_VFAS                14
-#define SVI_ALTITUDE            15
-#define SVI_DEBUG_1             16
-#define SVI_DEBUG_2             17
+#define SVI_PROFILE_ID          10  
+#define SVI_A1                  11  
+#define SVI_A2                  12
+#define SVI_VFAS                13
+#define SVI_ALTITUDE            14
+#define SVI_DEBUG_1             15
+#define SVI_DEBUG_2             16
+#define SVI_DEBUG_3             17  
 #define SVI_COUNT               18
 
 //=====================================================================
@@ -180,6 +181,12 @@ public:
     void setDebug2( uint32_t value)
     {
         this->setSportValue(SVI_DEBUG_2, value);
+    }  
+
+    //5262
+    void setDebug3( uint32_t value)
+    {
+        this->setSportValue(SVI_DEBUG_3, value);
     }  
 
 };

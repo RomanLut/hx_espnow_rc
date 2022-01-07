@@ -12,9 +12,6 @@ private:
     //when last packet received
     unsigned long lastReceived;
     
-    //average delta between packet received and ack sent
-    uint32_t delta256;
-
     static HXRCMaster* pInstance;
 
     HXRCMasterPayload outgoingData;
@@ -43,8 +40,6 @@ public:
     //index = 0..15
     //data = 1000...2000
     void setChannelValue( uint8_t index, uint16_t data);
-
-    void printDelta();
 
     uint32_t getA1();
     uint32_t getA2();

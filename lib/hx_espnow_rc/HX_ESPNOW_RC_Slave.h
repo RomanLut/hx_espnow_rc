@@ -10,6 +10,8 @@ class HXRCSlave : public HXRCBase
 {
 private:
 
+    volatile bool gotIncomingPacket;
+
     static HXRCSlave* pInstance;
 
 #if defined(ESP32)

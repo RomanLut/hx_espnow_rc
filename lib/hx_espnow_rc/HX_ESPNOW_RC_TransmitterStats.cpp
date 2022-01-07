@@ -52,6 +52,7 @@ uint8_t HXRCTransmitterStats::getRSSI()
     if ( delta > 1000)
     {
         uint16_t packetsSuccessCount = this->packetsAcknowledged - this->RSSIPacketsAcknowledged;
+        this->successfullPacketRateLast = packetsSuccessCount;
         uint16_t packetsTotalCount = this->packetsSentTotal + this->packetsNotSentInTime - this->RSSIPacketsTotal; 
 
         this->RSSIlast = ( packetsTotalCount > 0 ) ? (((uint32_t)packetsSuccessCount) * 100 / packetsTotalCount) : 0;
@@ -62,6 +63,13 @@ uint8_t HXRCTransmitterStats::getRSSI()
         this->RSSIUpdateMs = t; 
     }
     return this->RSSIlast;
+}
+
+//=====================================================================
+//=====================================================================
+uint8_t HXRCTransmitterStats::getSuccessfulPacketRate()
+{
+    return this->successfullPacketRateLast;
 }
 
 //=====================================================================
@@ -176,12 +184,13 @@ void HXRCTransmitterStats::printStats()
     HXRCLOG.printf(" | Ack: %u", packetsAcknowledged);
     HXRCLOG.printf(" | Error: %u", packetsSentError);
     HXRCLOG.printf(" | Missed time: %u", packetsNotSentInTime);
+    HXRCLOG.printf(" | PacketRate: %dp/s", getSuccessfulPacketRate());
     HXRCLOG.printf(" | Out telemetry: %u b/s\n", getTelemetrySendSpeed());
 #if defined(ESP32)
-    HXRCLOG.printf(" RSSIDBm: %dDbm", getRSSIDbm());
-    HXRCLOG.printf(" | Noise Floor: %dDbm", getNoiseFloor());
-    HXRCLOG.printf(" | SNR: %dDb", getSNR());
-    HXRCLOG.printf(" | Rate: %i\n", getRate());
+    HXRCLOG.printf(" RSSIDBm: -%ddbm", getRSSIDbm());
+    HXRCLOG.printf(" | Noise Floor: -%ddbm", getNoiseFloor());
+    HXRCLOG.printf(" | SNR: %ddb", getSNR());
+    HXRCLOG.printf(" | WifiRate: %i\n", getRate());
 #endif    
 }
 

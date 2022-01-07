@@ -199,6 +199,11 @@ void loop()
   if (t - lastStats1 > 1000)
   {
     lastStats1 = t;
+
+   Serial.print("=== Peer:");
+    HXRCPrintMac(hxrcSlave.getPeerMac());
+    Serial.print("\n");
+     
     hxrcSlave.getTransmitterStats().printStats();
     hxrcSlave.getReceiverStats().printStats();
     Serial.print("Errors: ");

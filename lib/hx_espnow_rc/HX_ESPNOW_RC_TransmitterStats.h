@@ -39,6 +39,7 @@ public:
     uint16_t RSSIPacketsTotal;
     unsigned long RSSIUpdateMs;
     uint8_t RSSIlast;
+    uint16_t successfullPacketRateLast; 
 
     uint32_t telemetryBytesSentTotal;
     uint32_t lastTelemetryBytesSentSpeed;
@@ -49,6 +50,7 @@ public:
 
     bool isFailsafe();
     uint8_t getRSSI();  //0..100 computed link quality
+    uint8_t getSuccessfulPacketRate();  //successful packed per second
 
     // RSSIDbm, Noise floor, SNR and rate are available on ESP32 only. They are 0 on ESP8266 (rate is -1).
     uint8_t getRSSIDbm();  //harware RSSI in dbm. 70 means -70dbm

@@ -118,7 +118,6 @@ bool HXRCMaster::init( HXRCConfig config )
     esp_now_register_recv_cb(OnDataRecvStatic);
 
     this->lastReceived = 0;
-    this->delta256 = 0;
 
     return true;
 }
@@ -132,29 +131,7 @@ void HXRCMaster::loop()
         unsigned long t = millis();
         unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
-        unsigned long dAdd = 0;
-
-        //receiver/transmitter synchronization
-        //we want transmitter and receiver to act in alternating order
-        //we adjust send event time so each side acts at DEFAULT_PACKET_SEND_PERIOD_MS/2 time
-        if ( this->lastReceived != 0 )
-        {
-            uint16_t recvDelta = t - this->lastReceived;
-            if ( recvDelta <= (DEFAULT_PACKET_SEND_PERIOD_MS + 1))
-            {
-                this->delta256 -= this->delta256 >> 8;
-                this->delta256 += recvDelta;
-
-                //clamp
-                if ( recvDelta > DEFAULT_PACKET_SEND_PERIOD_MS ) recvDelta = DEFAULT_PACKET_SEND_PERIOD_MS;
-
-                int16_t d = ( DEFAULT_PACKET_SEND_PERIOD_MS / 2 ) - (this->delta256 >> 8 );
-                if ( d  < 0 ) dAdd = 1; //sent event is late
-                if ( d  > 0 ) dAdd = -1;//sent event is early
-            }
-        }
-
-        int count = (deltaT + dAdd)/ DEFAULT_PACKET_SEND_PERIOD_MS;
+        int count = (deltaT)/ DEFAULT_PACKET_SEND_PERIOD_MS;
         if ( count > 1)
         {
             outgoingData.packetId += count - 1;  //missed time to send packet(s) with desired rate
@@ -201,15 +178,6 @@ void HXRCMaster::loop()
 void HXRCMaster::setChannelValue(uint8_t index, uint16_t data)
 {
     this->channels.setChannelValue( index, data );
-}
-
-//=====================================================================
-//=====================================================================
-void HXRCMaster::printDelta()
-{
-    int16_t d = DEFAULT_PACKET_SEND_PERIOD_MS / 2 - (this->delta256 >> 8 );
-    Serial.print("Delta: ");
-    Serial.println(d);
 }
 
 //=====================================================================

@@ -185,8 +185,12 @@ void loop()
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
+
+    Serial.print("=== Peer:");
+    HXRCPrintMac(hxrcMaster.getPeerMac());
+    Serial.print("\n");
+
     hxrcMaster.getTransmitterStats().printStats();
-    hxrcMaster.printDelta();
     hxrcMaster.getReceiverStats().printStats();
     Serial.print("Errors: ");
     Serial.println(errorCountTelemetry);

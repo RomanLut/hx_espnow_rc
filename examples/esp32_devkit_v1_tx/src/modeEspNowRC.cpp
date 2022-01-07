@@ -138,6 +138,7 @@ void ModeEspNowRC::loop(
     sport->setA2(hxrcMaster.getA2());
 
     sport->setDebug2(hxrcMaster.getTransmitterStats().getRate()>=0? hxrcMaster.getTransmitterStats().getRate():255);
+    sport->setDebug3(hxrcMaster.getTransmitterStats().getSuccessfulPacketRate());
 
     sport->loop();
 #endif

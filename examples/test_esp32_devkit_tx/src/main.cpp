@@ -186,25 +186,14 @@ void loop()
   {
     lastStats = millis();
     
-    Serial.print("Peer:");
+    Serial.print("=== Peer:");
     HXRCPrintMac(hxrcMaster.getPeerMac());
+    Serial.print("\n");
     
-    Serial.print(" packets:");
-    Serial.print(capture.packetsCount);
-
-    Serial.print(" rssi:");
-    Serial.print(capture.rssi);
-
-    Serial.print(" noise_floor:");
-    Serial.print(capture.noiseFloor);
-
-    Serial.print(" rate:");
-    Serial.println(capture.rate);
-
     hxrcMaster.getTransmitterStats().printStats();
-    hxrcMaster.printDelta();
     hxrcMaster.getReceiverStats().printStats();
-    Serial.print("Errors: ");
+    
+    Serial.print("Telemetry stream errors: ");
     Serial.println(errorCountTelemetry);
   }
 

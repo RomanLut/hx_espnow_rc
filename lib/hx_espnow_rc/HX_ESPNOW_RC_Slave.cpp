@@ -19,6 +19,7 @@ void HXRCSlave::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData
 HXRCSlave::HXRCSlave() : HXRCBase()
 {
     HXRCSlave::pInstance = this;
+    this->gotIncomingPacket = false;
 #if defined(ESP32)
     this->channelsMutex = xSemaphoreCreateMutex();
     if( this->channelsMutex == NULL )
@@ -106,6 +107,7 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
                 this->waitAck = false;
                 this->transmitterStats.onPacketAck( outgoingData.length );
             }
+            this->gotIncomingPacket = true;
         }
         else
         {
@@ -153,12 +155,13 @@ void HXRCSlave::loop()
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
         unsigned long t = millis();
-        unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
+        //unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
-        int count = deltaT / DEFAULT_PACKET_SEND_PERIOD_MS;
-
-        if ( count > 0 )
+        //reply as soon as we got packet from master. 
+        //we send packets in responce only to avoid collision with master packets
+        if ( this->gotIncomingPacket )
         {
+            this->gotIncomingPacket = false;
             outgoingData.packetId++;
 
             if ( !this->waitAck )
