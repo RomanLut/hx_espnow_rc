@@ -1,18 +1,19 @@
 [Work in progress]
 
 Goals:
-- transmit 16 RC channels (done)
-- transmit RSSI, A1, A2 telemetry (done)
-- transmit bidirectional telemetry stream (done)
-- build external module for Jumper T-Lite (done)
-- build receiver based on Wemos D1 Mini board (Servo/PWM outputs) (done)
-- build ESP-01 based SBUS output receiver (done)
-- build ESP32 based SBUS output receiver, LR mode (done)
-- external module for Jumper T-Lite: select active configuration by CH16 value (done)
-- external module for Jumper T-Lite: multiple configurations in xml file
-- external module for Jumper T-Lite: bluetooth gamepad mode
-- external module for Jumper T-Lite: telemetry bridge ( A1,A2,RSSI -> SPORT pin translate, SPORT stream -> SPORT pin, Mavlink stream -> SPORT pin translate)
-- external module for Jumper T-Lite: SPORT telemetry quering
+- [x] transmit 16 RC channels
+- [x] transmit RSSI, A1, A2 telemetry 
+- [x] transmit bidirectional telemetry stream 
+- [x] build external module for Jumper T-Lite 
+- [x] build receiver based on Wemos D1 Mini board (Servo/PWM outputs) 
+- [x] build ESP-01 based SBUS output receiver 
+- [x] build ESP32 based SBUS output receiver, LR mode 
+- [x] external module for Jumper T-Lite: select active configuration by CH16 value 
+- [ ] test range with xq-02a amplifier
+- [ ] external module for Jumper T-Lite: multiple configurations in xml file
+- [ ] external module for Jumper T-Lite: bluetooth gamepad mode
+- [ ]external module for Jumper T-Lite: telemetry bridge ( A1,A2,RSSI -> SPORT pin translate, SPORT stream -> SPORT pin, Mavlink stream -> SPORT pin translate)
+- [ ] external module for Jumper T-Lite: SPORT telemetry quering
 
 # hx_espnow_rc
 
