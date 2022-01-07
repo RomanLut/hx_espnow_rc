@@ -12,7 +12,7 @@
 - [ ] test range with xq-02a amplifier
 - [ ] external module for Jumper T-Lite: multiple configurations in xml file
 - [ ] external module for Jumper T-Lite: bluetooth gamepad mode
-- [ ]external module for Jumper T-Lite: telemetry bridge ( A1,A2,RSSI -> SPORT pin translate, SPORT stream -> SPORT pin, Mavlink stream -> SPORT pin translate)
+- [ ] external module for Jumper T-Lite: telemetry bridge ( A1,A2,RSSI -> SPORT pin translate, SPORT stream -> SPORT pin, Mavlink stream -> SPORT pin translate)
 - [ ] external module for Jumper T-Lite: SPORT telemetry quering
 
 # hx_espnow_rc
