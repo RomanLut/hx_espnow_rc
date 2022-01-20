@@ -113,7 +113,7 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distorion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
 Additionally library transmits A1 and A2 (32-bit) values for simple telemetry.
 
-See packets flow: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rfpower/rfpower.md
+See packets timing: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rfpower/rfpower.md
 
 # Building and Flashing
 Currently pre-build firmware is not provided. You have to build firmware yourself and flash ESP32/ESP8266 modules using PlatformIO https://platformio.org/
