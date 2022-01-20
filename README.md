@@ -25,7 +25,7 @@ Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 Transmits 16 channels at 40 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
-Can be used as cheap RC for LOS flights or up to 1km flight.
+Can be used as cheap RC for LOS flights or up to 1km flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
 Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/mahowii
