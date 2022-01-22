@@ -25,7 +25,7 @@ Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 Transmits 16 channels at 40 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
-Can be used as cheap RC for LOS flights or up to 1km flight.
+Can be used as cheap RC for LOS flights or up to 1km flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
 Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/mahowii
@@ -112,6 +112,8 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 # Telemetry
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distorion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
 Additionally library transmits A1 and A2 (32-bit) values for simple telemetry.
+
+See packets timing: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rfpower/rfpower.md
 
 # Building and Flashing
 Currently pre-build firmware is not provided. You have to build firmware yourself and flash ESP32/ESP8266 modules using PlatformIO https://platformio.org/
