@@ -11,6 +11,8 @@ UP telemetry rate is ~28Kbit and little bit less in LR mode.
 
 Telemetry rate drop down proportional to RSSI.
 
+Packet rate can be adjusted in configuration. In nornal mode packet rate can be increased up to 120Hz.
+
 Packets flow can be captured using RF Power sensor desribed here http://www.herbert-dingfelder.de/?page_id=68, and an oscilloscope. 
 
 # Packets flow in normal mode
@@ -24,7 +26,7 @@ Higher peaks - master packets. Smaller peaks - slave packets.
 
 Higher peaks - master packets. Smaller peaks - slave packets.
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rfpower/AKIP0022.jpg "Packets flow - LR")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rfpower/AKIP0019.jpg "Packets flow - LR")
 
 As can be seen, packets flow is not perfect. I guess ESP32 is sending Wifi network maintenanse packets too.
 
