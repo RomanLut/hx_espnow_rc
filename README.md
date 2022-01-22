@@ -23,7 +23,7 @@ Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diagram.jpg "Diagram")
 
-Transmits 16 channels at 40 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
+Transmits 17 channels at 50 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
 Can be used as cheap RC for LOS flights or up to 1km flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
