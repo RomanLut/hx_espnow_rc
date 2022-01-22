@@ -5,6 +5,12 @@ Slave responds with confirmation packet as soon as packet from master is receive
 Slave always sends single packet in response, without retries. Slave sends packets in responce only.
 
 
+Expected DL telemetry rate is ~56Kbit and little bit less in LR mode.
+
+UP telemetry rate is ~28Kbit and little bit less in LR mode.
+
+Telemetry rate drop down proportional to RSSI.
+
 Packets flow can be captured using RF Power sensor desribed here http://www.herbert-dingfelder.de/?page_id=68, and an oscilloscope. 
 
 # Packets flow in normal mode
