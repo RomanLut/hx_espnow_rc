@@ -131,7 +131,7 @@ void HXRCMaster::loop()
         unsigned long t = millis();
         unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
-        int count = (deltaT)/ DEFAULT_PACKET_SEND_PERIOD_MS;
+        int count = deltaT / (this->config.LRMode ? DEFAULT_PACKET_SEND_PERIOD_LR_MS : DEFAULT_PACKET_SEND_PERIOD_MS);
         if ( count > 1)
         {
             outgoingData.packetId += count - 1;  //missed time to send packet(s) with desired rate

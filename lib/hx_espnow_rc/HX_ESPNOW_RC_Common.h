@@ -28,8 +28,8 @@
 
 #define HXRCLOG (*HXRCGetLogStream())
 
-#define DEFAULT_PACKET_SEND_PERIOD_MS   25      //40Hz    
-//#define DEFAULT_PACKET_SEND_PERIOD_MS   100      //10Hz    
+#define DEFAULT_PACKET_SEND_PERIOD_MS   20      //8(120Hz) is max for normal mode  
+#define DEFAULT_PACKET_SEND_PERIOD_LR_MS   25      //25(40Hz)if max for LR mode
 #define DEFAULT_FAILSAFE_PERIOD_MS      1000
 
 #define HXRC_CHANNELS 16
