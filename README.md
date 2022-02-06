@@ -11,7 +11,7 @@
 - [x] external module for Jumper T-Lite: select active configuration by CH16 value 
 - [ ] test range with xq-02a amplifier
 - [ ] external module for Jumper T-Lite: multiple configurations in xml file
-- [ ] external module for Jumper T-Lite: bluetooth gamepad mode
+- [x] external module for Jumper T-Lite: bluetooth gamepad mode
 - [ ] external module for Jumper T-Lite: telemetry bridge ( A1,A2,RSSI -> SPORT pin translate, SPORT stream -> SPORT pin, Mavlink stream -> SPORT pin translate)
 - [ ] external module for Jumper T-Lite: SPORT telemetry quering
 
@@ -23,7 +23,7 @@ Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diagram.jpg "Diagram")
 
-Transmits 17 channels at 50 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
+Transmits 18 channels at 50 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
 Can be used as cheap RC for LOS flights or up to 1km flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
