@@ -31,6 +31,9 @@ void TXConfigProfile::loadConfig()
     TXConfigProfile::profiles[1].ap_name = "hxrct1";
 
     TXConfigProfile::profiles[2].transmitterMode = TM_XIRO_MINI;
+
+    TXConfigProfile::profiles[3].transmitterMode = TM_BLE_GAMEPAD;
+
 }
 
 //=====================================================================

@@ -5,6 +5,7 @@
 
 #include "modeEspNowRC.h"
 #include "modeXiroMini.h"
+#include "modeBLEGamepad.h"
 
 ModeBase* ModeBase::currentModeHandler;
 
@@ -93,6 +94,10 @@ void ModeBase::startRequestedProfile()
 
         case TM_XIRO_MINI:
             ModeBase::currentModeHandler = &ModeXiroMini::instance;
+            break;
+
+        case TM_BLE_GAMEPAD:
+            ModeBase::currentModeHandler = &ModeBLEGamepad::instance;
             break;
 
     }

@@ -43,7 +43,8 @@ typedef enum
 {
   TM_ESPNOW = 0,            
   TM_BLUETOOTH_GAMEPAD = 1,
-  TM_XIRO_MINI = 2
+  TM_XIRO_MINI = 2,
+  TM_BLE_GAMEPAD = 3,
   //TODO: other modes - Wifi RC, bluetooth RC, BLE RC 
 
 } TransmitterMode;
