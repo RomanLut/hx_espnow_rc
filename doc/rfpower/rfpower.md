@@ -1,6 +1,6 @@
 # Packets timing
 
-Master sends packets with 50Hz rate (40Hz in LR mode). The actual rate is not constant because it is controlled by rules of Wifi communications.
+Master sends packets with 50Hz rate (40Hz in LR mode). The actual rate is not constant because it is controlled by rules of Wifi communication.
 Slave responds with confirmation packet as soon as packet from master is received. This packet also contains incoming telementry.
 Slave always sends single packet in response, without retries. Slave sends packets in responce only.
 
