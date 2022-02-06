@@ -39,7 +39,7 @@ Checking MAC address is useless because it can be spoofed.
 
 Thus is it required to protect data with some kind of software-layer encription to discard mailformed packets. 
 
-Basically, ESP-NOW encription can be sued to protect content of transmitted data. But it does not prevent client to receive mailformed data.
+Basically, ESP-NOW encription can be used to protect content of transmitted data. But it does not prevent client to receive mailformed data.
 
 If encripted packet is sent to peer with non-matching pmk/lmk, API returns success, but peer does not see packet at software layer.
 
@@ -52,7 +52,7 @@ ESP-NOW encription is not used by this library due to low benefits for RC librar
 
 ESP32 has single radio which is shared between Wifi, Bluetooth Classic and Bluetooth LE.
 
-Peer with active ESP-NOW and Bluetooth Classic communications is able to receive ESP-NOW packets and reply with ACK packets. But is has a problem with sending ESP-NOW packets to the peer because it can not listen for ACK packets successfully. Successfull packet rate drop to 10-20/sec, sometimes no packets can be sent successfully in one second.
+Peer with active ESP-NOW and Bluetooth Classic communications is able to receive ESP-NOW packets and reply with ACK packets. But is has a problem with sending ESP-NOW packets to the peer because it can not listen for ACK packets successfully. Successfull packet rate drop to 10-20/sec, sometimes no packets can be sent successfully during one second.
 
 # ESP-NOW usage in HXRC library
 
@@ -60,9 +60,7 @@ Packets are sent to broadcast address. This allows to implement fast, ACKless, n
 
 # Binding 
                                                                                   
-There is no bind procedure. Devices have to be flashed with same USE_KEY and WIFI_CHANNEL.
-
-(todo: external module for Jumper T-lite, channel and key in configuration)
+There is no bind procedure. Devices have to be flashed with same USE_KEY, WIFI_CHANNEL (and LR_MODE).
 
 (todo: bind receiver to the first available transmitter after flashing)
 
@@ -97,7 +95,7 @@ LR mode is global setting for AP and STA. It is not possible to configure modes 
 
 # RSSI calculation
 
-TODO: RSSI calculation
+TODO: describe RSSI calculation
 
 # Harwdare RSSI and Noise level
 
