@@ -37,7 +37,9 @@ With ESP-NOW encription (pmk and lmk keys) enabled, slave will still receive une
 
 Checking MAC address is useless because it can be spoofed.
 
-Thus is it required to protect data with some kind of software-layer encription to discard mailformed packets. Simple CRC32 XORed with a key, combined with encription-enabled packets should give enough protection.
+Thus is it required to protect data with some kind of software-layer encription to discard mailformed packets. 
+
+Basically, ESP-NOW encription can be sued to protect content of transmitted data. But it does not prevent client to receive mailformed data.
 
 If encripted packet is sent to peer with non-matching pmk/lmk, API returns success, but peer does not see packet at software layer.
 
