@@ -28,7 +28,8 @@
 			"streambuf": "cpp",
 			"istream": "cpp",
 			"limits": "cpp",
-			"algorithm": "cpp"
+			"algorithm": "cpp",
+			"list": "cpp"
 		}
 	}
 }
