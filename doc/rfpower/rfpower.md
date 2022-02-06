@@ -13,7 +13,7 @@ Telemetry rate drop down proportional to RSSI.
 
 Packet rate can be adjusted in settings(DEFAULT_PACKET_SEND_PERIOD_MS and DEFAULT_PACKET_SEND_PERIOD_MS_LR). In nornal mode packet rate can be increased up to 120Hz.
 
-Packets flow can be captured using RF Power sensor desribed here http://www.herbert-dingfelder.de/?page_id=68, and an oscilloscope. 
+Packets flow can be captured using RF Power sensor described here http://www.herbert-dingfelder.de/?page_id=68, and an oscilloscope. 
 
 # Packets flow in normal mode
 
