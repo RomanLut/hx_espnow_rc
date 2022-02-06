@@ -22,7 +22,7 @@ Higher peaks - master packets. Smaller peaks - slave packets.
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rfpower/AKIP0022.jpg "Packets flow - normal")
 
 
-# Packets flow LR mode
+# Packets flow in LR mode
 
 Higher peaks - master packets. Smaller peaks - slave packets.
 
