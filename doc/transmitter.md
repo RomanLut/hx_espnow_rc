@@ -93,6 +93,7 @@ Prepare DC-DC module. Set output voltage to 5V before soldering everything toget
 
 Solder everything together according to connections diagram. Use capton type to isolate parts. 
 
+Note that DC-DC output is connected through diode to LDO regulator input on ESP32 board, not to 5V pin, because 5V pin is directly connected to USB 5+ rail. We need to pass voltage to LDO AFTER diode on ESP32 bard. Otherwise DC-DC would output voltage to USB connector.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build16.jpg "Build step")
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build17.jpg "Build step")
