@@ -1,8 +1,11 @@
 # External transmitter module for Jumper T-Lite
 
 This is external transmitter module for Jumper T-Lite.
+
 In general, can be built for any RC controller with SBUS output.
+
 Multiple profiles are selected by CH16 value https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_profiles.md
+
 Module can emulate BLE Gamepad.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Transmitter module")
@@ -48,8 +51,8 @@ Glue main part to base:
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build5.jpg "Build step")
 
 Prepare ESP32 module. If you are using module without U.FL connector, remove internal antena leaving only two pins for soldering antena extension wire.
-ESP module buttons will not be accessible inside shell. If your ESP32 module does not enter programming mode automatically during USB programming,
-add 1Uf capacitor between EN and GND:
+
+ESP module buttons will not be accessible inside shell. Some modules from Aliexpress are known to be defective. If your ESP32 module does not enter programming mode automatically during USB programming, add 1uF capacitor between EN and GND (look at bottom left corner):
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build6.jpg "Build step")
 
@@ -89,13 +92,12 @@ Prepare DC-DC module. Set output voltage to 5V before soldering everything toget
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build15.jpg "Build step")
 
 Solder everything together according to connections diagram. Use capton type to isolate parts. 
-Place alluminium foil to the cover and isolate with capton type to avoid plastic melting by DC-DC and linear regulators.
 
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build16.jpg "Build step")
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build17.jpg "Build step")
 
-Double-check all connections. Use m2.5 bolts to fix cover on the main part:
+Double-check all connections. Use M2.5 bolts to fix cover on the main part:
                               
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build18.jpg "Build step")
 

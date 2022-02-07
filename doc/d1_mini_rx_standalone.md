@@ -13,9 +13,9 @@
 
  "Discrete outputs" output 1 (3.3V) or 0 (0V).
                                            
- Transmits telementry: RSSI, battery voltage.
- Voltage range is 3.1...6V.
- It can be powered from 5V BEC or directly from 1S battery: (4.2V-3.1V).
+ Transmits telementry: RSSI, battery voltage as A1.
+ 
+ Power supply voltage range is 3.1...6V. Recevier can be powered from 5V BEC, or directly from 1S battery: (4.2V-3.1V).
 
  Peak power consumption is ~170mA.
 
@@ -101,14 +101,13 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
 
 # Building steps
 
-- edit receiver configuration: examples/d1_mini_rx_standalone/include/rx_config.h
-- configure key and wifi channel 
-- configure receiver pins 
+- edit receiver configuration: examples/d1_mini_rx_standalone/include/rx_config.h:
+- configure key and wifi channel (USE_KEY, USE_WIFI_CHANNEL)
+- configure output pins (SERVO_PINS, PWM_PINS, DISCRETE_PINS)
 - flash examples/d1_mini_rx_standalone/ to D1 Mini board
 - replace voltage sensing resistor 
 - remove diode
 - repace capacitor or add additional capacitor to 3.3V rail for stability
-
 
 Three example configurations are provided below.
 

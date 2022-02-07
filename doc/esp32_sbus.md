@@ -3,7 +3,7 @@
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_wroom_32.jpg "ESP32-WROOM-32")
 
 Receiver to be used with flight controller. Receives 15 channels and outputs SBUS signal.
-Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP, Frsky etc.). 
+Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP etc.). 
 
 RSSI is injected into channel 16.
 
@@ -12,7 +12,7 @@ If you are going to power it from 1S battery, linear regulator should be low-dro
 
 Peak power consumption is ~340mA.
 
-Compared to ESP01 based receiver, ESP32 allows to use LR (long range) mode. LR mode is special mode introduced by Espressif Systems with ESP32. Theoretically it should provide 2x better range, in practice the difference is subtle. I can not prove major benefits of LR mode currently.
+Compared to ESP01 based receiver, ESP32 allows to use LR (long range) mode. LR mode is special mode introduced by Espressif Systems with ESP32. Theoretically it should provide 2x better range, in practice the difference is 1.3...1.5x. 
 
 
 TODO: support sensors pooling for Smartport telemetry.
@@ -61,9 +61,9 @@ Failsafe flag is passed in SBUS packets. Channels retain last good values.
 # Flashing first time
 
 1) Edit receiver configuration: examples/esp32_rx_sbus/include/rx_config.h
-- configure key and wifi channel 
-- configure telemetry baudrate
-- configure LR mode
+- configure key, wifi channel and LR mode (USE_KEY, USE_WIFI_CHANNEL)
+- configure telemetry baudrate n RX/TX pins (TELEMETRY_BAUDRATE)
+- configure LR mode (USE_LR_MODE)
 
 2) Connect to USB-UART adapter according the connection diagram below:
 
