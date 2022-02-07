@@ -1,9 +1,9 @@
-# SBUS output recevier with transparent telemetry stream based on ESP01/ESP01s board
+# SBUS output receiver with transparent telemetry stream based on ESP01/ESP01s board
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_sbus2.jpg "ESP01 sbus2")
 
 Receiver to be used with flight controller. Receives 15 channels and outputs SBUS signal.
-Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP, Frsky etc.). 
+Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP etc.). 
 
 RSSI is injected into channel 16.
 
@@ -82,7 +82,7 @@ If FC has BEC which can provide 3.3V 170mA, LDO may not be required.
 # Flashing first time
 
 1) Edit receiver configuration: examples/esp01_rx_sbus/include/rx_config.h
-- configure key and wifi channel 
+- configure key and wifi channel: USE_KEY and USE_WIFI_CHANNEL
 - configure telemetry baudrate
 
 2) Temporary solder flash button according to connection diagram above.
