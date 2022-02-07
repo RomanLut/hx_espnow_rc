@@ -8,12 +8,14 @@
 - [x] build receiver based on Wemos D1 Mini board (Servo/PWM outputs) 
 - [x] build ESP-01 based SBUS output receiver 
 - [x] build ESP32 based SBUS output receiver, LR mode 
-- [x] external module for Jumper T-Lite: select active configuration by CH16 value 
+- [x] external module for Jumper T-Lite: select active profile by CH16 value 
 - [ ] test range with xq-02a amplifier
-- [ ] external module for Jumper T-Lite: multiple configurations in xml file
+- [ ] external module for Jumper T-Lite: multiple profiles in xml file
+- [ ] external module for Jumper T-Lite: web page for profiles editing
 - [x] external module for Jumper T-Lite: bluetooth gamepad mode
-- [ ] external module for Jumper T-Lite: telemetry bridge ( A1,A2,RSSI -> SPORT pin translate, SPORT stream -> SPORT pin, Mavlink stream -> SPORT pin translate)
-- [ ] external module for Jumper T-Lite: SPORT telemetry quering
+- [ ] external module for Jumper T-Lite: telemetry translation: Mavlink stream -> SPORT
+- [ ] external module for Jumper T-Lite: telemetry translation: CRSF stream -> SPORT
+- [ ] SBUS receiver: SPORT telemetry quering
 
 # hx_espnow_rc
 
@@ -36,13 +38,13 @@ Used in INAV 1.7.3 plane: https://www.youtube.com/watch?v=UptvxsFHDFA
 
 Used in INAV 3.0.2 plane: https://youtu.be/GYB-UckucRA
 
-You can build transmitter external module and SBUS/PWM receiver using guides below.
+You can build transmitter external module for RC Controller with external bay, and SBUS/PWM receiver using guides below.
 
 See building guides:
 
-- external module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
-- external module for Radiomaster TX16s [todo]
-- standalone Servo/PWM output receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
+- external module for Jumpter T-Lite (JR Bay): https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
+- external module for Radiomaster TX16s (Normal bay) [todo]
+- standalone Servo/PWM output receiver based on d1_mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
 - ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp01_sbus.md
 - ESP32 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp32_sbus.md
 - development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
@@ -110,7 +112,7 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatchinside.jpg "frskypatchinside")
 
 # Telemetry
-Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distorion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
+Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distortion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
 Additionally library transmits A1 and A2 (32-bit) values for simple telemetry.
 
 See packets timing: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rfpower/rfpower.md
