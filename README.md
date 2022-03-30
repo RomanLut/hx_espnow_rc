@@ -143,3 +143,5 @@ https://github.com/PepeTheFroggie/EspCopter32
 https://github.com/Crypter/ESP-RCLink
 
 https://github.com/RomanLut/mahowii
+
+https://github.com/martin-ger/ESP_E58-Drone
