@@ -69,7 +69,7 @@ Failsafe flag is passed in SBUS packets. Channels retain last good values.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_usbuart.jpg "ESP32 usbuart")
 
-3) Plug USB-UART adapter while shorting two wires as shown above with a tweezers. Upload examples/esp32_rx_sbus/ project using PlatformIO.
+3) Plug USB-UART adapter while shorting two wires as shown above with a tweezers. Upload examples/rx_esp32_sbus/ project using PlatformIO.
 
 After initial flashing, firmware can be updated wirelessly (OTA).
 
