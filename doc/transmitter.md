@@ -104,7 +104,7 @@ Double-check all connections. Use M2.5 bolts to fix cover on the main part:
                               
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build18.jpg "Build step")
 
-Flash module with Examples/esp32_devkit_v1_tx/
+Flash module with Examples/tx_external_module/
 
 Configure T-Lite to output SBUS (normal SBUS => inverted uart).
 
