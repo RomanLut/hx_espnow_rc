@@ -101,4 +101,4 @@ TODO: describe RSSI calculation
 
 Harware RSSI and Noise level (in dBm) can be extracted from raw packet data only when device is put into promiscuous mode.
 Unfortunately this mode is usefull on ESP32 only. I was not able to setup working ESP-NOW communication on ESP8266 in promiscuous mode. 
-So harware rssi and noise level are available on ESP32 only.
+Thus hardware rssi and noise level are available on ESP32 only.
