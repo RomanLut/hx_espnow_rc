@@ -4,13 +4,13 @@
 
  test_* projects are used to test the library. Flash one board with *_tx and other with *_rx project, with same wifi channel, key and LR mode setting(or leave settings by default). Statistic is output to console. On TTGO Display board statistic is also output on the screen.
 
- dx_mini_rx_standalone - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md - Servo/PWM/Discrete output receiver with telemetry
+ dx_mini_rx_standalone - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md - Servo/PWM/Discrete output receiver with telemetry
 
- esp01_rx_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp01_sbus.md - ESP-01 based SBUS receiver
+ esp01_rx_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md - ESP-01 based SBUS receiver
 
- esp32_rc_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp32_sbus.md - ESP32 based SBUS receiver
+ esp32_rc_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md - ESP32 based SBUS receiver
 
- esp32_devkit_v1_tx - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md - external module for Jumper T-Lite transmitter
+ esp32_devkit_v1_tx - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter_external_module.md - external module for Jumper T-Lite transmitter
 
  test_d1_mini_tx - Master(transmitter) test on D1 Mini board
 

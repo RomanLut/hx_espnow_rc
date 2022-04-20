@@ -42,11 +42,11 @@ You can build transmitter external module for RC Controller with external bay, a
 
 See building guides:
 
-- external module for Jumpter T-Lite (JR Bay): https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
+- external module for Jumpter T-Lite (JR Bay): https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter_external_module.md
 - external module for Radiomaster TX16s (Normal bay) [todo]
-- standalone Servo/PWM output receiver based on d1_mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/d1_mini_rx_standalone.md
-- ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp01_sbus.md
-- ESP32 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/esp32_sbus.md
+- standalone Servo/PWM output receiver based on d1_mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md
+- ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md
+- ESP32 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md
 - development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 - recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
 

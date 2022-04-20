@@ -175,7 +175,7 @@ https://esp32.com/viewtopic.php?t=9
 
 Модуль управления квадрокоптером Xiro Mini является частью проекта hx_espnow_rc - внешнего модуля на основе esp32 для авиамодельных пультов.
 
-О сборке модуля: external module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter.md
+О сборке модуля: external module for Jumpter T-Lite: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter_external_module.md
 
 ( bluetooth модуль не используется, можно не устанавливать ).
 
