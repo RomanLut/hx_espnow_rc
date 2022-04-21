@@ -10,7 +10,10 @@
 
 #include <BleGamepad.h>		// https://github.com/lemmingDev/ESP32-BLE-Gamepad
 
-BleGamepad bleGamepad("HXRCBLE");
+//vid,pid:
+//https://githublab.com/repository/issues/lemmingDev/ESP32-BLE-Gamepad/87
+//https://developer.x-plane.com/article/creating-joystick-configuration-joy-files/
+BleGamepad bleGamepad("HXRCBLE","Roman Lut");
 
 ModeBLEGamepad ModeBLEGamepad::instance;
 

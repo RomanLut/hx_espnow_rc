@@ -822,7 +822,8 @@ void BleGamepad::taskServer(void* pvParameter)
 
   BleGamepadInstance->hid->manufacturer()->setValue(BleGamepadInstance->deviceManufacturer);
 
-  BleGamepadInstance->hid->pnp(0x01,0x02e5,0xabbb,0x0110);
+//adjusted pid, X-Plane do not recognize axis
+  BleGamepadInstance->hid->pnp(0x01,0x02e5,0xacbb,0x0110); 
   BleGamepadInstance->hid->hidInfo(0x00,0x01);
 
   NimBLESecurity *pSecurity = new NimBLESecurity();
