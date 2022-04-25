@@ -107,7 +107,7 @@ void checkChannels()
   HXRCChannels channels = hxrcSlave.getChannels();
 
   uint16_t sum = 0;
-  for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
+  for ( int i = 0; i < HXRC_CHANNELS_COUNT-1; i++ )
   {
     sum += channels.getChannelValue( i );
   }
@@ -115,7 +115,7 @@ void checkChannels()
   sum %= 1000;
   sum += 1000;
 
-  if ( channels.getChannelValue( HXRC_CHANNELS-1) != sum )
+  if ( channels.getChannelValue( HXRC_CHANNELS_COUNT-1) != sum )
   {
       errorCountRC++;
   }

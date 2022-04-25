@@ -44,6 +44,16 @@ void TXProfileManager::loadConfig()
 
     //Hardcoded profile 4: BLE Gamepad
     TXProfileManager::profiles[3].transmitterMode = TM_BLE_GAMEPAD;
+
+    //Hardcoded profile 5: Eachine E58
+    TXProfileManager::profiles[4].transmitterMode = TM_E58;
+
+    //Hardcoded profile 11: Config
+    TXProfileManager::profiles[10].transmitterMode = TM_CONFIG;
+    TXProfileManager::profiles[10].ap_name = "hxrct";
+    TXProfileManager::profiles[10].espnow_channel = 3;
+    TXProfileManager::profiles[10].ftp_user = "anonymous";
+    TXProfileManager::profiles[10].ftp_password = "anonymous";
 }
 
 //=====================================================================

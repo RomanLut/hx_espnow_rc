@@ -1,6 +1,6 @@
 #pragma once
 
-#define WDT_TIMEOUT_SECONDS 3  
+#define WDT_TIMEOUT_SECONDS 10  
 
 #define HC06_INTERFACE_RX_PIN  17
 #define HC06_INTERFACE_TX_PIN  16
@@ -10,8 +10,8 @@
 #define RIGHT_STICK_X_PIN 39
 #define RIGHT_STICK_Y_PIN 36
 
-#define LEFT_BUMPER_BTN 33
-#define RIGHT_BUMPER_BTN 32
+#define LEFT_BUMPER_PIN 33
+#define RIGHT_BUMPER_PIN 32
 
 #define LED1_PIN 12
 #define LED2_PIN 14

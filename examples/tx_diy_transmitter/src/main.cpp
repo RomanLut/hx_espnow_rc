@@ -5,6 +5,8 @@
 
 #include <esp_task_wdt.h>
 
+#include <ArduinoJson.h>
+
 #include "HX_ESPNOW_RC_Master.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
 
@@ -16,6 +18,8 @@
 #include "modeIdle.h"
 
 #include "hx_channels.h"
+
+#include <SPIFFS.h> 
 
 static HC06Interface externalBTSerial;
 
@@ -29,8 +33,9 @@ static uint16_t ADCMidMin[ADC_COUNT];
 static uint16_t ADCMidMax[ADC_COUNT];
 
 static uint32_t lastButtonsRead = millis();
-static uint8_t left_bumper_button;
-static uint8_t right_bumper_button;
+#define BUTTONS_COUNT 2
+static uint8_t BUTTON_PINS[BUTTONS_COUNT] = { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN };
+static uint8_t buttonData[BUTTONS_COUNT];
 
 #define STATE_INIT                  0
 #define STATE_RUN                   1
@@ -41,6 +46,8 @@ static uint8_t right_bumper_button;
 static uint8_t state = STATE_INIT;
 
 static uint32_t stateTime;
+
+static uint16_t CH16 = 1300; //BLE gamepad profile
 
 
 //=====================================================================
@@ -78,12 +85,101 @@ void onOTAprogress( uint a, uint b )
 
 //=====================================================================
 //=====================================================================
+void initAxisPins()
+{
+  for ( int i = 0; i < ADC_COUNT; i++ )
+  {
+    pinMode(ADC_PINS[i],INPUT);
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void initButtonPins()
+{
+  for ( int i =0; i < BUTTONS_COUNT; i++)
+  {
+    pinMode(BUTTON_PINS[i],INPUT_PULLUP);
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void initCalibrationData()
+{
+  for ( int i = 0; i < ADC_COUNT; i++ )
+  {
+    ADC[i] = 2048;
+    ADCMin[i] = 0;
+    ADCMax[i] = 4096;
+    ADCMidMin[i] = 2048-200;
+    ADCMidMax[i] = 2048+200;
+  }
+
+  for ( int i =0; i < BUTTONS_COUNT; i++)
+  {
+    buttonData[i] = 15;
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void loadCalibrationData()
+{
+  File file = SPIFFS.open("/calibration.json");
+
+  DynamicJsonDocument json(512);
+
+  DeserializationError error = deserializeJson(json, file);
+  if (error)
+  {
+    Serial.println(F("Failed to read file, using default configuration"));
+    return;
+  }
+
+  for ( int i = 0; i < ADC_COUNT; i++ )
+  {
+    ADCMin[i] = json["axis"][i]["min"] | 0;
+    ADCMax[i] = json["axis"][i]["max"] | 4096;
+    ADCMidMin[i] = json["axis"][i]["midMin"] | (2048-200);
+    ADCMidMax[i] = json["axis"][i]["midMax"] | (2048+200);
+  }
+
+  file.close();
+}
+
+//=====================================================================
+//=====================================================================
+void saveCalibrationData()
+{
+  File configFile = SPIFFS.open("/calibration.json", FILE_WRITE);
+  if (!configFile) 
+  {
+    Serial.println("- failed to open config file for writing");
+    return;
+  }
+  DynamicJsonDocument json(512);
+
+  for ( int i =0; i < ADC_COUNT; i++ )
+  {
+    json["axis"][i]["min"] = ADCMin[i];
+    json["axis"][i]["max"] = ADCMax[i];
+    json["axis"][i]["midMin"] = ADCMidMin[i];
+    json["axis"][i]["midMax"] = ADCMidMax[i];
+  }
+  
+  //serializeJsonPretty(json,Serial);                    
+  serializeJsonPretty(json,configFile);                 
+  configFile.close();
+}
+
+
+//=====================================================================
+//=====================================================================
 void setup()
 {
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
-
-  TXProfileManager::loadConfig();
 
   Serial.begin(115200, SERIAL_8N1);  
 
@@ -95,15 +191,15 @@ void setup()
   pinMode(13,OUTPUT);
   digitalWrite(13, HIGH );
 
-  pinMode(LEFT_BUMPER_BTN,INPUT_PULLUP);
-  pinMode(RIGHT_BUMPER_BTN,INPUT_PULLUP);
-
   pinMode(LED1_PIN, OUTPUT);
   pinMode(LED2_PIN, OUTPUT);
   pinMode(LED3_PIN, OUTPUT);
   pinMode(LED4_PIN, OUTPUT);
 
   setLEDS4(0);
+
+  initAxisPins();
+  initButtonPins();
 
   externalBTSerial.init(&Serial2, HC06_INTERFACE_RX_PIN, HC06_INTERFACE_TX_PIN);
 
@@ -112,17 +208,10 @@ void setup()
 
   esp_task_wdt_reset();
 
-  for ( int i = 0; i < ADC_COUNT; i++ )
-  {
-    ADC[i] = 2048;
-    ADCMin[i] = 0;
-    ADCMax[i] = 4096;
-    ADCMidMin[i] = 2048-200;
-    ADCMidMax[i] = 2048+200;
-  }
-
-  left_bumper_button = 0;
-  right_bumper_button = 0;
+  SPIFFS.begin(true); //true -> format if mount failed
+  TXProfileManager::loadConfig();
+  initCalibrationData();
+  loadCalibrationData();
 
   stateTime = millis();
 }
@@ -151,10 +240,12 @@ void  getChannelValues( HXChannels* channelValues )
     }
   }
 
-  channelValues->channelValue[ADC_COUNT+1] = ( left_bumper_button == 0 ) ? 2000: 1000;
-  channelValues->channelValue[ADC_COUNT+2] = ( right_bumper_button == 0 ) ? 2000: 1000;
+  for ( int i =0; i < BUTTONS_COUNT; i++ )
+  {
+    channelValues->channelValue[ADC_COUNT+i] = ( buttonData[i] == 0 ) ? 2000: 1000;
+  }
 
-  channelValues->channelValue[15] = 1300;  //temp: BLE gamepad
+  channelValues->channelValue[15] = CH16;  //temp: BLE gamepad
 }
 
 
@@ -223,16 +314,13 @@ void  readButtons(uint32_t t)
   if ( lastButtonsRead - t < 10 ) return;
   lastButtonsRead = t;
 
-  left_bumper_button <<= 1;
-  if ( digitalRead(LEFT_BUMPER_BTN) == HIGH)
+  for ( int i = 0; i < BUTTONS_COUNT; i++ )
   {
-    left_bumper_button |= 1;
-  }
-
-  right_bumper_button <<= 1;
-  if ( digitalRead(RIGHT_BUMPER_BTN) == HIGH)
-  {
-    right_bumper_button |= 1;
+    buttonData[i] <<=1;
+    if ( digitalRead(BUTTON_PINS[i]) == HIGH)
+    {
+      buttonData[i] |= 1;
+    }
   }
 }
 
@@ -273,6 +361,11 @@ void stateInitRun()
       if ( analogRead(LEFT_STICK_X_PIN) < 500 &&  analogRead(LEFT_STICK_Y_PIN) < 500 )
       {
         startCalibrateMinMax();
+      }
+      else if ( analogRead(RIGHT_STICK_X_PIN) > 3500 &&  analogRead(RIGHT_STICK_Y_PIN) < 500 )
+      {
+        CH16 = 2000;  //Mode Config profile
+        state = STATE_RUN;
       }
       else
       {
@@ -352,8 +445,6 @@ void stateCalibrateMinMaxRun(uint32_t t )
 
     startCalibrateWaitCenter();
   }
-
-
 }
 
 //=====================================================================
@@ -440,6 +531,7 @@ void stateCalibrateCenterRun(uint32_t t )
     (ADCMidMax[2] - ADCMidMin[2]), 
     (ADCMidMax[3] - ADCMidMin[3]));
     
+    saveCalibrationData();
 
     state = STATE_RUN;
   }
@@ -448,16 +540,41 @@ void stateCalibrateCenterRun(uint32_t t )
 
 //=====================================================================
 //=====================================================================
-void stateRunRun()
+void stateConfigRun()
+{
+    HXChannels channelValues;
+    channelValues.isFailsafe = true;
+    ModeBase::currentModeHandler->loop( &channelValues, &externalBTSerial, NULL );
+    
+    setLEDS4( ((millis() & 512) > 0 )  ? 8+4+2+1 : 0 ); 
+}
+
+//=====================================================================
+//=====================================================================
+void stateRunRun(uint32_t t)
 {
     HXChannels channelValues;
     getChannelValues( &channelValues );
 
 //    Serial.printf( "%04d %04d %04d %04d %03d %03d\n", ADC[0]>>2, ADC[1]>>2, ADC[2]>>2, ADC[3]>>2, left_bumper_button &0xf, right_bumper_button &0xf );
 
-    ModeBase::currentModeHandler->loop( &channelValues, & externalBTSerial, NULL );
+    ModeBase::currentModeHandler->loop( &channelValues, &externalBTSerial, NULL );
 
-    setLEDS4( 8 ); 
+
+    const TXProfileManager* pProfile = TXProfileManager::getCurrentProfile();
+
+    if ( pProfile && pProfile->transmitterMode == TM_CONFIG )
+    {
+      setLEDS4(  (t % 1000) > 500 ?  8 +4 +2 + 1 : 0); 
+    }
+    else if ( pProfile && pProfile->transmitterMode == TM_BLE_GAMEPAD )
+    {
+      setLEDS4( 8 ); 
+    }
+    else
+    {
+      setLEDS4( 8 + 4 + 2 + 1); 
+    }
 }
 
 
@@ -491,7 +608,7 @@ void loop()
       break;
 
     case STATE_RUN:
-      stateRunRun();
+      stateRunRun(t);
       break;
   }
 }

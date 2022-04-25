@@ -5,6 +5,8 @@
 
 #include <esp_task_wdt.h>
 
+#include <SoftwareSerial.h>
+
 #include "HX_ESPNOW_RC_Master.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
 #include "hx_sbus_decoder.h"

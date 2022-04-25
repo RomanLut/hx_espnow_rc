@@ -6,6 +6,8 @@
 #include "modeEspNowRC.h"
 #include "modeXiroMini.h"
 #include "modeBLEGamepad.h"
+#include "modeE58.h"
+#include "modeConfig.h"
 
 ModeBase* ModeBase::currentModeHandler;
 
@@ -85,6 +87,10 @@ void ModeBase::startRequestedProfile()
 
     switch( TXProfileManager::getCurrentProfile()->transmitterMode )
     {
+        case TM_CONFIG:
+            ModeConfig::currentModeHandler = &ModeConfig::instance;
+            break;
+
         case TM_ESPNOW:
             ModeBase::currentModeHandler = &ModeEspNowRC::instance;
             break;
@@ -98,6 +104,10 @@ void ModeBase::startRequestedProfile()
             break;
 
         case TM_BLE_GAMEPAD:
+            ModeBase::currentModeHandler = &ModeBLEGamepad::instance;
+            break;
+
+        case TM_E58:
             ModeBase::currentModeHandler = &ModeBLEGamepad::instance;
             break;
 
@@ -122,14 +132,16 @@ void ModeBase::rebootToRequestedProfile()
 //=====================================================================
 int ModeBase::getProfileIndexFromChannelValue( int value)
 {
-    //1000/PROFILES_COUNT = 100
-    //500/PROFILES_COUNT = 50
-
     //1001 => 51 / 100 = 0
     //1049 => 99 / 100 = 0
     //1050 => 100 / 100 = 1
     //1100 => 150 / 100 = 1
     //1149 => 199 / 100 = 1
     //1200 => 250 / 100 = 2 
-    return (int)((value - 1000 + (500/PROFILES_COUNT)) / (1000/PROFILES_COUNT));
+    //...
+    //1300 => 3
+    //...
+    //1900 => 9
+    //2000 => 10
+    return (int)((value - 1000 + 50) / 100);
 }

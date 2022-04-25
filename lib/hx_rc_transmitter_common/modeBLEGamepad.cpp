@@ -142,7 +142,6 @@ void ModeBLEGamepad::loop(
         this->sendControls(channels);
     }
 
-
     if ( haveToChangeProfile() )
     {
         rebootToRequestedProfile();

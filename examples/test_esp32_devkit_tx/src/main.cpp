@@ -127,7 +127,7 @@ void setChannels()
   //last channel should contain summ of all values clamped to range 1000...2000
 
   uint16_t sum = 0;
-  for ( int i = 0; i < HXRC_CHANNELS-1; i++ )
+  for ( int i = 0; i < HXRC_CHANNELS_COUNT-1; i++ )
   {
     uint16_t r = 1000 + ((uint32_t)rand()) * 1000 / RAND_MAX;
     hxrcMaster.setChannelValue( i, r );
@@ -136,7 +136,7 @@ void setChannels()
 
   sum %= 1000;
   sum += 1000;
-  hxrcMaster.setChannelValue( HXRC_CHANNELS-1, sum);
+  hxrcMaster.setChannelValue( HXRC_CHANNELS_COUNT-1, sum);
 }
 
 //=====================================================================

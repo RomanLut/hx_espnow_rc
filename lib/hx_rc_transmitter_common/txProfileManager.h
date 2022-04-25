@@ -2,16 +2,18 @@
 
 #define LED_PIN 2  //LED pin of ESP32. REVIEW: this def does not belong here
 
-#define PROFILES_COUNT 10
+#define PROFILES_COUNT 11
 
 //=====================================================================
 //=====================================================================
 typedef enum 
 {
-  TM_ESPNOW = 0,            
-  TM_BLUETOOTH_GAMEPAD = 1,
-  TM_XIRO_MINI = 2,
-  TM_BLE_GAMEPAD = 3,
+  TM_CONFIG = 0,
+  TM_ESPNOW = 1,            
+  TM_BLUETOOTH_GAMEPAD = 2,
+  TM_XIRO_MINI = 3,
+  TM_BLE_GAMEPAD = 4,
+  TM_E58 = 5,
   //TODO: other modes - Wifi RC, bluetooth RC, BLE RC 
 
 } TransmitterMode;
@@ -45,6 +47,9 @@ public:
 
   const char* ap_name;     //NULL - no AP
   const char* ap_password;  //NULL - no password
+
+  const char* ftp_user;     //NULL - no ftp server
+  const char* ftp_password;  //NULL - no password
 
   TXProfileManager();
 
