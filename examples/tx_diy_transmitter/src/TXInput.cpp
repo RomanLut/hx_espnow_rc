@@ -334,6 +334,42 @@ bool TXInput::isCenterCalibrationSuccessfull()
 
 //=====================================================================
 //=====================================================================
+bool TXInput::isButtonPressed(uint8_t buttonId)
+{
+  return this->buttonData[buttonId] == 0;
+}
+
+//=====================================================================
+//=====================================================================
+bool TXInput::isButtonUnPressed(uint8_t buttonId)
+{
+  return (this->buttonData[buttonId] & 15 ) == 15;
+}
+
+//=====================================================================
+//=====================================================================
+bool TXInput::isStickMin(uint8_t stickId)
+{
+  return ADC[stickId]>>2 < ( ADCMidMin[stickId]  + ADCMin[stickId] ) / 2;
+}
+
+//=====================================================================
+//=====================================================================
+bool TXInput::isStickMiddle(uint8_t stickId)
+{
+  return ( ADC[stickId]>>2 > (ADCMin[stickId] + ADCMidMin[stickId]*3)/4) && ( ADC[stickId]>>2 < (ADCMidMax[stickId]*3 + ADCMax[stickId])/4 );
+}
+
+//=====================================================================
+//=====================================================================
+bool TXInput::isStickMax(uint8_t stickId)
+{
+  return ADC[stickId]>>2 >  ( ADCMidMax[stickId]  + ADCMax[stickId] ) / 2;
+}
+
+
+//=====================================================================
+//=====================================================================
 void TXInput::loop(uint32_t t)
 {
   this->readADC(t);

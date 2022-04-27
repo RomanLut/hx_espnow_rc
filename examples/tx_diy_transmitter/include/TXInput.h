@@ -73,6 +73,13 @@ public:
     void calibrateAdjustMidMinMaxADC();
     bool isCenterCalibrationSuccessfull();
 
+    bool isButtonPressed(uint8_t buttonId);
+    bool isButtonUnPressed(uint8_t buttonId);
+
+    bool isStickMin(uint8_t stickId);
+    bool isStickMiddle(uint8_t stickId);
+    bool isStickMax(uint8_t stickId);
+
     void loop(uint32_t t);
 
 };

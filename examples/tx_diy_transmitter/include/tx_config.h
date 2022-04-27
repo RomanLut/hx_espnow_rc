@@ -18,14 +18,22 @@
 #define RIGHT_STICK_X_PIN 39
 #define RIGHT_STICK_Y_PIN 36
 
+#define LEFT_STICK_X_ID     0
+#define LEFT_STICK_Y_ID     1
+#define RIGHT_STICK_X_ID    2
+#define RIGHT_STICK_Y_ID    3
+
 #define ADC_PINS_LIST {LEFT_STICK_X_PIN, LEFT_STICK_Y_PIN, RIGHT_STICK_X_PIN, RIGHT_STICK_Y_PIN};
 
 //--------------------------------------------
 #define BUTTONS_COUNT 2
 
-#define LEFT_BUMPER_PIN 33
-#define RIGHT_BUMPER_PIN 32
+#define LEFT_BUMPER_PIN     33
+#define RIGHT_BUMPER_PIN    32
 
+#define LEFT_BUMPER_ID  0 
+#define RIGHT_BUMPER_ID 1
+ 
 #define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN };
 
 //temp: pin 13 output 1

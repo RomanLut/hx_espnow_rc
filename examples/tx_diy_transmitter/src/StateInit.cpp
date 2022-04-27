@@ -1,6 +1,7 @@
 #include "StateInit.h"
 
 #include "StateCalibrateMinMax.h"
+#include "StateSelectProfile.h"
 #include "StateRun.h"
 
 #include "TXMain.h"
@@ -20,6 +21,9 @@ void StateInit::onEnter()
 void StateInit::onRun(uint32_t t)
 {
   int phase = (t - stateTime) / 500;
+
+  TXInput::instance.loop(t);
+
   switch (phase)
   {
     case 0: 
@@ -43,6 +47,10 @@ void StateInit::onRun(uint32_t t)
       {
         CH16 = 2000;  //Mode Config profile
         StateBase::Goto(&StateRun::instance);
+      }
+      else if ( TXInput::instance.isButtonPressed(LEFT_BUMPER_ID))
+      {
+        StateBase::Goto(&StateSelectProfile::instance);
       }
       else
       {
