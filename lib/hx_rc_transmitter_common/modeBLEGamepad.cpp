@@ -16,6 +16,7 @@
 BleGamepad bleGamepad("HXRCBLE","Roman Lut");
 
 ModeBLEGamepad ModeBLEGamepad::instance;
+const char* ModeBLEGamepad::name = "BLEGAMEPAD";
 
 //=====================================================================
 //=====================================================================
@@ -98,9 +99,9 @@ void ModeBLEGamepad::sendControls(const HXChannels* channels)
 
 //=====================================================================
 //=====================================================================
-void ModeBLEGamepad::start()
+void ModeBLEGamepad::start( JsonDocument* json )
 {
-    ModeBase::start();
+    ModeBase::start( json );
     
     HXRCLOG.println("BLE Gamepad start\n");      
 

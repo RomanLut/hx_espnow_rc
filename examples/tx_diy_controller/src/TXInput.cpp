@@ -1,4 +1,5 @@
 #include "TXInput.h"
+#include "ModeBLEGamepad.h"
 
 const uint8_t TXInput::ADC_PINS[ADC_COUNT] = ADC_PINS_LIST
 const uint8_t TXInput::BUTTON_PINS[BUTTONS_COUNT] = BUTTON_PINS_LIST
@@ -192,6 +193,8 @@ void TXInput::readButtons(uint32_t t)
 //=====================================================================
 void TXInput::getChannelValues( HXChannels* channelValues )
 {
+  //temp: channel values should be set using profile definitions
+
   channelValues-> isFailsafe = false;
   for ( int i = 0; i < HXRC_CHANNELS_COUNT; i++)
   {
@@ -214,7 +217,7 @@ void TXInput::getChannelValues( HXChannels* channelValues )
 
   for ( int i =0; i < BUTTONS_COUNT; i++ )
   {
-    channelValues->channelValue[ADC_COUNT+i] = ( buttonData[i] == 0 ) ? 2000: 1000;
+    channelValues->channelValue[BLE_GAMEPAD_AXIS_COUNT+i] = ( buttonData[i] == 0 ) ? 2000: 1000;
   }
 }
 

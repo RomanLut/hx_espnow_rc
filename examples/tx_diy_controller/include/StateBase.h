@@ -39,5 +39,6 @@ public:
     virtual void onEnter();
     virtual void onRun(uint32_t t);
 
+    void SetLEDS4Profile(uint8_t profileIndex);
 };
 

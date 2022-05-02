@@ -37,10 +37,11 @@ private:
 
 public:
     static ModeXiroMini instance;
+    static const char* name;
 
     ModeXiroMini();
 
-    void start();
+    void start( JsonDocument* json );
 
     void loop(
         const HXChannels* channels,

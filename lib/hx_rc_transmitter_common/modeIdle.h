@@ -8,8 +8,9 @@ class ModeIdle : public ModeBase
 private:
 public:
     static ModeIdle instance;
+    static const char* name;
 
-    void start();
+    void start( JsonDocument* json );
 
     void loop(
         const HXChannels* channels,

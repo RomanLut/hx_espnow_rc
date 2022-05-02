@@ -6,17 +6,19 @@
 #define HC06_INTERFACE_TX_PIN  16
 
 #define LED1_PIN 12
-#define LED2_PIN 14
+#define LED2_PIN 13
 #define LED3_PIN 27
 #define LED4_PIN 26
+
+#define SPEAKER_PIN 25  //I2S_DAC_CHANNEL_RIGHT_EN
 
 //--------------------------------------------
 #define ADC_COUNT 4
 
-#define LEFT_STICK_X_PIN 35
-#define LEFT_STICK_Y_PIN 34
-#define RIGHT_STICK_X_PIN 39
-#define RIGHT_STICK_Y_PIN 36
+#define LEFT_STICK_X_PIN    35
+#define LEFT_STICK_Y_PIN    34
+#define RIGHT_STICK_X_PIN   39
+#define RIGHT_STICK_Y_PIN   36
 
 #define LEFT_STICK_X_ID     0
 #define LEFT_STICK_Y_ID     1
@@ -36,4 +38,4 @@
  
 #define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN };
 
-//temp: pin 13 output 1
+//temp: pin 14 output 1

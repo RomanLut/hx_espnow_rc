@@ -34,10 +34,11 @@ private:
 
 public:
     static ModeE58 instance;
+    static const char* name;
 
     ModeE58();
 
-    void start();
+    void start( JsonDocument* json );
 
     void loop(
         const HXChannels* channels,

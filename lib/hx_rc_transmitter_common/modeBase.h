@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#include <ArduinoJson.h>
+
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -19,7 +21,7 @@ private:
     //millis value - time since we are getting stable profile index from CH16 (decoded to CH16Profile)
     unsigned long gotCH16ProfileTime = 0; 
     
-    int CH16Profile = -1; 
+    int CH16ProfileIndex = -1; 
 
     unsigned long lastCycleTime = 0; 
 
@@ -28,7 +30,7 @@ private:
 public:
     static ModeBase* currentModeHandler;
 
-    virtual void start();
+    virtual void start( JsonDocument* json );
 
     virtual void loop(
         const HXChannels* channels,

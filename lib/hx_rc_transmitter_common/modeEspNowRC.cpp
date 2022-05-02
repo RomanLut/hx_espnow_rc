@@ -7,6 +7,7 @@
 
 
 ModeEspNowRC ModeEspNowRC::instance;
+const char* ModeEspNowRC::name = "ESPNOW";
 
 //=====================================================================
 //=====================================================================
@@ -17,25 +18,27 @@ ModeEspNowRC::ModeEspNowRC() : hxrcTelemetrySerial(&hxrcMaster)
 
 //=====================================================================
 //=====================================================================
-void ModeEspNowRC::start()
+void ModeEspNowRC::start( JsonDocument* json )
 {
-    ModeBase::start();
+    ModeBase::start( json );
+
+    JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
 
     this->hxrcMaster.init(
         HXRCConfig(
-            TXProfileManager::getCurrentProfile()->espnow_channel,
-            TXProfileManager::getCurrentProfile()->espnow_key,
-            TXProfileManager::getCurrentProfile()->espnow_lrMode,
+            (*profile)["espnow_channel"] | 3,
+            (*profile)["espnow_key"] | 0,
+            (*profile)["espnow_long_range_mode"] | false,
             -1, false));
 
     esp_task_wdt_reset();
 
-    if ( TXProfileManager::getCurrentProfile()->ap_name )
+    if ( (*profile)["ap_name"].as<const char*>() )
     {
         WiFi.softAP(
-            TXProfileManager::getCurrentProfile()->ap_name, 
-            TXProfileManager::getCurrentProfile()->ap_password, 
-            TXProfileManager::getCurrentProfile()->espnow_channel);  //for ESPNOW RC mode, have to use channel configured from espnow rc
+            (*profile)["ap_name"], 
+            (*profile)["ap_password"] | "", 
+            (*profile)["espnow_channel"] | 3);  //for ESPNOW RC mode, have to use channel configured for espnow rc
 
         ArduinoOTA.begin();  
     }
@@ -143,7 +146,7 @@ void ModeEspNowRC::loop(
       sport->loop();
     }
 
-    if ( hxrcMaster.getReceiverStats().isFailsafe() && TXProfileManager::getCurrentProfile()->ap_name )
+    if ( hxrcMaster.getReceiverStats().isFailsafe() && (*TXProfileManager::instance.getCurrentProfile())["ap_name"].as<const char*>() )
     {
         ArduinoOTA.handle();  
     }

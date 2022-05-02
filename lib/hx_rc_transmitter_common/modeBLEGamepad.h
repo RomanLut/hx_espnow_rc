@@ -22,10 +22,11 @@ private:
 
 public:
     static ModeBLEGamepad instance;
+    static const char* name;
 
     ModeBLEGamepad();
 
-    void start();
+    void start( JsonDocument* json );
 
     void loop(
         const HXChannels* channels,

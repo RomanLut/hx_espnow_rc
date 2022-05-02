@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Audio.h>
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -24,7 +23,7 @@
 
 #include <SPIFFS.h> 
 
-extern uint16_t CH16;
+extern uint8_t currentProfileIndex;
 extern HC06Interface externalBTSerial;
 
 //=====================================================================
@@ -37,11 +36,13 @@ private:
     void initLEDS4Pins();
 
 public:
-
     static TXMain instance;
 
     void setLed( bool value );
     void setLEDS4(uint8_t v);
+
+    void loadLastProfile();
+    void saveLastProfile();
 
     void setup();
     void loop();

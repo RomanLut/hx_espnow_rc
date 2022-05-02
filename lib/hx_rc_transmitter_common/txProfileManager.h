@@ -1,9 +1,13 @@
 #pragma once
 
+#include <Arduino.h> 
+#include <ArduinoJson.h>
+
 #define LED_PIN 2  //LED pin of ESP32. REVIEW: this def does not belong here
 
 #define PROFILES_COUNT 11
 
+/*
 //=====================================================================
 //=====================================================================
 typedef enum 
@@ -27,16 +31,23 @@ typedef enum
   //TODO: SPT_MAVLINK  mavlink to sport encoding
 
 } SportTelemetryEncoder;
+*/
 
 //=====================================================================
 //=====================================================================
 class TXProfileManager
 {
 private:
-  static int currentProfileIndex;
-  static TXProfileManager profiles[PROFILES_COUNT];
+  int currentProfileIndex;
+  DynamicJsonDocument json;
+
+  void loadConfig();
+  void loadConfigProfile();
 public:
 
+  static TXProfileManager instance;  
+
+/*
   TransmitterMode transmitterMode;
 
   SportTelemetryEncoder sportTelemetryEncoder;
@@ -50,13 +61,66 @@ public:
 
   const char* ftp_user;     //NULL - no ftp server
   const char* ftp_password;  //NULL - no password
-
+*/
   TXProfileManager();
 
-  static const TXProfileManager* getCurrentProfile();
-  static int getCurrentProfileIndex();
-  static void setCurrentProfileIndex(int index);
-  static void loadConfig();
+  JsonDocument* getCurrentProfile();
+  int getCurrentProfileIndex();
+  void setCurrentProfileIndex(int index);
 };
 
 
+/*
+
+Actions
+
+SetChannelOnEvent( channelNumber, eventId, eventParam, ValueType, value )
+
+channelNumber:
+- 0..14
+
+EventId:
+- STARTUP
+- ALWAYS
+- CHANNEL_LOWER_1500 eventParam:channelId
+- CHANNEL_EQALS_1500 eventParam:channelId
+- CHANNEL_GREATER_1500 eventParam:channelId
+
+ValueType:
+ CONSTANT value:value
+ INPUT value:inputId
+ TRIGGER
+ SWITCH3
+ SWITCH4
+ INCREMENT value:increment
+ DECREMENT value:decrement
+ MUL value: mul
+
+INPUT_ID:
+  LEFT_STICK_X == AXIS1
+  LEFT_STICK_X_INVERSE
+  LEFT_STICK_Y
+  LEFT_STICK_Y_INVERSE
+
+  RIGHT_STICK_X 
+  RIGHT_STICK_X_INVERSE
+  RIGHT_STICK_Y
+  RIGHT_STICK_Y_INVERSE
+
+  AXIS_1  
+  AXIS_1_INVERSE
+  ...
+  AXIS_N  
+  AXIS_N_INVERSE
+
+  LEFT_THUMB == BUTTON1
+
+  RIGHT_THUMB == BUTTON2
+
+  BUTTON1
+  ...
+  BUTTONN
+
+
+
+*/

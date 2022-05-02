@@ -12,6 +12,7 @@
 #include <ESP-FTP-Server-Lib.h>
 
 ModeConfig ModeConfig::instance;
+const char* ModeConfig::name = "CONFIG";
 
 FTPServer ftp;
 
@@ -23,9 +24,9 @@ ModeConfig::ModeConfig()
 
 //=====================================================================
 //=====================================================================
-void ModeConfig::start()
+void ModeConfig::start( JsonDocument* json )
 {
-    ModeBase::start();
+    ModeBase::start(json);
     
     HXRCLOG.println("Config mode start\n");      
 
@@ -34,24 +35,17 @@ void ModeConfig::start()
 
     esp_task_wdt_reset();
 
-    if ( TXProfileManager::getCurrentProfile()->ap_name )
-    {
-        WiFi.softAP(
-            TXProfileManager::getCurrentProfile()->ap_name, 
-            TXProfileManager::getCurrentProfile()->ap_password, 
-            TXProfileManager::getCurrentProfile()->espnow_channel);  //for ESPNOW RC mode, have to use channel configured from espnow rc
+    JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
 
-        ArduinoOTA.begin();  
-    }
+    WiFi.softAP( (*profile)["ap_name"] | "hxrct",  (*profile)["ap_password"] | "");  
 
     esp_task_wdt_reset();
 
-    if ( TXProfileManager::getCurrentProfile()->ap_name && TXProfileManager::getCurrentProfile()->ftp_user)
-    {
-        ftp.addUser(TXProfileManager::getCurrentProfile()->ftp_user, TXProfileManager::getCurrentProfile()->ftp_password);
-        ftp.addFilesystem("SPIFFS", &SPIFFS);
-        ftp.begin();  
-    }
+    ftp.addUser((*profile)["ftp_user"] | "anonymous", (*profile)["ftp_password"] | "anonymous");
+    ftp.addFilesystem("SPIFFS", &SPIFFS);
+    ftp.begin();  
+
+    ArduinoOTA.begin();  
 
     esp_task_wdt_reset();
 }
@@ -73,8 +67,9 @@ void ModeConfig::loop(
         rebootToRequestedProfile();
     }
 
-    if ( TXProfileManager::getCurrentProfile()->ap_name && TXProfileManager::getCurrentProfile()->ftp_user)
-    {
-        ftp.handle();
-    }
+    JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
+
+    ftp.handle();
+
+    ArduinoOTA.handle();
 }

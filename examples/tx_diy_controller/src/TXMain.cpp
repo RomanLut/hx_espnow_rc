@@ -1,11 +1,10 @@
 #include "TXMain.h"
 #include "TXInput.h"
 #include "StateInit.h"
+#include "AudioManager.h"
 
-uint16_t CH16 = 1300; //BLE gamepad profile
+uint8_t currentProfileIndex;
 HC06Interface externalBTSerial;
-
-//Audio audio(true, I2S_DAC_CHANNEL_LEFT_EN);
 
 TXMain TXMain::instance;
 
@@ -63,25 +62,74 @@ void TXMain::setup()
   this->initLEDS4Pins();
   this->setLEDS4(0);
 
-  //temp PIN 13 output 3.3V
-  pinMode(13,OUTPUT);
-  digitalWrite(13, HIGH );
+  //temp PIN 14 output 3.3V
+  pinMode(14,OUTPUT);
+  digitalWrite(14, HIGH );
+
+  pinMode(25,OUTPUT);  //speaker pin
+  digitalWrite(25, LOW);
 
   TXInput::instance.init();
-
-  ModeBase::currentModeHandler = &ModeIdle::instance;
-  ModeBase::currentModeHandler->start();
 
   esp_task_wdt_reset();
 
   SPIFFS.begin(true); //true -> format if mount failed
 
-  TXProfileManager::loadConfig();
   TXInput::instance.initCalibrationData();
   TXInput::instance.loadCalibrationData();
 
+  this->loadLastProfile();
+
+  ModeBase::currentModeHandler = &ModeIdle::instance;
+  ModeBase::currentModeHandler->start(NULL);
+
+  AudioManager::instance.init();
+
   StateBase::Goto(&StateInit::instance);
 }
+
+//=====================================================================
+//=====================================================================
+void TXMain::loadLastProfile()
+{
+  currentProfileIndex = 3; //BLE_GAMEPAD
+
+  File configFile = SPIFFS.open("/lastState.json");
+  if  (!configFile) return;
+
+  DynamicJsonDocument json(512);
+
+  DeserializationError error = deserializeJson(json, configFile);
+  configFile.close();
+
+  if (error)
+  {
+    Serial.println(F("Failed to read file, using default configuration"));
+    return;
+  }
+
+  currentProfileIndex = json["lastProfileIndex"] | 3;
+}
+
+//=====================================================================
+//=====================================================================
+void TXMain::saveLastProfile()
+{
+  File configFile = SPIFFS.open("/lastState.json", FILE_WRITE);
+  if (!configFile) 
+  {
+    Serial.println("- failed to open config file for writing");
+    return;
+  }
+  DynamicJsonDocument json(512);
+
+  json["lastProfileIndex"] = currentProfileIndex;
+
+  //serializeJsonPretty(json,Serial);                    
+  serializeJsonPretty(json,configFile);                 
+  configFile.close();
+}
+
 
 //=====================================================================
 //=====================================================================
@@ -93,6 +141,10 @@ void TXMain::loop()
 
   TXInput::instance.loop(t);
   StateBase::currentState->onRun(t);
+
+  AudioManager::instance.loop(t);
+
+  //digitalWrite(25, (t % 10) > 5 ? LOW : HIGH);
 }
 
 

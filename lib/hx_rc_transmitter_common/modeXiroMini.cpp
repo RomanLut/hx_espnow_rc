@@ -18,6 +18,7 @@
 #define UDP_RTP_PORT 7078
 
 ModeXiroMini ModeXiroMini::instance;
+const char* ModeXiroMini::name = "XIROMINI";
 
 static WiFiUDP udpCMD;
 static WiFiUDP udpRTP;
@@ -56,9 +57,9 @@ static void ICACHE_RAM_ATTR sniffer_callback(void *buf, wifi_promiscuous_pkt_typ
 
 //=====================================================================
 //=====================================================================
-void ModeXiroMini::start()
+void ModeXiroMini::start( JsonDocument* json )
 {
-    ModeBase::start();
+    ModeBase::start(json);
 
     pinMode(LED_PIN,OUTPUT);
     digitalWrite(LED_PIN, HIGH );

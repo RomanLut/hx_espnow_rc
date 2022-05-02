@@ -15,10 +15,11 @@ private:
 
 public:
     static ModeConfig instance;
+    static const char* name;
 
     ModeConfig();
 
-    void start();
+    void start( JsonDocument* json );
 
     void loop(
         const HXChannels* channels,

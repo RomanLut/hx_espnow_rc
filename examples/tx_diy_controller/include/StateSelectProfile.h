@@ -10,13 +10,11 @@ private:
     uint32_t stateTime;
     bool waitUnpress;
     bool exit;
-    uint8_t profileId;
+    uint8_t profileIndex;
 
 public:
 
     static StateSelectProfile instance;
-
-    void SetLEDS4Profile();
 
     virtual void onEnter() override;
     virtual void onRun(uint32_t t) override;

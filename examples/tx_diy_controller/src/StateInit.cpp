@@ -7,13 +7,17 @@
 #include "TXMain.h"
 #include "TXInput.h"
 
+#include "AudioManager.h"
+
 StateInit StateInit::instance;
 
 //======================================================
 //======================================================
 void StateInit::onEnter()
 {
-    this->stateTime = millis();  
+  this->stateTime = millis();  
+
+  AudioManager::instance.play( SOUND_INTRO_BEEPS, AUDIO_GROUP_NONE );
 }
 
 //======================================================
@@ -45,7 +49,7 @@ void StateInit::onRun(uint32_t t)
       }
       else if ( TXInput::instance.isInitGesture())
       {
-        CH16 = 2000;  //Mode Config profile
+        currentProfileIndex = 10;  //Mode Config profile
         StateBase::Goto(&StateRun::instance);
       }
       else if ( TXInput::instance.isButtonPressed(LEFT_BUMPER_ID))

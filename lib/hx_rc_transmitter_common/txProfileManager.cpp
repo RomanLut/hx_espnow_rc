@@ -1,13 +1,21 @@
-#include "smartport.h"
 #include "txProfileManager.h"
 
-TXProfileManager TXProfileManager::profiles[PROFILES_COUNT];
-int TXProfileManager::currentProfileIndex = -1;
+#include <SPIFFS.h> 
+
+#include "smartport.h"
+#include "errorLog.h"
+
+TXProfileManager TXProfileManager::instance;  
+
+static const char* configProfile = "{\"transmitter_mode\" : \"CONFIG\", \"ap_name\" : \"hxrct\", \"ap_password\" : \"\", \"ftp_user\" : \"anonymous\", \"ftp_password\" : \"anonymous\" }";
 
 //=====================================================================
 //=====================================================================
-TXProfileManager::TXProfileManager()
+TXProfileManager::TXProfileManager() : json(512)
 {
+    this->currentProfileIndex = -1;
+
+    /*
     this->transmitterMode = TM_ESPNOW;
     
     this->sportTelemetryEncoder = SPE_RSSI;
@@ -18,13 +26,41 @@ TXProfileManager::TXProfileManager()
 
     this->ap_name = "hxrct";
     this->ap_password = NULL;
+    */
 }
-
 
 //=====================================================================
 //=====================================================================
 void TXProfileManager::loadConfig()
 {
+    char fname[32];
+    sprintf( fname, "/profile%d.json", this->currentProfileIndex );
+    File file = SPIFFS.open(fname);
+
+    if ( file == NULL ) 
+    {
+        this->loadConfigProfile();
+
+        ErrorLog::instance.write("Unable to open ");
+        ErrorLog::instance.write(fname);
+        ErrorLog::instance.write("\n");
+        return;
+    }
+
+    DeserializationError error = deserializeJson(this->json, file);
+    file.close();
+
+    if (error)
+    {
+        this->loadConfigProfile();
+
+        ErrorLog::instance.write("Unable to parse ");
+        ErrorLog::instance.write(fname);
+        ErrorLog::instance.write("\n");
+        return;
+    }
+
+    /*
     //TODO: load profiles from filesystem
 
     //Hardcoded profile 1: hx_espnow_rc
@@ -54,25 +90,40 @@ void TXProfileManager::loadConfig()
     TXProfileManager::profiles[10].espnow_channel = 3;
     TXProfileManager::profiles[10].ftp_user = "anonymous";
     TXProfileManager::profiles[10].ftp_password = "anonymous";
+    */
 }
 
 //=====================================================================
 //=====================================================================
-const TXProfileManager* TXProfileManager::getCurrentProfile()
+void TXProfileManager::loadConfigProfile()
 {
-    return TXProfileManager::currentProfileIndex < 0 ? NULL : &profiles[currentProfileIndex];
+    deserializeJson(this->json, configProfile);
+}
+
+//=====================================================================
+//=====================================================================
+JsonDocument* TXProfileManager::getCurrentProfile()
+{
+    return this->currentProfileIndex < 0 ? NULL : &json;
 }
 
 //=====================================================================
 //=====================================================================
 int TXProfileManager::getCurrentProfileIndex()
 {
-    return TXProfileManager::currentProfileIndex;
+    return this->currentProfileIndex;
 }
 
 //=====================================================================
 //=====================================================================
 void TXProfileManager::setCurrentProfileIndex(int index)
 {
-    TXProfileManager::currentProfileIndex = index;
+    if ( this->currentProfileIndex != index )
+    {
+        this->currentProfileIndex = index;
+        if ( this->currentProfileIndex > 0 )
+        {
+            this->loadConfig();
+        }
+    }
 }

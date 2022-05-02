@@ -26,10 +26,11 @@ private:
 
 public:
     static ModeEspNowRC instance;
+    static const char* name;
 
     ModeEspNowRC();
 
-    void start();
+    void start( JsonDocument* json );
 
     void loop(
         const HXChannels* channels,

@@ -27,6 +27,7 @@
 #define  CMD_CALIBRATE  0x80
 
 ModeE58 ModeE58::instance;
+const char* ModeE58::name = "E58";
 
 static WiFiUDP udpCMD;
 static WiFiUDP udpRTP;
@@ -66,9 +67,9 @@ static void ICACHE_RAM_ATTR sniffer_callback(void *buf, wifi_promiscuous_pkt_typ
 
 //=====================================================================
 //=====================================================================
-void ModeE58::start()
+void ModeE58::start( JsonDocument* json )
 {
-    ModeBase::start();
+    ModeBase::start(json);
 
     pinMode(LED_PIN,OUTPUT);
     digitalWrite(LED_PIN, HIGH );

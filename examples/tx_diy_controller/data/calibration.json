@@ -1,0 +1,28 @@
+{
+  "axis": [
+    {
+      "min": 0,
+      "max": 4094,
+      "midMin": 1847,
+      "midMax": 1856
+    },
+    {
+      "min": 0,
+      "max": 4094,
+      "midMin": 1871,
+      "midMax": 1883
+    },
+    {
+      "min": 0,
+      "max": 4094,
+      "midMin": 1999,
+      "midMax": 2006
+    },
+    {
+      "min": 0,
+      "max": 4094,
+      "midMin": 1975,
+      "midMax": 1983
+    }
+  ]
+}

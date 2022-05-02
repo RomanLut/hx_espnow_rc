@@ -9,14 +9,16 @@
 #include "modeE58.h"
 #include "modeConfig.h"
 
+#include "errorLog.h"
+
 ModeBase* ModeBase::currentModeHandler;
 
 //=====================================================================
 //=====================================================================
-void ModeBase::start()
+void ModeBase::start(JsonDocument* json)
 {
     this->gotCH16ProfileTime = 0;
-    this->CH16Profile = -1;
+    this->CH16ProfileIndex = -1;
 
     HXRCLOG.println("Waiting for CH16 profile");
 }
@@ -33,12 +35,12 @@ void ModeBase::loop(
     {
         int s = getProfileIndexFromChannelValue(channels->channelValue[15]  );
 
-        if ( this->CH16Profile != s )
+        if ( this->CH16ProfileIndex != s )
         {
             HXRCLOG.print("Got profile:");
             HXRCLOG.println(s);
 
-            this->CH16Profile = s;
+            this->CH16ProfileIndex = s;
             this->gotCH16ProfileTime = millis();
         }
     }
@@ -54,7 +56,7 @@ void ModeBase::loop(
     if ( sport != NULL )
     {
         sport->setR9PWR( 20 );
-        sport->setProfileId( TXProfileManager::getCurrentProfileIndex()>=0? TXProfileManager::getCurrentProfileIndex() : 255 );
+        sport->setProfileId( TXProfileManager::instance.getCurrentProfileIndex()>=0? TXProfileManager::instance.getCurrentProfileIndex() : 255 );
         sport->setDebug1( dt>5000? 5000 : 0 );
 
         sport->loop();
@@ -66,14 +68,14 @@ void ModeBase::loop(
 //=====================================================================
 boolean ModeBase::haveStableCH16ProfileSelection()
 {
-    return (this->gotCH16ProfileTime!=0) && ((millis() - this->gotCH16ProfileTime)> 1000) && (this->CH16Profile>=0);
+    return (this->gotCH16ProfileTime!=0) && ((millis() - this->gotCH16ProfileTime)> 1000) && (this->CH16ProfileIndex>=0);
 }
 
 //=====================================================================
 //=====================================================================
 boolean ModeBase::haveToChangeProfile()
 {
-    return this->haveStableCH16ProfileSelection() && (this->CH16Profile != TXProfileManager::getCurrentProfileIndex() );
+    return this->haveStableCH16ProfileSelection() && (this->CH16ProfileIndex != TXProfileManager::instance.getCurrentProfileIndex() );
 }
 
 //=====================================================================
@@ -81,39 +83,46 @@ boolean ModeBase::haveToChangeProfile()
 void ModeBase::startRequestedProfile()
 {
     HXRCLOG.print("Starting profile ");
-    HXRCLOG.println( CH16Profile );
+    HXRCLOG.println( CH16ProfileIndex );
 
-    TXProfileManager::setCurrentProfileIndex(CH16Profile);
+    TXProfileManager::instance.setCurrentProfileIndex(CH16ProfileIndex);
 
-    switch( TXProfileManager::getCurrentProfile()->transmitterMode )
+    JsonDocument* json = TXProfileManager::instance.getCurrentProfile();
+
+    if ( json )
     {
-        case TM_CONFIG:
-            ModeConfig::currentModeHandler = &ModeConfig::instance;
-            break;
+        const char* modeName = (*json)["transmitter_mode"] | "";
 
-        case TM_ESPNOW:
+        if ( strcmp( modeName, ModeConfig::name ) == 0)
+        {
+            ModeBase::currentModeHandler = &ModeConfig::instance;
+        }
+        else if ( strcmp( modeName, ModeEspNowRC::name ) == 0)
+        {
             ModeBase::currentModeHandler = &ModeEspNowRC::instance;
-            break;
-
-        case TM_BLUETOOTH_GAMEPAD:
-            //ModeBase::currentModeHandler = ModeEspNowRC::instance;
-            break;
-
-        case TM_XIRO_MINI:
+        }
+        else if ( strcmp( modeName, ModeBLEGamepad::name ) == 0)
+        {
+            ModeBase::currentModeHandler = &ModeBLEGamepad::instance;
+        }
+        else if ( strcmp( modeName, ModeXiroMini::name ) == 0)
+        {
             ModeBase::currentModeHandler = &ModeXiroMini::instance;
-            break;
+        }
+        else if ( strcmp( modeName, ModeE58::name ) == 0)
+        {
+            ModeBase::currentModeHandler = &ModeE58::instance;
+        }
+        else
+        {
+            ErrorLog::instance.write("Unknown mode: ");
+            ErrorLog::instance.write(modeName);
+            ErrorLog::instance.write("\n");
+        }
 
-        case TM_BLE_GAMEPAD:
-            ModeBase::currentModeHandler = &ModeBLEGamepad::instance;
-            break;
-
-        case TM_E58:
-            ModeBase::currentModeHandler = &ModeBLEGamepad::instance;
-            break;
-
+        ModeBase::currentModeHandler->start(json);
     }
 
-    ModeBase::currentModeHandler->start();
 }
 
 //=====================================================================
@@ -121,7 +130,7 @@ void ModeBase::startRequestedProfile()
 void ModeBase::rebootToRequestedProfile()
 {
     HXRCLOG.print( "Rebooting to profile" );
-    HXRCLOG.println( CH16Profile );
+    HXRCLOG.println( CH16ProfileIndex );
     delay(100);
 
     ESP.restart();
