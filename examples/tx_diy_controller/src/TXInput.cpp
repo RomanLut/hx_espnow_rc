@@ -1,5 +1,7 @@
 #include "TXInput.h"
 #include "ModeBLEGamepad.h"
+#include "ErrorLog.h"
+#include "AudioManager.h"
 
 const uint8_t TXInput::ADC_PINS[ADC_COUNT] = ADC_PINS_LIST
 const uint8_t TXInput::BUTTON_PINS[BUTTONS_COUNT] = BUTTON_PINS_LIST
@@ -38,6 +40,12 @@ void TXInput::init()
 {
   this->lastADCRead = millis();
   this->lastButtonsRead = millis();
+  this->lastAdditiveProcessing = millis();
+
+  this->lastButtonsState = 0;
+  this->buttonPressEvents = 0;
+
+  this->resetLastChannelValues();
 
   this->initAxisPins();
   this->initButtonPins();
@@ -186,15 +194,60 @@ void TXInput::readButtons(uint32_t t)
     {
       buttonData[i] |= 1;
     }
+    buttonData[i] &= 15;
+  }
+
+  uint16_t buttonsState = 0;
+  for ( int i = 0; i < BUTTONS_COUNT; i++ )
+  {
+    if ( this->isButtonPressed(i) )
+    {
+      buttonsState |= 1 << i;
+    }
+  }
+  this->buttonPressEvents |= (this->lastButtonsState ^ buttonsState) & buttonsState;  
+  this->lastButtonsState = buttonsState;
+}
+
+//=====================================================================
+//=====================================================================
+void TXInput::resetLastChannelValues()
+{
+  for ( int i =0; i < HXRC_CHANNELS_COUNT; i++ )  
+  {
+    this->lastChannelValue[i] = 1000;
   }
 }
 
 //=====================================================================
 //=====================================================================
-void TXInput::getChannelValues( HXChannels* channelValues )
+int16_t TXInput::mapADCValue( int ADCId )
 {
-  //temp: channel values should be set using profile definitions
+  int v = (this->ADC[ADCId] + 2) >> 2;
+  if ( v < ADCMidMin[ADCId] )
+  {
+      v = map( v, ADCMidMin[ADCId], ADCMin[ADCId], 1500, 1000);
+      return v < 1000 ? 1000 : v;
+  }
+  else if ( v > ADCMidMax[ADCId] )
+  {
+      v = map( v, ADCMidMax[ADCId], ADCMax[ADCId], 1500, 2000);
+      return v > 2000 ? 2000 : v;
+  }
+  return 1500;
+}
 
+//=====================================================================
+//=====================================================================
+int16_t TXInput::mapButtonValue( int buttonId )
+{
+  return ( buttonData[buttonId] == 0 ) ? 2000: 1000;
+}
+
+//=====================================================================
+//=====================================================================
+void TXInput::getChannelValuesDefault( out HXChannels* channelValues )
+{
   channelValues-> isFailsafe = false;
   for ( int i = 0; i < HXRC_CHANNELS_COUNT; i++)
   {
@@ -203,22 +256,336 @@ void TXInput::getChannelValues( HXChannels* channelValues )
 
   for ( int i = 0; i < ADC_COUNT; i++ )
   {
-    channelValues->channelValue[i] = 1500;
-    int v = ADC[i]>>2;
-    if ( v < ADCMidMin[i] )
-    {
-        channelValues->channelValue[i] = map( v, ADCMidMin[i], ADCMin[i], 1500, 1000);
-    }
-    else if ( v > ADCMidMax[i] )
-    {
-        channelValues->channelValue[i] = map( v, ADCMidMax[i], ADCMax[i], 1500, 2000);
-    }
+    channelValues->channelValue[i] = this->mapADCValue(i);
   }
 
-  for ( int i =0; i < BUTTONS_COUNT; i++ )
+  for ( int i = 0; i < BUTTONS_COUNT; i++ )
   {
     channelValues->channelValue[BLE_GAMEPAD_AXIS_COUNT+i] = ( buttonData[i] == 0 ) ? 2000: 1000;
   }
+}
+
+//=====================================================================
+//=====================================================================
+int16_t TXInput::chClamp(int16_t value)
+{
+  if ( value < 1000) return 1000;
+  if ( value > 2000) return 2000;
+  return value;
+}
+
+//=====================================================================
+//=====================================================================
+int16_t TXInput::chMul10(int16_t value, int mul)
+{
+  return ((int32_t)value - 1500)  * mul / 10 + 1500;
+}
+
+//=====================================================================
+//=====================================================================
+int16_t TXInput::chAdditive(int16_t value, const char* axisName, int speed, int32_t dT)
+{
+
+  value = value  + (this->getAxisValueByName(axisName) - 1500) * dT * speed / 10000;
+
+  if ( value < 1000) return 1000;
+  if ( value > 2000) return 2000;
+  return value;
+}
+
+//=====================================================================
+//=====================================================================
+int TXInput::getAxisIdByName(const char* parm)
+{
+  if ( strcmp(parm, "LEFT_STICK_X") == 0 )
+  {
+    return LEFT_STICK_X_ID;
+  }  
+  else if ( strcmp(parm, "LEFT_STICK_Y") == 0 )
+  {
+    return LEFT_STICK_Y_ID;
+  }  
+  else if ( strcmp(parm, "RIGHT_STICK_X") == 0 )
+  {
+    return RIGHT_STICK_X_ID;
+  }  
+  else if ( strcmp(parm, "RIGHT_STICK_Y") == 0 )
+  {
+    return RIGHT_STICK_Y_ID;
+  }  
+  else
+  {
+      for ( int i = 0; i < ADC_COUNT; i++)
+      {
+        char axisName[32];
+        sprintf( axisName, "AXIS%d", i);
+        if ( strcmp(parm, axisName) == 0 )
+        {
+          return i;
+        }  
+      }
+      ErrorLog::instance.writeOnce("Invalid axis name:");
+      ErrorLog::instance.writeOnce(parm);
+      ErrorLog::instance.writeOnce("\n");
+      ErrorLog::instance.disableWriteOnce();
+  }
+  return 0;
+}
+
+//=====================================================================
+//=====================================================================
+int16_t TXInput::getAxisValueByName(const char* parm)
+{
+  return this->mapADCValue( this->getAxisIdByName(parm) );
+}
+
+//=====================================================================
+//=====================================================================
+int TXInput::getButtonIdByName( const char* parm)
+{
+  if ( strcmp(parm, "LEFT_BUMPER") == 0 )
+  {
+    return LEFT_BUMPER_ID;
+  }  
+  else if ( strcmp(parm, "RIGHT_BUMPER") == 0 )
+  {
+    return RIGHT_BUMPER_ID;
+  }  
+  else
+  {
+      for ( int i = 0; i < BUTTONS_COUNT; i++)
+      {
+        char buttonName[32];
+        sprintf( buttonName, "BUTTON%d", i);
+        if ( strcmp(parm, buttonName) == 0 )
+        {
+          return i;
+        }  
+      }
+      ErrorLog::instance.writeOnce("Invalid button name:");
+      ErrorLog::instance.writeOnce(parm);
+      ErrorLog::instance.writeOnce("\n");
+      ErrorLog::instance.disableWriteOnce();
+  }
+  return 0;
+}
+
+//=====================================================================
+//=====================================================================
+int16_t TXInput::getButtonValueByName( const char* parm)
+{
+  return this->mapButtonValue( this->getButtonIdByName(parm) );
+}
+
+//=====================================================================
+//=====================================================================
+bool TXInput::hasButtonPressEventByName( const char* parm )
+{
+  return this->buttonPressEvents & (1 << this->getButtonIdByName(parm));
+}
+
+//=====================================================================
+//=====================================================================
+void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, bool startup)
+{
+  channelValues-> isFailsafe = false;
+
+  uint32_t t = millis();
+  int32_t dT = t - this->lastAdditiveProcessing;
+  if ( dT > 10 )  //process every 10ms to avoid to small values in integer math
+  {
+    this->lastAdditiveProcessing = t;
+    if ( dT>10) dT = 0;
+  }
+  else
+  {
+    dT = 10;
+  }
+
+  for ( int i = 0; i < mapping.size(); i++)
+  {
+    const JsonVariant& action = mapping[i];
+
+    const char* event = action["event"] | "";
+    int channelIndex = (action["channel"] | -1) - 1;
+
+    if (channelIndex < 0 || channelIndex >= HXRC_CHANNELS_COUNT-1)
+    {
+      ErrorLog::instance.writeOnce("Invalid channelIndex in mapping\n");
+      ErrorLog::instance.disableWriteOnce();
+      return;
+    }
+
+    bool run = false;
+    if ( strcmp(event, "STARTUP") == 0)
+    {
+      run = startup;
+    }
+    else if ( strcmp(event, "ALWAYS") == 0)
+    {
+      run = !startup;
+    }
+    else if ( strcmp(event, "CHANNEL_EQUAL_1000") == 0)
+    {
+      run = !startup && (channelValues->channelValue[channelIndex] == 1000) && (this->lastChannelValue[channelIndex] != 1000);
+    }
+    else if ( strcmp(event, "CHANNEL_EQUAL_1333") == 0)
+    {
+      run = !startup && (channelValues->channelValue[channelIndex] == 1333) && (this->lastChannelValue[channelIndex] != 1333);
+    }
+    else if ( strcmp(event, "CHANNEL_EQUAL_1500") == 0)
+    {
+      run = !startup && (channelValues->channelValue[channelIndex] == 1500) && (this->lastChannelValue[channelIndex] != 1500);
+    }
+    else if ( strcmp(event, "CHANNEL_EQUAL_1666") == 0)
+    {
+      run = !startup && (channelValues->channelValue[channelIndex] == 1666) && (this->lastChannelValue[channelIndex] != 1666);
+    }
+    else if ( strcmp(event, "CHANNEL_EQUAL_2000") == 0)
+    {
+      run = !startup && (channelValues->channelValue[channelIndex] == 2000) && (this->lastChannelValue[channelIndex] != 2000);
+    }
+    else
+    {
+      ErrorLog::instance.writeOnce("Invalid event in mapping:");
+      ErrorLog::instance.writeOnce(event);
+      ErrorLog::instance.writeOnce("\n");
+      ErrorLog::instance.disableWriteOnce();
+    }
+
+    if ( run )
+    {
+      const char* op = action["op"] | "";      
+      const char* parm = action["parm"] | "";      
+
+      if ( strcmp(op, "AXIS") == 0)
+      {
+        channelValues->channelValue[channelIndex] = this->getAxisValueByName(parm);
+      }
+      else if ( strcmp(op, "BUTTON") == 0)
+      {
+        channelValues->channelValue[channelIndex] = this->getButtonValueByName(parm);
+      }
+      else if ( strcmp(op, "TRIGGER") == 0)
+      {
+        if ( this->hasButtonPressEventByName(parm) )
+        {
+          channelValues->channelValue[channelIndex] = ( channelValues->channelValue[channelIndex] == 1000) ? 2000: 1000;
+          //Serial.print(channelValues->channelValue[channelIndex]);
+        }
+      }
+      else if ( strcmp(op, "CONSTANT") == 0)
+      {
+        channelValues->channelValue[channelIndex] = action["parm"] | 0;
+      }
+      else if ( strcmp(op, "SWITCH3") == 0)
+      {
+        if ( this->hasButtonPressEventByName(parm) )
+        {
+          if ( channelValues->channelValue[channelIndex] < 1500 )
+          {
+            channelValues->channelValue[channelIndex] = 1500;
+          }
+          else if ( channelValues->channelValue[channelIndex] < 2000 )
+          {
+            channelValues->channelValue[channelIndex] = 2000;
+          }
+          else
+          {
+            channelValues->channelValue[channelIndex] = 1000;              
+          }
+        }
+      }
+      else if ( strcmp(op, "SWITCH4") == 0)
+      {
+        if ( this->hasButtonPressEventByName(parm) )
+        {
+          if ( channelValues->channelValue[channelIndex] < 1333 )
+          {
+            channelValues->channelValue[channelIndex] = 1333;
+          }
+          else if ( channelValues->channelValue[channelIndex] < 1666 )
+          {
+            channelValues->channelValue[channelIndex] = 1666;
+          }
+          else if ( channelValues->channelValue[channelIndex] < 2000 )
+          {
+            channelValues->channelValue[channelIndex] = 2000;
+          }
+          else
+          {
+            channelValues->channelValue[channelIndex] = 1000;              
+          }
+        }
+      }
+      else if ( strcmp(op, "ADD") == 0)
+      {
+        channelValues->channelValue[channelIndex] = channelValues->channelValue[channelIndex] + (action["parm"] | 0);
+      }
+      else if ( strcmp(op, "MUL") == 0)
+      {
+        channelValues->channelValue[channelIndex] = this->chMul10( channelValues->channelValue[channelIndex], (action["parm"] | 1 )  );
+      }
+      else if ( strcmp(op, "ADDITIVE") == 0)
+      {
+        channelValues->channelValue[channelIndex] = this->chAdditive( channelValues->channelValue[channelIndex], action["parm"] | "", (action["speed"] | 1 ), dT  );
+      }
+      else if ( strcmp(op, "SOUND") == 0)
+      {
+        AudioManager::instance.play(String(parm), AUDIO_GROUP_NONE);
+      }
+      else
+      {
+        ErrorLog::instance.writeOnce("Invalid operation:");
+        ErrorLog::instance.writeOnce(op);
+        ErrorLog::instance.writeOnce("\n");
+        ErrorLog::instance.disableWriteOnce();
+      }
+    }
+
+  }
+
+  for ( int i = 0; i < HXRC_CHANNELS_COUNT; i++ )
+  {
+    channelValues->channelValue[i] = this->chClamp(channelValues->channelValue[i]);
+  }
+
+}
+
+
+//=====================================================================
+//=====================================================================
+void TXInput::getChannelValues( HXChannels* channelValues )
+{
+  JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
+
+  if (profile)
+  {
+    const JsonArray& mapping = (*profile)["mapping"];
+    if ( mapping.size() > 0 )
+    {
+      bool startup = false;
+      int profileIndex = TXProfileManager::instance.getCurrentProfileIndex();
+      if ( this->lastProfileIndex != profileIndex )
+      {
+        this->lastProfileIndex = profileIndex;
+        this->resetLastChannelValues();
+        this->buttonPressEvents = 0;
+        startup = true;
+      }
+
+      memcpy( channelValues->channelValue, this->lastChannelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
+
+      this->getChannelValuesMapping( channelValues, mapping, startup);
+
+      this->buttonPressEvents = 0;
+      memcpy( this->lastChannelValue, channelValues->channelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
+
+      return;
+    }
+  }
+
+  this->getChannelValuesDefault( channelValues );
 }
 
 //=====================================================================
@@ -339,14 +706,25 @@ bool TXInput::isCenterCalibrationSuccessfull()
 //=====================================================================
 bool TXInput::isButtonPressed(uint8_t buttonId)
 {
-  return this->buttonData[buttonId] == 0;
+  if ( this->buttonData[buttonId] == 0 ) 
+  {
+    return true;
+  }
+  else if ( this->buttonData[buttonId] == 15 ) 
+  {
+    return false;
+  }
+  else
+  {
+    return this->lastButtonsState && (1 << buttonId);
+  }
 }
 
 //=====================================================================
 //=====================================================================
 bool TXInput::isButtonUnPressed(uint8_t buttonId)
 {
-  return (this->buttonData[buttonId] & 15 ) == 15;
+  return !this->isButtonPressed(buttonId);
 }
 
 //=====================================================================

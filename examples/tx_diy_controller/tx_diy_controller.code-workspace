@@ -37,7 +37,9 @@
 			"xtree": "cpp",
 			"xutility": "cpp",
 			"functional": "cpp",
-			"memory": "cpp"
+			"memory": "cpp",
+			"system_error": "cpp",
+			"xlocale": "cpp"
 		}
 	}
 }

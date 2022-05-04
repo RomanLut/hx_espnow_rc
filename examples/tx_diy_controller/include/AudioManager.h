@@ -14,13 +14,6 @@
 #define AUDIO_GROUP_PROFILE     1
 #define AUDIO_GROUP_SOUND       2
 
-#define SOUND_INTRO_BEEPS           0
-#define SOUND_AXIS_CALIBRATION      1
-#define SOUND_CENTER_CALIBRATION    2
-#define SOUND_CALIBRATION_SUCCESS   3
-#define SOUND_PROFILE_SELECTION     4
-#define SOUND_PROFILE_1             5
-
 /*
 Sounds
 ============
@@ -56,7 +49,7 @@ Sound on.
 
 typedef struct
 {
-    uint8_t soundId;
+    String fileName;
     uint8_t soundGroup;
 } AudioItem;
 
@@ -70,6 +63,8 @@ private:
 
     void removeItem(int index);
     void removeSoundGroup(int soundGroup);
+    void prefetch( const char* fileName );
+    
 public:
 
     static AudioManager instance;
@@ -78,7 +73,7 @@ public:
     bool loop( uint32_t t );
     void waitFinish();
 
-    void play( uint8_t soundId, uint8_t soundGroup);
+    void play( String fileName, uint8_t soundGroup);
 
 };
 

@@ -30,11 +30,37 @@
 class TXInput
 {
 private:
+    int lastProfileIndex = -1;
+
+    int16_t lastChannelValue[HXRC_CHANNELS_COUNT];  
+    uint16_t lastButtonsState;   //a bit for each button 1 << id
+    uint16_t buttonPressEvents; // bit for each button 1 << id
+
     void initAxisPins();
     void initButtonPins();
     void readADCEx(int pin, uint16_t* v );
     void readADC(uint32_t t);
     void readButtons(uint32_t t);
+
+    void resetLastChannelValues();
+
+    void  getChannelValuesDefault( out HXChannels* channelValues );
+    void  getChannelValuesMapping( inout HXChannels* channelValues, const JsonArray& mapping, bool startup );
+
+    int getAxisIdByName( const char* parm);
+    int16_t getAxisValueByName( const char* parm);
+
+    int getButtonIdByName( const char* parm);
+    int16_t getButtonValueByName( const char* parm);
+    bool hasButtonPressEventByName( const char* parm );
+
+    int16_t mapADCValue( int ADCId );
+    int16_t mapButtonValue( int buttonId );
+
+    int16_t chMul10(int16_t value, int mul);
+    int16_t chClamp(int16_t value);
+
+    int16_t chAdditive(int16_t value, const char* axisName, int speed, int32_t dT);
 
 public:
 
@@ -48,9 +74,11 @@ public:
     uint16_t ADCMidMin[ADC_COUNT];
     uint16_t ADCMidMax[ADC_COUNT];
 
-    uint32_t lastButtonsRead = millis();
+    uint32_t lastButtonsRead;
     static const uint8_t BUTTON_PINS[BUTTONS_COUNT];
     uint8_t buttonData[BUTTONS_COUNT];
+
+    uint32_t lastAdditiveProcessing;
 
     TXInput();
 
@@ -60,7 +88,7 @@ public:
     void loadCalibrationData();
     void saveCalibrationData();
 
-    void  getChannelValues( HXChannels* channelValues );
+    void getChannelValues( inout HXChannels* channelValues );
 
     bool isCalibrateGesture();
     bool isInitGesture();

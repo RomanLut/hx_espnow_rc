@@ -17,7 +17,7 @@ void StateInit::onEnter()
 {
   this->stateTime = millis();  
 
-  AudioManager::instance.play( SOUND_INTRO_BEEPS, AUDIO_GROUP_NONE );
+  AudioManager::instance.play( "/intro.mp3", AUDIO_GROUP_NONE );
 }
 
 //======================================================

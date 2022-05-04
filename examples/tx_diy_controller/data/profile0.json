@@ -1,8 +1,0 @@
-{
-    "transmitter_mode" : "ESPNOW",
-    "espnow_channel" : 3,
-    "espnow_key" : 0,
-    "espnow_long_range_mode" : false,
-    "ap_name" : "hxrct",
-    "ap_password" : ""
-}

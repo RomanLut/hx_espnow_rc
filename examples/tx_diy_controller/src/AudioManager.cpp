@@ -18,15 +18,31 @@ void AudioManager::init()
 
 //======================================================
 //======================================================
+void AudioManager::prefetch( const char* fileName )
+{
+    File file = SPIFFS.open(fileName);
+    if  (!file) return;
+
+    char buffer[1024];
+
+    while( file.available() )
+    {
+      file.readBytes( buffer, 1024);
+    }
+
+    file.close();
+}
+
+//======================================================
+//======================================================
 bool AudioManager::loop( uint32_t t )
 {
   if  ( this->length && !audio.isRunning() )
   {
-    char fName[32];
-    sprintf( fName, "%d.wav", this->queue[0].soundId);
     Serial.print("Play:");
-    Serial.println(fName);
-    audio.connecttoFS(SPIFFS, fName);
+    Serial.println(this->queue[0].fileName);
+    this->prefetch(this->queue[0].fileName.c_str());
+    audio.connecttoFS(SPIFFS, this->queue[0].fileName.c_str());
     this->removeItem(0);
   }
   audio.loop();
@@ -72,7 +88,7 @@ void AudioManager::removeSoundGroup(int soundGroup)
 
 //======================================================
 //======================================================
-void AudioManager::play( uint8_t soundId, uint8_t soundGroup)
+void AudioManager::play( String fileName, uint8_t soundGroup)
 {
   if ( soundGroup != AUDIO_GROUP_NONE)
   {
@@ -83,7 +99,7 @@ void AudioManager::play( uint8_t soundId, uint8_t soundGroup)
     this->removeItem(0);
   }
   this->queue[this->length].soundGroup = soundGroup;
-  this->queue[this->length].soundId = soundId;
+  this->queue[this->length].fileName = fileName;
   this->length++;
 }
 

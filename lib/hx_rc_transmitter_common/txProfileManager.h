@@ -7,6 +7,8 @@
 
 #define PROFILES_COUNT 11
 
+#define JSON_BUFFER_SIZE 4096
+
 /*
 //=====================================================================
 //=====================================================================
@@ -72,9 +74,8 @@ public:
 
 /*
 
-Actions
 
-SetChannelOnEvent( channelNumber, eventId, eventParam, ValueType, value )
+SetChannelOnEvent( eventId, channel, value, parm )
 
 channelNumber:
 - 0..14
@@ -86,12 +87,12 @@ EventId:
 - CHANNEL_EQALS_1500 eventParam:channelId
 - CHANNEL_GREATER_1500 eventParam:channelId
 
-ValueType:
+Value:
  CONSTANT value:value
  INPUT value:inputId
- TRIGGER
- SWITCH3
- SWITCH4
+ TRIGGER value:inputId
+ SWITCH3 value:inputId
+ SWITCH4 value:inputId
  INCREMENT value:increment
  DECREMENT value:decrement
  MUL value: mul

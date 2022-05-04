@@ -11,7 +11,7 @@ static const char* configProfile = "{\"transmitter_mode\" : \"CONFIG\", \"ap_nam
 
 //=====================================================================
 //=====================================================================
-TXProfileManager::TXProfileManager() : json(512)
+TXProfileManager::TXProfileManager() : json(JSON_BUFFER_SIZE)
 {
     this->currentProfileIndex = -1;
 
@@ -34,10 +34,11 @@ TXProfileManager::TXProfileManager() : json(512)
 void TXProfileManager::loadConfig()
 {
     char fname[32];
-    sprintf( fname, "/profile%d.json", this->currentProfileIndex );
+    sprintf( fname, "/profile%d.json", this->currentProfileIndex+1 );
+    Serial.println(fname);
     File file = SPIFFS.open(fname);
 
-    if ( file == NULL ) 
+    if ( !file ) 
     {
         this->loadConfigProfile();
 
@@ -56,6 +57,8 @@ void TXProfileManager::loadConfig()
 
         ErrorLog::instance.write("Unable to parse ");
         ErrorLog::instance.write(fname);
+        ErrorLog::instance.write(": ");
+        ErrorLog::instance.write(error.c_str());
         ErrorLog::instance.write("\n");
         return;
     }
@@ -121,7 +124,7 @@ void TXProfileManager::setCurrentProfileIndex(int index)
     if ( this->currentProfileIndex != index )
     {
         this->currentProfileIndex = index;
-        if ( this->currentProfileIndex > 0 )
+        if ( this->currentProfileIndex >= 0 )
         {
             this->loadConfig();
         }

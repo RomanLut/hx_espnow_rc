@@ -18,7 +18,7 @@ ErrorLog::ErrorLog()
 //=====================================================================
 void ErrorLog::write( const char* msg )
 {
-    Serial.println(msg);
+    Serial.print(msg);
 
     File logFile = SPIFFS.open("/errorLog.txt", FILE_APPEND);
     if (!logFile) 
@@ -43,5 +43,5 @@ void ErrorLog::writeOnce( const char* msg )
 //=====================================================================
 void ErrorLog::disableWriteOnce()
 {
-    this->writeOnceDisabled = false;
+    this->writeOnceDisabled = true;
 }

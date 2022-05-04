@@ -53,6 +53,13 @@ void ModeBase::loop(
     unsigned long dt = t - this->lastCycleTime;
     this->lastCycleTime = t;
 
+    if ( dt > 10 )
+    {
+        Serial.print("!Cycle time:");
+        Serial.println(dt);
+    }
+
+
     if ( sport != NULL )
     {
         sport->setR9PWR( 20 );
