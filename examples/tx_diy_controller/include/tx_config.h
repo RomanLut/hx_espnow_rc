@@ -1,9 +1,5 @@
 #pragma once
 
-#define in
-#define out
-#define inout
-
 #define WDT_TIMEOUT_SECONDS 10  
 
 #define HC06_INTERFACE_RX_PIN  17

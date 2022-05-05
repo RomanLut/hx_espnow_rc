@@ -1,14 +1,19 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Audio.h>
+
+#include <SPIFFS.h>
+
+#include "AudioFileSourceSPIFFS.h"
+#include "AudioGeneratorMP3.h"
+#include "AudioOutputI2S.h"
 
 #include <stdio.h>
 #include <stdarg.h>
 
 #include "tx_config.h"
 
-#define AUDIO_QUEUE_LENGTH   3
+#define AUDIO_QUEUE_LENGTH      3
 
 #define AUDIO_GROUP_NONE        0      
 #define AUDIO_GROUP_PROFILE     1
@@ -58,12 +63,16 @@ typedef struct
 class AudioManager
 {
 private:
+    AudioGeneratorMP3* mp3 = NULL;
+    AudioFileSourceSPIFFS* file = NULL;
+    AudioOutputI2S* output = NULL;        
+
     AudioItem queue[AUDIO_QUEUE_LENGTH];
     uint8_t length;
 
     void removeItem(int index);
     void removeSoundGroup(int soundGroup);
-    void prefetch( const char* fileName );
+//    void prefetch( const char* fileName );
     
 public:
 

@@ -246,7 +246,7 @@ int16_t TXInput::mapButtonValue( int buttonId )
 
 //=====================================================================
 //=====================================================================
-void TXInput::getChannelValuesDefault( out HXChannels* channelValues )
+void TXInput::getChannelValuesDefault( HXChannels* channelValues )
 {
   channelValues-> isFailsafe = false;
   for ( int i = 0; i < HXRC_CHANNELS_COUNT; i++)

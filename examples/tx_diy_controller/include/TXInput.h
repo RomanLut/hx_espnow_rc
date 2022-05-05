@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <Audio.h>
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -44,8 +43,8 @@ private:
 
     void resetLastChannelValues();
 
-    void  getChannelValuesDefault( out HXChannels* channelValues );
-    void  getChannelValuesMapping( inout HXChannels* channelValues, const JsonArray& mapping, bool startup );
+    void  getChannelValuesDefault( HXChannels* channelValues );
+    void  getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, bool startup );
 
     int getAxisIdByName( const char* parm);
     int16_t getAxisValueByName( const char* parm);
@@ -88,7 +87,7 @@ public:
     void loadCalibrationData();
     void saveCalibrationData();
 
-    void getChannelValues( inout HXChannels* channelValues );
+    void getChannelValues( HXChannels* channelValues );
 
     bool isCalibrateGesture();
     bool isInitGesture();

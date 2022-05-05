@@ -2,8 +2,6 @@
 
 #include <esp_task_wdt.h>
 
-static Audio audio(true, I2S_DAC_CHANNEL_RIGHT_EN);
-
  AudioManager AudioManager::instance;
 
 //======================================================
@@ -11,11 +9,9 @@ static Audio audio(true, I2S_DAC_CHANNEL_RIGHT_EN);
 void AudioManager::init()
 {
   this->length = 0;
-  audio.setVolume(21); // 0...21
-  //audio.setTone(6,6,6);
-  //audio.setBufsize( 50000,0);
 }
 
+/*
 //======================================================
 //======================================================
 void AudioManager::prefetch( const char* fileName )
@@ -32,22 +28,51 @@ void AudioManager::prefetch( const char* fileName )
 
     file.close();
 }
+*/
 
 //======================================================
 //======================================================
 bool AudioManager::loop( uint32_t t )
 {
-  if  ( this->length && !audio.isRunning() )
+  if  ( this->length && !mp3 )
   {
     Serial.print("Play:");
     Serial.println(this->queue[0].fileName);
-    this->prefetch(this->queue[0].fileName.c_str());
-    audio.connecttoFS(SPIFFS, this->queue[0].fileName.c_str());
+//    this->prefetch(this->queue[0].fileName.c_str());
+
+    this->file = new AudioFileSourceSPIFFS( this->queue[0].fileName.c_str() );
+    this->output = new AudioOutputI2S(0, AudioOutputI2S::INTERNAL_DAC, 8, AudioOutputI2S::APLL_DISABLE);
+    this->output->SetGain(2.0f);
+    this->mp3 = new AudioGeneratorMP3();
+    this->mp3->begin(file, output);
+
     this->removeItem(0);
   }
-  audio.loop();
 
-  return ( this->length || audio.isRunning() );
+  if (this->mp3)
+  {
+    if ( this->mp3->isRunning() )
+    {
+       if (!mp3->loop()) 
+       {
+         mp3->stop();
+          Serial.println("AudioStop");
+       }
+    }
+    else
+    {
+      delete this->mp3;
+      this->mp3 = NULL;
+
+      delete this->file;
+      this->file = NULL;
+      
+      delete this->output;
+      this->output = NULL;        
+    }
+  } 
+
+  return ( this->length || !!mp3 );
 }
 
 //======================================================
