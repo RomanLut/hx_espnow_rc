@@ -39,7 +39,8 @@
 			"functional": "cpp",
 			"memory": "cpp",
 			"system_error": "cpp",
-			"xlocale": "cpp"
+			"xlocale": "cpp",
+			"xiosbase": "cpp"
 		}
 	}
 }

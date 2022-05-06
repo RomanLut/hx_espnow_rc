@@ -8,9 +8,9 @@
 #define LED1_PIN 12
 #define LED2_PIN 13
 #define LED3_PIN 27
-#define LED4_PIN 26
+#define LED4_PIN 23
 
-#define SPEAKER_PIN 25  //I2S_DAC_CHANNEL_RIGHT_EN
+#define SPEAKER_PIN 22  
 
 //--------------------------------------------
 #define AXIS_COUNT 4
@@ -43,3 +43,6 @@
 #define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN };
 
 //temp: pin 14 output 1
+
+//pin 22 - speaker 
+//pin 25, 26 - used by I2S

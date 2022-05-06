@@ -13,7 +13,7 @@ StateRun StateRun::instance;
 void StateRun::onEnter()
 {
   AudioManager::instance.play( String( "/profile") + (currentProfileIndex+1) + ".mp3", AUDIO_GROUP_PROFILE );
-  //AudioManager::instance.waitFinish();
+  AudioManager::instance.waitFinish();
 }
 
 //======================================================

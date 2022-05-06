@@ -5,8 +5,9 @@
 #include <SPIFFS.h>
 
 #include "AudioFileSourceSPIFFS.h"
+#include "AudioOutputI2SNoDAC.h"
 #include "AudioGeneratorMP3.h"
-#include "AudioOutputI2S.h"
+#include "AudioGeneratorPopKiller.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -65,7 +66,8 @@ class AudioManager
 private:
     AudioGeneratorMP3* mp3 = NULL;
     AudioFileSourceSPIFFS* file = NULL;
-    AudioOutputI2S* output = NULL;        
+    AudioOutputI2SNoDAC* output = NULL;        
+    AudioGeneratorPopKiller* popKiller = NULL;
 
     AudioItem queue[AUDIO_QUEUE_LENGTH];
     uint8_t length;

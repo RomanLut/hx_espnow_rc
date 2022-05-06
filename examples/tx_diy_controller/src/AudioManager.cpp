@@ -41,26 +41,31 @@ bool AudioManager::loop( uint32_t t )
 //    this->prefetch(this->queue[0].fileName.c_str());
 
     this->file = new AudioFileSourceSPIFFS( this->queue[0].fileName.c_str() );
-    this->output = new AudioOutputI2S(0, AudioOutputI2S::INTERNAL_DAC, 8, AudioOutputI2S::APLL_DISABLE);
-    this->output->SetGain(2.0f);
+    this->output = new AudioOutputI2SNoDAC();
+    this->output->SetGain(1.5f);
+    //this->output->SetOversampling(64);
     this->mp3 = new AudioGeneratorMP3();
-    this->mp3->begin(file, output);
+    this->popKiller = new AudioGeneratorPopKiller( this->mp3, 20);
+    this->popKiller->begin(file, output);
 
     this->removeItem(0);
   }
 
-  if (this->mp3)
+  if (this->popKiller)
   {
-    if ( this->mp3->isRunning() )
+    if ( this->popKiller->isRunning() )
     {
-       if (!mp3->loop()) 
+       if (!popKiller->loop()) 
        {
-         mp3->stop();
+         popKiller->stop();
           Serial.println("AudioStop");
        }
     }
     else
     {
+      delete this->popKiller;
+      this->popKiller = NULL;
+
       delete this->mp3;
       this->mp3 = NULL;
 
