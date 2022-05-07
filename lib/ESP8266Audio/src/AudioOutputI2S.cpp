@@ -49,6 +49,7 @@ AudioOutputI2S::AudioOutputI2S(int port, int output_mode, int dma_buf_count, int
   bclkPin = 26;
   wclkPin = 25;
   doutPin = 22;
+  rampMs = 0;
   SetGain(1.0);
 }
 
@@ -92,6 +93,7 @@ AudioOutputI2S::AudioOutputI2S(long sampleRate, pin_size_t sck, pin_size_t data)
     hertz = sampleRate;
     bclkPin = sck;
     doutPin = data;
+    rampMs = 0;
     SetGain(1.0);
 }
 #endif
@@ -114,21 +116,33 @@ AudioOutputI2S::~AudioOutputI2S()
 
 bool AudioOutputI2S::SetRate(int hz)
 {
+  //Serial.print("SetRate ");
+  //Serial.println(hz);
   // TODO - have a list of allowable rates from constructor, check them
   this->hertz = hz;
   if (i2sOn)
   {
   #ifdef ESP32
-  Serial.println("SetRate");
-  Serial.println(hz);
-      i2s_set_sample_rates((i2s_port_t)portNo, AdjustI2SRate(hz));
+      hz = AdjustI2SRate(hz);
+      i2s_set_sample_rates((i2s_port_t)portNo, hz);
   #elif defined(ESP8266)
       i2s_set_rate(AdjustI2SRate(hz));
-  #elif defined(ARDUINO_ARCH_RP2040)
+#elif defined(ARDUINO_ARCH_RP2040)
       I2S.setFrequency(hz);
   #endif
   }
+  //NOTE: with mp3 decoder, rate is set after few sampes are passed to output already. We restart ramp each time.
+  updateRampSamples();
   return true;
+}
+
+void AudioOutputI2S::updateRampSamples()
+{
+    int hz = this->hertz;
+  #ifdef ESP32
+    hz = AdjustI2SRate(hz);
+  #endif
+    this->startRampSamples = this->endRampSamples = this->endRampSamplesTotal = this->startRampSamplesTotal = ((unsigned long)hz) * rampMs / 1000;
 }
 
 bool AudioOutputI2S::SetBitsPerSample(int bits)
@@ -157,8 +171,17 @@ bool AudioOutputI2S::SetLsbJustified(bool lsbJustified)
   return true;
 }
 
+void AudioOutputI2S::SetRamp(unsigned int rampMs)
+{
+  this->rampMs = rampMs;
+  updateRampSamples();
+}
+
+
 bool AudioOutputI2S::begin(bool txDAC)
 {
+        //Serial.println("Begin");
+
   #ifdef ESP32
     if (!i2sOn)
     {
@@ -274,8 +297,37 @@ bool AudioOutputI2S::begin(bool txDAC)
     }
   #endif
   i2sOn = true;
+  finalSamples = 2*128*dma_buf_count;
   SetRate(hertz); // Default
   return true;
+}
+
+bool AudioOutputI2S::writeSample(int16_t ms[2])
+{
+  #ifdef ESP32
+    uint32_t s32;
+    if (output_mode == INTERNAL_DAC)
+    {
+      int16_t l = ms[LEFTCHANNEL] + 0x8000;
+      int16_t r = ms[RIGHTCHANNEL] + 0x8000;
+      s32 = ((r & 0xffff) << 16) | (l & 0xffff);
+    }
+    else
+    {
+      s32 = (ms[RIGHTCHANNEL] << 16) | (ms[LEFTCHANNEL] & 0xffff);
+    }
+//"i2s_write_bytes" has been removed in the ESP32 Arduino 2.0.0,  use "i2s_write" instead.
+//    return i2s_write_bytes((i2s_port_t)portNo, (const char *)&s32, sizeof(uint32_t), 0);
+
+    size_t i2s_bytes_written;
+    i2s_write((i2s_port_t)portNo, (const char*)&s32, sizeof(uint32_t), &i2s_bytes_written, 0);
+    return i2s_bytes_written;
+  #elif defined(ESP8266)
+    uint32_t s32 = (ms[RIGHTCHANNEL] << 16) | (ms[LEFTCHANNEL] & 0xffff);
+    return i2s_write_sample_nb(s32); // If we can't store it, return false.  OTW true
+  #elif defined(ARDUINO_ARCH_RP2040)
+    return !!I2S.write((void*)ms, 4);
+  #endif
 }
 
 bool AudioOutputI2S::ConsumeSample(int16_t sample[2])
@@ -286,7 +338,6 @@ bool AudioOutputI2S::ConsumeSample(int16_t sample[2])
     return false;
 
   int16_t ms[2];
-
   ms[0] = sample[0];
   ms[1] = sample[1];
   MakeSampleStereo16( ms );
@@ -296,31 +347,51 @@ bool AudioOutputI2S::ConsumeSample(int16_t sample[2])
     int32_t ttl = ms[LEFTCHANNEL] + ms[RIGHTCHANNEL];
     ms[LEFTCHANNEL] = ms[RIGHTCHANNEL] = (ttl>>1) & 0xffff;
   }
-  #ifdef ESP32
-    uint32_t s32;
-    if (output_mode == INTERNAL_DAC)
-    {
-      int16_t l = Amplify(ms[LEFTCHANNEL]) + 0x8000;
-      int16_t r = Amplify(ms[RIGHTCHANNEL]) + 0x8000;
-      s32 = ((r & 0xffff) << 16) | (l & 0xffff);
-    }
-    else
-    {
-      s32 = ((Amplify(ms[RIGHTCHANNEL])) << 16) | (Amplify(ms[LEFTCHANNEL]) & 0xffff);
-    }
 
-//"i2s_write_bytes" has been removed in the ESP32 Arduino 2.0.0,  use "i2s_write" instead.
-//    return i2s_write_bytes((i2s_port_t)portNo, (const char *)&s32, sizeof(uint32_t), 0);
+  ms[LEFTCHANNEL] = Amplify(ms[LEFTCHANNEL]);
+  ms[RIGHTCHANNEL] = Amplify(ms[RIGHTCHANNEL]);
 
-    size_t i2s_bytes_written;
-    i2s_write((i2s_port_t)portNo, (const char*)&s32, sizeof(uint32_t), &i2s_bytes_written, 0);
-    return i2s_bytes_written;
-  #elif defined(ESP8266)
-    uint32_t s32 = ((Amplify(ms[RIGHTCHANNEL])) << 16) | (Amplify(ms[LEFTCHANNEL]) & 0xffff);
-    return i2s_write_sample_nb(s32); // If we can't store it, return false.  OTW true
-  #elif defined(ARDUINO_ARCH_RP2040)
-    return !!I2S.write((void*)ms, 4);
-  #endif
+
+  //ms[0] = 0;
+  //ms[1] = 0;
+
+  if ( startRampSamples > 0 )
+  {
+    //if ( startRampSamples ==  startRampSamplesTotal) Serial.println("StartRamp1");
+
+    //lerp beetween -32768 and ms[]
+      
+    uint16_t t = ((((int32_t)startRampSamples) << 8) / startRampSamplesTotal); //256...0
+    int16_t v = -(t << 7);  //256 -> -32768
+    t = 256 - t;
+    ms[0] = v + ((ms[0] >> 8) * t);
+    ms[1] = v + ((ms[1] >> 8) * t);
+    
+    /*
+    Serial.print(startRampSamples);
+    Serial.print(" = ");
+    Serial.print(startRampSamplesTotal);
+    Serial.print(" = ");
+    Serial.println(ms[0]);
+    Serial.print(" t= ");
+    Serial.println(t);
+    Serial.print(" v= ");
+    Serial.println(v);
+    */
+    
+    startRampSamples--;
+
+/*
+    if ( startRampSamples == 0) 
+    {
+      Serial.println(ms[0]);
+      Serial.println(ms[1]);
+      Serial.println("EndRamp1");
+    }
+*/    
+  }
+
+  return writeSample(ms);
 }
 
 void AudioOutputI2S::flush()
@@ -341,9 +412,65 @@ void AudioOutputI2S::flush()
   #endif
 }
 
+bool AudioOutputI2S::finish()
+{
+  if (!i2sOn)
+    return true;
+
+  int16_t ms[2];
+
+  if ( endRampSamples > 0 )
+  {
+    /*
+    if ( endRampSamples ==  endRampSamplesTotal)
+    {
+        Serial.println("StartRamp2");
+    }
+    */
+
+    while ( endRampSamples > 0) 
+    {
+      ms[0] = -32768 + (((endRampSamples << 7) / endRampSamplesTotal) << 8);
+      ms[1] = ms[0];
+
+/*
+      Serial.print(endRampSamples);
+      Serial.print(" = ");
+      Serial.print(endRampSamplesTotal);
+      Serial.print(" = ");
+      Serial.println(ms[0]);
+*/ 
+      if ( !writeSample(ms) ) break;
+      endRampSamples--;
+    }
+/*
+      Serial.print(endRampSamples);
+      Serial.print(" = ");
+      Serial.print(endRampSamplesTotal);
+      Serial.print(" = ");
+      Serial.println(ms[0]);
+*/
+    if ( endRampSamples > 0) return false;
+    
+    
+    /*
+    Serial.println(ms[0]);
+    Serial.println(ms[1]);
+    Serial.println("EndRamp2");
+    */
+  }
+
+  ms[0] = endRampSamplesTotal > 0 ? -32768 : 0; 
+  ms[1] = ms[0];
+
+  while ( finalSamples > 0 && writeSample(ms)) finalSamples--;
+  
+  return finalSamples == 0;
+}
+
+
 bool AudioOutputI2S::stop()
 {
-  /*
   if (!i2sOn)
     return false;
 
@@ -353,6 +480,5 @@ bool AudioOutputI2S::stop()
     I2S.end();
   #endif
   i2sOn = false;
-  */
   return true;
 }

@@ -78,6 +78,7 @@ class AudioGeneratorMP3 : public AudioGenerator
 
   private:
     int unrecoverable = 0;
+    bool hasLastSample;
 };
 
 #endif

@@ -32,16 +32,17 @@ class AudioOutputI2SNoDAC : public AudioOutputI2S
 #if defined(ARDUINO_ARCH_RP2040)
     AudioOutputI2SNoDAC(int port = 28,int sck = 26);
 #else
-    AudioOutputI2SNoDAC(int port = 0);
+    AudioOutputI2SNoDAC(int port = 0, int dma_buf_count = 8);
 #endif
 
     virtual ~AudioOutputI2SNoDAC() override;
     virtual bool begin() override { return AudioOutputI2S::begin(false); }
-    virtual bool ConsumeSample(int16_t sample[2]) override;
+//    virtual bool ConsumeSample(int16_t sample[2]) override;
     
     bool SetOversampling(int os);
     
   protected:
+    virtual bool writeSample(int16_t ms[2]) override;
     virtual int AdjustI2SRate(int hz) override { return hz * oversample/32; }
     uint8_t oversample;
     void DeltaSigma(int16_t sample[2], uint32_t dsBuff[4]);

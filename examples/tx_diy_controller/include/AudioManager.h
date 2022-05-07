@@ -6,8 +6,8 @@
 
 #include "AudioFileSourceSPIFFS.h"
 #include "AudioOutputI2SNoDAC.h"
+#include "AudioGeneratorWAV.h"
 #include "AudioGeneratorMP3.h"
-#include "AudioGeneratorPopKiller.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -64,10 +64,9 @@ typedef struct
 class AudioManager
 {
 private:
-    AudioGeneratorMP3* mp3 = NULL;
+    AudioGenerator* audioFile = NULL;
     AudioFileSourceSPIFFS* file = NULL;
     AudioOutputI2SNoDAC* output = NULL;        
-    AudioGeneratorPopKiller* popKiller = NULL;
 
     AudioItem queue[AUDIO_QUEUE_LENGTH];
     uint8_t length;

@@ -24,16 +24,19 @@
 AudioGeneratorMP3::AudioGeneratorMP3()
 {
   running = false;
+  finishing = false;
   file = NULL;
   output = NULL;
   buff = NULL;
   nsCountMax = 1152/32;
   madInitted = false;
+  hasLastSample = false;
 }
 
 AudioGeneratorMP3::AudioGeneratorMP3(void *space, int size): preallocateSpace(space), preallocateSize(size)
 {
   running = false;
+  finishing = false;
   file = NULL;
   output = NULL;
   buff = NULL;
@@ -48,6 +51,7 @@ AudioGeneratorMP3::AudioGeneratorMP3(void *buff, int buffSize, void *stream, int
     preallocateSynthSpace(synth), preallocateSynthSize(synthSize)
 {
   running = false;
+  finishing = false;
   file = NULL;
   output = NULL;
   buff = NULL;
@@ -88,13 +92,14 @@ bool AudioGeneratorMP3::stop()
   stream = NULL;
 
   running = false;
+  finishing = false;
   output->stop();
   return file->close();
 }
 
 bool AudioGeneratorMP3::isRunning()
 {
-  return running;
+  return running || finishing;
 }
 
 enum mad_flow AudioGeneratorMP3::ErrorToFlow()
@@ -174,12 +179,11 @@ bool AudioGeneratorMP3::DecodeNextFrame()
 
 bool AudioGeneratorMP3::GetOneSample(int16_t sample[2])
 {
-  /*
+  //Serial.println("MP3:GetOneSample");
   if (synth->pcm.samplerate != lastRate) {
     output->SetRate(synth->pcm.samplerate);
     lastRate = synth->pcm.samplerate;
   }
-  */
   if (synth->pcm.channels != lastChannels) {
     output->SetChannels(synth->pcm.channels);
     lastChannels = synth->pcm.channels;
@@ -189,6 +193,7 @@ bool AudioGeneratorMP3::GetOneSample(int16_t sample[2])
   if (samplePtr < synth->pcm.length) {
     sample[AudioOutput::LEFTCHANNEL ] = synth->pcm.samples[0][samplePtr];
     sample[AudioOutput::RIGHTCHANNEL] = synth->pcm.samples[1][samplePtr];
+  //Serial.println("CreatedSample1");
     samplePtr++;
   } else {
     samplePtr = 0;
@@ -201,8 +206,15 @@ bool AudioGeneratorMP3::GetOneSample(int16_t sample[2])
           break; // Do nothing
     }
     // for IGNORE and CONTINUE, just play what we have now
-    sample[AudioOutput::LEFTCHANNEL ] = synth->pcm.samples[0][samplePtr];
-    sample[AudioOutput::RIGHTCHANNEL] = synth->pcm.samples[1][samplePtr];
+    sample[AudioOutput::LEFTCHANNEL ] = lastSample[0];
+    sample[AudioOutput::RIGHTCHANNEL] = lastSample[1];
+    /*
+  Serial.println("CreatedSample2");
+  Serial.println(sample[AudioOutput::LEFTCHANNEL ]);
+  Serial.println(sample[AudioOutput::RIGHTCHANNEL]);
+  Serial.println(samplePtr);
+  Serial.println(synth->pcm.length);
+  */
     samplePtr++;
   }
   return true;
@@ -211,10 +223,15 @@ bool AudioGeneratorMP3::GetOneSample(int16_t sample[2])
 
 bool AudioGeneratorMP3::loop()
 {
+  if ( finishing )
+  {
+    return output->finish() == false;
+  }
+
   if (!running) goto done; // Nothing to do here!
 
   // First, try and push in the stored sample.  If we can't, then punt and try later
-  if (!output->ConsumeSample(lastSample)) goto done; // Can't send, but no error detected
+  if (hasLastSample && !output->ConsumeSample(lastSample)) goto done; // Can't send, but no error detected
 
   // Try and stuff the buffer one sample at a time
   do
@@ -223,7 +240,9 @@ bool AudioGeneratorMP3::loop()
     if ( (samplePtr >= synth->pcm.length) && (nsCount >= nsCountMax) ) {
 retry:
       if (Input() == MAD_FLOW_STOP) {
-        return false;
+        running = false;
+        finishing = true;
+        return true;
       }
 
       if (!DecodeNextFrame()) {
@@ -250,6 +269,7 @@ retry:
       running = false;
       goto done;
     }
+    hasLastSample = true; 
   } while (running && output->ConsumeSample(lastSample));
 
 done:

@@ -34,40 +34,47 @@ void AudioManager::prefetch( const char* fileName )
 //======================================================
 bool AudioManager::loop( uint32_t t )
 {
-  if  ( this->length && !mp3 )
+  if  ( this->length && !audioFile )
   {
     Serial.print("Play:");
     Serial.println(this->queue[0].fileName);
 //    this->prefetch(this->queue[0].fileName.c_str());
 
     this->file = new AudioFileSourceSPIFFS( this->queue[0].fileName.c_str() );
-    this->output = new AudioOutputI2SNoDAC();
+    //this->output = new AudioOutputI2S(0, AudioOutputI2S::INTERNAL_DAC, 32);
+    this->output = new AudioOutputI2SNoDAC(0, 8);
     this->output->SetGain(1.5f);
-    //this->output->SetOversampling(64);
-    this->mp3 = new AudioGeneratorMP3();
-    this->popKiller = new AudioGeneratorPopKiller( this->mp3, 20);
-    this->popKiller->begin(file, output);
+    this->output->SetRamp(100);
+    this->output->SetOversampling(64);
+    String fname = this->queue[0].fileName;
+    fname.toLowerCase();
+    if (fname.endsWith(".mp3"))
+    {
+      this->audioFile = new AudioGeneratorMP3();
+    }
+    else
+    {
+      this->audioFile = new AudioGeneratorWAV();
+    }
+    this->audioFile->begin(file, output);
 
     this->removeItem(0);
   }
 
-  if (this->popKiller)
+  if (this->audioFile)
   {
-    if ( this->popKiller->isRunning() )
+    if ( this->audioFile->isRunning() )
     {
-       if (!popKiller->loop()) 
+       if (!audioFile->loop()) 
        {
-         popKiller->stop();
+         audioFile->stop();
           Serial.println("AudioStop");
        }
     }
     else
     {
-      delete this->popKiller;
-      this->popKiller = NULL;
-
-      delete this->mp3;
-      this->mp3 = NULL;
+      delete this->audioFile;
+      this->audioFile = NULL;
 
       delete this->file;
       this->file = NULL;
@@ -77,7 +84,7 @@ bool AudioManager::loop( uint32_t t )
     }
   } 
 
-  return ( this->length || !!mp3 );
+  return ( this->length || !!audioFile );
 }
 
 //======================================================

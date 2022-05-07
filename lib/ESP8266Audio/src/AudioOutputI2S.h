@@ -40,15 +40,19 @@ class AudioOutputI2S : public AudioOutput
     virtual bool begin() override { return begin(true); }
     virtual bool ConsumeSample(int16_t sample[2]) override;
     virtual void flush() override;
+    virtual bool finish() override;
     virtual bool stop() override;
     
     bool begin(bool txDAC);
     bool SetOutputModeMono(bool mono);  // Force mono output no matter the input
     bool SetLsbJustified(bool lsbJustified);  // Allow supporting non-I2S chips, e.g. PT8211 
+    void SetRamp(unsigned int rampMs);
 
   protected:
     bool SetPinout();
     virtual int AdjustI2SRate(int hz) { return hz; }
+    void updateRampSamples();
+    virtual bool writeSample(int16_t ms[2]);
     uint8_t portNo;
     int output_mode;
     bool mono;
@@ -63,4 +67,10 @@ class AudioOutputI2S : public AudioOutput
     uint8_t bclkPin;
     uint8_t wclkPin;
     uint8_t doutPin;
+    unsigned long finalSamples;
+    unsigned int rampMs;
+    uint32_t startRampSamples;
+    uint32_t startRampSamplesTotal;
+    uint32_t endRampSamples;
+    uint32_t endRampSamplesTotal;
 };

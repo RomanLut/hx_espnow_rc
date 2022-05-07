@@ -66,8 +66,8 @@ void TXMain::setup()
   pinMode(14,OUTPUT);
   digitalWrite(14, HIGH );
 
-  pinMode(25,OUTPUT);  //speaker pin
   digitalWrite(25, LOW);
+  pinMode(25,OUTPUT);  //speaker pin
 
   TXInput::instance.init();
 
