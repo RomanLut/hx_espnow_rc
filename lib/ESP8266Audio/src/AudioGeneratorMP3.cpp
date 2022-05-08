@@ -30,7 +30,6 @@ AudioGeneratorMP3::AudioGeneratorMP3()
   buff = NULL;
   nsCountMax = 1152/32;
   madInitted = false;
-  hasLastSample = false;
 }
 
 AudioGeneratorMP3::AudioGeneratorMP3(void *space, int size): preallocateSpace(space), preallocateSize(size)
@@ -179,7 +178,6 @@ bool AudioGeneratorMP3::DecodeNextFrame()
 
 bool AudioGeneratorMP3::GetOneSample(int16_t sample[2])
 {
-  //Serial.println("MP3:GetOneSample");
   if (synth->pcm.samplerate != lastRate) {
     output->SetRate(synth->pcm.samplerate);
     lastRate = synth->pcm.samplerate;
@@ -193,7 +191,6 @@ bool AudioGeneratorMP3::GetOneSample(int16_t sample[2])
   if (samplePtr < synth->pcm.length) {
     sample[AudioOutput::LEFTCHANNEL ] = synth->pcm.samples[0][samplePtr];
     sample[AudioOutput::RIGHTCHANNEL] = synth->pcm.samples[1][samplePtr];
-  //Serial.println("CreatedSample1");
     samplePtr++;
   } else {
     samplePtr = 0;
@@ -208,13 +205,6 @@ bool AudioGeneratorMP3::GetOneSample(int16_t sample[2])
     // for IGNORE and CONTINUE, just play what we have now
     sample[AudioOutput::LEFTCHANNEL ] = lastSample[0];
     sample[AudioOutput::RIGHTCHANNEL] = lastSample[1];
-    /*
-  Serial.println("CreatedSample2");
-  Serial.println(sample[AudioOutput::LEFTCHANNEL ]);
-  Serial.println(sample[AudioOutput::RIGHTCHANNEL]);
-  Serial.println(samplePtr);
-  Serial.println(synth->pcm.length);
-  */
     samplePtr++;
   }
   return true;
@@ -231,7 +221,7 @@ bool AudioGeneratorMP3::loop()
   if (!running) goto done; // Nothing to do here!
 
   // First, try and push in the stored sample.  If we can't, then punt and try later
-  if (hasLastSample && !output->ConsumeSample(lastSample)) goto done; // Can't send, but no error detected
+  if (!output->ConsumeSample(lastSample)) goto done; // Can't send, but no error detected
 
   // Try and stuff the buffer one sample at a time
   do
@@ -269,7 +259,6 @@ retry:
       running = false;
       goto done;
     }
-    hasLastSample = true; 
   } while (running && output->ConsumeSample(lastSample));
 
 done:

@@ -37,7 +37,6 @@ class AudioOutputI2SNoDAC : public AudioOutputI2S
 
     virtual ~AudioOutputI2SNoDAC() override;
     virtual bool begin() override { return AudioOutputI2S::begin(false); }
-//    virtual bool ConsumeSample(int16_t sample[2]) override;
     
     bool SetOversampling(int os);
     

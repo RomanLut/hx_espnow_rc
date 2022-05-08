@@ -116,8 +116,6 @@ AudioOutputI2S::~AudioOutputI2S()
 
 bool AudioOutputI2S::SetRate(int hz)
 {
-  //Serial.print("SetRate ");
-  //Serial.println(hz);
   // TODO - have a list of allowable rates from constructor, check them
   this->hertz = hz;
   if (i2sOn)
@@ -180,8 +178,6 @@ void AudioOutputI2S::SetRamp(unsigned int rampMs)
 
 bool AudioOutputI2S::begin(bool txDAC)
 {
-        //Serial.println("Begin");
-
   #ifdef ESP32
     if (!i2sOn)
     {
@@ -332,7 +328,6 @@ bool AudioOutputI2S::writeSample(int16_t ms[2])
 
 bool AudioOutputI2S::ConsumeSample(int16_t sample[2])
 {
-
   //return if we haven't called ::begin yet
   if (!i2sOn)
     return false;
@@ -342,7 +337,8 @@ bool AudioOutputI2S::ConsumeSample(int16_t sample[2])
   ms[1] = sample[1];
   MakeSampleStereo16( ms );
 
-  if (this->mono) {
+  if (this->mono) 
+  {
     // Average the two samples and overwrite
     int32_t ttl = ms[LEFTCHANNEL] + ms[RIGHTCHANNEL];
     ms[LEFTCHANNEL] = ms[RIGHTCHANNEL] = (ttl>>1) & 0xffff;
@@ -351,44 +347,18 @@ bool AudioOutputI2S::ConsumeSample(int16_t sample[2])
   ms[LEFTCHANNEL] = Amplify(ms[LEFTCHANNEL]);
   ms[RIGHTCHANNEL] = Amplify(ms[RIGHTCHANNEL]);
 
-
-  //ms[0] = 0;
-  //ms[1] = 0;
-
   if ( startRampSamples > 0 )
   {
-    //if ( startRampSamples ==  startRampSamplesTotal) Serial.println("StartRamp1");
-
-    //lerp beetween -32768 and ms[]
+    //lerp between -32768 and ms[]
       
     uint16_t t = ((((int32_t)startRampSamples) << 8) / startRampSamplesTotal); //256...0
     int16_t v = -(t << 7);  //256 -> -32768
     t = 256 - t;
+
     ms[0] = v + ((ms[0] >> 8) * t);
     ms[1] = v + ((ms[1] >> 8) * t);
     
-    /*
-    Serial.print(startRampSamples);
-    Serial.print(" = ");
-    Serial.print(startRampSamplesTotal);
-    Serial.print(" = ");
-    Serial.println(ms[0]);
-    Serial.print(" t= ");
-    Serial.println(t);
-    Serial.print(" v= ");
-    Serial.println(v);
-    */
-    
     startRampSamples--;
-
-/*
-    if ( startRampSamples == 0) 
-    {
-      Serial.println(ms[0]);
-      Serial.println(ms[1]);
-      Serial.println("EndRamp1");
-    }
-*/    
   }
 
   return writeSample(ms);
@@ -421,43 +391,16 @@ bool AudioOutputI2S::finish()
 
   if ( endRampSamples > 0 )
   {
-    /*
-    if ( endRampSamples ==  endRampSamplesTotal)
-    {
-        Serial.println("StartRamp2");
-    }
-    */
-
     while ( endRampSamples > 0) 
     {
       ms[0] = -32768 + (((endRampSamples << 7) / endRampSamplesTotal) << 8);
       ms[1] = ms[0];
 
-/*
-      Serial.print(endRampSamples);
-      Serial.print(" = ");
-      Serial.print(endRampSamplesTotal);
-      Serial.print(" = ");
-      Serial.println(ms[0]);
-*/ 
       if ( !writeSample(ms) ) break;
       endRampSamples--;
     }
-/*
-      Serial.print(endRampSamples);
-      Serial.print(" = ");
-      Serial.print(endRampSamplesTotal);
-      Serial.print(" = ");
-      Serial.println(ms[0]);
-*/
+
     if ( endRampSamples > 0) return false;
-    
-    
-    /*
-    Serial.println(ms[0]);
-    Serial.println(ms[1]);
-    Serial.println("EndRamp2");
-    */
   }
 
   ms[0] = endRampSamplesTotal > 0 ? -32768 : 0; 

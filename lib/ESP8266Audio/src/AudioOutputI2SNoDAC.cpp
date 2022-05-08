@@ -79,7 +79,6 @@ void AudioOutputI2SNoDAC::DeltaSigma(int16_t sample[2], uint32_t dsBuff[8])
 {
   // Not shift 8 because addition takes care of one mult x 2
   int32_t sum = (((int32_t)sample[0]) + ((int32_t)sample[1])) >> 1;
-  //fixed24p8_t newSamp = ( (int32_t)Amplify(sum) ) << 8;
   fixed24p8_t newSamp = ( (int32_t)sum ) << 8;
 
   int oversample32 = oversample / 32;
@@ -107,43 +106,6 @@ void AudioOutputI2SNoDAC::DeltaSigma(int16_t sample[2], uint32_t dsBuff[8])
   }
 }
 
-/*
-bool AudioOutputI2SNoDAC::ConsumeSample(int16_t sample[2])
-{
-  int16_t ms[2];
-  ms[0] = sample[0];
-  ms[1] = sample[1];
-  MakeSampleStereo16( ms );
-
-  // Make delta-sigma filled buffer
-  uint32_t dsBuff[8];
-  DeltaSigma(ms, dsBuff);
-
-  // Either send complete pulse stream or nothing
-#ifdef ESP32
-//"i2s_write_bytes" has been removed in the ESP32 Arduino 2.0.0,  use "i2s_write" instead.
-//  if (!i2s_write_bytes((i2s_port_t)portNo, (const char *)dsBuff, sizeof(uint32_t) * (oversample/32), 0))
-
-  size_t i2s_bytes_written;
-  i2s_write((i2s_port_t)portNo, (const char *)dsBuff, sizeof(uint32_t) * (oversample/32), &i2s_bytes_written, 0);
-  if (!i2s_bytes_written){
-    return false;
-  }
-#elif defined(ESP8266)
-  if (!i2s_write_sample_nb(dsBuff[0])) return false; // No room at the inn
-  // At this point we've sent in first of possibly 8 32-bits, need to send
-  // remaining ones even if they block.
-  for (int i = 32; i < oversample; i+=32)
-    i2s_write_sample( dsBuff[i / 32]);
-#elif defined(ARDUINO_ARCH_RP2040)
-  int16_t *p = (int16_t *) dsBuff;
-  for (int i = 0; i < oversample / 16; i++) {
-    I2S.write(*(p++));
-  }
-#endif
-  return true;
-}
-*/
 
 bool AudioOutputI2SNoDAC::writeSample(int16_t ms[2])
 {
