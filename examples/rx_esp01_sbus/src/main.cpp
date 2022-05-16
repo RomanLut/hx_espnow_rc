@@ -40,7 +40,6 @@ void fillOutgoingTelemetry()
 void setup()
 {
   Serial.begin(TELEMETRY_BAUDRATE);
-//  Serial.println("Start");
 
   hxSBUSEncoder.init( Serial1, 2, SBUS_INVERTED );
 
@@ -86,12 +85,16 @@ void updateSBUSOutput()
 //=====================================================================
 void loop()
 {
+  hxrcTelemetrySerial.flushIn();
   processIncomingTelemetry();
+  
   fillOutgoingTelemetry();
+  hxrcTelemetrySerial.flushOut();
 
   hxrcSlave.setA2(hxrcSlave.getReceiverStats().getRSSI());
 
   hxrcSlave.loop();
+
 /*
   if (millis() - lastStats > 1000)
   {

@@ -1,32 +1,15 @@
 [Work in progress]
 
-DIY Transmitter 
+Audio files making
 
- Brief: 
-  GPIO2: LED
-  SERIAL2 - HC-06 module
+Make with voicemaker.in
+Neural TSS - Saili,Female
+mp3 24000
+all defaults
 
-Connections:
-
-  GPIO2: -> Yellow LED throught 220 Ohm
-
-  GPIO36 -> Left Stick X 
-  GPIO39 -> Left Stick Y
-  GPIO34 -> Right Stick X
-  GPIO35 -> Right Stick Y
-  GPIO32 -> Left bumper
-  GPIO33 -> Right bumper
-
-  Buttons to GND
-
-  Sticks to GND and 3.3V
-
-  GPIO16 -> HC-06 RX
-  GPIO17 -> HC-06 TX
-  3.3    -> HC-06 VCC
-  GND    -> HC-06 GND
-
-  TODO: Note:
-   12,13,15,14 is available for JTAG debugger
-
-
+Audicity
+ctrl+a
+Effect->Amplify
+6db
+Allow clipping
+Export to MP3 170-210kBit/sec, force mono

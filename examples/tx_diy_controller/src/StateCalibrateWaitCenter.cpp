@@ -2,6 +2,8 @@
 
 #include "StateCalibrateCenter.h"
 
+#include "AudioManager.h"
+
 #include "TXMain.h"
 #include "TXInput.h"
 
@@ -13,7 +15,17 @@ void StateCalibrateWaitCenter::onEnter()
 {
   this->stateTime = millis();
 
-  TXInput::instance.calibrateInitADC2();
+  TXInput::instance.calibrateAxisInitADC2();
+
+  if ( this->soundSkipCount == 0 ) 
+  {
+    AudioManager::instance.play( "/calibrate_center.mp3", AUDIO_GROUP_NONE );
+  }
+  this->soundSkipCount++;
+  if ( this->soundSkipCount > 10 )
+  {
+    this->soundSkipCount = 0;
+  }
 }
 
 //======================================================
@@ -30,11 +42,11 @@ void StateCalibrateWaitCenter::onRun(uint32_t t)
   }
 
   TXInput::instance.loop(t);
-  TXInput::instance.calibrateAdjustMidMinMaxADC();
+  TXInput::instance.calibrateAxisAdjustMidMinMaxADC();
 
   if ( t - stateTime > 1000)
   {
-    if ( TXInput::instance.isCenterCalibrationSuccessfull() ) 
+    if ( TXInput::instance.isAxisCenterCalibrationSuccessfull() ) 
     {
       StateBase::Goto( &StateCalibrateCenter::instance );
     }

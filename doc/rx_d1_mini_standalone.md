@@ -86,7 +86,7 @@ Motors generate a lot of noise. If board reboots or terminal looses connection, 
 
 Anternatively, repace 1uF capacitor on board with 20uF capacitor:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini_cap_33v.jpg "D1 Mini VBUS diode")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini_cap_33v.jpg "D1 Mini CAP")
 
 # Beeping with brushed motors.
 

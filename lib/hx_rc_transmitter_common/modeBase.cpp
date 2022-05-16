@@ -125,6 +125,7 @@ void ModeBase::startRequestedProfile()
             ErrorLog::instance.write("Unknown mode: ");
             ErrorLog::instance.write(modeName);
             ErrorLog::instance.write("\n");
+            ErrorLog::instance.signalError();
         }
 
         ModeBase::currentModeHandler->start(json);

@@ -2,6 +2,8 @@
 
 #include "StateCalibrateWaitCenter.h"
 
+#include "AudioManager.h"
+
 #include "TXMain.h"
 #include "TXInput.h"
 
@@ -12,7 +14,9 @@ StateCalibrateMinMax StateCalibrateMinMax::instance;
 void StateCalibrateMinMax::onEnter()
 {
     this->stateTime = millis();
-    TXInput::instance.calibrateInitADC();
+    TXInput::instance.calibrateAxisInitADC();
+
+    AudioManager::instance.play( "/calibrate_min_max.mp3", AUDIO_GROUP_NONE );
 }
 
 //======================================================
@@ -30,11 +34,11 @@ void StateCalibrateMinMax::onRun(uint32_t t)
 
   TXInput::instance.loop(t);
   
-  TXInput::instance.calibrateAdjustMinMaxADC();
+  TXInput::instance.calibrateAxisAdjustMinMaxADC();
 
   if ( t - stateTime > 7000)
   {
-    if ( TXInput::instance.isMinMaxCalibrationSuccessfull() ) 
+    if ( TXInput::instance.isAxisMinMaxCalibrationSuccessfull() ) 
     {
         StateBase::Goto(&StateCalibrateWaitCenter::instance);
     }

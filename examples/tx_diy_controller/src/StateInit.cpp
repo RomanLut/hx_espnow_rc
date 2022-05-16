@@ -45,11 +45,13 @@ void StateInit::onRun(uint32_t t)
      case 4: 
       if ( TXInput::instance.isCalibrateGesture() )
       {
+        AudioManager::instance.play( "/calibration.mp3", AUDIO_GROUP_NONE );
+        AudioManager::instance.waitFinish();
         StateBase::Goto(&StateCalibrateMinMax::instance);
       }
-      else if ( TXInput::instance.isInitGesture())
+      else if ( TXInput::instance.isButtonPressed(RIGHT_BUMPER_ID))
       {
-        currentProfileIndex = 10;  //Mode Config profile
+        currentProfileIndex = CONFIG_PROFILE_INDEX;  //Mode Config profile
         StateBase::Goto(&StateRun::instance);
       }
       else if ( TXInput::instance.isButtonPressed(LEFT_BUMPER_ID))

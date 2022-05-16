@@ -1,6 +1,7 @@
 #include "StateBase.h"
 #include "TXMain.h"
 
+#include "AudioManager.h"
 
 StateBase* StateBase::currentState = NULL;
 
@@ -51,4 +52,3 @@ void StateBase::SetLEDS4Profile(uint8_t profileIndex)
       break;
   }
 }
-

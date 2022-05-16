@@ -40,7 +40,10 @@
 			"memory": "cpp",
 			"system_error": "cpp",
 			"xlocale": "cpp",
-			"xiosbase": "cpp"
+			"xiosbase": "cpp",
+			"shared_mutex": "cpp",
+			"random": "cpp",
+			"xlocbuf": "cpp"
 		}
 	}
 }

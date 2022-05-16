@@ -43,7 +43,7 @@ bool AudioManager::loop( uint32_t t )
     this->file = new AudioFileSourceSPIFFS( this->queue[0].fileName.c_str() );
     //this->output = new AudioOutputI2S(0, AudioOutputI2S::INTERNAL_DAC, 32);
     this->output = new AudioOutputI2SNoDAC(0, 8);
-    this->output->SetGain(1.5f);
+    this->output->SetGain(1.3f);
     this->output->SetRamp(100);
     this->output->SetOversampling(64);
     String fname = this->queue[0].fileName;
@@ -67,7 +67,7 @@ bool AudioManager::loop( uint32_t t )
     {
        if (!audioFile->loop()) 
        {
-         audioFile->stop();
+          audioFile->stop();
           Serial.println("AudioStop");
        }
     }
@@ -133,11 +133,19 @@ void AudioManager::play( String fileName, uint8_t soundGroup)
   }
   if ( this->length == AUDIO_QUEUE_LENGTH )
   {
+    Serial.println("AudioManager::play() queue overflow");
     this->removeItem(0);
   }
   this->queue[this->length].soundGroup = soundGroup;
   this->queue[this->length].fileName = fileName;
   this->length++;
+}
+
+//======================================================
+//======================================================
+void AudioManager::sayProfile(int profileIndex)
+{
+  AudioManager::instance.play( String( "/profile") + (profileIndex + 1) + ".mp3", AUDIO_GROUP_PROFILE );
 }
 
 

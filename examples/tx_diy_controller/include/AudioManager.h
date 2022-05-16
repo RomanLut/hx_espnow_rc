@@ -84,6 +84,8 @@ public:
     void waitFinish();
 
     void play( String fileName, uint8_t soundGroup);
+    void sayProfile(int profileIndex);
+
 
 };
 

@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include <SPIFFS.h> 
+
 #include <esp_task_wdt.h>
 
 #include <SoftwareSerial.h>
@@ -75,8 +77,6 @@ void setup()
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 
-  TXProfileManager::loadConfig();
-
 #ifdef USE_SPORT  
   sport.init( &Serial, SPORT_PIN );
 
@@ -100,8 +100,10 @@ void setup()
 
   externalBTSerial.init(&Serial2, HC06_INTERFACE_RX_PIN, HC06_INTERFACE_TX_PIN);
 
+  SPIFFS.begin(true); //true -> format if mount failed
+
   ModeBase::currentModeHandler = &ModeIdle::instance;
-  ModeBase::currentModeHandler->start();
+  ModeBase::currentModeHandler->start(NULL);
 
   esp_task_wdt_reset();
 }

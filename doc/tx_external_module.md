@@ -105,6 +105,7 @@ Double-check all connections. Use M2.5 bolts to fix cover on the main part:
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/build18.jpg "Build step")
 
 Flash module with Examples/tx_external_module/
+Upload filesystem Examples/tx_external_module/
 
 Configure T-Lite to output SBUS (normal SBUS => inverted uart).
 
@@ -113,5 +114,22 @@ Configure T-Lite to output SBUS (normal SBUS => inverted uart).
 
 # See next
 
-Profiles https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_profiles.md
+Module can work in multiple modes. Mode is configured in profile. Profile is selected depending on CH16 value from RC Controller. Configure CH16 mixer to output constant value in OpenTX (use MAX with Weight 0 and adjust Offset).
+
+There are 10 profiles. Profile 10 is reserved for Configuration mode.
+
+For example:
+
+- 1000...1100 ( or -100%) - profile 1
+- 1100...1200 ( or -80%) - profile 2
+- 1200...1300 ( or -60%) - profile 3
+- 1300...1400 ( or -40%) - profile 4
+- 1400...1500 ( or -20%) - profile 5
+- 1500...1600 ( or 0%) - profile 6
+- 1600...1700 ( or -20%) - profile 7
+- 1700...1800 ( or -40%) - profile 8
+- 1800...1900 ( or -60%) - profile 9
+- 1900...2000 ( or -80%) - profile 10 (Configuration mode)
+
+See profiles https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_profiles.md
 

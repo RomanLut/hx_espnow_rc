@@ -1,6 +1,10 @@
 
 # Mapping
 
+Controller has to map available inputs ( axes, buttons, sliders ) to channels.
+Mapping is described in profile json.
+
+``
 {
     "transmitter_mode" : "ESPNOW",
     "espnow_channel" : 3,
@@ -17,11 +21,11 @@
         { "event" :"ALWAYS", "channel" : 6, "op" : "TRIGGER", "parm" : "RIGHT_BUMPER" }
     ]
 }
+``
 
+*Mapping is used in DIY RC controller. Mapping definition is ignored in External module. In external module, channels mapping is defined using OpenTX functionality.*
 
-Controller has to map available inputs ( axies, buttons, sliders ) to channels.
-Mapping is described in profile json.
-Mapping is a set of actions excuted one-by-one of each loop:
+Mapping is a set of actions executed one-by-one of each loop:
 
 { "event" :"ALWAYS", "channel" : "1", "op" : "AXIS", "parm" : "LEFT_STICK_X" }
 

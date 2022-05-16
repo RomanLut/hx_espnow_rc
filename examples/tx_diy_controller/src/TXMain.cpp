@@ -62,12 +62,11 @@ void TXMain::setup()
   this->initLEDS4Pins();
   this->setLEDS4(0);
 
-  //temp PIN 14 output 3.3V
-  pinMode(14,OUTPUT);
-  digitalWrite(14, HIGH );
+  digitalWrite(SPEAKER_PIN, LOW);
+  pinMode(SPEAKER_PIN,OUTPUT);  //speaker pin
 
-  digitalWrite(25, LOW);
-  pinMode(25,OUTPUT);  //speaker pin
+  pinMode(HC06_INTERFACE_TX_PIN,OUTPUT);
+  pinMode(HC06_INTERFACE_RX_PIN,INPUT);
 
   TXInput::instance.init();
 
@@ -75,8 +74,8 @@ void TXMain::setup()
 
   SPIFFS.begin(true); //true -> format if mount failed
 
-  TXInput::instance.initCalibrationData();
-  TXInput::instance.loadCalibrationData();
+  TXInput::instance.initAxisCalibrationData();
+  TXInput::instance.loadAxisCalibrationData();
 
   this->loadLastProfile();
 

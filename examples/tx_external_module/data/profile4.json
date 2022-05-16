@@ -1,0 +1,14 @@
+{
+    "transmitter_mode" : "BLEGAMEPAD",
+    "mapping":[
+        { "event" :"ALWAYS", "channel" : 1, "op" : "AXIS", "parm" : "LEFT_STICK_X" },
+        { "event" :"ALWAYS", "channel" : 2, "op" : "AXIS", "parm" : "LEFT_STICK_Y" },
+        { "event" :"ALWAYS", "channel" : 3, "op" : "AXIS", "parm" : "RIGHT_STICK_X" },
+        { "event" :"ALWAYS", "channel" : 4, "op" : "AXIS", "parm" : "RIGHT_STICK_Y" },
+        { "event" :"ALWAYS", "channel" : 5, "op" : "ADDITIVE", "parm" : "LEFT_STICK_Y", speed: 10 },
+        { "event" :"ALWAYS", "channel" : 7, "op" : "BUTTON", "parm" : "LEFT_BUMPER" },
+        { "event" :"ALWAYS", "channel" : 8, "op" : "BUTTON", "parm" : "RIGHT_BUMPER" }
+
+    ]
+
+}

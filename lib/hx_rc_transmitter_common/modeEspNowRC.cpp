@@ -108,9 +108,11 @@ void ModeEspNowRC::loop(
 
     setChannels(channels);
 
-    hxrcTelemetrySerial.flush();
+    hxrcTelemetrySerial.flushIn();
     processIncomingTelemetry(externalBTSerial);
+
     fillOutgoingTelemetry( externalBTSerial);
+    hxrcTelemetrySerial.flushOut();
 
     hxrcMaster.loop();
     hxrcMaster.updateLed( LED_PIN, true );  //LED_PIN is not inverted. Pass"inverted" flag so led is ON in idle mode

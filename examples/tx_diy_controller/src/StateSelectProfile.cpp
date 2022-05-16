@@ -2,6 +2,8 @@
 
 #include "StateRun.h"
 
+#include "AudioManager.h"
+
 #include "TXMain.h"
 #include "TXInput.h"
 
@@ -17,6 +19,8 @@ void StateSelectProfile::onEnter()
   this->profileIndex = currentProfileIndex;
 
   TXMain::instance.setLEDS4( 8 + 4 + 2 + 1 );
+
+  AudioManager::instance.play( "/select_profile.mp3", AUDIO_GROUP_NONE );
 }
 
 //======================================================
@@ -29,7 +33,8 @@ void StateSelectProfile::onRun(uint32_t t)
   {
     if ( 
       TXInput::instance.isButtonUnPressed(LEFT_BUMPER_ID) && 
-      TXInput::instance.isStickMiddle(RIGHT_STICK_X_ID)
+      TXInput::instance.isStickMiddle(RIGHT_STICK_X_ID) &&
+      TXInput::instance.isStickMiddle(LEFT_STICK_X_ID) 
       )
     {
       this->waitUnpress = false;
@@ -52,7 +57,7 @@ void StateSelectProfile::onRun(uint32_t t)
       TXMain::instance.setLEDS4( 0 );
     }
 
-    if ( TXInput::instance.isStickMin(RIGHT_STICK_X_ID) )
+    if ( TXInput::instance.isStickMin(LEFT_STICK_X_ID) || TXInput::instance.isStickMin(RIGHT_STICK_X_ID))
     {
       this->waitUnpress = true;
       if ( profileIndex == 0)
@@ -64,9 +69,10 @@ void StateSelectProfile::onRun(uint32_t t)
         profileIndex--;
       }
       this->SetLEDS4Profile(profileIndex);
+      AudioManager::instance.sayProfile(this->profileIndex);
     }
 
-    if ( TXInput::instance.isStickMax(RIGHT_STICK_X_ID) )
+    if ( TXInput::instance.isStickMax(LEFT_STICK_X_ID) || TXInput::instance.isStickMax(RIGHT_STICK_X_ID) )
     {
       this->waitUnpress = true;
       if ( profileIndex == 7)
@@ -78,6 +84,7 @@ void StateSelectProfile::onRun(uint32_t t)
         profileIndex++;
       }
       this->SetLEDS4Profile(profileIndex);
+      AudioManager::instance.sayProfile(this->profileIndex);
     }
 
     if ( TXInput::instance.isButtonPressed(LEFT_BUMPER_ID) )

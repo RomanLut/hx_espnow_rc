@@ -68,6 +68,8 @@ void ModeXiroMini::start( JsonDocument* json )
 
     this->connected = false;
 
+    JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
+
     WiFi.mode(WIFI_AP_STA);
     esp_wifi_set_protocol (WIFI_IF_STA, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N );
     esp_wifi_set_protocol (WIFI_IF_AP, WIFI_PROTOCOL_11B|WIFI_PROTOCOL_11G|WIFI_PROTOCOL_11N );
@@ -79,12 +81,12 @@ void ModeXiroMini::start( JsonDocument* json )
     WiFi.softAPConfig(local, dns, netmask);
 
     //access point part
-    WiFi.softAP("XIRO_RC","XIRO1234",3,0,3);
+    WiFi.softAP( (*profile)["ap_name"] | "XIRO_RC", (*profile)["ap_password"] | "XIRO1234", (*profile)["ap_channel"] | 3, 0, 3 );
     HXRCLOG.print("AP IP:\n");
     HXRCLOG.println(WiFi.softAPIP());
 
     //station part
-    WiFi.begin("XPLORER_Mini_0b4a41", "XIRO1234");    
+    WiFi.begin( (*profile)["drone_name"] | "XPLORER_Mini_0b4a41", (*profile)["drone_password"] | "XIRO1234");    
 
     delay(1000);
 

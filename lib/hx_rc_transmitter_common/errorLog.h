@@ -9,7 +9,8 @@ class ErrorLog
 {
 private:
     bool writeOnceDisabled = false;
-    
+    bool hasError = false;
+
 public:
     static ErrorLog instance;
 
@@ -18,6 +19,9 @@ public:
     void write( const char* msg);
     void writeOnce( const char* msg);
     void disableWriteOnce();
+    
+    void signalError();
+    bool getHasErrorAndClear();
 };
 
 

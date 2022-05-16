@@ -35,7 +35,7 @@ private:
     uint16_t lastButtonsState;   //a bit for each button 1 << id
     uint16_t buttonPressEvents; // bit for each button 1 << id
 
-    void initAxisPins();
+    void initADCPins();
     void initButtonPins();
     void readADCEx(int pin, uint16_t* v );
     void readADC(uint32_t t);
@@ -83,22 +83,21 @@ public:
 
     void init();
     
-    void initCalibrationData();
-    void loadCalibrationData();
-    void saveCalibrationData();
+    void initAxisCalibrationData();
+    void loadAxisCalibrationData();
+    void saveAxisCalibrationData();
 
     void getChannelValues( HXChannels* channelValues );
 
     bool isCalibrateGesture();
-    bool isInitGesture();
 
-    void calibrateInitADC();
-    void calibrateAdjustMinMaxADC();
-    bool isMinMaxCalibrationSuccessfull();
+    void calibrateAxisInitADC();
+    void calibrateAxisAdjustMinMaxADC();
+    bool isAxisMinMaxCalibrationSuccessfull();
 
-    void calibrateInitADC2();
-    void calibrateAdjustMidMinMaxADC();
-    bool isCenterCalibrationSuccessfull();
+    void calibrateAxisInitADC2();
+    void calibrateAxisAdjustMidMinMaxADC();
+    bool isAxisCenterCalibrationSuccessfull();
 
     bool isButtonPressed(uint8_t buttonId);
     bool isButtonUnPressed(uint8_t buttonId);

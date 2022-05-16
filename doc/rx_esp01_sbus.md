@@ -43,9 +43,9 @@ Failsafe flag is passed in SBUS packets. Channels retain last good values.
 
 # 1k resistor (R1)
                                                
-SBUS output is GPIO2. If GPIO2 is pulled down, ESP board boot fails. Typical SBUS invertor schematix on flight controller includes 1k resistor to the base/gate of transistor and 10k pulldown resistor from base/gate to GND. Effectively, GPIO2 is grounded. The easiest way to solve this is to add 1k pullup resistor. Another option is to use inverted SBUS input on FC, which is not pulled down.
+SBUS output is GPIO2. If GPIO2 is pulled down, ESP board boot fails. Typical SBUS invertor schematix on flight controller includes 1k resistor to the base/gate of transistor and 10k pulldown resistor from base/gate to GND. Effectively, GPIO2 is grounded. The easiest way to solve this is to add 1k pullup resistor. 
 
-If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then R1 value show be decreased, down to 1k. Alternativelly, connect GPIO2 to FC through diode (cathode to ESP01).
+If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then R1 value show be decreased, down to 470Ohm. Alternativelly, connect GPIO2 to FC through diode (cathode to ESP01).
 
 # Building steps
 

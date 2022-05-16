@@ -5,6 +5,7 @@
 #include "ModeConfig.h"
 
 #include "AudioManager.h"
+#include "ErrorLog.h"
 
 StateRun StateRun::instance;
 
@@ -12,7 +13,7 @@ StateRun StateRun::instance;
 //======================================================
 void StateRun::onEnter()
 {
-  AudioManager::instance.play( String( "/profile") + (currentProfileIndex+1) + ".mp3", AUDIO_GROUP_PROFILE );
+  AudioManager::instance.sayProfile(currentProfileIndex);
   AudioManager::instance.waitFinish();
 }
 
@@ -30,10 +31,22 @@ void StateRun::onRun(uint32_t t)
 
   if ( ModeBase::currentModeHandler == &ModeConfig::instance )
   {
+    if ( this->configAudioOnce )
+    {
+      this->configAudioOnce = false;
+      AudioManager::instance.play( "/config_mode.mp3", AUDIO_GROUP_NONE );
+      AudioManager::instance.waitFinish();
+    }
+
     TXMain::instance.setLEDS4(  (t % 1000) > 500 ?  8 +4 +2 + 1 : 0); 
   }
   else
   {
     this->SetLEDS4Profile(currentProfileIndex);
+  }
+
+  if ( ErrorLog::instance.getHasErrorAndClear())
+  {
+    AudioManager::instance.play( "/error.mp3", AUDIO_GROUP_NONE );
   }
 }

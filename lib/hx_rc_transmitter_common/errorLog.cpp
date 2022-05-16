@@ -45,3 +45,19 @@ void ErrorLog::disableWriteOnce()
 {
     this->writeOnceDisabled = true;
 }
+
+//=====================================================================
+//=====================================================================
+void ErrorLog::signalError()
+{
+    this->hasError = true;
+}
+
+//=====================================================================
+//=====================================================================
+bool ErrorLog::getHasErrorAndClear()
+{
+    bool res = this->hasError;
+    this->hasError = false;
+    return res;
+}

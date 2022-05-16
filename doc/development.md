@@ -4,14 +4,6 @@
 
  test_* projects are used to test the library. Flash one board with *_tx and other with *_rx project, with same wifi channel, key and LR mode setting(or leave settings by default). Statistic is output to console. On TTGO Display board statistic is also output on the screen.
 
- dx_mini_rx_standalone - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md - Servo/PWM/Discrete output receiver with telemetry
-
- esp01_rx_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md - ESP-01 based SBUS receiver
-
- esp32_rc_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md - ESP32 based SBUS receiver
-
- esp32_devkit_v1_tx - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/transmitter_external_module.md - external module for Jumper T-Lite transmitter
-
  test_d1_mini_tx - Master(transmitter) test on D1 Mini board
 
  test_esp32_devkit_rx - Slave(receiver) test on ESP32 Devkit V1 board or similar
@@ -19,6 +11,20 @@
  test_esp32_devkit_tx - Master(transmitter) test on ESP32 Devkit V1 board or similar
 
  test_ttgo_display_rx - Slave(receiver) test on TTGO Display board 
+
+ Receiver projects:
+
+ rx_d1_mini_standalone - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md - Servo/PWM/Discrete output receiver with telemetry
+
+ rx_esp01_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md - ESP-01 based SBUS receiver
+
+ rx_esp32_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md - ESP32 based SBUS receiver
+
+ Transmitter projects:
+
+ tx_external_module - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_external_module.md - external module for Jumper T-Lite or compatible RC controller
+
+ tx_diy_controller - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_diy_controller.md - base project for DIY RC controller
 
 
  See classes reference: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/classes.md

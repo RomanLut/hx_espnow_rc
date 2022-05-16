@@ -115,8 +115,11 @@ void loop()
 {
   esp_task_wdt_reset();
 
+  hxrcTelemetrySerial.flushIn();
   processIncomingTelemetry();
+  
   fillOutgoingTelemetry();
+  hxrcTelemetrySerial.flushOut();
 
   hxrcSlave.setA2(hxrcSlave.getReceiverStats().getRSSI());
 

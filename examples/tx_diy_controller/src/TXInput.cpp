@@ -16,11 +16,12 @@ TXInput::TXInput()
 
 //=====================================================================
 //=====================================================================
-void TXInput::initAxisPins()
+void TXInput::initADCPins()
 {
   for ( int i = 0; i < ADC_COUNT; i++ )
   {
     pinMode(ADC_PINS[i],INPUT);
+    this->ADC[i] = 2048;
   }
 }
 
@@ -47,16 +48,16 @@ void TXInput::init()
 
   this->resetLastChannelValues();
 
-  this->initAxisPins();
+  this->initADCPins();
   this->initButtonPins();
 }
 
 
 //=====================================================================
 //=====================================================================
-void TXInput::initCalibrationData()
+void TXInput::initAxisCalibrationData()
 {
-  for ( int i = 0; i < ADC_COUNT; i++ )
+  for ( int i = 0; i < AXIS_COUNT; i++ )
   {
     this->ADC[i] = 2048;
     this->ADCMin[i] = 0;
@@ -73,7 +74,7 @@ void TXInput::initCalibrationData()
 
 //=====================================================================
 //=====================================================================
-void TXInput::loadCalibrationData()
+void TXInput::loadAxisCalibrationData()
 {
   File file = SPIFFS.open("/calibration.json");
 
@@ -86,7 +87,7 @@ void TXInput::loadCalibrationData()
     return;
   }
 
-  for ( int i = 0; i < ADC_COUNT; i++ )
+  for ( int i = 0; i < AXIS_COUNT; i++ )
   {
     ADCMin[i] = json["axis"][i]["min"] | 0;
     ADCMax[i] = json["axis"][i]["max"] | 4096;
@@ -99,7 +100,7 @@ void TXInput::loadCalibrationData()
 
 //=====================================================================
 //=====================================================================
-void TXInput::saveCalibrationData()
+void TXInput::saveAxisCalibrationData()
 {
   File configFile = SPIFFS.open("/calibration.json", FILE_WRITE);
   if (!configFile) 
@@ -109,7 +110,7 @@ void TXInput::saveCalibrationData()
   }
   DynamicJsonDocument json(512);
 
-  for ( int i =0; i < ADC_COUNT; i++ )
+  for ( int i =0; i < AXIS_COUNT; i++ )
   {
     json["axis"][i]["min"] = this->ADCMin[i];
     json["axis"][i]["max"] = this->ADCMax[i];
@@ -254,7 +255,7 @@ void TXInput::getChannelValuesDefault( HXChannels* channelValues )
     channelValues->channelValue[i] = 1000;
   }
 
-  for ( int i = 0; i < ADC_COUNT; i++ )
+  for ( int i = 0; i < AXIS_COUNT; i++ )
   {
     channelValues->channelValue[i] = this->mapADCValue(i);
   }
@@ -315,7 +316,7 @@ int TXInput::getAxisIdByName(const char* parm)
   }  
   else
   {
-      for ( int i = 0; i < ADC_COUNT; i++)
+      for ( int i = 0; i < AXIS_COUNT; i++)
       {
         char axisName[32];
         sprintf( axisName, "AXIS%d", i);
@@ -597,16 +598,9 @@ bool TXInput::isCalibrateGesture()
 
 //=====================================================================
 //=====================================================================
-bool TXInput::isInitGesture()
+void TXInput::calibrateAxisInitADC()
 {
-  return analogRead(RIGHT_STICK_X_PIN) > 3500 &&  analogRead(RIGHT_STICK_Y_PIN) < 500;
-}
-
-//=====================================================================
-//=====================================================================
-void TXInput::calibrateInitADC()
-{
-  for ( int i = 0; i < ADC_COUNT; i++ )
+  for ( int i = 0; i < AXIS_COUNT; i++ )
   {
     ADCMin[i] = ADCMax[i] = 2048;
   }
@@ -614,9 +608,9 @@ void TXInput::calibrateInitADC()
 
 //=====================================================================
 //=====================================================================
-void TXInput::calibrateAdjustMinMaxADC()
+void TXInput::calibrateAxisAdjustMinMaxADC()
 {
-  for ( int i = 0; i < ADC_COUNT; i++)
+  for ( int i = 0; i < AXIS_COUNT; i++)
   {
     int v = ADC[i];
     if ( ADCMin[i] > v ) ADCMin[i] = v;
@@ -626,9 +620,9 @@ void TXInput::calibrateAdjustMinMaxADC()
 
 //=====================================================================
 //=====================================================================
-bool TXInput::isMinMaxCalibrationSuccessfull()
+bool TXInput::isAxisMinMaxCalibrationSuccessfull()
 {
-  for ( int i = 0; i < ADC_COUNT; i++)
+  for ( int i = 0; i < AXIS_COUNT; i++)
   {
     if ( ADCMin[i] > 500 || ADCMax[i] < (4096-500 ))
     {
@@ -636,7 +630,7 @@ bool TXInput::isMinMaxCalibrationSuccessfull()
     }
   }
   
-  for ( int i = 0; i < ADC_COUNT; i++)
+  for ( int i = 0; i < AXIS_COUNT; i++)
   {
     ADCMin[i] >>= 2;
     ADCMax[i] >>= 2;
@@ -651,9 +645,9 @@ bool TXInput::isMinMaxCalibrationSuccessfull()
 
 //=====================================================================
 //=====================================================================
-void TXInput::calibrateInitADC2()
+void TXInput::calibrateAxisInitADC2()
 {
-  for ( int i = 0; i < ADC_COUNT; i++ )
+  for ( int i = 0; i < AXIS_COUNT; i++ )
   {
     ADCMidMin[i]= ADCMidMax[i] = ADC[i];
   }
@@ -661,9 +655,9 @@ void TXInput::calibrateInitADC2()
 
 //=====================================================================
 //=====================================================================
-void TXInput::calibrateAdjustMidMinMaxADC()
+void TXInput::calibrateAxisAdjustMidMinMaxADC()
 {
-  for ( int i = 0; i < ADC_COUNT; i++)
+  for ( int i = 0; i < AXIS_COUNT; i++)
   {
     int v = ADC[i];
     if ( ADCMidMin[i] > v ) ADCMidMin[i] = v;
@@ -673,9 +667,9 @@ void TXInput::calibrateAdjustMidMinMaxADC()
 
 //=====================================================================
 //=====================================================================
-bool TXInput::isCenterCalibrationSuccessfull()
+bool TXInput::isAxisCenterCalibrationSuccessfull()
 {
-  for ( int i = 0; i < ADC_COUNT; i++)
+  for ( int i = 0; i < AXIS_COUNT; i++)
   {
     if ( (ADCMidMax[i] - ADCMidMin[i] ) > 500 ) return false;
   }
@@ -684,7 +678,7 @@ bool TXInput::isCenterCalibrationSuccessfull()
   Serial.printf( "%04d %04d %04d %04d\n", ADCMidMin[0]>>2, ADCMidMin[1]>>2, ADCMidMin[2]>>2, ADCMidMin[3]>>2 );
   Serial.printf( "%04d %04d %04d %04d\n", ADCMidMax[0]>>2, ADCMidMax[1]>>2, ADCMidMax[2]>>2, ADCMidMax[3]>>2 );
 
-  for ( int i = 0; i < ADC_COUNT; i++)
+  for ( int i = 0; i < AXIS_COUNT; i++)
   {
     int d = ADCMidMax[i] - ADCMidMin[i];
     ADCMidMin[i] -= d/10 + 4;
