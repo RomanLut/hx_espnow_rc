@@ -53,7 +53,7 @@
 //#define BUTTON4_PIN         14  // pulled up
 //#define BUTTON5_PIN         15  
 //Free: 4 (generic) 
-//Free: 0 (pullerd up)
+//Free: 0 (pulled up)
 
 #define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN, LEFT_TRIGGER_PIN, RIGHT_TRIGGER_PIN/*, BUTTON4_PIN, BUTTON5_PIN*/};
 
