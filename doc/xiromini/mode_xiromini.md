@@ -40,8 +40,8 @@ On the RC controller, configure the following channels output:
 **Channels 1-4**: AETR
 
 - A right+
-- E down+ ( set tje weight to -100 )
-- T down+ ( set the weight to -100 )
+- E down+ ( set the weight to -100 in OpenTX )
+- T down+ ( set the weight to -100 in OpenTX)
 - R right+
 
 
@@ -59,7 +59,7 @@ On the RC controller, configure the following channels output:
 - +100: 100m 
 - 0: 420m. 
 
-Channel 10 can be used as "GPS Rescue" feature. If limit is changed to 100m, quadcopter will fly back into 100m zone. Altitude is not changed (?Not comfirmed).
+Channel 10 can be used as "GPS Rescue" feature. If limit is changed to 100m, quadcopter will fly back into 100m zone. Altitude is not changed (?Not confirmed).
 
 # Telemetry
 
