@@ -2,6 +2,8 @@
 
 This is base project for building DIY RC controller, or modifying gamepad/RC controller.
 
+RC controller can work in multiple modes. Controls are mapped to channels according to mapping defined in profiles.
+
 [WORK IN PROGRESS]
 
 - [x] Build on breadboard
@@ -85,5 +87,6 @@ See **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/do
 # See next
 
 Profiles https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_profiles.md
-Mapping https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mapping.md
+
+Controls mapping https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mapping.md
 
