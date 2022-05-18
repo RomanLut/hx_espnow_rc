@@ -43,7 +43,16 @@
 			"xiosbase": "cpp",
 			"shared_mutex": "cpp",
 			"random": "cpp",
-			"xlocbuf": "cpp"
+			"xlocbuf": "cpp",
+			"*.rh": "cpp",
+			"numeric": "cpp",
+			"typeinfo": "cpp",
+			"locale": "cpp",
+			"xlocinfo": "cpp",
+			"xlocnum": "cpp",
+			"xloctime": "cpp",
+			"xstddef": "cpp",
+			"xxatomic": "cpp"
 		}
 	}
 }

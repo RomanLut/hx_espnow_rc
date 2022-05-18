@@ -1,7 +1,7 @@
 {
     "transmitter_mode" : "XIROMINI",
     "ap_name" : "XIRO_RC",
-    "ap_password" : "XIRO1234"
+    "ap_password" : "XIRO1234",
 	"ap_channel" : 3,
 	"drone" : "XPLORER_Mini_0b4a41",
  	"drone_password" : "XIRO1234"
