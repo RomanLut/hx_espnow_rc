@@ -13,7 +13,7 @@ Example profile1.json:
     "ap_name" : "hxrct",
     "ap_password" : ""
 }
-``
+```
 
 **Configuration Mode** is enabled if profile json is not found or can not be parsed
 
