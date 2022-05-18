@@ -1,6 +1,6 @@
 # Configuration mode
 
-This mode is used to edit or upload profiles with ftp.
+This mode is used to edit or upload profiles via ftp.
 
 Profile 10 is reserved for **Configuration mode**. It is not necessary to upload **profile10.json**. 
 
