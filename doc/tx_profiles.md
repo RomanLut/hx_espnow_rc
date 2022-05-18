@@ -29,10 +29,10 @@ This profile is reserved for **Configuration mode** https://github.com/RomanLut/
 
 # Modes 
 
-hx_espnow_rc https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_hx_espnow_rc.md
+`ESPNOW` hx_espnow_rc https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_hx_espnow_rc.md
 
-Xiro Xplorer Mini quadcopter  https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/xiromini/mode_xiromini.md
+`XIROMINI` Xiro Xplorer Mini quadcopter  https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/xiromini/mode_xiromini.md
 
-BLE gamepad https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_ble_gamepad.md
+`BLEGAMEPAD` BLE gamepad https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_ble_gamepad.md
 
-Configuration mode https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
+`CONFIG` Configuration mode https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
