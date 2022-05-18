@@ -3,7 +3,7 @@
 Profles are defined in json files on SIPFFS filesystem.
 Files are named profile1.json, profile2.json etc.
 
-Example profile1.json:
+Example **profile1.json**:
 ```json
 {
     "transmitter_mode" : "ESPNOW",
