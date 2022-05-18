@@ -9,7 +9,7 @@ In this mode, controller is creating WIFI access point with FTP server.
 It is possible to change **Configuration mode** default properties by uploading **profile10.json**.
 
 
-profile10.json
+**profile10.json** example:
 ```json
 {
     "transmitter_mode" : "CONFIG",
