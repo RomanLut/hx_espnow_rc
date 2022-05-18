@@ -4,11 +4,6 @@ This is base project for building DIY RC controller, or modifying gamepad/RC con
 
 [TODO]
 
-Controller can work in multiple modes:
-- ESP_NOW DIY RC system
-- WIFI controlled drones
-- BLE Gamepad.
-
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_controller_prototype.jpg "DIY controller prototype")
 
 # Parts list
@@ -48,46 +43,37 @@ Flash module with Examples/tx_diy_controller/
 Upload filesystem Examples/tx_diy_controller/
 
 
-#Sticks calibration
+# Sticks calibration
 
-To enter sticks calibration mode, power the controller with left stick moved LEFT DOWN. Controller will indicate calibration phase with LEDS and audio messages.
+To enter **sticks calibration mode**, power the controller with **left stick moved LEFT DOWN**. Controller will indicate calibration phase with LEDS and audio messages.
 
-1) LED pattern: *..* .**. Move all sticks and external axes to the min and max positions.
-2) LED pattern: .**. Move all sticks and external axis to center position.
+1) `LED pattern: *..* .**.` Move all sticks and external axes to the min and max positions.
+2) `LED pattern: .**.` Move all sticks and external axis to center position.
 
 # Profile selection
 
-To select profile, power controller with LEFT Bumper pressed.
+To enable **Profile slection mode**, power controller **with LEFT Bumper pressed**.
 Move left or right stick left and right to select profile 1...8.
 LED patterns: 
-1 *... 
-2 .*.. 
-3 ..*. 
-4 ...* 
-5 .*** 
-6 *.** 
-7 **.* 
-8 ***. 
+- `1 *...` 
+- `2 .*..` 
+- `3 ..*.` 
+- `4 ...*` 
+- `5 .***` 
+- `6 *.**` 
+- `7 **.*` 
+- `8 ***.`
 
-Press LEFT bumper to use selected profile. Selected profile will be stored and also used on next boot.
+Press **LEFT Bumper** to use selected profile. Selected profile will be stored and also used on next boot.
 
 
 # Configration mode
 
-To force configuration mode, power the controller with RIGHT bumper pressed.
+To force **configuration mode**, power the controller with **RIGHT Bumper** pressed.
 
-Configuration mode is used to upload profiles to controller filesystem.
-In this mode, controller is creating Wifi access point and FTP server.
-FTP server can be used to edit/upload profile json files.
+**Configuration mode** is used to upload profiles to controller filesystem.
 
-``
-wifi ap: hxrct
-wifi password: [empty]
-ftp user: anonymous
-ftp password: anonymous
-``
-
-To change theese settings, edit Configuration mode profile (profile10.json).
+See **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
 
 # See next
 
