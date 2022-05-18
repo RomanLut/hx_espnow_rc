@@ -20,3 +20,5 @@ It is possible to change **Configuration mode** default properties by uploading 
 }
 
 ```
+
+As always, you can also upload whole filesystem with PlatformIO.
