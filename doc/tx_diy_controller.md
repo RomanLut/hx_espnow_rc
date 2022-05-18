@@ -2,14 +2,15 @@
 
 This is base project for building DIY RC controller, or modifying gamepad/RC controller.
 
-[TODO]
+[WORK IN PROGRESS]
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_controller_prototype.jpg "DIY controller prototype")
 
-# Parts list
+# Connection diagram
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_controller_connections.jpg "DIY controller connections")
 
+# Parts list
 
 - ESP32 DevkitC U32 or ESP32 Devkit V1 
 - HC-06 bluetooth module
