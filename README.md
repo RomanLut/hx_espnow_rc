@@ -9,7 +9,7 @@
 - [x] build ESP-01 based SBUS output receiver 
 - [x] build ESP32 based SBUS output receiver, LR mode 
 - [x] external module for Jumper T-Lite: select active profile by CH16 value 
-- [.] DYI RC Controller
+- [x] DYI RC Controller
 - [ ] test range with xq-02a amplifier
 - [x] external module for Jumper T-Lite: multiple profiles in xml file
 - [ ] external module for Jumper T-Lite: web page for profiles editing
@@ -41,12 +41,12 @@ Used in INAV 1.7.3 plane: https://www.youtube.com/watch?v=UptvxsFHDFA
 
 Used in INAV 3.0.2 plane: https://youtu.be/GYB-UckucRA
 
-You can build transmitter external module for RC Controller with external bay, and SBUS/PWM receiver using guides below.
+You can build **transmitter module for RC Controller with Externamo module bay**, **DIY RC controller**, and **SBUS/PWM receiver** using guides below.
 
 See building guides:
 
-- external module for Jumpter T-Lite (JR Bay): https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_external_module.md
-- external module for Radiomaster TX16s (Normal bay) [todo]
+- transmitter module for Jumpter T-Lite (JR Bay): https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_external_module.md
+- module for Radiomaster TX16s JR bay [todo]
 - standalone Servo/PWM output receiver based on d1_mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md
 - ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md
 - D1 Mini based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_sbus.md
