@@ -25,7 +25,7 @@ Examples can be found in folder: https://github.com/RomanLut/hx_espnow_rc/blob/m
 
 # Profile 10 (Configuration mode)
 
-This profile is reserved for configuration mode https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
+This profile is reserved for **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
 
 # Modes 
 
