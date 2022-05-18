@@ -28,7 +28,7 @@ Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diagram.jpg "Diagram")
 
-Transmits 18 channels at 50 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
+Transmits 16 channels at 50 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
 Can be used as cheap RC for LOS flights or up to 1km flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
@@ -41,16 +41,16 @@ Used in INAV 1.7.3 plane: https://www.youtube.com/watch?v=UptvxsFHDFA
 
 Used in INAV 3.0.2 plane: https://youtu.be/GYB-UckucRA
 
-You can build **transmitter module for RC Controller with Externamo module bay**, **DIY RC controller**, and **SBUS/PWM receiver** using guides below.
+You can build **transmitter module for RC Controller with External module bay**, **DIY RC controller**, and **SBUS/PWM receiver** using guides below.
 
 See building guides:
 
 - transmitter module for Jumpter T-Lite (JR Bay): https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_external_module.md
 - DIY RC Controller: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_diy_controller.md
 - module for Radiomaster TX16s JR bay [todo]
-- standalone Servo/PWM output receiver based on d1_mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md
+- standalone Servo/PWM output receiver based on Wemos D1 mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md
 - ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md
-- D1 Mini based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_sbus.md
+- Wemos D1 Mini based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_sbus.md
 - ESP32 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md
 - development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 - recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
@@ -125,7 +125,7 @@ See packets timing: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rfpow
 # Building and Flashing
 Currently pre-build firmware is not provided. You have to build firmware yourself and flash ESP32/ESP8266 modules using PlatformIO https://platformio.org/
 
-If you do not know what PlatformIO is, than this project is not for you at the current stage. Later I may try to provide pre-build binaries and detailed instructions for flashing and configuring transmitter and receviers.
+If you do not know what PlatformIO is, than this project is not for you at the current stage. Later I may try to provide pre-build binaries and detailed instructions for flashing and configuring transmitter and receivers.
 
 See development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 
