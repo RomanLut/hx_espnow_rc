@@ -4,6 +4,12 @@ This is base project for building DIY RC controller, or modifying gamepad/RC con
 
 [WORK IN PROGRESS]
 
+- [x] Build on breadboard
+- [x] Implement firmware
+- [ ] Modify Dji Mini 1 RC Controller 
+
+
+
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_controller_prototype.jpg "DIY controller prototype")
 
 # Connection diagram
@@ -15,8 +21,7 @@ This is base project for building DIY RC controller, or modifying gamepad/RC con
 - ESP32 DevkitC U32 or ESP32 Devkit V1 
 - HC-06 bluetooth module
 - DIY powerbank board
-- Resistors: 10K 4x, 510Ohm, 1MHom, 2MOhm
-- variable resistor 1k
+- Resistors: 4x 10K, 510Ohm, 1MOhm, 2MOhm
 - 4 LEDs
 - SMA to U.FL wire or Wifi antenna with feeder cable
 - Sticks x2
@@ -29,8 +34,9 @@ This is base project for building DIY RC controller, or modifying gamepad/RC con
 - 100uF capacitor
 - 47uH 0.37A inductance
  
-*Note: I do not recommend to use Arduino joysticks like KY-23 or RC controllers from toys. They have huge dead zones and low angles whenre values change.*
-*I recommend to get original XBOX/Dualshock joysticks ("3D Analog dualshock"), joysticks from serious RC controllers, modify original Dualshock/XBOX gamepads, or modify RC controllers with good joysticks.*
+*Note: I do not recommend to use Arduino joysticks like KY-23 or RC controllers from toys. They have huge dead zones and low angles where values change.*
+
+*I recommend to get original XBOX/Dualshock sticks ("3D Analog dualshock"), sticks from serious RC controllers, or modify original Dualshock/XBOX gamepads or RC controllers with good sticks.*
 
 *Connections diagram is shown for 4-axis, 4-buttons RC controller. As there are few pins left, it is possible to add one axis and two buttons. Axes and buttons are configured in include\txConfig.h*
 
@@ -55,7 +61,7 @@ To enter **sticks calibration mode**, power the controller with **left stick mov
 
 To enable **Profile slection mode**, power controller **with LEFT Bumper pressed**.
 Move left or right stick left and right to select profile 1...8.
-LED patterns: 
+LED pattern corresponds to profile number: 
 - `1 *...` 
 - `2 .*..` 
 - `3 ..*.` 
@@ -70,7 +76,7 @@ Press **LEFT Bumper** to use selected profile. Selected profile will be stored a
 
 # Configration mode
 
-To force **configuration mode**, power the controller with **RIGHT Bumper** pressed.
+To force **Configuration mode**, power the controller with **RIGHT Bumper** pressed.
 
 **Configuration mode** is used to upload profiles to controller filesystem.
 
