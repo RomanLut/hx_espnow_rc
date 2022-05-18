@@ -1,7 +1,7 @@
 # Profiles 
 
 Profles are defined in json files on SIPFFS filesystem.
-Files are named profile1.json, profile2.json etc.
+Files are named **profile1.json**, **profile2.json** etc.
 
 Example **profile1.json**:
 ```json
