@@ -85,4 +85,5 @@ See **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/do
 # See next
 
 Profiles https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_profiles.md
+Mapping https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mapping.md
 
