@@ -4,8 +4,6 @@ This is external transmitter module for Jumper T-Lite.
 
 In general, can be built for any RC controller with SBUS output.
 
-Multiple profiles are selected by CH16 value https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_profiles.md
-
 Module can emulate BLE Gamepad.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "Transmitter module")
