@@ -15,7 +15,7 @@ Example **profile1.json**:
 }
 ```
 
-**Configuration Mode** is enabled if profile json is not found or can not be parsed
+**Configuration Mode** is enabled if profile json is not found or can not be parsed.
 
 Most important entry in the file is `"transmitter_mode"`. This parameter defines mode of the transmitter. Other parameters are dependent on transmitter mode.
 
