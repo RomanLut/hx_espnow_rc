@@ -32,8 +32,13 @@ class TXMain
 {
 private:
 
+    uint32_t bluetoothCheckTime;
+    bool lastBluetoothState;
+
     void initLedPin();
     void initLEDS4Pins();
+
+    void checkBluetoothState(uint32_t t);
 
 public:
     static TXMain instance;

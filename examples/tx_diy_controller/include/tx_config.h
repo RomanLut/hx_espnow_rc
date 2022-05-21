@@ -5,12 +5,17 @@
 #define HC06_INTERFACE_RX_PIN  16  //SERIAL2 RX
 #define HC06_INTERFACE_TX_PIN  17  //SERIAL2 TX
 
+//uncomment if LEDS are inverted (connected to +3.3V)
+#define LED_INVERT
+
 #define LED1_PIN 13
-#define LED2_PIN 12
+#define LED2_PIN 14
 #define LED3_PIN 27
 #define LED4_PIN 23
 
 #define SPEAKER_PIN 22  
+
+#define HC06_LED_PIN 4
 
 //--------------------------------------------
 #define AXIS_COUNT 4
@@ -52,8 +57,8 @@
 #define RIGHT_TRIGGER_PIN   21
 //#define BUTTON4_PIN         14  // pulled up
 //#define BUTTON5_PIN         15  
-//Free: 4 (generic) 
 //Free: 0 (pulled up)
+//Free: 12 (boot fails if pooled high)
 
 #define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN, LEFT_TRIGGER_PIN, RIGHT_TRIGGER_PIN/*, BUTTON4_PIN, BUTTON5_PIN*/};
 

@@ -3,6 +3,8 @@
 #include "StateInit.h"
 #include "AudioManager.h"
 
+#define BLUETOOTH_CHECK_PERIOD_MS 3000
+
 uint8_t currentProfileIndex;
 HC06Interface externalBTSerial;
 
@@ -31,22 +33,43 @@ void TXMain::initLEDS4Pins()
   pinMode(LED2_PIN, OUTPUT);
   pinMode(LED3_PIN, OUTPUT);
   pinMode(LED4_PIN, OUTPUT);
+#ifdef LED_INVERT  
+  digitalWrite(LED1_PIN, HIGH);
+  digitalWrite(LED2_PIN, HIGH);
+  digitalWrite(LED3_PIN, HIGH);
+  digitalWrite(LED4_PIN, HIGH);
+#endif
 }
 
 //=====================================================================
 //=====================================================================
 void TXMain::setLEDS4(uint8_t v)
 {
+ #ifdef LED_INVERT
+  digitalWrite(LED1_PIN, (v & 8)>0? LOW:HIGH );
+  digitalWrite(LED2_PIN, (v & 4)>0? LOW:HIGH );
+  digitalWrite(LED3_PIN, (v & 2)>0? LOW:HIGH );
+  digitalWrite(LED4_PIN, (v & 1)>0? LOW:HIGH );
+ #else
   digitalWrite(LED1_PIN, (v & 8)>0? HIGH:LOW );
   digitalWrite(LED2_PIN, (v & 4)>0? HIGH:LOW );
   digitalWrite(LED3_PIN, (v & 2)>0? HIGH:LOW );
   digitalWrite(LED4_PIN, (v & 1)>0? HIGH:LOW );
+#endif  
 }
 
 //=====================================================================
 //=====================================================================
 void TXMain::setup()
 {
+  this->initLedPin();
+  this->setLed(true);
+
+  this->initLEDS4Pins();
+  this->setLEDS4(0);
+
+  pinMode(HC06_LED_PIN, INPUT);
+
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 
@@ -55,12 +78,6 @@ void TXMain::setup()
   externalBTSerial.init(&Serial2, HC06_INTERFACE_RX_PIN, HC06_INTERFACE_TX_PIN);
 
   HXRCLOG.println("Start");
-
-  this->initLedPin();
-  this->setLed(true);
-
-  this->initLEDS4Pins();
-  this->setLEDS4(0);
 
   digitalWrite(SPEAKER_PIN, LOW);
   pinMode(SPEAKER_PIN,OUTPUT);  //speaker pin
@@ -85,6 +102,9 @@ void TXMain::setup()
   AudioManager::instance.init();
 
   StateBase::Goto(&StateInit::instance);
+
+  this->bluetoothCheckTime = millis() + 5000;
+  this->lastBluetoothState = false;
 }
 
 //=====================================================================
@@ -129,6 +149,23 @@ void TXMain::saveLastProfile()
   configFile.close();
 }
 
+//=====================================================================
+//=====================================================================
+void TXMain::checkBluetoothState(uint32_t t)
+{
+  if ( t > (this->bluetoothCheckTime + BLUETOOTH_CHECK_PERIOD_MS ))
+  {
+    this->bluetoothCheckTime = t;
+    bool b = digitalRead(HC06_LED_PIN) == HIGH;
+    if ( this->lastBluetoothState != b )
+    {
+      this->lastBluetoothState = b;
+      AudioManager::instance.play( b ? "/bt_connected.mp3" : "/bt_disconnected.mp3", AUDIO_GROUP_NONE );
+    }
+  }
+
+  //Serial.println( digitalRead(HC06_LED_PIN) == HIGH ? "H" : "L");
+}
 
 //=====================================================================
 //=====================================================================
@@ -142,6 +179,8 @@ void TXMain::loop()
   StateBase::currentState->onRun(t);
 
   AudioManager::instance.loop(t);
+
+  this->checkBluetoothState(t);
 
   //digitalWrite(25, (t % 10) > 5 ? LOW : HIGH);
 }
