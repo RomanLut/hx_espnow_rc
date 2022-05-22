@@ -47,6 +47,14 @@ RC controller can work in multiple modes. Controls are mapped to channels accord
 
 [TODO]
 
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_sticks.jpg "Mavic Mini RC sticks")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_cam_control.jpg "Mavic camera control")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_led_board.jpg  "Mavic LED board")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_battery.jpg "Mavic battery")
+
 Flash module with Examples/tx_diy_controller/
 
 Upload filesystem Examples/tx_diy_controller/
