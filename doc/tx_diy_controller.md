@@ -62,7 +62,9 @@ Upload filesystem Examples/tx_diy_controller/
 
 # Sticks calibration
 
-To enter **sticks calibration mode**, power the controller with **left stick moved LEFT DOWN**. Controller will indicate calibration phase with LEDS and audio messages.
+To enter **sticks calibration mode**, power the controller with **Right Trigger pressed**. Controller will indicate calibration phase with LEDS and audio messages.
+
+Alternatively, delete **calibration.json** to enter calibration mode.
 
 1) `LED pattern: *..* .**.` Move all sticks and external axes to the min and max positions.
 2) `LED pattern: .**.` Move all sticks and external axis to center position.
