@@ -52,6 +52,10 @@ void ErrorLog::disableWriteOnce()
 bool ErrorLog::getHasError()
 {
     bool res = this->hasError && !this->hadError;
+
+    if ( res)
+    {
     this->hadError = true;
+    }
     return res;
 }
