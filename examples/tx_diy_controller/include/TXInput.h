@@ -60,6 +60,7 @@ private:
     int16_t chClamp(int16_t value);
 
     int16_t chAdditive(int16_t value, const char* axisName, int speed, int32_t dT);
+    void printADCArray( const char* title, const uint16_t* array, int shr );
 
 public:
 
@@ -67,17 +68,19 @@ public:
 
     uint32_t lastADCRead;
     static const uint8_t ADC_PINS[ADC_COUNT];
-    uint16_t ADC[ADC_COUNT];
-    uint16_t ADCMin[ADC_COUNT];
-    uint16_t ADCMax[ADC_COUNT];
-    uint16_t ADCMidMin[ADC_COUNT];
-    uint16_t ADCMidMax[ADC_COUNT];
+    uint16_t ADC[ADC_COUNT];  //value*4 => 0...4095*4 
+    uint16_t ADCMin[ADC_COUNT];  //0...4095
+    uint16_t ADCMax[ADC_COUNT];  //0...4095
+    uint16_t ADCMidMin[ADC_COUNT]; //0...4095
+    uint16_t ADCMidMax[ADC_COUNT]; //0...4095
 
     uint32_t lastButtonsRead;
     static const uint8_t BUTTON_PINS[BUTTONS_COUNT];
     uint8_t buttonData[BUTTONS_COUNT];
 
     uint32_t lastAdditiveProcessing;
+
+    bool calibrationDataLoadedOk;
 
     TXInput();
 
@@ -88,8 +91,6 @@ public:
     void saveAxisCalibrationData();
 
     void getChannelValues( HXChannels* channelValues );
-
-    bool isCalibrateGesture();
 
     void calibrateAxisInitADC();
     void calibrateAxisAdjustMinMaxADC();

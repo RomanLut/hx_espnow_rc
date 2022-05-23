@@ -9,8 +9,9 @@ StateBase* StateBase::currentState = NULL;
 //======================================================
 void StateBase::Goto(StateBase* s)
 {
+  StateBase* prev = StateBase::currentState;
   StateBase::currentState = s;
-  StateBase::currentState->onEnter();
+  StateBase::currentState->onEnter(prev);
 }
 
 //======================================================

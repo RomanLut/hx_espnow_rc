@@ -46,6 +46,8 @@ void TXInput::init()
   this->lastButtonsState = 0;
   this->buttonPressEvents = 0;
 
+  this->calibrationDataLoadedOk = false;
+
   this->resetLastChannelValues();
 
   this->initADCPins();
@@ -76,6 +78,8 @@ void TXInput::initAxisCalibrationData()
 //=====================================================================
 void TXInput::loadAxisCalibrationData()
 {
+  this->calibrationDataLoadedOk = false;
+
   File file = SPIFFS.open("/calibration.json");
 
   DynamicJsonDocument json(512);
@@ -96,6 +100,8 @@ void TXInput::loadAxisCalibrationData()
   }
 
   file.close();
+
+  this->calibrationDataLoadedOk = true;
 }
 
 //=====================================================================
@@ -126,13 +132,14 @@ void TXInput::saveAxisCalibrationData()
 //=====================================================================
 //=====================================================================
 //*v is current value * 4
+//so v is in range 0...4095*4
 void TXInput::readADCEx(int pin, uint16_t* v )
 {
   uint16_t sample[8];
   uint16_t mean = 0; 
   for ( int i = 0; i < 8; i++ )
   {
-    sample[i]=analogRead(pin);
+    sample[i]=analogRead(pin);  //analogRead() => 0..4095
     mean += sample[i];
   }
   mean >>= 3;
@@ -351,6 +358,14 @@ int TXInput::getButtonIdByName( const char* parm)
   else if ( strcmp(parm, "RIGHT_BUMPER") == 0 )
   {
     return RIGHT_BUMPER_ID;
+  }  
+  if ( strcmp(parm, "LEFT_TRIGGER") == 0 )
+  {
+    return LEFT_TRIGGER_ID;
+  }  
+  else if ( strcmp(parm, "RIGHT_TRIGGER") == 0 )
+  {
+    return RIGHT_TRIGGER_ID;
   }  
   else
   {
@@ -591,18 +606,12 @@ void TXInput::getChannelValues( HXChannels* channelValues )
 
 //=====================================================================
 //=====================================================================
-bool TXInput::isCalibrateGesture()
-{
-  return analogRead(LEFT_STICK_X_PIN) < 500 &&  analogRead(LEFT_STICK_Y_PIN) < 500;
-}
-
-//=====================================================================
-//=====================================================================
 void TXInput::calibrateAxisInitADC()
 {
   for ( int i = 0; i < AXIS_COUNT; i++ )
   {
-    ADCMin[i] = ADCMax[i] = 2048;
+    ADCMin[i] = 4095 * 4;
+    ADCMax[i] = 0;
   }
 }
 
@@ -620,11 +629,26 @@ void TXInput::calibrateAxisAdjustMinMaxADC()
 
 //=====================================================================
 //=====================================================================
-bool TXInput::isAxisMinMaxCalibrationSuccessfull()
+void TXInput::printADCArray( const char* title, const uint16_t* array, int shr )
 {
+  Serial.print(title);
   for ( int i = 0; i < AXIS_COUNT; i++)
   {
-    if ( ADCMin[i] > 500 || ADCMax[i] < (4096-500 ))
+    Serial.printf( "%04d ", array[i] >> shr );
+  }
+  Serial.print("\n");
+}
+
+//=====================================================================
+//=====================================================================
+bool TXInput::isAxisMinMaxCalibrationSuccessfull()
+{
+  this->printADCArray("Min: ", ADCMin, 2);
+  this->printADCArray("Max: ", ADCMax, 2);
+
+  for ( int i = 0; i < AXIS_COUNT; i++)
+  {
+    if ( (ADCMax[i] - ADCMin[i]) < 1000*4)
     {
       return false;          
     }
@@ -636,9 +660,8 @@ bool TXInput::isAxisMinMaxCalibrationSuccessfull()
     ADCMax[i] >>= 2;
   }
 
-  Serial.println("Min, Max:");
-  Serial.printf( "%04d %04d %04d %04d\n", ADCMin[0], ADCMin[1], ADCMin[2], ADCMin[3] );
-  Serial.printf( "%04d %04d %04d %04d\n", ADCMax[0], ADCMax[1], ADCMax[2], ADCMax[3] );
+  this->printADCArray("Min: ", ADCMin, 0);
+  this->printADCArray("Max: ", ADCMax, 0);
 
   return true;
 }
@@ -674,9 +697,10 @@ bool TXInput::isAxisCenterCalibrationSuccessfull()
     if ( (ADCMidMax[i] - ADCMidMin[i] ) > 500 ) return false;
   }
 
-  Serial.println("Middle Min, Max:");
-  Serial.printf( "%04d %04d %04d %04d\n", ADCMidMin[0]>>2, ADCMidMin[1]>>2, ADCMidMin[2]>>2, ADCMidMin[3]>>2 );
-  Serial.printf( "%04d %04d %04d %04d\n", ADCMidMax[0]>>2, ADCMidMax[1]>>2, ADCMidMax[2]>>2, ADCMidMax[3]>>2 );
+  this->printADCArray("MidMin: ", ADCMidMin, 2);
+  this->printADCArray("MidMax: ", ADCMidMax, 2);
+
+  uint16_t delta[AXIS_COUNT];
 
   for ( int i = 0; i < AXIS_COUNT; i++)
   {
@@ -686,12 +710,13 @@ bool TXInput::isAxisCenterCalibrationSuccessfull()
 
     ADCMidMin[i] >>= 2;
     ADCMidMax[i] >>= 2;
+
+    delta[i] = ADCMidMax[i] - ADCMidMin[i];
   }
 
-  Serial.println("Middle Min, Max, delta, adjusted:");
-  Serial.printf( "%04d %04d %04d %04d\n", ADCMidMin[0], ADCMidMin[1], ADCMidMin[2], ADCMidMin[3] );
-  Serial.printf( "%04d %04d %04d %04d\n", ADCMidMax[0], ADCMidMax[1], ADCMidMax[2], ADCMidMax[3] );
-  Serial.printf( "%04d %04d %04d %04d\n", (ADCMidMax[0] - ADCMidMin[0]), (ADCMidMax[1] - ADCMidMin[1]),  (ADCMidMax[2] - ADCMidMin[2]), (ADCMidMax[3] - ADCMidMin[3]));
+  this->printADCArray("MidMin: ", ADCMidMin, 0);
+  this->printADCArray("MidMax: ", ADCMidMax, 0);
+  this->printADCArray("delta : ", delta, 0);
 
   return true;
 }

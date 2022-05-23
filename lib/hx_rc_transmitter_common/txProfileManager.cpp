@@ -32,7 +32,6 @@ void TXProfileManager::loadConfig(int profileIndex)
             ErrorLog::instance.write("Unable to open ");
             ErrorLog::instance.write(fname);
             ErrorLog::instance.write("\n");
-            ErrorLog::instance.signalError();
         }
 
         deserializeJson(this->json, configProfile);
@@ -50,7 +49,6 @@ void TXProfileManager::loadConfig(int profileIndex)
         ErrorLog::instance.write(": ");
         ErrorLog::instance.write(error.c_str());
         ErrorLog::instance.write("\n");
-        ErrorLog::instance.signalError();
 
         deserializeJson(this->json, configProfile);
 

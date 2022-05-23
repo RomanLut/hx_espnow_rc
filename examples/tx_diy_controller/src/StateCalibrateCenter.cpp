@@ -11,7 +11,7 @@ StateCalibrateCenter StateCalibrateCenter::instance;
 
 //======================================================
 //======================================================
-void StateCalibrateCenter::onEnter()
+void StateCalibrateCenter::onEnter(StateBase *prevState)
 {
   this->stateTime = millis();
 

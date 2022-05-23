@@ -11,7 +11,7 @@ StateSelectProfile StateSelectProfile::instance;
 
 //======================================================
 //======================================================
-void StateSelectProfile::onEnter()
+void StateSelectProfile::onEnter(StateBase *prevState)
 {
   this->stateTime = millis();
   this->waitUnpress = true;

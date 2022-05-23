@@ -13,7 +13,7 @@ StateInit StateInit::instance;
 
 //======================================================
 //======================================================
-void StateInit::onEnter()
+void StateInit::onEnter(StateBase *prevState)
 {
   this->stateTime = millis();  
 
@@ -43,7 +43,7 @@ void StateInit::onRun(uint32_t t)
       TXMain::instance.setLEDS4( 8 + 4 + 2 + 1 ); 
       break;
      case 4: 
-      if ( TXInput::instance.isCalibrateGesture() )
+      if ( TXInput::instance.isButtonPressed(RIGHT_TRIGGER_ID) || !TXInput::instance.calibrationDataLoadedOk)
       {
         AudioManager::instance.play( "/calibration.mp3", AUDIO_GROUP_NONE );
         AudioManager::instance.waitFinish();

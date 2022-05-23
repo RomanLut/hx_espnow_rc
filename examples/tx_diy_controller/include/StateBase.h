@@ -35,7 +35,7 @@ public:
 
     static void Goto(StateBase* s);
 
-    virtual void onEnter();
+    virtual void onEnter(StateBase *prevState);
     virtual void onRun(uint32_t t);
 
     void SetLEDS4Profile(uint8_t profileIndex);

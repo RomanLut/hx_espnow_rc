@@ -11,7 +11,7 @@ StateRun StateRun::instance;
 
 //======================================================
 //======================================================
-void StateRun::onEnter()
+void StateRun::onEnter(StateBase *prevState)
 {
   AudioManager::instance.sayProfile(currentProfileIndex);
   AudioManager::instance.waitFinish();
@@ -45,7 +45,7 @@ void StateRun::onRun(uint32_t t)
     this->SetLEDS4Profile(currentProfileIndex);
   }
 
-  if ( ErrorLog::instance.getHasErrorAndClear())
+  if ( ErrorLog::instance.getHasError())
   {
     AudioManager::instance.play( "/error.mp3", AUDIO_GROUP_NONE );
   }

@@ -11,10 +11,13 @@ StateCalibrateMinMax StateCalibrateMinMax::instance;
 
 //======================================================
 //======================================================
-void StateCalibrateMinMax::onEnter()
+void StateCalibrateMinMax::onEnter(StateBase *prevState)
 {
     this->stateTime = millis();
-    TXInput::instance.calibrateAxisInitADC();
+    if ( prevState != &StateCalibrateMinMax::instance )
+    {
+      TXInput::instance.calibrateAxisInitADC();
+    }
 
     AudioManager::instance.play( "/calibrate_min_max.mp3", AUDIO_GROUP_NONE );
 }

@@ -18,7 +18,7 @@
 #define HC06_LED_PIN 4
 
 //--------------------------------------------
-#define AXIS_COUNT 4
+#define AXIS_COUNT 5
 
 #define ADC_COUNT (AXIS_COUNT + 1) //+battery pin
 
@@ -37,7 +37,7 @@
 #define BAT_ADC_PIN         33
 
 
-#define ADC_PINS_LIST {LEFT_STICK_X_PIN, LEFT_STICK_Y_PIN, RIGHT_STICK_X_PIN, RIGHT_STICK_Y_PIN, /*EXT_AXIS_PIN,*/ BAT_ADC_PIN};
+#define ADC_PINS_LIST {LEFT_STICK_X_PIN, LEFT_STICK_Y_PIN, RIGHT_STICK_X_PIN, RIGHT_STICK_Y_PIN, EXT_AXIS_PIN, BAT_ADC_PIN};
 
 //--------------------------------------------
 #define BUTTONS_COUNT 4

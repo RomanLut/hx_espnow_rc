@@ -11,7 +11,7 @@ StateCalibrateWaitCenter StateCalibrateWaitCenter::instance;
 
 //======================================================
 //======================================================
-void StateCalibrateWaitCenter::onEnter()
+void StateCalibrateWaitCenter::onEnter(StateBase *prevState)
 {
   this->stateTime = millis();
 

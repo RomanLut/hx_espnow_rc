@@ -19,6 +19,7 @@ ErrorLog::ErrorLog()
 void ErrorLog::write( const char* msg )
 {
     Serial.print(msg);
+    this->hasError = true;
 
     File logFile = SPIFFS.open("/errorLog.txt", FILE_APPEND);
     if (!logFile) 
@@ -48,16 +49,9 @@ void ErrorLog::disableWriteOnce()
 
 //=====================================================================
 //=====================================================================
-void ErrorLog::signalError()
+bool ErrorLog::getHasError()
 {
-    this->hasError = true;
-}
-
-//=====================================================================
-//=====================================================================
-bool ErrorLog::getHasErrorAndClear()
-{
-    bool res = this->hasError;
-    this->hasError = false;
+    bool res = this->hasError && !this->hadError;
+    this->hadError = true;
     return res;
 }

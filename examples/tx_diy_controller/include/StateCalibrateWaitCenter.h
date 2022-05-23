@@ -13,7 +13,7 @@ public:
 
     static StateCalibrateWaitCenter instance;
 
-    virtual void onEnter() override;
+    virtual void onEnter(StateBase *prevState) override;
     virtual void onRun(uint32_t t) override;
 
 };
