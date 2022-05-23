@@ -107,6 +107,8 @@ public:
     bool isStickMiddle(uint8_t stickId);
     bool isStickMax(uint8_t stickId);
 
+    void dumpADC();
+
     void loop(uint32_t t);
 
 };

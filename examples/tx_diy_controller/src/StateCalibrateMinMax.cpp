@@ -50,4 +50,6 @@ void StateCalibrateMinMax::onRun(uint32_t t)
         StateBase::Goto(&StateCalibrateMinMax::instance);
     }
   }
+
+  TXInput::instance.dumpADC();
 }
