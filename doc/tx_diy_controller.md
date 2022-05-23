@@ -53,6 +53,8 @@ Pictures below provide hints for converting Mavic Mini 1 controller.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_cam_control.jpg "Mavic camera control")
 
+**LB**, **RB** are **HOME** and **Power** buttons. **LT** and **RT** are **Record** and **Photo** buttons.
+
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_led_board.jpg  "Mavic LED board")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_battery.jpg "Mavic battery")
