@@ -45,6 +45,8 @@ RC controller can work in multiple modes. Controls are mapped to channels accord
 
 # Building guide
 
+Pictures below provide hints for converting Mavic Mini 1 controller.
+
 [TODO]
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_sticks.jpg "Mavic Mini RC sticks")
@@ -68,6 +70,8 @@ Alternatively, delete **calibration.json** to enter calibration mode.
 
 1) `LED pattern: *..* .**.` Move all sticks and external axes to the min and max positions.
 2) `LED pattern: .**.` Move all sticks and external axis to center position.
+
+*Note: At the min/max calibration step, calibrate sliders and non-self-centerix axes(throttle if any) first (move min/max), then **move sliders and non-self-centering axis to central positon**. Move self-centering axes second.*
 
 # Profile selection
 
