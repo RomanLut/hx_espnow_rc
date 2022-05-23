@@ -59,6 +59,14 @@ Pictures below provide hints for converting Mavic Mini 1 controller.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_battery.jpg "Mavic battery")
 
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_1.jpg  "Mavic mini rc 1")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_2.jpg  "Mavic mini rc 2")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_3.jpg  "Mavic mini rc 3")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_4.jpg  "Mavic mini rc 4")
+
 Flash module with Examples/tx_diy_controller/
 
 Upload filesystem Examples/tx_diy_controller/
