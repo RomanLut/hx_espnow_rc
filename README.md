@@ -19,6 +19,7 @@
 - [ ] SBUS receiver: SPORT telemetry quering
 - [ ] PPM output
 - [ ] FSHH ? 
+- [ ] Pure mavlink control instead of SBUS
 
 
 # hx_espnow_rc
