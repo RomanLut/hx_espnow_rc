@@ -18,6 +18,7 @@
 - [ ] external module for Jumper T-Lite: telemetry translation: CRSF stream -> SPORT
 - [ ] SBUS receiver: SPORT telemetry quering
 - [ ] PPM output
+- [ ] FSHH ? 
 
 
 # hx_espnow_rc
