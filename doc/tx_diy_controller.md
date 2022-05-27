@@ -74,14 +74,22 @@ Upload filesystem Examples/tx_diy_controller/
 
 # Sticks calibration
 
-To enter **sticks calibration mode**, power the controller with **Right Trigger pressed**. Controller will indicate calibration phase with LEDS and audio messages.
+To enter **sticks calibration mode**, power the controller **with RIGHT Trigger pressed**. Controller will indicate calibration phase with LEDS and audio messages.
+
+*Hold Right Bumper for ~3 seconds untill RC controller is powered completely.*
 
 Alternatively, delete **calibration.json** to enter calibration mode.
 
-1) `LED pattern: *..* .**.` Move all sticks and external axes to the min and max positions.
-2) `LED pattern: .**.` Move all sticks and external axis to center position.
+1) `LED pattern: *..* .**.` Move all sticks and external axes to the min and max positions. Press **LEFT Bumper** to continue.
+2) `LED pattern: .**.` Move all sticks and external axis to center position. 
 
-*Note: At the min/max calibration step, calibrate sliders and non-self-centerix axes(throttle if any) first (move min/max), then **move sliders and non-self-centering axis to central positon**. Move self-centering axes second.*
+  Press **LEFT Bumper** to start calibratin. 
+  
+  Ligthly touch and move sticks and external axes in the range of backlash. RC controller will record this range of movement as central position.
+  
+  Press **LEFT Bumper** to finish calibratin. 
+  
+Calibration data is saved to **calibration.json**.
 
 # Profile selection
 
