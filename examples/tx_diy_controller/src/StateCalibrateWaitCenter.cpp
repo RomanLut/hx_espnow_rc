@@ -19,7 +19,10 @@ void StateCalibrateWaitCenter::onEnter(StateBase *prevState)
     this->waitUnpress = true;
   }
 
-  AudioManager::instance.play( (this->count & 1 ) == 0 ?  "/calibrate_center.mp3" : "/lb_start_calibration.mp3", AUDIO_GROUP_NONE );
+  if ( this->count != 1 ) 
+  {
+    AudioManager::instance.play( (this->count & 1 ) == 0 ?  "/calibrate_center.mp3" : "/lb_start_calibration.mp3", AUDIO_GROUP_NONE );
+  }
   if ( this->count == 0 ) AudioManager::instance.play( "/lb_start_calibration.mp3", AUDIO_GROUP_NONE );
   this->count++;
 }
