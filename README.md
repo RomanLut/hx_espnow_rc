@@ -35,6 +35,8 @@ Transmits 16 channels at 50 Hz, bidirectional telemetry(transparent stream) and 
 Can be used as cheap RC for LOS flights or up to 1km flights.
 Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
+Used in DIY RC Controller: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_diy_controller.md
+
 Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/mahowii
 
 Used in DIY ESP8266 plane: https://www.youtube.com/watch?v=c9dDOX0IzME
