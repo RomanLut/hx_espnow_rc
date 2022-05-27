@@ -102,7 +102,7 @@ void AudioManager::waitFinish()
 //======================================================
 void AudioManager::removeItem(int index)
 {
-  for ( int i = index + 1; i < this->length; i++ )
+  for ( int i = index; i < this->length - 1; i++ )
   {
     this->queue[i] = this->queue[i+1];
   }

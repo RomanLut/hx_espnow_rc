@@ -8,7 +8,8 @@ class StateCalibrateWaitCenter: public StateBase
 {
 private:
     uint32_t stateTime;
-    int soundSkipCount = 0;
+    bool waitUnpress;
+    int count = 0;
 public:
 
     static StateCalibrateWaitCenter instance;

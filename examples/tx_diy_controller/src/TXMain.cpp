@@ -182,7 +182,9 @@ void TXMain::loop()
 
   this->checkBluetoothState(t);
 
-  //digitalWrite(25, (t % 10) > 5 ? LOW : HIGH);
+  //TXInput::instance.dumpBatADC();
+
+  //digitalWrite(2, (t % 10) > 5 ? LOW : HIGH);
 }
 
 

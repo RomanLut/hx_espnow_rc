@@ -12,6 +12,10 @@ TXInput TXInput::instance;
 //=====================================================================
 TXInput::TXInput()
 {
+  for ( int i = 0; i < HXRC_CHANNELS_COUNT; i++)
+  {
+    this->additiveAccumulator[i] = 0;
+  }
 }
 
 //=====================================================================
@@ -291,14 +295,26 @@ int16_t TXInput::chMul10(int16_t value, int mul)
 
 //=====================================================================
 //=====================================================================
-int16_t TXInput::chAdditive(int16_t value, const char* axisName, int speed, int32_t dT)
+int16_t TXInput::chAdditive(int16_t* value, int32_t* additiveAccumulator, const char* axisName, int speed, int32_t dT)
 {
+  //dt*speed => number of ms
+  //1000 change => 1000ms * speed / 10000
+  //speed = 1000 / 1000 * 10000 = 10000ms
+  //10 seconds for full range change with speed 1
+  //1 second for full range change with speed 10
 
-  value = value  + (this->getAxisValueByName(axisName) - 1500) * dT * speed / 10000;
+  (*additiveAccumulator) += (int32_t)(this->getAxisValueByName(axisName) - 1500) * dT * speed;
 
-  if ( value < 1000) return 1000;
-  if ( value > 2000) return 2000;
-  return value;
+  int add = (*additiveAccumulator) / 10000;
+
+  (*value) += add;
+  (*additiveAccumulator) -= (int32_t)add * 10000;
+
+  //Serial.println((*additiveAccumulator));
+
+  if ( *value < 1000) return 1000;
+  if ( *value > 2000) return 2000;
+  return *value;
 }
 
 //=====================================================================
@@ -408,14 +424,14 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
 
   uint32_t t = millis();
   int32_t dT = t - this->lastAdditiveProcessing;
-  if ( dT > 10 )  //process every 10ms to avoid to small values in integer math
+  if ( dT > 10 )  //process minimum every 10ms to avoid to small values in integer math
   {
     this->lastAdditiveProcessing = t;
-    if ( dT>10) dT = 0;
+    if ( dT>100) dT = 0;  //sanitize value
   }
   else
   {
-    dT = 10;
+    dT = 0;
   }
 
   for ( int i = 0; i < mapping.size(); i++)
@@ -544,7 +560,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       }
       else if ( strcmp(op, "ADDITIVE") == 0)
       {
-        channelValues->channelValue[channelIndex] = this->chAdditive( channelValues->channelValue[channelIndex], action["parm"] | "", (action["speed"] | 1 ), dT  );
+        this->chAdditive( &(channelValues->channelValue[channelIndex]), &(this->additiveAccumulator[channelIndex]), action["parm"] | "", (action["speed"] | 1 ), dT  );
       }
       else if ( strcmp(op, "SOUND") == 0)
       {
@@ -641,19 +657,8 @@ void TXInput::printADCArray( const char* title, const uint16_t* array, int shr )
 
 //=====================================================================
 //=====================================================================
-bool TXInput::isAxisMinMaxCalibrationSuccessfull()
+void TXInput::finishAxisMinMaxCalibration()
 {
-  this->printADCArray("Min: ", ADCMin, 2);
-  this->printADCArray("Max: ", ADCMax, 2);
-
-  for ( int i = 0; i < AXIS_COUNT; i++)
-  {
-    if ( (ADCMax[i] - ADCMin[i]) < 1000*4)
-    {
-      return false;          
-    }
-  }
-  
   for ( int i = 0; i < AXIS_COUNT; i++)
   {
     ADCMin[i] >>= 2;
@@ -662,8 +667,14 @@ bool TXInput::isAxisMinMaxCalibrationSuccessfull()
 
   this->printADCArray("Min: ", ADCMin, 0);
   this->printADCArray("Max: ", ADCMax, 0);
+}
 
-  return true;
+//=====================================================================
+//=====================================================================
+void TXInput::dumpAxisMinMaxCalibration()
+{
+  this->printADCArray("Min: ", ADCMin, 2);
+  this->printADCArray("Max: ", ADCMax, 2);
 }
 
 //=====================================================================
@@ -690,18 +701,12 @@ void TXInput::calibrateAxisAdjustMidMinMaxADC()
 
 //=====================================================================
 //=====================================================================
-bool TXInput::isAxisCenterCalibrationSuccessfull()
+void TXInput::finishAxisCenterCalibration()
 {
-  for ( int i = 0; i < AXIS_COUNT; i++)
-  {
-    if ( (ADCMidMax[i] - ADCMidMin[i] ) > 500 ) return false;
-  }
-
   this->printADCArray("MidMin: ", ADCMidMin, 2);
   this->printADCArray("MidMax: ", ADCMidMax, 2);
 
   uint16_t delta[AXIS_COUNT];
-
   for ( int i = 0; i < AXIS_COUNT; i++)
   {
     int d = ADCMidMax[i] - ADCMidMin[i];
@@ -717,8 +722,20 @@ bool TXInput::isAxisCenterCalibrationSuccessfull()
   this->printADCArray("MidMin: ", ADCMidMin, 0);
   this->printADCArray("MidMax: ", ADCMidMax, 0);
   this->printADCArray("delta : ", delta, 0);
+}
 
-  return true;
+//=====================================================================
+//=====================================================================
+void TXInput::dumpAxisCenterCalibration()
+{
+  uint16_t delta[AXIS_COUNT];
+  for ( int i = 0; i < AXIS_COUNT; i++)
+  {
+    delta[i] = (ADCMidMax[i]>>2) - (ADCMidMin[i]>>2);
+  }
+  this->printADCArray("MidMin: ", ADCMidMin, 2);
+  this->printADCArray("MidMax: ", ADCMidMax, 2);
+  this->printADCArray("Delta:  ", delta, 0);
 }
 
 //=====================================================================
@@ -777,6 +794,13 @@ void TXInput::dumpADC()
     Serial.printf( "%04d ", this->ADC[i] >> 2);
   }
   Serial.print("\r");
+}
+
+//=====================================================================
+//=====================================================================
+void TXInput::dumpBatADC()
+{
+  Serial.printf( "%04d\r", this->ADC[AXIS_COUNT] >> 2);
 }
 
 //=====================================================================

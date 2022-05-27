@@ -59,7 +59,9 @@ private:
     int16_t chMul10(int16_t value, int mul);
     int16_t chClamp(int16_t value);
 
-    int16_t chAdditive(int16_t value, const char* axisName, int speed, int32_t dT);
+    int32_t additiveAccumulator[HXRC_CHANNELS_COUNT];
+
+    int16_t chAdditive(int16_t* value, int32_t* additiveAccumulator, const char* axisName, int speed, int32_t dT);
     void printADCArray( const char* title, const uint16_t* array, int shr );
 
 public:
@@ -94,11 +96,13 @@ public:
 
     void calibrateAxisInitADC();
     void calibrateAxisAdjustMinMaxADC();
-    bool isAxisMinMaxCalibrationSuccessfull();
+    void finishAxisMinMaxCalibration();
+    void dumpAxisMinMaxCalibration();
 
     void calibrateAxisInitADC2();
     void calibrateAxisAdjustMidMinMaxADC();
-    bool isAxisCenterCalibrationSuccessfull();
+    void finishAxisCenterCalibration();
+    void dumpAxisCenterCalibration();
 
     bool isButtonPressed(uint8_t buttonId);
     bool isButtonUnPressed(uint8_t buttonId);
@@ -108,6 +112,7 @@ public:
     bool isStickMax(uint8_t stickId);
 
     void dumpADC();
+    void dumpBatADC();
 
     void loop(uint32_t t);
 

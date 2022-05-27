@@ -35,6 +35,8 @@
 #define EXT_AXIS_PIN        32
 
 #define BAT_ADC_PIN         33
+#define BAT_4P2             3400  //ADC value at 4.2V
+#define BAT_LOW             2670  //low voltage ADC value (~3.3V)
 
 
 #define ADC_PINS_LIST {LEFT_STICK_X_PIN, LEFT_STICK_Y_PIN, RIGHT_STICK_X_PIN, RIGHT_STICK_Y_PIN, EXT_AXIS_PIN, BAT_ADC_PIN};

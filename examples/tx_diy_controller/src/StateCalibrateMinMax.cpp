@@ -19,7 +19,8 @@ void StateCalibrateMinMax::onEnter(StateBase *prevState)
       TXInput::instance.calibrateAxisInitADC();
     }
 
-    AudioManager::instance.play( "/calibrate_min_max.mp3", AUDIO_GROUP_NONE );
+    AudioManager::instance.play( (count & 1 ) == 0 ? "/calibrate_min_max.mp3" : "/lb_finish.mp3", AUDIO_GROUP_NONE );
+    this->count++;
 }
 
 //======================================================
@@ -41,14 +42,14 @@ void StateCalibrateMinMax::onRun(uint32_t t)
 
   if ( t - stateTime > 7000)
   {
-    if ( TXInput::instance.isAxisMinMaxCalibrationSuccessfull() ) 
-    {
-        StateBase::Goto(&StateCalibrateWaitCenter::instance);
-    }
-    else
-    {
-        StateBase::Goto(&StateCalibrateMinMax::instance);
-    }
+    TXInput::instance.dumpAxisMinMaxCalibration();
+    StateBase::Goto(&StateCalibrateMinMax::instance);
+  }
+
+  if ( TXInput::instance.isButtonPressed( LEFT_BUMPER_ID) || TXInput::instance.isButtonPressed( LEFT_TRIGGER_ID) )
+  {
+    TXInput::instance.finishAxisMinMaxCalibration();
+    StateBase::Goto(&StateCalibrateWaitCenter::instance);
   }
 
   TXInput::instance.dumpADC();

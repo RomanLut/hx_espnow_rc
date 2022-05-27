@@ -14,46 +14,45 @@ StateCalibrateWaitCenter StateCalibrateWaitCenter::instance;
 void StateCalibrateWaitCenter::onEnter(StateBase *prevState)
 {
   this->stateTime = millis();
-
-  TXInput::instance.calibrateAxisInitADC2();
-
-  if ( this->soundSkipCount == 0 ) 
+  if ( prevState != &StateCalibrateWaitCenter::instance )
   {
-    AudioManager::instance.play( "/calibrate_center.mp3", AUDIO_GROUP_NONE );
+    this->waitUnpress = true;
   }
-  this->soundSkipCount++;
-  if ( this->soundSkipCount > 10 )
-  {
-    this->soundSkipCount = 0;
-  }
+
+  AudioManager::instance.play( (this->count & 1 ) == 0 ?  "/calibrate_center.mp3" : "/lb_start_calibration.mp3", AUDIO_GROUP_NONE );
+  if ( this->count == 0 ) AudioManager::instance.play( "/lb_start_calibration.mp3", AUDIO_GROUP_NONE );
+  this->count++;
 }
 
 //======================================================
 //======================================================
 void StateCalibrateWaitCenter::onRun(uint32_t t)
 {
-  if ( (t % 1000) < 500 )
-  {
-    TXMain::instance.setLEDS4( 4 + 2 ); 
-  }
-  else
-  {
-    TXMain::instance.setLEDS4( 0 ); 
-  }
+  TXMain::instance.setLEDS4( 4 + 2 ); 
 
   TXInput::instance.loop(t);
-  TXInput::instance.calibrateAxisAdjustMidMinMaxADC();
 
-  if ( t - stateTime > 1000)
+  if ( this->waitUnpress )
   {
-    if ( TXInput::instance.isAxisCenterCalibrationSuccessfull() ) 
+    if ( TXInput::instance.isButtonPressed( LEFT_BUMPER_ID) || TXInput::instance.isButtonPressed( LEFT_TRIGGER_ID) )
     {
-      StateBase::Goto( &StateCalibrateCenter::instance );
+      this->stateTime = millis();
     }
     else
     {
-      StateBase::Goto( &StateCalibrateWaitCenter::instance );
+      this->waitUnpress = false;
     }
   }
+  else
+  {
+    if ( t - stateTime > 7000 )
+    {
+      StateBase::Goto( &StateCalibrateWaitCenter::instance );
+    }
 
+    if ( TXInput::instance.isButtonPressed( LEFT_BUMPER_ID) || TXInput::instance.isButtonPressed( LEFT_TRIGGER_ID) )
+    {
+      StateBase::Goto( &StateCalibrateCenter::instance );
+    }
+  }
 }

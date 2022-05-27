@@ -8,6 +8,7 @@ class StateCalibrateMinMax: public StateBase
 {
 private:
     uint32_t stateTime;
+    uint32_t count = 0;
 public:
 
     static StateCalibrateMinMax instance;

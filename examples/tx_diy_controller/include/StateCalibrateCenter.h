@@ -8,6 +8,7 @@ class StateCalibrateCenter: public StateBase
 {
 private:
     uint32_t stateTime;
+    bool waitUnpress;
 public:
 
     static StateCalibrateCenter instance;
