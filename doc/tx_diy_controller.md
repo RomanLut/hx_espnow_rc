@@ -80,14 +80,18 @@ To enter **sticks calibration mode**, power the controller **with RIGHT Trigger 
 
 Alternatively, delete **calibration.json** to enter calibration mode.
 
-1) `LED pattern: *..* .**.` Move all sticks and external axes to the min and max positions. Press **LEFT Bumper** to continue.
-2) `LED pattern: .**.` Move all sticks and external axis to center position. 
+** 1. Min/max **
+`LED pattern: *..* .**.` Move all sticks and external axes to the min and max positions. Press **LEFT Bumper** to continue.
 
-  Press **LEFT Bumper** to start calibratin. 
+
+** 2. Center**
+ `LED pattern: .**.` Move all sticks and external axis to center position. 
+
+ Press **LEFT Bumper** to start calibratin. 
   
-  Ligthly touch and move sticks and external axes in the range of backlash. RC controller will record this range of movement as central position.
+ Ligthly touch and move sticks and external axes in the range of backlash. RC controller will record this range of movement as central position.
   
-  Press **LEFT Bumper** to finish calibratin. 
+ Press **LEFT Bumper** to finish calibratin. 
   
 Calibration data is saved to **calibration.json**.
 
