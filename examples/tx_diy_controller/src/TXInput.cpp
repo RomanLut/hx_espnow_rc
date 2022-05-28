@@ -3,6 +3,7 @@
 #include "ErrorLog.h"
 #include "AudioManager.h"
 
+const bool TXInput::AXIS_INVERT[AXIS_COUNT] = AXIS_INVERT_LIST
 const uint8_t TXInput::ADC_PINS[ADC_COUNT] = ADC_PINS_LIST
 const uint8_t TXInput::BUTTON_PINS[BUTTONS_COUNT] = BUTTON_PINS_LIST
 
@@ -235,18 +236,29 @@ void TXInput::resetLastChannelValues()
 //=====================================================================
 int16_t TXInput::mapADCValue( int ADCId )
 {
+  int res;
   int v = (this->ADC[ADCId] + 2) >> 2;
   if ( v < ADCMidMin[ADCId] )
   {
       v = map( v, ADCMidMin[ADCId], ADCMin[ADCId], 1500, 1000);
-      return v < 1000 ? 1000 : v;
+      res = v < 1000 ? 1000 : v;
   }
   else if ( v > ADCMidMax[ADCId] )
   {
       v = map( v, ADCMidMax[ADCId], ADCMax[ADCId], 1500, 2000);
-      return v > 2000 ? 2000 : v;
+      res = v > 2000 ? 2000 : v;
   }
-  return 1500;
+  else
+  {
+    res = 1500;
+  }
+
+  if ( TXInput::AXIS_INVERT[ADCId] ) 
+  {
+    res = 3000 - res;
+  }
+  
+  return res;
 }
 
 //=====================================================================

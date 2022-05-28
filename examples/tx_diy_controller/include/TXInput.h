@@ -70,6 +70,8 @@ public:
 
     uint32_t lastADCRead;
     static const uint8_t ADC_PINS[ADC_COUNT];
+    static const bool AXIS_INVERT[AXIS_COUNT];
+
     uint16_t ADC[ADC_COUNT];  //value*4 => 0...4095*4 
     uint16_t ADCMin[ADC_COUNT];  //0...4095
     uint16_t ADCMax[ADC_COUNT];  //0...4095
