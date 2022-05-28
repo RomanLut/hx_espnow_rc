@@ -18,7 +18,7 @@
 - [ ] external module for Jumper T-Lite: telemetry translation: CRSF stream -> SPORT
 - [ ] SBUS receiver: SPORT telemetry quering
 - [ ] PPM output
-- [ ] FSHH ? 
+- [ ] FHSS ? 
 - [ ] Pure mavlink control instead of SBUS
 
 
@@ -154,3 +154,5 @@ https://github.com/Crypter/ESP-RCLink
 https://github.com/RomanLut/mahowii
 
 https://github.com/martin-ger/ESP_E58-Drone
+
+https://github.com/Hermann-SW/wireless-control-Eachine-E52-drone
