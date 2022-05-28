@@ -1,0 +1,34 @@
+{
+  "axis": [
+    {
+      "min": 443,
+      "max": 3167,
+      "midMin": 1721,
+      "midMax": 1782
+    },
+    {
+      "min": 455,
+      "max": 3325,
+      "midMin": 1781,
+      "midMax": 1844
+    },
+    {
+      "min": 470,
+      "max": 3471,
+      "midMin": 1790,
+      "midMax": 1919
+    },
+    {
+      "min": 432,
+      "max": 3232,
+      "midMin": 1736,
+      "midMax": 1801
+    },
+    {
+      "min": 293,
+      "max": 3817,
+      "midMin": 1762,
+      "midMax": 1963
+    }
+  ]
+}
