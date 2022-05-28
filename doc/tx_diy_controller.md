@@ -28,11 +28,13 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 - HC-06 bluetooth module
 - DIY powerbank board
 - Resistors: 4x 10K, 510Ohm, 1MOhm, 2MOhm
+- Variable resistor 1k (volume control, optional)
 - 4 LEDs
 - SMA to U.FL wire or Wifi antenna with feeder cable
 - Sticks x2
 - Buttons x4
 - Switch x1
+- self-centering variable resistor ( axis 4)
 - speaker
 - S8050 transistor or analogous NPN
 - S8550 transistor or analogous PNP
@@ -44,7 +46,7 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 
 *I recommend to get original XBOX/Dualshock sticks ("3D Analog dualshock"), sticks from serious RC controllers, or modify original Dualshock/XBOX gamepads or RC controllers with good sticks.*
 
-*Connections diagram is shown for 4-axis, 4-buttons RC controller. As there are few pins left, it is possible to add one axis and two buttons. Axes and buttons are configured in include\txConfig.h*
+*Connections diagram is shown for 5-axis, 4-buttons RC controller. As there are few pins left, it is possible to add three more buttons. Axes and buttons are configured in include\txConfig.h*
 
 
 # Building guide
@@ -117,7 +119,7 @@ Alternatively, delete **calibration.json** to enter calibration mode.
 
  `LED pattern: .**.` 
  
- Move all sticks and external axis to center position. 
+ Move all sticks and external axis to center position. If non-centering sliders are used on axes, more approximatelly to center position.
 
  Press **LEFT Bumper** to start calibratin. 
   
