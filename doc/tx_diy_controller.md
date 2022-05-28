@@ -67,15 +67,21 @@ Pictures below provide hints for converting Mavic Mini 1 controller.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_4.jpg  "Mavic mini rc 4")
 
+Remove PCB antenna from bluetooth module and solder right antenna of RC controller:
+
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_bt_1.jpg  "Mavic mini bt 1")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_bt_2.jpg  "Mavic mini bt 2")
 
+Fix feeder cable with epoxy glue:
+
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_bt_3.jpg  "Mavic mini bt 3")
+
+Remove PCB antenna from ESP32 module and solder left antenna of RC controller:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_wifi_1.jpg  "Mavic mini wifi")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_ant.jpg  "Mavic mini ant")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_ant.jpg  "Mavic mini ant")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_5.jpg  "Mavic mini rc 5")
 
