@@ -2,7 +2,11 @@
 
 This is base project for building DIY RC controller, or modifying gamepad/RC controller.
 
-RC controller can work in multiple modes. Controls are mapped to channels according to mapping defined in profiles.
+Example below shows how to convert Mavic Mini 1 RC controller.
+
+Project Configuration can be adjusted for different axis and buttons count.
+
+DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad and more.
 
 - [x] Build on breadboard
 - [x] Implement firmware
