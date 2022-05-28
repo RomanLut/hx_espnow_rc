@@ -61,6 +61,8 @@ Pictures below provide hints for converting Mavic Mini 1 RC Controller. We reuse
 
 **LB**, **RB** are **HOME** and **Power** buttons. **LT** and **RT** are **Record** and **Photo** buttons.
 
+Use control points on the original PCB to solder wires. Fix wires with epoxy glue.
+
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_led_board.jpg  "Mavic LED board")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_battery.jpg "Mavic battery")
