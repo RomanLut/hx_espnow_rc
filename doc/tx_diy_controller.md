@@ -67,6 +67,22 @@ Pictures below provide hints for converting Mavic Mini 1 controller.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_4.jpg  "Mavic mini rc 4")
 
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_bt_1.jpg  "Mavic mini bt 1")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_bt_2.jpg  "Mavic mini bt 2")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_bt_3.jpg  "Mavic mini bt 3")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_wifi_1.jpg  "Mavic mini wifi")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_ant.jpg  "Mavic mini ant")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_5.jpg  "Mavic mini rc 5")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_6.jpg  "Mavic mini rc 6")
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_7.jpg  "Mavic mini rc 7")
+
 Flash module with Examples/tx_diy_controller/
 
 Upload filesystem Examples/tx_diy_controller/
