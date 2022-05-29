@@ -21,6 +21,9 @@
 
 #include "hx_channels.h"
 
+#include "BluetoothState.h"
+#include "BatteryState.h"
+
 #include <SPIFFS.h> 
 
 extern uint8_t currentProfileIndex;
@@ -32,13 +35,11 @@ class TXMain
 {
 private:
 
-    uint32_t bluetoothCheckTime;
-    bool lastBluetoothState;
+    BluetoothState bluetoothState;
+    BatteryState batteryState;
 
     void initLedPin();
     void initLEDS4Pins();
-
-    void checkBluetoothState(uint32_t t);
 
 public:
     static TXMain instance;

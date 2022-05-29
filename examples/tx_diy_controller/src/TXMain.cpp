@@ -3,8 +3,6 @@
 #include "StateInit.h"
 #include "AudioManager.h"
 
-#define BLUETOOTH_CHECK_PERIOD_MS 3000
-
 uint8_t currentProfileIndex;
 HC06Interface externalBTSerial;
 
@@ -102,9 +100,6 @@ void TXMain::setup()
   AudioManager::instance.init();
 
   StateBase::Goto(&StateInit::instance);
-
-  this->bluetoothCheckTime = millis() + 5000;
-  this->lastBluetoothState = false;
 }
 
 //=====================================================================
@@ -151,24 +146,6 @@ void TXMain::saveLastProfile()
 
 //=====================================================================
 //=====================================================================
-void TXMain::checkBluetoothState(uint32_t t)
-{
-  if ( t > (this->bluetoothCheckTime + BLUETOOTH_CHECK_PERIOD_MS ))
-  {
-    this->bluetoothCheckTime = t;
-    bool b = digitalRead(HC06_LED_PIN) == HIGH;
-    if ( this->lastBluetoothState != b )
-    {
-      this->lastBluetoothState = b;
-      AudioManager::instance.play( b ? "/bt_connected.mp3" : "/bt_disconnected.mp3", AUDIO_GROUP_NONE );
-    }
-  }
-
-  //Serial.println( digitalRead(HC06_LED_PIN) == HIGH ? "H" : "L");
-}
-
-//=====================================================================
-//=====================================================================
 void TXMain::loop()
 {
   esp_task_wdt_reset();
@@ -180,7 +157,8 @@ void TXMain::loop()
 
   AudioManager::instance.loop(t);
 
-  this->checkBluetoothState(t);
+  this->bluetoothState.loop();
+  this->batteryState.loop();
 
   //TXInput::instance.dumpBatADC();
 
