@@ -53,7 +53,7 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 
 Pictures below provide hints for converting Mavic Mini 1 RC Controller. We reuse sticks, buttons, camera control slider, original battery and micro USB connector.
 
-Powerbank controller board is used to control battery charge and power ESP32. It has one drawback though: when usb cable is disconnected, it takes ~1 second to start boost up converter. Due to this delay, controller reboots.
+DIY powerbank board is used to control battery charge and power ESP32. It has one drawback though: when usb cable is disconnected, it takes ~1 second to start boost up converter. Due to this delay, controller reboots.
 
 [TODO]
 
