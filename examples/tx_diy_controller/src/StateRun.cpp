@@ -2,7 +2,9 @@
 #include "TXMain.h"
 #include "TXInput.h"
 
-#include "ModeConfig.h"
+#include "modeConfig.h"
+#include "modeEspNowRC.h"
+#include "modeBLEGamepad.h"
 
 #include "AudioManager.h"
 #include "ErrorLog.h"
@@ -29,16 +31,29 @@ void StateRun::onRun(uint32_t t)
 
   ModeBase::currentModeHandler->loop( &channelValues, &externalBTSerial, NULL );
 
+  if ( !this->modeNameAudioPlayed )
+  {
+    if ( ModeBase::currentModeHandler == &ModeConfig::instance )
+    {
+        this->modeNameAudioPlayed = true;
+        AudioManager::instance.play( "/config_mode.mp3", AUDIO_GROUP_NONE );
+        AudioManager::instance.waitFinish();
+    } else if ( ModeBase::currentModeHandler == &ModeBLEGamepad::instance )
+    {
+        this->modeNameAudioPlayed = true;
+        AudioManager::instance.play( "/bt_gamepad_mode.mp3", AUDIO_GROUP_NONE );
+        //AudioManager::instance.waitFinish();
+    } if ( ModeBase::currentModeHandler == &ModeEspNowRC::instance )
+    {
+        this->modeNameAudioPlayed = true;
+        AudioManager::instance.play( ModeEspNowRC::instance.LRMode ? "/esp_now_lr_mode.mp3" : "/esp_now_mode.mp3", AUDIO_GROUP_NONE );
+        //AudioManager::instance.waitFinish();
+    }
+  }
+
   if ( ModeBase::currentModeHandler == &ModeConfig::instance )
   {
-    if ( this->configAudioOnce )
-    {
-      this->configAudioOnce = false;
-      AudioManager::instance.play( "/config_mode.mp3", AUDIO_GROUP_NONE );
-      AudioManager::instance.waitFinish();
-    }
-
-    TXMain::instance.setLEDS4(  (t % 1000) > 500 ?  8 +4 +2 + 1 : 0); 
+    TXMain::instance.setLEDS4( (t % 1000) > 500 ?  8 + 4 + 2 + 1 : 0 ); 
   }
   else
   {

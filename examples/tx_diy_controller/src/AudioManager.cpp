@@ -1,6 +1,6 @@
-#include "AudioManager.h"
-
 #include <esp_task_wdt.h>
+
+#include "AudioManager.h"
 
  AudioManager AudioManager::instance;
 
@@ -147,5 +147,4 @@ void AudioManager::sayProfile(int profileIndex)
 {
   AudioManager::instance.play( String( "/profile") + (profileIndex + 1) + ".mp3", AUDIO_GROUP_PROFILE );
 }
-
 

@@ -7,7 +7,7 @@
 class StateRun: public StateBase
 {
 private:
-    bool configAudioOnce = true;
+    bool modeNameAudioPlayed = false;
 public:
 
     static StateRun instance;

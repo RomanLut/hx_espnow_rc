@@ -24,11 +24,13 @@ void ModeEspNowRC::start( JsonDocument* json )
 
     JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
 
+    this->LRMode = (*profile)["espnow_long_range_mode"] | false;
+
     this->hxrcMaster.init(
         HXRCConfig(
             (*profile)["espnow_channel"] | 3,
             (*profile)["espnow_key"] | 0,
-            (*profile)["espnow_long_range_mode"] | false,
+            this->LRMode,
             -1, false));
 
     esp_task_wdt_reset();

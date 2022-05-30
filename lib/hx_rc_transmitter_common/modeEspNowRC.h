@@ -28,6 +28,8 @@ public:
     static ModeEspNowRC instance;
     static const char* name;
 
+    bool LRMode;
+
     ModeEspNowRC();
 
     void start( JsonDocument* json );
