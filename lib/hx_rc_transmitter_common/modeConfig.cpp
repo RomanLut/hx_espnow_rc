@@ -9,16 +9,15 @@
 #include "txProfileManager.h"
 
 #include <SPIFFS.h> 
-#include <ESP-FTP-Server-Lib.h>
 
 ModeConfig ModeConfig::instance;
 const char* ModeConfig::name = "CONFIG";
 
-FTPServer ftp;
+#define CONFIG_FILE_MANAGER_PORT    80
 
 //=====================================================================
 //=====================================================================
-ModeConfig::ModeConfig() 
+ModeConfig::ModeConfig() : filemgr(CONFIG_FILE_MANAGER_PORT)
 {
 }
 
@@ -48,6 +47,8 @@ void ModeConfig::start( JsonDocument* json )
     ArduinoOTA.begin();  
 
     esp_task_wdt_reset();
+
+    this->filemgr.begin();
 }
 
 //=====================================================================
@@ -72,4 +73,7 @@ void ModeConfig::loop(
     ftp.handle();
 
     ArduinoOTA.handle();
+
+    this->filemgr.handleClient();
+
 }
