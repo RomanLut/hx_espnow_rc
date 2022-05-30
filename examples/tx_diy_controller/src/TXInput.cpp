@@ -779,7 +779,14 @@ bool TXInput::isButtonUnPressed(uint8_t buttonId)
 //=====================================================================
 bool TXInput::isStickMin(uint8_t stickId)
 {
-  return ADC[stickId]>>2 < ( ADCMidMin[stickId]  + ADCMin[stickId] ) / 2;
+  if ( TXInput::AXIS_INVERT[stickId] )
+  {
+    return ADC[stickId]>>2 >  ( ADCMidMax[stickId] + ADCMax[stickId] ) / 2;
+  }
+  else
+  {
+    return ADC[stickId]>>2 < ( ADCMidMin[stickId]  + ADCMin[stickId] ) / 2;
+  }
 }
 
 //=====================================================================
@@ -793,7 +800,14 @@ bool TXInput::isStickMiddle(uint8_t stickId)
 //=====================================================================
 bool TXInput::isStickMax(uint8_t stickId)
 {
-  return ADC[stickId]>>2 >  ( ADCMidMax[stickId]  + ADCMax[stickId] ) / 2;
+  if ( TXInput::AXIS_INVERT[stickId] )
+  {
+    return ADC[stickId]>>2 < ( ADCMidMin[stickId]  + ADCMin[stickId] ) / 2;
+  }
+  else
+  {
+    return ADC[stickId]>>2 >  ( ADCMidMax[stickId] + ADCMax[stickId] ) / 2;
+  }
 }
 
 

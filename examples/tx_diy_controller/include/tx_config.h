@@ -39,8 +39,8 @@
 
 #define LEFT_STICK_X_PIN    35
 #define LEFT_STICK_Y_PIN    34
-#define RIGHT_STICK_X_PIN   39
-#define RIGHT_STICK_Y_PIN   36
+#define RIGHT_STICK_X_PIN   36
+#define RIGHT_STICK_Y_PIN   39
 #define EXT_AXIS_PIN        32
 
 //--------------------------------------------
@@ -52,7 +52,7 @@
 
 //--------------------------------------------
 
-#define AXIS_INVERT_LIST {true, false, false, true, false};
+#define AXIS_INVERT_LIST {true, false, true, false, false};
 #define ADC_PINS_LIST {LEFT_STICK_X_PIN, LEFT_STICK_Y_PIN, RIGHT_STICK_X_PIN, RIGHT_STICK_Y_PIN, EXT_AXIS_PIN, BAT_ADC_PIN};
 
 //--------------------------------------------
