@@ -1,34 +1,34 @@
 {
   "axis": [
     {
-      "min": 443,
-      "max": 3167,
-      "midMin": 1721,
-      "midMax": 1782
+      "min": 501,
+      "max": 3173,
+      "midMin": 1747,
+      "midMax": 1787
     },
     {
-      "min": 455,
-      "max": 3325,
-      "midMin": 1781,
-      "midMax": 1844
+      "min": 499,
+      "max": 3280,
+      "midMin": 1776,
+      "midMax": 1823
     },
     {
-      "min": 470,
-      "max": 3471,
-      "midMin": 1790,
-      "midMax": 1919
+      "min": 500,
+      "max": 3196,
+      "midMin": 1751,
+      "midMax": 1776
     },
     {
-      "min": 432,
-      "max": 3232,
-      "midMin": 1736,
-      "midMax": 1801
+      "min": 457,
+      "max": 3343,
+      "midMin": 1796,
+      "midMax": 1885
     },
     {
-      "min": 293,
-      "max": 3817,
-      "midMin": 1762,
-      "midMax": 1963
+      "min": 304,
+      "max": 3791,
+      "midMin": 1784,
+      "midMax": 1933
     }
   ]
 }
