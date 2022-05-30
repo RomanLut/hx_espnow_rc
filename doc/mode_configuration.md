@@ -1,10 +1,28 @@
 # Configuration mode
 
-This mode is used to edit or upload profiles via ftp.
+This mode is used to configure profiles. 
 
-Profile 10 is reserved for **Configuration mode**. It is not necessary to upload **profile10.json**. 
+In this mode, controller is creating WIFI access point *("hxrct" without password by default)*, web and FTP servers.
 
-In this mode, controller is creating WIFI access point with FTP server.
+*Profile 10 is reserved for **Configuration mode**. It is not necessary to upload **profile10.json**.* 
+
+
+# Editing profiles using web file manager
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/file_manager.jpg "File manager")
+
+After connecting to AP, go to url http://192.168.4.1.
+
+Use file manager to upload, edit, rename, or delete profiles.
+
+
+# Exploring filesystem using ftp
+
+After connecting to AP, use ftp server **ftp:://192.168.4.1** to explore filesystem. Default credentials can be found below.
+
+Directories are not supported.
+
+# Changing AP Name, password etc.
 
 It is possible to change **Configuration mode** default properties by uploading **profile10.json**.
 
