@@ -70,7 +70,7 @@ Common usage is to play sound file with `SOUND` action.
 
 This actions sets `AXIS` value to the channel.
 
-**parm** is axis: **LEFT_STICK_X == AXIS0, LEFT_STICK_Y == AXIS1, RIGHT_STICK_X == AXIS2, RIGHT_STICK_Y == AXIS3, AXIS4, AXIS5 ... AXISN**
+**parm** is axis: **LEFT_STICK_X == AXIS0, LEFT_STICK_Y == AXIS1, RIGHT_STICK_X == AXIS2, RIGHT_STICK_Y == AXIS3, AXIS4...AXIS15**
 
 `{ "event" :"ALWAYS", "channel" : 1, "op" : "AXIS", "parm" : "LEFT_STICK_X" }`
 
