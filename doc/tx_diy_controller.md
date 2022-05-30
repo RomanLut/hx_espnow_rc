@@ -51,7 +51,7 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 
 # Building guide
 
-Pictures below provide hints for converting Mavic Mini 1 RC Controller. We reuse sticks, buttons, camera control slider, original battery and micro USB conntector.
+Pictures below provide hints for converting Mavic Mini 1 RC Controller. We reuse sticks, buttons, camera control slider, original battery and micro USB connector.
 
 [TODO]
 
