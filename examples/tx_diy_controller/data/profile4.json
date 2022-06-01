@@ -1,115 +1,19 @@
 {
   "transmitter_mode": "BLEGAMEPAD",
   "mapping": [
-      {
-         "event": {
-            "name": "STARTUP"
-         },
-         "op": {
-            "name": "SOUND",
-            "parm": "/mode_bt_gamepad.mp3"
-         }
-      },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "AXIS",
-        "parm": "LEFT_STICK_X",
-        "channel": 1
-      }
-    },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "AXIS",
-        "parm": "LEFT_STICK_Y",
-        "channel": 2
-      }
-    },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "AXIS",
-        "parm": "RIGHT_STICK_X",
-        "channel": 3
-      }
-    },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "AXIS",
-        "parm": "RIGHT_STICK_Y",
-        "channel": 4
-      }
-    },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "AXIS",
-        "parm": "AXIS4",
-        "channel": 5
-      }
-    },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "ADDITIVE",
-        "parm": "LEFT_STICK_Y",
-        "speed": 20,
-        "channel": 6
-      }
-    },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "BUTTON",
-        "parm": "LEFT_BUMPER",
-        "channel": 7
-      }
-    },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "BUTTON",
-        "parm": "RIGHT_BUMPER",
-        "channel": 8
-      }
-    },
-    {
-		"event": {
-			"name": "ALWAYS"
-		},
-      "op": {
-        "name": "BUTTON",
-        "parm": "LEFT_TRIGGER",
-        "channel": 9
-      }
-    },
-    {
-      "event": {
-        "name": "ALWAYS"
-      },
-      "op": {
-        "name": "BUTTON",
-        "parm": "RIGHT_TRIGGER",
-        "channel": 10
-      }
-    }
+	{ "event": { "name": "STARTUP" 	},	"op": { "name": "SOUND",	"parm": "/mode_bt_gamepad.mp3"				} },
+
+	{ "event": { "name": "ALWAYS" 	},	"op": { "name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 1	} },
+    { "event": { "name": "ALWAYS" 	},  "op": { "name": "AXIS",     "parm": "LEFT_STICK_Y",		"channel": 2	} },
+    { "event": { "name": "ALWAYS"	},	"op": { "name": "AXIS",		"parm": "RIGHT_STICK_X",	"channel": 3	} },
+    { "event": { "name": "ALWAYS"	}, 	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y",	"channel": 4	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "AXIS4",			"channel": 5	} },
+
+    { "event": { "name": "ALWAYS"	},	"op": { "name": "ADDITIVE",	"parm": "LEFT_STICK_Y",		"speed": 20,	"channel": 6	} },
+
+    { "event": { "name": "ALWAYS"	},	"op": { "name": "BUTTON",	"parm": "LEFT_BUMPER",		"channel": 7 	} },
+    { "event": { "name": "ALWAYS"	},  "op": { "name": "BUTTON",	"parm": "RIGHT_BUMPER",		"channel": 8	} },
+    { "event": { "name": "ALWAYS"	},	"op": { "name": "BUTTON",	"parm": "LEFT_TRIGGER",		"channel": 9	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "RIGHT_TRIGGER",	"channel": 10	} }
   ]
 }

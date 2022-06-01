@@ -3,94 +3,24 @@
    "ap_name": "hxrct",
    "ap_password": "",
    "mapping": [
-      {
-         "event": {
-            "name": "STARTUP"
-         },
-         "op": {
-            "name": "SOUND",
-            "parm": "/mode_KYFPV.mp3"
-         }
-      },
-      {
-         "event": {
-            "name": "ALWAYS"
-         },
-         "op": {
-            "name": "AXIS",
-            "parm": "RIGHT_STICK_X",
-            "channel": 1
-         }
-      },
-      {
-         "event": {
-            "name": "ALWAYS"
-         },
-         "op": {
-            "name": "AXIS",
-            "parm": "RIGHT_STICK_Y",
-            "channel": 2
-         }
-      },
-      {
-         "event": {
-            "name": "ALWAYS"
-         },
-         "op": {
-            "name": "AXIS",
-            "parm": "LEFT_STICK_Y",
-            "channel": 3
-         }
-      },
-      {
-         "event": {
-            "name": "ALWAYS"
-         },
-         "op": {
-            "name": "AXIS",
-            "parm": "LEFT_STICK_X",
-            "channel": 4
-         }
-      },
-      {
-         "event": {
-            "name": "ALWAYS"
-         },
-         "op": {
-            "name": "BUTTON",
-            "parm": "LEFT_BUMPER",
-            "channel": 5
-         }
-      },
-      {
-		"event": {
-			"name": "ALWAYS"
-		},
-         "op": {
-            "name": "BUTTON",
-            "parm": "RIGHT_BUMPER",
-            "channel": 6
-         }
-      },
-      {
-         "event": {
-            "name": "ALWAYS"
-         },
-         "op": {
-            "name": "BUTTON",
-            "parm": "RIGHT_TRIGGER",
-            "channel": 7
-         }
-      },
-      {
-         "event": {
-            "name": "ALWAYS"
-         },
-         "op": {
-            "name": "BUTTON",
-            "parm": "LEFT_TRIGGER",
-            "channel": 8
-         }
-      }
+      { "event": { "name": "STARTUP" 			}, 	"op": { "name": "SOUND",	"parm": "/mode_KYFPV.mp3" 					} },
+      { "event": { "name": "CONNECTED"			},	"op": { "name": "SOUND",	"parm": "/connected.mp3"					} },
+      { "event": { "name": "DISCONNECTED"		},  "op": { "name": "SOUND",	"parm": "/disconnected.mp3"					} },
+      { "event": { "name": "TAKEOFF"			},	"op": { "name": "SOUND",	"parm": "/takeoff.mp3"						} },
+      {	"event": { "name": "LANDING"			},	"op": { "name": "SOUND",	"parm": "/landing.mp3"						} },
+      { "event": { "name": "EMERGENCY_STOP" 	},	"op": { "name": "SOUND",	"parm": "/emergency_stop.mp3"				} },
+      { "event": { "name": "RTH"				},	"op": { "name": "SOUND",	"parm": "/return_to_home.mp3"				} },
+      { "event": { "name": "HEADLESS_ENABLED"	},  "op": { "name": "SOUND",	"parm": "/headless_mode_on.mp3" 			} },
+      { "event": { "name": "HEADLESS_DISABLED"  },  "op": { "name": "SOUND",	"parm": "/headless_mode_off.mp3"			} },
+      { "event": { "name": "GYRO_CALIBRATION"	},	"op": { "name": "SOUND",	"parm": "/gyro_calibration.mp3"				} },
+
+      { "event": { "name": "ALWAYS"				},  "op": { "name": "AXIS",		"parm": "RIGHT_STICK_X",	"channel": 1	} },
+      { "event": { "name": "ALWAYS"				},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y",	"channel": 2	} },
+      { "event": { "name": "ALWAYS"				},	"op": { "name": "AXIS",		"parm": "LEFT_STICK_Y",		"channel": 3	} },
+      { "event": { "name": "ALWAYS"				},  "op": { "name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 4	} },
+      { "event": { "name": "ALWAYS"				},	"op": { "name": "BUTTON",	"parm": "LEFT_BUMPER",		"channel": 5	} },
+      { "event": { "name": "ALWAYS"				},	"op": { "name": "BUTTON",	"parm": "RIGHT_BUMPER",		"channel": 6	} },
+      { "event": { "name": "ALWAYS"				},	"op": {	"name": "BUTTON",	"parm": "RIGHT_TRIGGER",	"channel": 7	} },
+      { "event": { "name": "ALWAYS"				},	"op": {	"name": "BUTTON",	"parm": "LEFT_TRIGGER",		"channel": 8	} }
    ]
 }

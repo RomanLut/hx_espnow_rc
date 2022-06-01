@@ -484,35 +484,13 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       {
         run = true;
       }
-      else if ( strcmp(eventName, "CHANNEL_EQUAL_1000") == 0)
+      else if ( strcmp(eventName, "CHANNEL_EQUAL") == 0)
       {
         int channelIndex = (event["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
-        run = (channelValues->channelValue[channelIndex] == 1000) && (this->lastChannelValue[channelIndex] != 1000);
-      }
-      else if ( strcmp(eventName, "CHANNEL_EQUAL_1333") == 0)
-      {
-        int channelIndex = (event["channel"] | -1) - 1;
-        if (!this->isValidChannelIndex(channelIndex)) return;
-        run = (channelValues->channelValue[channelIndex] == 1333) && (this->lastChannelValue[channelIndex] != 1333);
-      }
-      else if ( strcmp(eventName, "CHANNEL_EQUAL_1500") == 0)
-      {
-        int channelIndex = (event["channel"] | -1) - 1;
-        if (!this->isValidChannelIndex(channelIndex)) return;
-        run = (channelValues->channelValue[channelIndex] == 1500) && (this->lastChannelValue[channelIndex] != 1500);
-      }
-      else if ( strcmp(eventName, "CHANNEL_EQUAL_1666") == 0)
-      {
-        int channelIndex = (event["channel"] | -1) - 1;
-        if (!this->isValidChannelIndex(channelIndex)) return;
-        run = (channelValues->channelValue[channelIndex] == 1666) && (this->lastChannelValue[channelIndex] != 1666);
-      }
-      else if ( strcmp(eventName, "CHANNEL_EQUAL_2000") == 0)
-      {
-        int channelIndex = (event["channel"] | -1) - 1;
-        if (!this->isValidChannelIndex(channelIndex)) return;
-        run = (channelValues->channelValue[channelIndex] == 2000) && (this->lastChannelValue[channelIndex] != 2000);
+        int value = (event["value"] | 0);
+        bool once = strcmp((event["once"] | ""), "yes") == 0;
+        run = (channelValues->channelValue[channelIndex] == value) && ( !once || (this->lastChannelValue[channelIndex] != value));
       }
       else
       {
@@ -543,7 +521,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
         if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = this->getButtonValueByName(parm);
       }
-      else if ( strcmp(opName, "TRIGGER") == 0)
+      else if ( strcmp(opName, "SWITCH") == 0)
       {
         int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
@@ -609,7 +587,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
         if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = channelValues->channelValue[channelIndex] + (op["parm"] | 0);
       }
-      else if ( strcmp(opName, "MUL") == 0)
+      else if ( strcmp(opName, "MULD10") == 0)
       {
         int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
