@@ -15,8 +15,6 @@ Example **profile1.json**:
 }
 ```
 
-**Configuration Mode** is enabled if profile json is not found or can not be parsed.
-
 Most important entry in the file is `"transmitter_mode"`. This parameter defines mode of the transmitter. Other parameters are dependent on transmitter mode.
 
 Examples can be found in folder: https://github.com/RomanLut/hx_espnow_rc/blob/main/examples/tx_diy_controller/data/
@@ -29,7 +27,9 @@ This profile is reserved for **Configuration mode** https://github.com/RomanLut/
 
 # Handling errors
 
-If profile definition or mapping can not be parsed, configuration mode is started. Check **errorLog.txt** for the last error messages.
+**Configuration Mode** is started if profile json is not found or can not be parsed.
+
+Check **errorLog.txt** for the last error messages.
 
 *Note: DIY Controller plays **"Error.please check log"** audio message on error.*
 
