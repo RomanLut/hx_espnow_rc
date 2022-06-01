@@ -1,6 +1,15 @@
 {
   "transmitter_mode": "BLEGAMEPAD",
   "mapping": [
+      {
+         "event": {
+            "name": "STARTUP"
+         },
+         "op": {
+            "name": "SOUND",
+            "parm": "/mode_bt_gamepad.mp3"
+         }
+      },
     {
       "event": {
         "name": "ALWAYS"

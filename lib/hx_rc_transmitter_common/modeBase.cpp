@@ -13,6 +13,9 @@
 
 ModeBase* ModeBase::currentModeHandler;
 
+ModeBase::TModeEventHandler ModeBase::eventHandler = NULL;
+
+
 //=====================================================================
 //=====================================================================
 void ModeBase::start(JsonDocument* json)
@@ -160,4 +163,16 @@ int ModeBase::getProfileIndexFromChannelValue( int value)
     //1900 => 9
     //2000 => 10
     return (int)((value - 1000 + 50) / 100);
+}
+
+//=====================================================================
+//=====================================================================
+void ModeBase::fire( const char* event )
+{
+    Serial.print("Event:");
+    Serial.println(event);
+    if (ModeBase::eventHandler)
+    {
+        ModeBase::eventHandler(event);
+    }
 }

@@ -12,6 +12,26 @@
 
 #include "hx_channels.h"
 
+#define EVENT_STARTUP           "STARTUP"
+
+#define EVENT_CONNECTED         "CONNECTED"
+#define EVENT_DISCONNECTED      "DISCONNECTED"
+
+#define EVENT_TAKEOFF           "TAKEOFF"
+#define EVENT_LANDING           "LANDING"
+#define EVENT_EMERGENCY_STOP    "EMERGENCY_STOP"
+#define EVENT_RTH               "RTH"
+
+#define EVENT_HEADLESS_ENABLED  "HEADLESS_ENABLED"
+#define EVENT_HEADLESS_DISABLED "HEADLESS_DISABLED"
+
+#define EVENT_TRIM_ADJUST       "TRIM_ADJUST"
+#define EVENT_TRIM_MAX          "TRIM_MAX"
+#define EVENT_TRIM_CENTER       "TRIM_CENTER"
+
+#define EVENT_GYRO_CALIBRATION  "GYRO_CALIBRATION"
+
+
 //=====================================================================
 //=====================================================================
 class ModeBase
@@ -30,6 +50,10 @@ private:
 public:
     static ModeBase* currentModeHandler;
 
+    typedef void (*TModeEventHandler) (const char*); 
+
+    static TModeEventHandler eventHandler;
+
     virtual void start( JsonDocument* json );
 
     virtual void loop(
@@ -46,6 +70,8 @@ public:
 
     void startRequestedProfile();
     void rebootToRequestedProfile();
+
+    void fire( const char* event );
 
 };
 

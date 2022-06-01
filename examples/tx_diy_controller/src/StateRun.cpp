@@ -41,12 +41,12 @@ void StateRun::onRun(uint32_t t)
     } else if ( ModeBase::currentModeHandler == &ModeBLEGamepad::instance )
     {
         this->modeNameAudioPlayed = true;
-        AudioManager::instance.play( "/bt_gamepad_mode.mp3", AUDIO_GROUP_NONE );
+        //AudioManager::instance.play( "/bt_gamepad_mode.mp3", AUDIO_GROUP_NONE );
         //AudioManager::instance.waitFinish();
     } if ( ModeBase::currentModeHandler == &ModeEspNowRC::instance )
     {
         this->modeNameAudioPlayed = true;
-        AudioManager::instance.play( ModeEspNowRC::instance.LRMode ? "/esp_now_lr_mode.mp3" : "/esp_now_mode.mp3", AUDIO_GROUP_NONE );
+        //AudioManager::instance.play( ModeEspNowRC::instance.LRMode ? "/esp_now_lr_mode.mp3" : "/esp_now_mode.mp3", AUDIO_GROUP_NONE );
         //AudioManager::instance.waitFinish();
     }
   }

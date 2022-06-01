@@ -1,19 +1,99 @@
 {
-    "transmitter_mode" : "ESPNOW",
-    "espnow_channel" : 3,
-    "espnow_key" : 0,
-    "espnow_long_range_mode" : false,
-    "ap_name" : "hxrct",
-    "ap_password" : "",
-    "mapping":[
-        { "event" :"ALWAYS", "channel" : 1, "op" : "AXIS", "parm" : "RIGHT_STICK_X" },
-        { "event" :"ALWAYS", "channel" : 2, "op" : "AXIS", "parm" : "RIGHT_STICK_Y" },
-        { "event" :"ALWAYS", "channel" : 3, "op" : "AXIS", "parm" : "LEFT_STICK_Y" },
-        { "event" :"ALWAYS", "channel" : 4, "op" : "AXIS", "parm" : "LEFT_STICK_X" },
-        { "event" :"ALWAYS", "channel" : 5, "op" : "TRIGGER", "parm" : "LEFT_BUMPER" },
-        { "event" :"ALWAYS", "channel" : 6, "op" : "TRIGGER", "parm" : "RIGHT_BUMPER" },
-		{ "event" :"CHANNEL_EQUAL_1000", "channel" : 5, "op" : "SOUND", "parm" : "/disarmed.mp3" },
-		{ "event" :"CHANNEL_EQUAL_2000", "channel" : 5, "op" : "SOUND", "parm" : "/armed.mp3" }
-
-    ]
+	"transmitter_mode": "ESPNOW",
+	"espnow_channel": 3,
+	"espnow_key": 0,
+	"espnow_long_range_mode": false,
+	"ap_name": "hxrct",
+	"ap_password": "",
+	"mapping": [
+		{
+			"event": {
+				"name": "STARTUP"
+			},
+			"op": {
+				"name": "SOUND",
+				"parm": "/mode_esp_now.mp3"
+			}
+		},
+		{
+			"event": {
+				"name": "ALWAYS"
+			},
+			"op": {
+				"name": "AXIS",
+				"parm": "RIGHT_STICK_X",
+				"channel": 1
+			}
+		},
+		{
+			"event": {
+				"name": "ALWAYS"
+			},
+			"op": {
+				"name": "AXIS",
+				"parm": "RIGHT_STICK_Y",
+				"channel": 2
+			}
+		},
+		{
+			"event": {
+				"name": "ALWAYS"
+			},
+			"op": {
+				"name": "AXIS",
+				"parm": "LEFT_STICK_Y",
+				"channel": 3
+			}
+		},
+		{
+			"event": {
+				"name": "ALWAYS"
+			},
+			"op": {
+				"name": "AXIS",
+				"parm": "LEFT_STICK_X",
+				"channel": 4
+			}
+		},
+		{
+			"event": {
+				"name": "ALWAYS"
+			},
+			"op": {
+				"name": "TRIGGER",
+				"parm": "LEFT_BUMPER",
+				"channel": 5
+			}
+		},
+		{
+			"event": {
+				"name": "ALWAYS"
+			},
+			"op": {
+				"name": "TRIGGER",
+				"parm": "RIGHT_BUMPER",
+				"channel": 6
+			}
+		},
+		{
+			"event": {
+				"name": "CHANNEL_EQUAL_1000",
+				"channel": 5
+			},
+			"op": {
+				"name": "SOUND",
+				"parm": "/disarmed.mp3"
+			}
+		},
+		{
+			"event": {
+				"name": "CHANNEL_EQUAL_2000",
+				"channel": 5
+			},
+			"op": {
+				"name": "SOUND",
+				"parm": "/armed.mp3"
+			}
+		}
+	]
 }
