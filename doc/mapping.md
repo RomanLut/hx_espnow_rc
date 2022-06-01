@@ -148,7 +148,7 @@ Note that value is specified without quotes.
 
 This action does not modify channels value. It is used to play sound file.
 
-`{ "event" :"EQUAL_1000", "channel" : 5, "op" : "SOUND", "parm" : "/armed.wav" },`
+`{ "event" :"EQUAL_1000", "channel" : 5, "op" : "SOUND", "parm" : "/armed.mp3" },`
 
 
 
