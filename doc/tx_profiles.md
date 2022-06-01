@@ -27,6 +27,12 @@ Examples can be found in folder: https://github.com/RomanLut/hx_espnow_rc/blob/m
 
 This profile is reserved for **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
 
+# Handling errors
+
+If profile definition or mapping can not be parsed, configuration mode is started. Check **errorLog.txt** for the last error messages.
+
+*Note: DIY Controller plays **"Error.please check log"** audio message on error.*
+
 # Modes 
 
 `ESPNOW` hx_espnow_rc https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_hx_espnow_rc.md
