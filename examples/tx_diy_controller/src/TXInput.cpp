@@ -17,6 +17,8 @@ TXInput::TXInput()
   {
     this->additiveAccumulator[i] = 0;
   }
+
+  ModeBase::eventHandler = &TXInput::staticModeEventHandler;
 }
 
 //=====================================================================
@@ -430,7 +432,20 @@ bool TXInput::hasButtonPressEventByName( const char* parm )
 
 //=====================================================================
 //=====================================================================
-void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, bool startup)
+bool TXInput::isValidChannelIndex(int channelIndex)
+{
+    if (channelIndex < 0 || channelIndex >= HXRC_CHANNELS_COUNT-1)
+    {
+      ErrorLog::instance.writeOnce("Invalid channelIndex in mapping\n");
+      ErrorLog::instance.disableWriteOnce();
+      return false;
+    }
+    return true;
+}
+
+//=====================================================================
+//=====================================================================
+void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, const char* inEventName)
 {
   channelValues-> isFailsafe = false;
 
@@ -449,81 +464,105 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
   for ( int i = 0; i < mapping.size(); i++)
   {
     const JsonVariant& action = mapping[i];
-
-    const char* event = action["event"] | "";
-    int channelIndex = (action["channel"] | -1) - 1;
-
-    if (channelIndex < 0 || channelIndex >= HXRC_CHANNELS_COUNT-1)
-    {
-      ErrorLog::instance.writeOnce("Invalid channelIndex in mapping\n");
-      ErrorLog::instance.disableWriteOnce();
-      return;
-    }
+    const JsonVariant& event = action["event"];
+    const JsonVariant& op = action["op"];
 
     bool run = false;
-    if ( strcmp(event, "STARTUP") == 0)
+
+    const char* eventName = event["name"] | "";
+
+    if ( inEventName != NULL ) 
     {
-      run = startup;
-    }
-    else if ( strcmp(event, "ALWAYS") == 0)
-    {
-      run = !startup;
-    }
-    else if ( strcmp(event, "CHANNEL_EQUAL_1000") == 0)
-    {
-      run = !startup && (channelValues->channelValue[channelIndex] == 1000) && (this->lastChannelValue[channelIndex] != 1000);
-    }
-    else if ( strcmp(event, "CHANNEL_EQUAL_1333") == 0)
-    {
-      run = !startup && (channelValues->channelValue[channelIndex] == 1333) && (this->lastChannelValue[channelIndex] != 1333);
-    }
-    else if ( strcmp(event, "CHANNEL_EQUAL_1500") == 0)
-    {
-      run = !startup && (channelValues->channelValue[channelIndex] == 1500) && (this->lastChannelValue[channelIndex] != 1500);
-    }
-    else if ( strcmp(event, "CHANNEL_EQUAL_1666") == 0)
-    {
-      run = !startup && (channelValues->channelValue[channelIndex] == 1666) && (this->lastChannelValue[channelIndex] != 1666);
-    }
-    else if ( strcmp(event, "CHANNEL_EQUAL_2000") == 0)
-    {
-      run = !startup && (channelValues->channelValue[channelIndex] == 2000) && (this->lastChannelValue[channelIndex] != 2000);
+      if (  strcmp(eventName, inEventName) == 0 )
+      {
+        run = true;
+      }
     }
     else
     {
-      ErrorLog::instance.writeOnce("Invalid event in mapping:");
-      ErrorLog::instance.writeOnce(event);
-      ErrorLog::instance.writeOnce("\n");
-      ErrorLog::instance.disableWriteOnce();
+      if ( strcmp(eventName, "ALWAYS") == 0)
+      {
+        run = true;
+      }
+      else if ( strcmp(eventName, "CHANNEL_EQUAL_1000") == 0)
+      {
+        int channelIndex = (event["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        run = (channelValues->channelValue[channelIndex] == 1000) && (this->lastChannelValue[channelIndex] != 1000);
+      }
+      else if ( strcmp(eventName, "CHANNEL_EQUAL_1333") == 0)
+      {
+        int channelIndex = (event["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        run = (channelValues->channelValue[channelIndex] == 1333) && (this->lastChannelValue[channelIndex] != 1333);
+      }
+      else if ( strcmp(eventName, "CHANNEL_EQUAL_1500") == 0)
+      {
+        int channelIndex = (event["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        run = (channelValues->channelValue[channelIndex] == 1500) && (this->lastChannelValue[channelIndex] != 1500);
+      }
+      else if ( strcmp(eventName, "CHANNEL_EQUAL_1666") == 0)
+      {
+        int channelIndex = (event["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        run = (channelValues->channelValue[channelIndex] == 1666) && (this->lastChannelValue[channelIndex] != 1666);
+      }
+      else if ( strcmp(eventName, "CHANNEL_EQUAL_2000") == 0)
+      {
+        int channelIndex = (event["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        run = (channelValues->channelValue[channelIndex] == 2000) && (this->lastChannelValue[channelIndex] != 2000);
+      }
+      else
+      {
+        /*
+        TODO: all events list
+        ErrorLog::instance.writeOnce("Invalid event in mapping:");
+        ErrorLog::instance.writeOnce(event);
+        ErrorLog::instance.writeOnce("\n");
+        ErrorLog::instance.disableWriteOnce();
+        */
+      }
     }
 
     if ( run )
     {
-      const char* op = action["op"] | "";      
-      const char* parm = action["parm"] | "";      
+      const char* opName = op["name"] | "";      
+      const char* parm = op["parm"] | "";      
 
-      if ( strcmp(op, "AXIS") == 0)
+      if ( strcmp(opName, "AXIS") == 0)
       {
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = this->getAxisValueByName(parm);
       }
-      else if ( strcmp(op, "BUTTON") == 0)
+      else if ( strcmp(opName, "BUTTON") == 0)
       {
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = this->getButtonValueByName(parm);
       }
-      else if ( strcmp(op, "TRIGGER") == 0)
+      else if ( strcmp(opName, "TRIGGER") == 0)
       {
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
         if ( this->hasButtonPressEventByName(parm) )
         {
           channelValues->channelValue[channelIndex] = ( channelValues->channelValue[channelIndex] == 1000) ? 2000: 1000;
           //Serial.print(channelValues->channelValue[channelIndex]);
         }
       }
-      else if ( strcmp(op, "CONSTANT") == 0)
+      else if ( strcmp(opName, "CONSTANT") == 0)
       {
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = action["parm"] | 0;
       }
-      else if ( strcmp(op, "SWITCH3") == 0)
+      else if ( strcmp(opName, "SWITCH3") == 0)
       {
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
         if ( this->hasButtonPressEventByName(parm) )
         {
           if ( channelValues->channelValue[channelIndex] < 1500 )
@@ -540,8 +579,10 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
-      else if ( strcmp(op, "SWITCH4") == 0)
+      else if ( strcmp(opName, "SWITCH4") == 0)
       {
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
         if ( this->hasButtonPressEventByName(parm) )
         {
           if ( channelValues->channelValue[channelIndex] < 1333 )
@@ -562,26 +603,32 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
-      else if ( strcmp(op, "ADD") == 0)
+      else if ( strcmp(opName, "ADD") == 0)
       {
-        channelValues->channelValue[channelIndex] = channelValues->channelValue[channelIndex] + (action["parm"] | 0);
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        channelValues->channelValue[channelIndex] = channelValues->channelValue[channelIndex] + (op["parm"] | 0);
       }
-      else if ( strcmp(op, "MUL") == 0)
+      else if ( strcmp(opName, "MUL") == 0)
       {
-        channelValues->channelValue[channelIndex] = this->chMul10( channelValues->channelValue[channelIndex], (action["parm"] | 1 )  );
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        channelValues->channelValue[channelIndex] = this->chMul10( channelValues->channelValue[channelIndex], (op["parm"] | 1 )  );
       }
-      else if ( strcmp(op, "ADDITIVE") == 0)
+      else if ( strcmp(opName, "ADDITIVE") == 0)
       {
-        this->chAdditive( &(channelValues->channelValue[channelIndex]), &(this->additiveAccumulator[channelIndex]), action["parm"] | "", (action["speed"] | 1 ), dT  );
+        int channelIndex = (op["channel"] | -1) - 1;
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        this->chAdditive( &(channelValues->channelValue[channelIndex]), &(this->additiveAccumulator[channelIndex]), op["parm"] | "", (op["speed"] | 1 ), dT  );
       }
-      else if ( strcmp(op, "SOUND") == 0)
+      else if ( strcmp(opName, "SOUND") == 0)
       {
         AudioManager::instance.play(String(parm), AUDIO_GROUP_NONE);
       }
       else
       {
         ErrorLog::instance.writeOnce("Invalid operation:");
-        ErrorLog::instance.writeOnce(op);
+        ErrorLog::instance.writeOnce(opName);
         ErrorLog::instance.writeOnce("\n");
         ErrorLog::instance.disableWriteOnce();
       }
@@ -608,19 +655,19 @@ void TXInput::getChannelValues( HXChannels* channelValues )
     const JsonArray& mapping = (*profile)["mapping"];
     if ( mapping.size() > 0 )
     {
-      bool startup = false;
+      const char* eventName = NULL;
       int profileIndex = TXProfileManager::instance.getCurrentProfileIndex();
       if ( this->lastProfileIndex != profileIndex )
       {
         this->lastProfileIndex = profileIndex;
         this->resetLastChannelValues();
         this->buttonPressEvents = 0;
-        startup = true;
+        eventName = EVENT_STARTUP;
       }
 
       memcpy( channelValues->channelValue, this->lastChannelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
 
-      this->getChannelValuesMapping( channelValues, mapping, startup);
+      this->getChannelValuesMapping( channelValues, mapping, eventName );
 
       this->buttonPressEvents = 0;
       memcpy( this->lastChannelValue, channelValues->channelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
@@ -831,10 +878,42 @@ void TXInput::dumpBatADC()
 
 //=====================================================================
 //=====================================================================
+void TXInput::modeEventHandler(const char* event)
+{
+  JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
+
+  if (profile)
+  {
+    const JsonArray& mapping = (*profile)["mapping"];
+    if ( mapping.size() > 0 )
+    {
+      HXChannels channelValues;
+      memcpy( channelValues.channelValue, this->lastChannelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
+
+      this->getChannelValuesMapping( &channelValues, mapping, event );
+
+      this->buttonPressEvents = 0;
+      memcpy( this->lastChannelValue, channelValues.channelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
+
+      return;
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void TXInput::staticModeEventHandler(const char* event)
+{
+  TXInput::instance.modeEventHandler(event);
+}
+
+//=====================================================================
+//=====================================================================
 void TXInput::loop(uint32_t t)
 {
   this->readADC(t);
   this->readButtons(t);
 }
+
 
 

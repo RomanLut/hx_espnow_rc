@@ -44,7 +44,7 @@ private:
     void resetLastChannelValues();
 
     void  getChannelValuesDefault( HXChannels* channelValues );
-    void  getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, bool startup );
+    void  getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, const char* inEventName );
 
     int getAxisIdByName( const char* parm);
     int16_t getAxisValueByName( const char* parm);
@@ -63,6 +63,11 @@ private:
 
     int16_t chAdditive(int16_t* value, int32_t* additiveAccumulator, const char* axisName, int speed, int32_t dT);
     void printADCArray( const char* title, const uint16_t* array, int shr );
+
+    bool isValidChannelIndex(int channelIndex);
+
+    void modeEventHandler(const char* event); 
+    static void staticModeEventHandler(const char* event); 
 
 public:
 
