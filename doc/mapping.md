@@ -151,6 +151,7 @@ This action is used to implement switch using self-sentering axis. Channel value
 #### AXIS_SWITCH_LEFT and AXIS_SWITCH_RIGHT
 
 `"op": { "name" : "AXIS_SWITCH_LEFT", "parm" : "AXIS4", "channel" : 5 }`
+
 `"op": { "name" : "AXIS_SWITCH_RIGHT", "parm" : "AXIS4", "channel" : 6 }`
 
 This actions are used to implement switch using self-sentering axis. Channel value is switched between 1000/2000 values when axis is moved to specified direction.
