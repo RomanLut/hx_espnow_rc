@@ -508,22 +508,20 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
     {
       const char* opName = op["name"] | "";      
       const char* parm = op["parm"] | "";      
+      int channelIndex = (op["channel"] | -1) - 1;
 
       if ( strcmp(opName, "AXIS") == 0)
       {
-        int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = this->getAxisValueByName(parm);
       }
       else if ( strcmp(opName, "BUTTON") == 0)
       {
-        int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = this->getButtonValueByName(parm);
       }
       else if ( strcmp(opName, "SWITCH") == 0)
       {
-        int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         if ( this->hasButtonPressEventByName(parm) )
         {
@@ -531,15 +529,8 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           //Serial.print(channelValues->channelValue[channelIndex]);
         }
       }
-      else if ( strcmp(opName, "CONSTANT") == 0)
-      {
-        int channelIndex = (op["channel"] | -1) - 1;
-        if (!this->isValidChannelIndex(channelIndex)) return;
-        channelValues->channelValue[channelIndex] = action["parm"] | 0;
-      }
       else if ( strcmp(opName, "SWITCH3") == 0)
       {
-        int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         if ( this->hasButtonPressEventByName(parm) )
         {
@@ -559,7 +550,6 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       }
       else if ( strcmp(opName, "SWITCH4") == 0)
       {
-        int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         if ( this->hasButtonPressEventByName(parm) )
         {
@@ -581,21 +571,82 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
+      else if ( strcmp(opName, "AXIS_SWITCH") == 0)
+      {
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        int av = this->getAxisValueByName(parm);
+        if ( channelValues->channelValue[channelIndex] < 1500 )
+        {
+          if ( av > 1750 )
+          {
+            channelValues->channelValue[channelIndex] = 2000;
+          }
+        }
+        else
+        {
+          if ( av < 1250 )
+          {
+            channelValues->channelValue[channelIndex] = 1000;
+          }
+        }
+      }
+      else if ( strcmp(opName, "AXIS_SWITCH_LEFT") == 0)
+      {
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        int av = this->getAxisValueByName(parm);
+        if ( (this->additiveAccumulator[channelIndex] & 1) != 0 ) 
+        {
+          if ( av > 1350 )
+          {
+            this->additiveAccumulator[channelIndex] &= ~1;
+          }
+        }
+        else 
+        {
+          if ( av < 1250 )
+          {
+            this->additiveAccumulator[channelIndex] |= 1;
+            channelValues->channelValue[channelIndex] = ( channelValues->channelValue[channelIndex] == 1000) ? 2000: 1000;
+          }
+        }
+      }
+      else if ( strcmp(opName, "AXIS_SWITCH_RIGHT") == 0)
+      {
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        int av = this->getAxisValueByName(parm);
+        if ( ( this->additiveAccumulator[channelIndex] & 2 ) != 0 ) 
+        {
+          if ( av < 1650 )
+          {
+            this->additiveAccumulator[channelIndex] &= ~2;
+          }
+        }
+        else 
+        {
+          if ( av > 1750 )
+          {
+            this->additiveAccumulator[channelIndex] |= 2;
+            channelValues->channelValue[channelIndex] = ( channelValues->channelValue[channelIndex] == 1000) ? 2000: 1000;
+          }
+        }
+      }
+      else if ( strcmp(opName, "CONSTANT") == 0)
+      {
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        channelValues->channelValue[channelIndex] = action["parm"] | 0;
+      }
       else if ( strcmp(opName, "ADD") == 0)
       {
-        int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = channelValues->channelValue[channelIndex] + (op["parm"] | 0);
       }
       else if ( strcmp(opName, "MULD10") == 0)
       {
-        int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         channelValues->channelValue[channelIndex] = this->chMul10( channelValues->channelValue[channelIndex], (op["parm"] | 1 )  );
       }
       else if ( strcmp(opName, "ADDITIVE") == 0)
       {
-        int channelIndex = (op["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         this->chAdditive( &(channelValues->channelValue[channelIndex]), &(this->additiveAccumulator[channelIndex]), op["parm"] | "", (op["speed"] | 1 ), dT  );
       }
