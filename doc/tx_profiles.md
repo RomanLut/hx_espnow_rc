@@ -19,7 +19,7 @@ Most important entry in the file is `"transmitter_mode"`. This parameter defines
 
 Examples can be found in folder: https://github.com/RomanLut/hx_espnow_rc/blob/main/examples/tx_diy_controller/data/
 
-*NOTE: Profile json max file size is limited to 4096 bytes.*
+*NOTE: Profile json max file size is limited to 8192 bytes.*
 
 # Profile 10 (Configuration mode)
 
