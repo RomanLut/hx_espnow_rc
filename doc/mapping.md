@@ -102,7 +102,7 @@ This actions sets `AXIS` value to the channel.
 
 This action sets channel value to 1000/2000 depending on button/switch status.
 
-**parm** is button name: **LEFT_BUMPER == BUTTON0, RIGHT_BUMPER == BUTTON1, BUTTON2 ... BUTTONN**
+**parm** is button name: **LEFT_BUMPER == BUTTON0, RIGHT_BUMPER == BUTTON1, LEFT_TRIGGER == BUTTON2, RIGHT_TRIGGER == BUTTON3, BUTTON4 ... BUTTONN**
 
 **channel** is target channel.
 
