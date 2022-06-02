@@ -148,13 +148,29 @@ This action is used to implement switch using self-sentering axis. Channel value
 
 **channel** is target channel.
 
+
+#### AXIS_BUTTON_LEFT and AXIS_BUTTON_RIGHT
+
+`"op": { "name" : "AXIS_BUTTON_LEFT", "parm" : "AXIS4", "channel" : 5 }`
+
+`"op": { "name" : "AXIS_BUTTON_RIGHT", "parm" : "AXIS4", "channel" : 6 }`
+
+Theese actions are used to implement button using self-sentering axis. Channel value is switched between 1000/2000 values while axis is hold at specified direction.
+
+This way axis works as two independent buttons.
+
+**parm** is axis name.
+
+**channel** is target channel.
+
+
 #### AXIS_SWITCH_LEFT and AXIS_SWITCH_RIGHT
 
 `"op": { "name" : "AXIS_SWITCH_LEFT", "parm" : "AXIS4", "channel" : 5 }`
 
 `"op": { "name" : "AXIS_SWITCH_RIGHT", "parm" : "AXIS4", "channel" : 6 }`
 
-This actions are used to implement switch using self-sentering axis. Channel value is switched between 1000/2000 values when axis is moved to specified direction.
+Theese actions are used to implement switches using self-sentering axis. Channel value is switched between 1000/2000 values when axis is moved to specified direction.
 
 This way axis works as two independent switches.
 
