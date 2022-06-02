@@ -9,34 +9,40 @@
 
 //=====================================================================
 //=====================================================================
-class ModeE58 : public ModeBase
+class ModeKYFPV : public ModeBase
 {
 private:
-    unsigned long lastStats;
     unsigned long lastPacketTime;
-    unsigned long lastRTPPacketTime;
-    unsigned long  lastRTPTrigger;
-    bool connected;
-    uint8_t batPercentage;
-    uint8_t numSats;
-    uint16_t height;
+    unsigned long retryConnectionTime;
+    uint32_t packetsCount;
+    uint32_t flipBeep;
 
-    uint32_t cmdPacketsSent;
-    uint32_t cmdPacketsReceived;
-    uint32_t rtpPacketsTotal;
-    uint32_t cmdPacketsMirrored;
-    uint32_t rtpPacketsMirrored;
+    //States:
+    //0 - inactive
+    //1...22 - in effect
+    //23...100 - wating to deactivate
+    uint8_t takeOffCount;
+    uint8_t landingCount;
+    uint8_t stopCount;
+    uint8_t GyroCount;
+
+    WiFiUDP udpCMD;
+    bool connected;
+
+    boolean headless;
 
     void sendChannels(const HXChannels* channels);
+
     void fillOutgoingTelemetry(HC06Interface* externalBTSerial);
     void processIncomingTelemetry(HC06Interface* externalBTSerial);
-    void sendCommand( byte x, byte y, byte z, byte rot, byte command );
+
+    void processButton( int channelValue, uint8_t* state, const char* event);
 
 public:
-    static ModeE58 instance;
+    static ModeKYFPV instance;
     static const char* name;
 
-    ModeE58();
+    ModeKYFPV();
 
     void start( JsonDocument* json );
 

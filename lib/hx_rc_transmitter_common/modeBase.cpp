@@ -6,7 +6,7 @@
 #include "modeEspNowRC.h"
 #include "modeXiroMini.h"
 #include "modeBLEGamepad.h"
-#include "modeE58.h"
+#include "modeKYFPV.h"
 #include "modeConfig.h"
 
 #include "errorLog.h"
@@ -119,9 +119,9 @@ void ModeBase::startRequestedProfile()
         {
             ModeBase::currentModeHandler = &ModeXiroMini::instance;
         }
-        else if ( strcmp( modeName, ModeE58::name ) == 0)
+        else if ( strcmp( modeName, ModeKYFPV::name ) == 0)
         {
-            ModeBase::currentModeHandler = &ModeE58::instance;
+            ModeBase::currentModeHandler = &ModeKYFPV::instance;
         }
         else
         {
