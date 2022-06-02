@@ -630,6 +630,44 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
+      else if ( strcmp(opName, "AXIS_BUTTON_LEFT") == 0)
+      {
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        int av = this->getAxisValueByName(parm);
+        if ( channelValues->channelValue[channelIndex] > 1500 ) 
+        {
+          if ( av > 1350 )
+          {
+            channelValues->channelValue[channelIndex] = 1000;
+          }
+        }
+        else 
+        {
+          if ( av < 1250 )
+          {
+            channelValues->channelValue[channelIndex] = 2000;
+          }
+        }
+      }
+      else if ( strcmp(opName, "AXIS_BUTTON_RIGHT") == 0)
+      {
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        int av = this->getAxisValueByName(parm);
+        if ( channelValues->channelValue[channelIndex] > 1500 ) 
+        {
+          if ( av < 1750 )
+          {
+            channelValues->channelValue[channelIndex] = 1000;
+          }
+        }
+        else 
+        {
+          if ( av > 1850 )
+          {
+            channelValues->channelValue[channelIndex] = 2000;
+          }
+        }
+      }
       else if ( strcmp(opName, "CONSTANT") == 0)
       {
         if (!this->isValidChannelIndex(channelIndex)) return;
