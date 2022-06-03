@@ -27,10 +27,11 @@ private:
     uint8_t GyroCount;
 
     WiFiUDP udpCMD;
-    bool connected;
+    int state;
 
     boolean headless;
 
+    void sendBeginPacket();
     void sendChannels(const HXChannels* channels);
 
     void fillOutgoingTelemetry(HC06Interface* externalBTSerial);

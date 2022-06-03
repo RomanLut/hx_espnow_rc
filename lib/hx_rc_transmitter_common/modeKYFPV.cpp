@@ -14,11 +14,17 @@
 #include <esp_wifi.h>
 #include "esp_wifi_internal.h" 
 
+#define STATE_DISCONNECTED   0 
+#define STATE_CONNECTED_WIFI 1 
+#define STATE_CONNECTED      2
+
 #define UDP_CMD_PORT    8800
 #define UDP_CMD_IP      "192.168.169.1"
 
 ModeKYFPV ModeKYFPV::instance;
 const char* ModeKYFPV::name = "KYFPV";
+
+static const byte START_PACKET[] = {0xef, 0x00, 0x04, 0x00};
 
 //=====================================================================
 //=====================================================================
@@ -71,7 +77,7 @@ void ModeKYFPV::start( JsonDocument* json )
 
     this->lastPacketTime = millis();
     this->packetsCount = 0;
-    this->connected = false;
+    this->state = STATE_DISCONNECTED;
     this->retryConnectionTime = millis();
 
     this->takeOffCount = 0;
@@ -121,6 +127,15 @@ void ModeKYFPV::processButton( int channelValue, uint8_t* state, const char* eve
     {
         (*state)++;
     }
+}
+
+//=====================================================================
+//=====================================================================
+void ModeKYFPV::sendBeginPacket()
+{
+    udpCMD.beginPacket(UDP_CMD_IP, UDP_CMD_PORT);
+    udpCMD.write( START_PACKET, sizeof(START_PACKET) );
+    udpCMD.endPacket();    
 }
 
 //=====================================================================
@@ -268,9 +283,9 @@ void ModeKYFPV::loop(
     {
         digitalWrite(LED_PIN, HIGH );
 
-        if ( this->connected )
+        if ( this->state != STATE_DISCONNECTED )
         {
-            this->connected = false;
+            this->state = STATE_DISCONNECTED;
 
             WiFi.disconnect();
             udpCMD.stop();
@@ -280,7 +295,7 @@ void ModeKYFPV::loop(
 
         if ( this->retryConnectionTime <= t )
         {
-            this->retryConnectionTime = millis() + 10000;
+            this->retryConnectionTime = t + 10000;
 
             if ( WiFi.status() != WL_IDLE_STATUS && WiFi.status() != WL_NO_SSID_AVAIL )  
             {
@@ -292,36 +307,56 @@ void ModeKYFPV::loop(
     }
     else
     {
-        if ( !this->connected)
+        if ( this->state == STATE_DISCONNECTED)
         {
-            this->connected = true;
+            this->state = STATE_CONNECTED_WIFI;
         
-            Serial.println("Connected...");
+            Serial.println("Connected to wifi...");
             udpCMD.begin( 40000 );
 
-            this->fire(EVENT_CONNECTED);
+            this->retryConnectionTime = t;
         }
 
-        digitalWrite(LED_PIN, ((millis() & 512) > 0 ) ? HIGH : LOW );
-
-        if ((millis() - lastPacketTime) >= 50)
+        if ( this->state == STATE_CONNECTED_WIFI)
         {
-            lastPacketTime = millis();
-            this->sendChannels(channels);
-            Serial.print("*");
+            if ( this->retryConnectionTime + 100 < t )
+            {
+                this->retryConnectionTime  = t + 100;
+                this->sendBeginPacket();
+            }
+        }
+        else
+        {
+            digitalWrite(LED_PIN, ((millis() & 512) > 0 ) ? HIGH : LOW );
+
+            if ((millis() - lastPacketTime) >= 50)
+            {
+                lastPacketTime = millis();
+                this->sendChannels(channels);
+                Serial.print("*");
+            }
         }
     }
 
-/*
-    int packetSize = udpCMD.parsePacket();
-    if (packetSize)
+    if ( this->state != STATE_DISCONNECTED )
     {
-        Serial.printf("Received %d bytes from %s:%d\n", packetSize, udpCMD.remoteIP().toString().c_str(), udpCMD.remotePort());
-        
-        char incomingPacket[1460];
-        int len = udpCMD.read(incomingPacket, 1460);
-    } 
-*/
+        int packetSize = udpCMD.parsePacket();
+        if (packetSize)
+        {
+
+            if ( this->state == STATE_CONNECTED_WIFI )
+            {
+                this->fire(EVENT_CONNECTED);
+            }
+
+            this->state = STATE_CONNECTED;
+
+            Serial.printf("Received %d bytes from %s:%d\n", packetSize, udpCMD.remoteIP().toString().c_str(), udpCMD.remotePort());
+            
+            char incomingPacket[1460];
+            int len = udpCMD.read(incomingPacket, 1460);
+        } 
+    }
 
     processIncomingTelemetry(externalBTSerial);
     fillOutgoingTelemetry( externalBTSerial);
@@ -345,17 +380,24 @@ host:
 
 port: 8800
 
+0)  ef 00 04 00
+initial packet
+
+ 
+1) 
                                            ef 02 3c 00   ......"`.DI...<.
 0040   02 02 00 01 01 00 00 00 39 05 00 00 66 80 80 00   ........9...f...
 0050   80 40 c0 99 00 00 00 00 00 00 00 00 66 08 00 00   .@..........f...
 0060   00 00 00 00 01 00 00 00 14 00 00 00 ff ff ff ff   ................
 0070   00 00 00 00 00 00 00 00 
 
+2) 
                                            ef 02 28 00   ......"`.0....(.
 0040   02 02 00 01 00 00 00 00 2a 08 00 00 66 80 80 00   ........*...f...
 0050   80 40 c0 99 00 00 00 00 00 00 00 00 00 00 00 00   .@..............
 0060   00 00 00 00 
 
+3)
                                            ef 02 60 00   ......"`.h....`.
 0040   02 02 00 01 03 00 00 00 d8 2c 00 00 66 80 80 80   .........,..f...
 0050   80 40 40 99 00 00 00 00 00 00 00 00 89 44 00 00   .@@..........D..
