@@ -41,4 +41,6 @@ Check **errorLog.txt** for the last error messages.
 
 `BLEGAMEPAD` BLE gamepad https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_ble_gamepad.md
 
+`KY FPV` Drones controller with KY FPV application https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/kyfpv/mode_kyfpv.md
+
 `CONFIG` Configuration mode https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
