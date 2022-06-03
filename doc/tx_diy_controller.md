@@ -112,7 +112,7 @@ Upload filesystem Examples/tx_diy_controller/
 
 # Sticks calibration
 
-To enter **sticks calibration mode**, power the controller **with RIGHT Trigger pressed**. Controller will indicate calibration phase with LEDS and audio messages.
+To enter **sticks calibration mode**, power the controller **with RIGHT Bumper pressed**. Controller will indicate calibration phase with LEDS and audio messages.
 
 *Hold Right Bumper for ~3 seconds untill RC controller is powered completely.*
 
