@@ -19,6 +19,7 @@
 #define AUDIO_GROUP_NONE        0      
 #define AUDIO_GROUP_PROFILE     1
 #define AUDIO_GROUP_BLUETOOTH   2
+#define AUDIO_GROUP_TRIM        3
 
 /*
 Sounds

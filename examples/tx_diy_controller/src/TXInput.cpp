@@ -3,6 +3,8 @@
 #include "ErrorLog.h"
 #include "AudioManager.h"
 
+#define TRIM_MAX  32
+
 const bool TXInput::AXIS_INVERT[AXIS_COUNT] = AXIS_INVERT_LIST
 const uint8_t TXInput::ADC_PINS[ADC_COUNT] = ADC_PINS_LIST
 const uint8_t TXInput::BUTTON_PINS[BUTTONS_COUNT] = BUTTON_PINS_LIST
@@ -13,9 +15,17 @@ TXInput TXInput::instance;
 //=====================================================================
 TXInput::TXInput()
 {
+  this->trimMode = false;
+  this->lastTrimTime = millis();
+
   for ( int i = 0; i < HXRC_CHANNELS_COUNT; i++)
   {
     this->additiveAccumulator[i] = 0;
+  }
+
+  for ( int i = 0; i < 3; i++)
+  {
+    this->trim[i] = 0;
   }
 
   ModeBase::eventHandler = &TXInput::staticModeEventHandler;
@@ -372,9 +382,26 @@ int TXInput::getAxisIdByName(const char* parm)
 
 //=====================================================================
 //=====================================================================
-int16_t TXInput::getAxisValueByName(const char* parm)
+int16_t TXInput::getAxisValueByName(const char* parm, bool trim)
 {
-  return this->mapADCValue( this->getAxisIdByName(parm) );
+  int id = this->getAxisIdByName(parm);
+  if ( trim )
+  {
+    if ( id == LEFT_STICK_X_ID )
+    {
+      return this->trim[0] + ( this->trimMode ? 1500 : this->mapADCValue( id ) );
+    }
+    else if ( id == RIGHT_STICK_X_ID )
+    {
+      return this->trim[1] + ( this->trimMode ? 1500 : this->mapADCValue( id ) );
+    }
+    else if ( id == RIGHT_STICK_Y_ID )
+    {
+      return this->trim[2] + ( this->trimMode ? 1500 : this->mapADCValue( id ) );
+    }
+  }
+
+  return this->mapADCValue( id );
 }
 
 //=====================================================================
@@ -513,7 +540,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       if ( strcmp(opName, "AXIS") == 0)
       {
         if (!this->isValidChannelIndex(channelIndex)) return;
-        channelValues->channelValue[channelIndex] = this->getAxisValueByName(parm);
+        channelValues->channelValue[channelIndex] =  this->getAxisValueByName(parm, true);
       }
       else if ( strcmp(opName, "BUTTON") == 0)
       {
@@ -668,6 +695,10 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
+      else if ( strcmp(opName, "TRIM") == 0)
+      {
+        this->trimMode = this->getButtonValueByName(parm) > 1750;
+      }
       else if ( strcmp(opName, "CONSTANT") == 0)
       {
         if (!this->isValidChannelIndex(channelIndex)) return;
@@ -708,8 +739,8 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
     channelValues->channelValue[i] = this->chClamp(channelValues->channelValue[i]);
   }
 
+  this->processTrim();
 }
-
 
 //=====================================================================
 //=====================================================================
@@ -744,6 +775,64 @@ void TXInput::getChannelValues( HXChannels* channelValues )
   }
 
   this->getChannelValuesDefault( channelValues );
+}
+
+//=====================================================================
+//=====================================================================
+void TXInput::processAxisTrim( uint32_t t, int axisId, int trimIndex )
+{
+  int v = this->mapADCValue( axisId );
+
+  int p = 500;
+  if ( (v < 1150) ||  (v > 1850) )
+  {
+    p = 300;        
+  }
+  else if ((v > 1400) &&  (v < 1600)) 
+  {
+    return;
+  }
+
+  if ( (this->lastTrimTime + p) > t ) return;
+
+  this->lastTrimTime = t;
+
+  if ( v < 1400 )
+  {
+    if ( this->trim[trimIndex] == -TRIM_MAX )
+    {
+      AudioManager::instance.play( "/trim_max.mp3", AUDIO_GROUP_TRIM );
+      return;
+    }
+    
+    this->trim[trimIndex]--;
+  }
+  else  if ( v > 1600 )
+  {
+    if ( this->trim[trimIndex] == TRIM_MAX )
+    {
+      AudioManager::instance.play( "/trim_max.mp3", AUDIO_GROUP_TRIM );
+      return;
+    }
+    
+    this->trim[trimIndex]++;
+  }
+
+  AudioManager::instance.play( this->trim[trimIndex] == 0 ? "/trim_center.mp3" : "/trim_beep.mp3", AUDIO_GROUP_TRIM );
+}
+
+
+//=====================================================================
+//=====================================================================
+void TXInput::processTrim()
+{
+  if ( !this->trimMode ) return;
+
+  uint32_t t = millis();
+
+  this->processAxisTrim( t, LEFT_STICK_X_ID, 0 );
+  this->processAxisTrim( t, RIGHT_STICK_X_ID, 1 );
+  this->processAxisTrim( t, RIGHT_STICK_Y_ID, 2 );
 }
 
 //=====================================================================

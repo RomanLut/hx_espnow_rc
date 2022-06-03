@@ -29,11 +29,19 @@
 class TXInput
 {
 private:
+    bool trimMode;
+
     int lastProfileIndex = -1;
 
     int16_t lastChannelValue[HXRC_CHANNELS_COUNT];  
     uint16_t lastButtonsState;   //a bit for each button 1 << id
     uint16_t buttonPressEvents; // bit for each button 1 << id
+
+    int32_t additiveAccumulator[HXRC_CHANNELS_COUNT];
+
+    int8_t trim[3]; 
+
+    uint32_t lastTrimTime;
 
     void initADCPins();
     void initButtonPins();
@@ -47,7 +55,7 @@ private:
     void  getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, const char* inEventName );
 
     int getAxisIdByName( const char* parm);
-    int16_t getAxisValueByName( const char* parm);
+    int16_t getAxisValueByName( const char* parm, bool trim = false);
 
     int getButtonIdByName( const char* parm);
     int16_t getButtonValueByName( const char* parm);
@@ -59,12 +67,13 @@ private:
     int16_t chMul10(int16_t value, int mul);
     int16_t chClamp(int16_t value);
 
-    int32_t additiveAccumulator[HXRC_CHANNELS_COUNT];
-
     int16_t chAdditive(int16_t* value, int32_t* additiveAccumulator, const char* axisName, int speed, int32_t dT);
     void printADCArray( const char* title, const uint16_t* array, int shr );
 
     bool isValidChannelIndex(int channelIndex);
+
+    void processAxisTrim( uint32_t t, int axisId, int trimIndex );
+    void processTrim();
 
     void modeEventHandler(const char* event); 
     static void staticModeEventHandler(const char* event); 
