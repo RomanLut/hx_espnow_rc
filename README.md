@@ -1,5 +1,3 @@
-[Work in progress]
-
 **Goals:**
 - [x] transmit 16 RC channels
 - [x] transmit RSSI, A1, A2 telemetry 
