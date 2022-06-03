@@ -8,12 +8,14 @@ Project Configuration can be adjusted for different axis and buttons count.
 
 DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad and more.
 
-[WORK IN PROGRESS ]
+**Goals**
 
 - [x] Build on breadboard
 - [x] Implement firmware
 - [x] Modify Dji Mini 1 RC Controller 
 - [ ] Write full documentation and building guide
+- [x] KY FPV mode
+- [x] Xiro explorer mini mode
 
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_controller_prototype.jpg "DIY controller prototype")
