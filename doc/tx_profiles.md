@@ -15,17 +15,23 @@ Example **profile1.json**:
 }
 ```
 
-**Configuration Mode** is enabled if profile json is not found or can not be parsed.
-
 Most important entry in the file is `"transmitter_mode"`. This parameter defines mode of the transmitter. Other parameters are dependent on transmitter mode.
 
 Examples can be found in folder: https://github.com/RomanLut/hx_espnow_rc/blob/main/examples/tx_diy_controller/data/
 
-*NOTE: Profile json max file size is limited to 4096 bytes.*
+*NOTE: Profile json max file size is limited to 8192 bytes.*
 
 # Profile 10 (Configuration mode)
 
 This profile is reserved for **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
+
+# Handling errors
+
+**Configuration Mode** is started if profile json is not found or can not be parsed.
+
+Check **errorLog.txt** for the last error messages.
+
+*Note: DIY Controller plays **"Error.please check log"** audio message on error.*
 
 # Modes 
 

@@ -7,20 +7,25 @@ Mapping is described in profile json:
 
 ```json
 {
-    "transmitter_mode" : "ESPNOW",
-    "espnow_channel" : 3,
-    "espnow_key" : 0,
-    "espnow_long_range_mode" : false,
-    "ap_name" : "hxrct",
-    "ap_password" : "",
-    "mapping":[
-        { "event" :"ALWAYS", "channel" : 1, "op" : "AXIS", "parm" : "LEFT_STICK_X" },
-        { "event" :"ALWAYS", "channel" : 2, "op" : "AXIS", "parm" : "LEFT_STICK_Y" },
-        { "event" :"ALWAYS", "channel" : 3, "op" : "AXIS", "parm" : "RIGHT_STICK_X" },
-        { "event" :"ALWAYS", "channel" : 4, "op" : "AXIS", "parm" : "RIGHT_STICK_Y" },
-        { "event" :"ALWAYS", "channel" : 5, "op" : "TRIGGER", "parm" : "LEFT_BUMPER" },
-        { "event" :"ALWAYS", "channel" : 6, "op" : "TRIGGER", "parm" : "RIGHT_BUMPER" }
-    ]
+	"transmitter_mode": "ESPNOW",
+	"espnow_channel": 3,
+	"espnow_key": 0,
+	"espnow_long_range_mode": false,
+	"ap_name": "hxrct",
+	"ap_password": "",
+	"mapping": [
+		{ "event": { "name": "STARTUP"	},	"op": {	"name": "SOUND",	"parm": "/mode_esp_now.mp3"		} },
+
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_X", 	"channel": 1 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y", 	"channel": 2 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_Y",		"channel": 3 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 4 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "TRIGGER",	"parm": "LEFT_BUMPER", 		"channel": 5 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "TRIGGER",	"parm": "RIGHT_BUMPER",		"channel": 6 	} },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disarmed.mp3"    } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "ence": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3"       } }
+	]
 }
 ```
 
@@ -28,18 +33,26 @@ Mapping is described in profile json:
 
 Mapping is a set of actions executed one-by-one on each loop:
 
-`{ "event" :"ALWAYS", "channel" : "1", "op" : "AXIS", "parm" : "LEFT_STICK_X" }`
+`{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_X", 	"channel": 1 	} }`
 
-If mapping is not provided, controller will map all Axesr and buttons to channels consecutive.
+Action consists of **event** and operation **op**.
+
+If mapping is not provided, controller will map all Axes and buttons to channels consecutive.
 
 Buttons will be mapped starting from channel `BLE_GAMEPAD_AXIS_COUNT` ( ==6 ).
 
 # event
 
+Event definition includes name of event, and event specific parameters:
+
+`"event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "ence": "yes" }`
+
 #### STARTUP
 
 Action is executed one time on profile initialization.
-It can be used to assign values for channels using `CONTSTANT` input.
+For example, it can be used to assign values for channels using `CONTSTANT` input, or play audio message.
+
+`{ "event": { "name": "STARTUP"	},	"op": {	"name": "SOUND", "parm": "/mode_esp_now.mp3" } },`
  
 On statup, all channels have value 1000. `STARTUP` is the only action which is executed on the first loop.
 
@@ -47,148 +60,232 @@ On statup, all channels have value 1000. `STARTUP` is the only action which is e
 
  Action is executed on each loop.
 
-#### CHANNEL_EQUAL_1000 
-#### CHANNEL_EQUAL_1333
-#### CHANNEL_EQUAL_1500 
-#### CHANNEL_EQUAL_1666
-#### CHANNEL_EQUAL_2000
+#### CHANNEL_EQUAL
 
-Theese actions are executed each time channel value is changed to specified value ( action is executed one time after each change ).
-Make sure action is placed after (not before) action which actially changes channel value, otherwise change will not be detected.
-Common usage is to play sound file with `SOUND` action.
+`"event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }`
 
+Channel value is compared with "value".
 
-# channel 
+**parm** is value. Value is specified without quotes.
 
- **Channel** is target channel for this action, 1..15
+**channel** is target channel.
+
+**once** is either "no"" or "yes".
+
+This action is executed on each loop ("once":"no"), or each time channel value is changed ("once": "yes") (action is executed one time after each change). 
+
+Make sure action is placed after (not before) action which actually changes channel value, otherwise change will not be detected.
+
+Common usage of "ence" action is to play sound file using `SOUND` action.
+
 
 # op
 
- `op` is operation to run on selected channel:
+`"op": { "name": "AXIS", "parm": "RIGHT_STICK_X", "channel": 1 }` 
+
+Operation definition contains operation name, and operation specific parameters:
 
 #### AXIS
 
+`"op": { "name": "AXIS", "parm": "RIGHT_STICK_X", "channel": 1 }`
+
 This actions sets `AXIS` value to the channel.
 
-**parm** is axis: **LEFT_STICK_X == AXIS0, LEFT_STICK_Y == AXIS1, RIGHT_STICK_X == AXIS2, RIGHT_STICK_Y == AXIS3, AXIS4...AXIS15**
+**parm** is axis name: **LEFT_STICK_X == AXIS0, LEFT_STICK_Y == AXIS1, RIGHT_STICK_X == AXIS2, RIGHT_STICK_Y == AXIS3, AXIS4...AXIS15**
 
-`{ "event" :"ALWAYS", "channel" : 1, "op" : "AXIS", "parm" : "LEFT_STICK_X" }`
+**channel** is target channel.
+
 
 #### BUTTON
 
-This action sets channels value to 1000/2000 depending on button/switch status.
+`"op" : { "op" : "BUTTON", "parm" : "LEFT_THUMB", "channel" : 5 }`
 
-parm is button: **LEFT_BUMPER == BUTTON0, RIGHT_BUMPER == BUTTON1, BUTTON2 ... BUTTONN**
+This action sets channel value to 1000/2000 depending on button/switch status.
 
-`{ "event" :"ALWAYS", "channel" : 5, "op" : "BUTTON", "parm" : "LEFT_THUMB" }`
+**parm** is button name: **LEFT_BUMPER == BUTTON0, RIGHT_BUMPER == BUTTON1, LEFT_TRIGGER == BUTTON2, RIGHT_TRIGGER == BUTTON3, BUTTON4 ... BUTTONN**
 
-#### TRIGGER
+**channel** is target channel.
 
-This action is used to implement switch using button. Channel value is switched between 1000/2000 on each button press.
+
+#### SWITCH
+
+`"op": { "name" : "SWITCH", "parm" : "LEFT_THUMB", "channel" : 5 }`
+
+This action is used to implement switch using a button. Channel value is switched between 1000/2000 values on each button press.
 
 **parm** is button name.
 
-`{ "event" :"ALWAYS", "channel" : 5, "op" : "TRIGGER", "parm" : "LEFT_THUMB" }`
+**channel** is target channel.
 
 #### SWITCH3
+
+`"op": { "name" : "SWITCH3", "parm" : "LEFT_THUMB", "channel" : 5 }`
 
 This action is used to implement 3-state switch using button. Channel value is switched beetwen 1000/1500/2000 on each button press.
 
 **parm** is button name.
 
-`{ "event" :"ALWAYS", "channel" : 5, "op" : "SWITCH3", "parm" : "LEFT_THUMB" }`
+**channel** is target channel.
+
 
 #### SWITCH4
+
+`"op": { "name" : "SWITCH4", "parm" : "LEFT_THUMB", "channel" : 5 }`
 
 This action is used to implement 4-state switch using button. Channel value is switched beetwen 1000/1333/1666/2000 on each button press.
 
 **parm** is button name.
 
-`{ "event" :"ALWAYS", "channel" : 5, "op" : "SWITCH4", "parm" : "LEFT_THUMB" }`
+**channel** is target channel.
 
-#### CONSTANT
+#### AXIS_SWITCH
 
-This action is used to assign constant value to the channel
+`"op": { "name" : "AXIS_SWITCH", "parm" : "AXIS4", "channel" : 5 }`
 
-**parm** is value
+This action is used to implement switch using self-sentering axis. Channel value is switched between 1000/2000 values when axis is moved left or right.
 
-Note that value is specified without quotes.
+**parm** is axis name.
 
-`{ "event" :"STARTUP", "channel" : 5, "op" : "CONSTANT", "parm" : 1500 },`
-
-#### MUL
-
-This action is used to multiply channel value.
-
-`CH = (CH - 1500) * MUL / 10 + 1500.`
-
-Can be used to inverse axis (multiply by -1) or map upper part of axis to full range.
-
-**parm** is multiplicator (integer)
-
-Note that value is specified without quotes.
-
-Note that value 1 means "multiply by 1/10".
-
-`{ "event" :"ALWAYS", "channel" : 1, "op" : "MUL", "parm" : -1 },`
-
-#### ADD
-
-This action is used to add value to channel.
-
-`CH = CH + value`
-
-**parm** is value (integer)
-
-Note that value is specified without quotes.
-
-- `{ "event" :"ALWAYS", "channel" : 1, "op" : "ADD", "parm" : 500 },`
-
-#### SOUND
-
-This action does not modify channels value. It is used to play sound file.
-
-`{ "event" :"EQUAL_1000", "channel" : 5, "op" : "SOUND", "parm" : "/armed.wav" },`
+**channel** is target channel.
 
 
+#### AXIS_BUTTON_LEFT and AXIS_BUTTON_RIGHT
 
-# Inversing axis
+`"op": { "name" : "AXIS_BUTTON_LEFT", "parm" : "AXIS4", "channel" : 5 }`
 
- To inverse axis, multiply channel by -1 after setting axis value:
+`"op": { "name" : "AXIS_BUTTON_RIGHT", "parm" : "AXIS4", "channel" : 6 }`
 
-```
- { "event" :"ALWAYS", "channel" : 1, "op" : "AXIS", "parm" : "LEFT_STICK_X" },
- { "event" :"ALWAYS", "channel" : 1, "op" : "MUL", "parm" : -10 }
-```
+Theese actions are used to implement button using self-sentering axis. Channel value is switched between 1000/2000 values while axis is hold at specified direction.
 
-# Mapping upper part of axis to the full range
+This way axis works as two independent buttons.
 
- If Throttle axis is self-centering, sometimes it is desired to map apper part of axis to full range.
-```
- { "event" :"ALWAYS", "channel" : 1, "op" : "AXIS", "parm" : "LEFT_STICK_Y" },
- { "event" :"ALWAYS", "channel" : 1, "op" : "MUL", "parm" : 20 },
- { "event" :"ALWAYS", "channel" : 1, "op" : "ADD", "parm" : -500 }
-```
+**parm** is axis name.
 
-# Additive axis
+**channel** is target channel.
 
+
+#### AXIS_SWITCH_LEFT and AXIS_SWITCH_RIGHT
+
+`"op": { "name" : "AXIS_SWITCH_LEFT", "parm" : "AXIS4", "channel" : 5 }`
+
+`"op": { "name" : "AXIS_SWITCH_RIGHT", "parm" : "AXIS4", "channel" : 6 }`
+
+Theese actions are used to implement switches using self-sentering axis. Channel value is switched between 1000/2000 values when axis is moved to specified direction.
+
+This way axis works as two independent switches.
+
+**parm** is axis name.
+
+**channel** is target channel.
+
+
+#### ADDITIVE
+
+ `"op:" { "name"" : "ADDITIVE", "parm" : "LEFT_STICK_Y", speed: 5, "channel" : 1 }`
+ 
+ `CH += (Axis - 1500) * dT * speed / 10000;`
+ 
  If Throttle axis is self-centering, sometimes it is desired to implement additive axis.
  
  When stick is moved up, value of channel increases proportionally.
  
  When stick is moved down, value of channel decreases proportionally.
  
- **speed** is amount of axis value to add to the channel value.
- 
- `CH += (Axis - 1500) * dT * speed / 10000;`
+ **speed** is amount of axis value to add to the channel value. Specified without quotes.
  
  **speed** value of 1 means that channel will reach maximum in 10 seconds, if stick is moved to maximum.
  
  **speed** value of 10 means that channel will reach maximum in 1 second, if stick is moved to maximum.
 
- `{ "event" :"ALWAYS", "channel" : 1, "op" : "ADDITIVE", "parm" : "LEFT_STICK_Y", speed: 5 }`
+ 
+#### CONSTANT
+
+`"op": { "name" : "CONSTANT", "parm" : 1500, "channel" : 5 },`
+
+This action is used to assign constant value to the channel.
+
+**parm** is value. Value is specified without quotes.
+
+**channel** is target channel.
+
+
+#### MULD10
+
+`"op": { "name" : "MULD10", "parm" : -1, "channel" : 1  },`
+
+`CH = (CH - 1500) * MUL / 10 + 1500.`
+
+This action is used to multiply channel value.
+
+**parm** is multiplicator (integer). Value is specified without quotes. Value 1 means "multiply by 1/10".
+
+**channel** is target channel.
+
+Can be used to inverse axis (multiply by -1) or map upper part of axis to full range.
+
+
+#### ADD
+
+`"op": { "name" : "ADD", "parm" : 500, "channel" : 1 },`
+
+`CH = CH + value`
+
+This action is used to add value to the channel.
+
+**parm** is value (integer). Value is specified without quotes.
+
+**channel** is target channel.
+
+
+#### SOUND
+
+`"op": { name : "SOUND", "parm" : "/armed.mp3" },`
+
+This action used to play sound file.
+
+**parm**" is sound file in mp3 or wav format. Leading "/" is required.
+
+MP3: 24KHz, momo, 128-192kBit
+
+WAV: 8-16KHz 8bit mono.
+
+
+#### TRIM
+
+`"op": { "name": "TRIM", "parm": "LEFT_TRIGGER", "channel": 8 } },`
+
+This action is used to trim sticks: Left X, Right X, Right Y. Move sticks while holding modifier button to adjust trim.
+
+Trim is reset on reboot.
+
+**parm**" is modifier button name.
+
+
+
+# Inverting axis
+
+ To inverse axis, multiply channel by -1 after setting axis value:
+
+```
+ { "event": { "name" :"ALWAYS" }, "op": { "name" : "AXIS", "parm" : "LEFT_STICK_X", "channel" : 1 } },
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "MUL", "parm" : -10, "channel" : 1 } }
+```
+
+# Mapping upper part of axis to the full range
+
+ If Throttle axis is self-centering, sometimes it is desired to map apper part of axis to full range.
+```
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "AXIS", "parm" : "LEFT_STICK_Y", "channel" : 1 },
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "MUL", "parm" : 20, "channel" : 1 },
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "ADD", "parm" : -500, "channel" : 1 }
+```
 
 # Clamping 
- Each channel value is clamped to the range 1000...2000 after completing all operations.
- 
- Intermediate values can be in range -32768...32768.
+Each channel value is clamped to the range 1000...2000 after completing all operations.
+
+Intermediate values can be in range -32768...32768.
+
+# Comments
+Json format does not support comments. To add comments, use any unused parameter name ( unknown parameters are ignored) :
+
+`{ "event": { "name": "ALWAYS" }, op": { "name": "BUTTON", "parm": "LEFT_BUMPER", "channel": 5,	"note":"takeoff" } }`
