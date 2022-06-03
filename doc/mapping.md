@@ -250,6 +250,18 @@ MP3: 24KHz, momo, 128-192kBit
 WAV: 8-16KHz 8bit mono.
 
 
+#### TRIM
+
+`"op": { "name": "TRIM", "parm": "LEFT_TRIGGER", "channel": 8 } },`
+
+This action is used to trim sticks: Left X, Right X, Right Y. Move sticks while holding modifier button to adjust trim.
+
+Trim is reset on reboot.
+
+**parm**" is modifier button name.
+
+
+
 # Inverting axis
 
  To inverse axis, multiply channel by -1 after setting axis value:
@@ -269,6 +281,11 @@ WAV: 8-16KHz 8bit mono.
 ```
 
 # Clamping 
- Each channel value is clamped to the range 1000...2000 after completing all operations.
- 
- Intermediate values can be in range -32768...32768.
+Each channel value is clamped to the range 1000...2000 after completing all operations.
+
+Intermediate values can be in range -32768...32768.
+
+# Comments
+Json format does not support comments. To add comments, use any unused parameter name ( unknown parameters are ignored) :
+
+`{ "event": { "name": "ALWAYS" }, op": { "name": "BUTTON", "parm": "LEFT_BUMPER", "channel": 5,	"note":"takeoff" } }`
