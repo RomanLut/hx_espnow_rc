@@ -1,0 +1,39 @@
+{
+	"folders": [
+		{
+			"name": "rx_esp32_ppm",
+			"path": "."
+		},
+		{
+			"name": "hx_espnow_rc",
+			"path": "../../lib"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"bit": "cpp",
+			"*.tcc": "cpp",
+			"exception": "cpp",
+			"iterator": "cpp",
+			"ranges": "cpp",
+			"streambuf": "cpp",
+			"cmath": "cpp",
+			"type_traits": "cpp",
+			"typeinfo": "cpp",
+			"numeric": "cpp",
+			"memory": "cpp",
+			"array": "cpp",
+			"string": "cpp",
+			"vector": "cpp",
+			"string_view": "cpp",
+			"functional": "cpp",
+			"limits": "cpp",
+			"ostream": "cpp",
+			"tuple": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"unordered_map": "cpp",
+			"initializer_list": "cpp"
+		}
+	}
+}
