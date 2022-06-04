@@ -1,7 +1,5 @@
 {
    "transmitter_mode": "KYFPV",
-   "ap_name": "hxrct",
-   "ap_password": "",
    "mapping": [
       { "event": { "name": "STARTUP" 			}, 	"op": { "name": "SOUND",	"parm": "/mode_KYFPV.mp3" 								} },
       { "event": { "name": "CONNECTED"			},	"op": { "name": "SOUND",	"parm": "/connected.mp3"								} },
