@@ -16,6 +16,7 @@ class ModeEspNowRC : public ModeBase
 {
 private:
     unsigned long lastStats;
+    bool lastFailsafe;
 
     HXRCMaster hxrcMaster;
     HXRCSerialBuffer<512> hxrcTelemetrySerial;

@@ -48,6 +48,7 @@ void ModeEspNowRC::start( JsonDocument* json )
     esp_task_wdt_reset();
 
     this->lastStats = millis();
+    this->lastFailsafe = true;
 }
 
 
@@ -119,45 +120,50 @@ void ModeEspNowRC::loop(
     hxrcMaster.loop();
     hxrcMaster.updateLed( LED_PIN, true );  //LED_PIN is not inverted. Pass"inverted" flag so led is ON in idle mode
 
-/*
+
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
     hxrcMaster.getTransmitterStats().printStats();
     hxrcMaster.getReceiverStats().printStats();
-    if ( sbusDecoder.isFailsafe()) HXRCLOG.print("SBUS FS!\n");
+    if ( channels->isFailsafe) HXRCLOG.print("SBUS FS!\n");
   }
-*/
 
-    if ( sport != NULL )
-    {
-      sport->setRSSI(hxrcMaster.getTransmitterStats().getRSSI());
-      sport->setRSSIDbm( hxrcMaster.getTransmitterStats().getRSSIDbm() );
-      sport->setNoiseFloor(hxrcMaster.getTransmitterStats().getNoiseFloor());
-      sport->setSNR(hxrcMaster.getTransmitterStats().getSNR());
+  if ( this->lastFailsafe != hxrcMaster.getReceiverStats().isFailsafe() )
+  {
+    this->lastFailsafe = hxrcMaster.getReceiverStats().isFailsafe();
+    this->fire( this->lastFailsafe ? EVENT_DISCONNECTED : EVENT_CONNECTED );  
+  } 
 
-      sport->setRXRSSI(hxrcMaster.getReceiverStats().getRSSI());
-      sport->setRXRSSIDbm( hxrcMaster.getReceiverStats().getRemoteRSSIDbm() );
-      sport->setRXNoiseFloor(hxrcMaster.getReceiverStats().getRemoteNoiseFloor());
-      sport->setRXSNR(hxrcMaster.getReceiverStats().getRemoteSNR());
+  if ( sport != NULL )
+  {
+    sport->setRSSI(hxrcMaster.getTransmitterStats().getRSSI());
+    sport->setRSSIDbm( hxrcMaster.getTransmitterStats().getRSSIDbm() );
+    sport->setNoiseFloor(hxrcMaster.getTransmitterStats().getNoiseFloor());
+    sport->setSNR(hxrcMaster.getTransmitterStats().getSNR());
 
-      sport->setA1(hxrcMaster.getA1());
-      sport->setA2(hxrcMaster.getA2());
+    sport->setRXRSSI(hxrcMaster.getReceiverStats().getRSSI());
+    sport->setRXRSSIDbm( hxrcMaster.getReceiverStats().getRemoteRSSIDbm() );
+    sport->setRXNoiseFloor(hxrcMaster.getReceiverStats().getRemoteNoiseFloor());
+    sport->setRXSNR(hxrcMaster.getReceiverStats().getRemoteSNR());
 
-      sport->setDebug2(hxrcMaster.getTransmitterStats().getRate()>=0? hxrcMaster.getTransmitterStats().getRate():255);
-      sport->setDebug3(hxrcMaster.getTransmitterStats().getSuccessfulPacketRate());
+    sport->setA1(hxrcMaster.getA1());
+    sport->setA2(hxrcMaster.getA2());
 
-      sport->loop();
-    }
+    sport->setDebug2(hxrcMaster.getTransmitterStats().getRate()>=0? hxrcMaster.getTransmitterStats().getRate():255);
+    sport->setDebug3(hxrcMaster.getTransmitterStats().getSuccessfulPacketRate());
 
-    if ( hxrcMaster.getReceiverStats().isFailsafe() && (*TXProfileManager::instance.getCurrentProfile())["ap_name"].as<const char*>() )
-    {
-        ArduinoOTA.handle();  
-    }
+    sport->loop();
+  }
 
-    if ( haveToChangeProfile() )
-    {
-        rebootToRequestedProfile();
-    }
+  if ( hxrcMaster.getReceiverStats().isFailsafe() && (*TXProfileManager::instance.getCurrentProfile())["ap_name"].as<const char*>() )
+  {
+      ArduinoOTA.handle();  
+  }
+
+  if ( haveToChangeProfile() )
+  {
+      rebootToRequestedProfile();
+  }
 
 }
