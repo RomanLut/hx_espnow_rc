@@ -87,7 +87,7 @@ Failsafe:
 //#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
 //#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
-#define MOTOR_BEEPER_CH 8 //zero-based CH number
+//#define MOTOR_BEEPER_CH 8 //zero-based CH number
 //==========================================================================================
 
 
@@ -107,8 +107,7 @@ Failsafe:
 //==========================================================================================
 
 //Notes: 
-//5 - D1- SCL, 4 -  D2- SDA
+//5 - D1 - SCL, 4 - D2 - SDA
 //13,15 - alternative UART1
 //2 - D4 - LED
 //16 - no pwm or interrupts possible
-
