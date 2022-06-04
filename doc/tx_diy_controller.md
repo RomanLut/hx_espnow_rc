@@ -16,6 +16,8 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 - [ ] Write full documentation and building guide
 - [x] KY FPV mode
 - [x] Xiro explorer mini mode
+- [ ] Rize tello mode
+- [ ] Eachine E58 mode
 
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_controller_prototype.jpg "DIY controller prototype")
@@ -57,7 +59,9 @@ Pictures below provide hints for converting Mavic Mini 1 RC Controller. We reuse
 
 DIY powerbank board is used to control battery charge and power ESP32. It has one drawback though: when usb cable is disconnected, it takes ~1 second to start boost up converter. Due to this delay, controller reboots.
 
-[TODO]
+Mavic Mini controller can be disassembled using guides from youtube.
+
+Connection diagrams for the internals of the controller are shown below:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_sticks.jpg "Mavic Mini RC sticks")
 
@@ -68,6 +72,8 @@ DIY powerbank board is used to control battery charge and power ESP32. It has on
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_led_board.jpg  "Mavic LED board")
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_battery.jpg "Mavic battery")
+
+Solder ESP32, BT-06, powerbank module and amplifier according to schematics above.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_1.jpg  "Mavic mini rc 1")
 
@@ -163,6 +169,12 @@ To force **Configuration mode**, power the controller with **RIGHT Bumper** pres
 **Configuration mode** is used to upload profiles to controller filesystem.
 
 See **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
+
+
+# Known problems
+
+1) Sound volume is low. Speaker is not well placed. It would  produce good sound if mounted against shell holes. Possible solutions: Use PAM8403 amplifier for higher volume? Use tiny mobile phone speaker mouted against holes at the back of the shell?
+
 
 # See next
 
