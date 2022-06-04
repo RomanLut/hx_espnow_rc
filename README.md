@@ -52,7 +52,7 @@ See building guides:
 - transmitter module for Jumpter T-Lite (JR Bay): https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_external_module.md
 - DIY RC Controller: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_diy_controller.md
 - module for Radiomaster TX16s JR bay [todo]
-- standalone Servo/PWM output receiver based on Wemos D1 mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md
+- Servo/PWM/Discrete output receiver based on Wemos D1 mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_pwm.md
 - ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md
 - Wemos D1 Mini based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_sbus.md
 - ESP32 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md

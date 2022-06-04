@@ -14,7 +14,7 @@
 
  Receiver projects:
 
- rx_d1_mini_standalone - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_standalone.md - Servo/PWM/Discrete output receiver with telemetry
+ rx_d1_mini_pwm - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_pwm.md - Servo/PWM/Discrete output receiver with telemetry
 
  rx_esp01_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md - ESP-01 based SBUS receiver
 

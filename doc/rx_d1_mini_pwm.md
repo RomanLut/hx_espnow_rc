@@ -1,4 +1,4 @@
-# Standalone Servo/PWM/Discrete output receiver based on D1 Mini board
+# Servo/PWM/Discrete output receiver based on D1 Mini board
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1miniphoto.jpg "D1 Mini photo")
 
@@ -101,10 +101,10 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
 
 # Building steps
 
-- edit receiver configuration: examples/rx_d1_mini_standalone/include/rx_config.h:
+- edit receiver configuration: examples/rx_d1_mini_pwm/include/rx_config.h:
 - configure key and wifi channel (USE_KEY, USE_WIFI_CHANNEL)
 - configure output pins (SERVO_PINS, PWM_PINS, DISCRETE_PINS)
-- flash examples/rx_d1_mini_standalone/ to D1 Mini board
+- flash examples/rx_d1_mini_pwm/ to D1 Mini board
 - replace voltage sensing resistor 
 - remove diode
 - repace capacitor or add additional capacitor to 3.3V rail for stability
