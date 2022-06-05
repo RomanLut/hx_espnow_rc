@@ -1,11 +1,11 @@
-# PPM output recevier with transparent telemetry stream based on ESP32-WROOM-32 naked module
+# PPM output receiver with transparent telemetry stream based on ESP32-WROOM-32 naked module
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_wroom_32.jpg "ESP32-WROOM-32")
 
-Receiver to be used with flight controller. Receives 15 channels and outputs SBUS signal.
+Receiver to be used with flight controller. Receives 4...15 channels and outputs PPM signal.
 Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP etc.). 
 
-RSSI is injected into channel 16.
+RSSI is injected into last channel (optionally).
 
 Can be powered from 5V BEC or directly from 1S battery (3.0V...5.0V).
 If you are going to power it from 1S battery, linear regulator should be low-drop one (0.2...0.3V at 340mAh). ESP32 will operate stable down to 2.7V, allowing dischaging battery down to 3V.
@@ -21,11 +21,11 @@ TODO: work as telemetry blackbox?
 
 # Failsave
 
-Failsafe flag is passed in SBUS packets. Channels retain last good values.
+There is no pulses while connection is lost.
 
 # Connection diagram
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_sbus_connections.jpg "ESP32 sbus connections")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_ppm_connections.jpg "ESP32 ppm connections")
 
 # Parts list
 
@@ -60,10 +60,13 @@ Failsafe flag is passed in SBUS packets. Channels retain last good values.
 
 # Flashing first time
 
-1) Edit receiver configuration: examples/esp32_rx_sbus/include/rx_config.h
+1) Edit receiver configuration: examples/esp32_rx_ppm/include/rx_config.h
 - configure key, wifi channel and LR mode (USE_KEY, USE_WIFI_CHANNEL)
 - configure telemetry baudrate n RX/TX pins (TELEMETRY_BAUDRATE)
 - configure LR mode (USE_LR_MODE)
+- configure number of PPM channels
+- configure RSSI injection
+- configure PPM pin
 
 2) Connect to USB-UART adapter according the connection diagram below:
 
