@@ -111,6 +111,8 @@ Charging indicator LED and power switch are placed on the back cover of the RC c
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_7.jpg  "Mavic mini rc 7")
 
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/diy_mavic_mini_rc_mod.jpg  "Mavic mini rc 8")
+
 Flash module with Examples/tx_diy_controller/
 
 Upload filesystem Examples/tx_diy_controller/
