@@ -91,7 +91,7 @@ lines in platformio.ini.
 
 3) Build and upload using PlatformIO IDE as usual.
 
-If receiver is flashed in LR mode, access point will not be visible initially. Recevier will switch to normal mode to show AP and allow OTA updates after 1 minute of inactivity. Just power on receiver without transmitter enabled, and wait for 1 minute.
+If receiver is flashed in LR mode, access point will not be visible initially. Receiver will switch to normal mode to show AP and allow OTA updates after 1 minute of inactivity. Just power on receiver without transmitter enabled, and wait for 1 minute.
 
 
 

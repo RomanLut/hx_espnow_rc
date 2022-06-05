@@ -15,7 +15,7 @@
                                            
  Transmits telementry: RSSI, battery voltage as A1.
  
- Power supply voltage range is 3.1...6V. Recevier can be powered from 5V BEC, or directly from 1S battery: (4.2V-3.1V).
+ Power supply voltage range is 3.1...6V. Receiver can be powered from 5V BEC, or directly from 1S battery: (4.2V-3.1V).
 
  Peak power consumption is ~170mA.
 
