@@ -2,26 +2,26 @@
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1_mini_sbus.jpg "D1 Mini sbus")
 
-Receiver to be used with flight controller. Receives 15 channels and outputs SBUS signal.
+Receiver to be used with flight controller. Receives 4...15 channels and outputs PPM signal.
 Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP etc.). 
 
-RSSI is injected into channel 16.
+*PMM jittering is in range of ~2us*
+
+RSSI is injected into last channel (optionally).
 
 Can be powered from 5V BEC.
 
 Peak power consumption is ~170mA.
 
-Receiver is similar to rx_esp01_sbus. The only difference is that Serial1 pins are swapped to pins D7/D8, because Serial1 is connected to USB serial. 
-
-See testing ESP01 receiver with INAV 1.7.3 flying wing: https://www.youtube.com/watch?v=UptvxsFHDFA
+Receiver is similar to rx_d1_mini_sbus, but with PPM output.
 
 # Failsave
 
-Failsafe flag is passed in SBUS packets. Channels retain last good values.
+There will be no pulses if connection is lost.
 
 # Connection diagram
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1_mini_sbus_connections.jpg "D1 Mini sbus connections")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1_mini_ppm_connections.jpg "D1 Mini ppm connections")
 
 # Parts list
 
@@ -69,11 +69,13 @@ If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then
 
 # Flashing first time
 
-1. Edit receiver configuration: `examples/rx_d1_mini_sbus/include/rx_config.h`
+1. Edit receiver configuration: `examples/rx_d1_mini_ppm/include/rx_config.h`
  - configure key and wifi channel: `USE_KEY` and `USE_WIFI_CHANNEL`
  - configure telemetry baudrate
+ - configure number of PPM channels
+ - configure RSSI injection
 
-2. Upload `examples/rx_d1_mini_sbus/` project using PlatformIO.
+2. Upload `examples/rx_d1_mini_ppm/` project using PlatformIO.
 
 After initial flashing, firmware can be updated wirelessly (OTA).
 
