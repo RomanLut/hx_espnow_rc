@@ -29,6 +29,8 @@
 class StateBase
 {
 private:
+    uint32_t runningLightStart;
+
 public:
 
     static StateBase* currentState;
@@ -39,5 +41,9 @@ public:
     virtual void onRun(uint32_t t);
 
     void SetLEDS4Profile(uint8_t profileIndex);
+
+    void initLEDS4RunningLight();
+    void SetLEDS4RunningLight();
+    void LEDS4RunningLightAudioWait();
 };
 

@@ -9,6 +9,7 @@ class StateSelectProfile: public StateBase
 private:
     uint32_t stateTime;
     bool waitUnpress;
+    bool runningLight;
     bool exit;
     uint8_t profileIndex;
 

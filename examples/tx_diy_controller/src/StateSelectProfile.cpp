@@ -15,12 +15,13 @@ void StateSelectProfile::onEnter(StateBase *prevState)
 {
   this->stateTime = millis();
   this->waitUnpress = true;
+  this->runningLight = true;
   this->exit = false;
   this->profileIndex = currentProfileIndex;
 
-  TXMain::instance.setLEDS4( 8 + 4 + 2 + 1 );
-
   AudioManager::instance.play( "/select_profile.mp3", AUDIO_GROUP_NONE );
+
+  this->initLEDS4RunningLight();
 }
 
 //======================================================
@@ -38,6 +39,12 @@ void StateSelectProfile::onRun(uint32_t t)
       )
     {
       this->waitUnpress = false;
+      this->runningLight = false;
+      this->SetLEDS4Profile(profileIndex);
+    }
+    if ( this->runningLight )
+    {
+      this->SetLEDS4RunningLight();
     }
   }
   else
@@ -90,6 +97,7 @@ void StateSelectProfile::onRun(uint32_t t)
     if ( TXInput::instance.isButtonPressed(LEFT_BUMPER_ID) )
     {
       this->waitUnpress = true;
+      this->runningLight = true;
       this->exit = true;
     }
   }

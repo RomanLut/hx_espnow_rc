@@ -42,8 +42,8 @@ void StateInit::onRun(uint32_t t)
     case 3: 
       TXMain::instance.setLEDS4( 8 + 4 + 2 + 1 ); 
       break;
-     case 4: 
-      if ( TXInput::instance.isButtonPressed(RIGHT_TRIGGER_ID) || !TXInput::instance.calibrationDataLoadedOk)
+    case 4: 
+      if ( TXInput::instance.isButtonPressed(RIGHT_TRIGGER_ID) || !TXInput::instance.calibrationDataLoadedOk )
       {
         AudioManager::instance.play( "/calibration.mp3", AUDIO_GROUP_NONE );
         AudioManager::instance.waitFinish();

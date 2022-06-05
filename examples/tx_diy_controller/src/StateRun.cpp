@@ -16,7 +16,9 @@ StateRun StateRun::instance;
 void StateRun::onEnter(StateBase *prevState)
 {
   AudioManager::instance.sayProfile(currentProfileIndex);
-  AudioManager::instance.waitFinish();
+  this->initLEDS4RunningLight();
+  this->LEDS4RunningLightAudioWait();
+  this->configModeNameAudioPlayed = false;
 }
 
 //======================================================
@@ -31,29 +33,22 @@ void StateRun::onRun(uint32_t t)
 
   ModeBase::currentModeHandler->loop( &channelValues, &externalBTSerial, NULL );
 
-  if ( !this->modeNameAudioPlayed )
+  if ( !this->configModeNameAudioPlayed )
   {
     if ( ModeBase::currentModeHandler == &ModeConfig::instance )
     {
-        this->modeNameAudioPlayed = true;
         AudioManager::instance.play( "/config_mode.mp3", AUDIO_GROUP_NONE );
-        AudioManager::instance.waitFinish();
-    } else if ( ModeBase::currentModeHandler == &ModeBLEGamepad::instance )
-    {
-        this->modeNameAudioPlayed = true;
-        //AudioManager::instance.play( "/bt_gamepad_mode.mp3", AUDIO_GROUP_NONE );
-        //AudioManager::instance.waitFinish();
-    } if ( ModeBase::currentModeHandler == &ModeEspNowRC::instance )
-    {
-        this->modeNameAudioPlayed = true;
-        //AudioManager::instance.play( ModeEspNowRC::instance.LRMode ? "/esp_now_lr_mode.mp3" : "/esp_now_mode.mp3", AUDIO_GROUP_NONE );
-        //AudioManager::instance.waitFinish();
+        this->configModeNameAudioPlayed = true;
     }
   }
 
   if ( ModeBase::currentModeHandler == &ModeConfig::instance )
   {
     TXMain::instance.setLEDS4( (t % 1000) > 500 ?  8 + 4 + 2 + 1 : 0 ); 
+  }
+  else if ( ModeBase::currentModeHandler == &ModeIdle::instance )
+  {
+    this->SetLEDS4RunningLight();
   }
   else
   {
