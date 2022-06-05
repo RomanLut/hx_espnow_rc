@@ -55,7 +55,7 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
                                                
 SBUS output is GPIO2. If GPIO2 is pulled down, ESP8266 boot fails. Typical SBUS invertor schematix on flight controller includes 1k resistor to the base/gate of transistor and 10k pulldown resistor from base/gate to GND. Effectively, GPIO2 is grounded. The easiest way to solve this is to add 1k pullup resistor. 
 
-If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then R1 value should be decreased, down to 470 Ohm. Alternativelly, connect GPIO2 to FC through diode (cathode to ESP8266).
+If ESP is still not able to boot, and boots with GPIO2 disconnected from FC, then R1 value should be decreased, down to 470 Ohm. Alternativelly, connect GPIO2 to FC through diode (cathode to ESP8266).
 
 # Building steps
 
