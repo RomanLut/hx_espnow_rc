@@ -14,6 +14,7 @@ Peak power consumption is ~340mA.
 
 Compared to ESP01 based receiver, ESP32 allows to use LR (long range) mode. LR mode is special mode introduced by Espressif Systems with ESP32. Theoretically it should provide 2x better range, in practice the difference is 1.3...1.5x. 
 
+*PPM jittering is in range of ~5us*
 
 TODO: support sensors pooling for Smartport telemetry.
 
