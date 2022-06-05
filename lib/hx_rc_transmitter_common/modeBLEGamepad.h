@@ -15,6 +15,7 @@
 class ModeBLEGamepad : public ModeBase
 {
 private:
+    bool connected;
 
     int16_t axes[BLE_GAMEPAD_AXIS_COUNT];
     bool buttons[BLE_GAMEPAD_BUTTON_COUNT];

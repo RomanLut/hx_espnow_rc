@@ -31,6 +31,8 @@ ModeBLEGamepad::ModeBLEGamepad()
     {
         buttons[i] = false;
     }
+
+    this->connected = false;
 }
 
 //=====================================================================
@@ -141,6 +143,20 @@ void ModeBLEGamepad::loop(
     if(bleGamepad.isConnected()) 
     {
         this->sendControls(channels);
+
+        if ( !this->connected )
+        {
+            this->fire(EVENT_CONNECTED);
+            this->connected = true;
+        }
+    }
+    else
+    {
+        if ( this->connected )
+        {
+            this->fire(EVENT_DISCONNECTED);
+            this->connected = false;
+        }
     }
 
     if ( haveToChangeProfile() )
