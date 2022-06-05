@@ -16,6 +16,10 @@
 
  rx_d1_mini_pwm - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_pwm.md - Servo/PWM/Discrete output receiver with telemetry
 
+ rx_d1_mini_ppm https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_ppm.md - D1 Mini based PPM receiver. 
+
+ rx_esp32_ppm - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_ppm.md - ESP32 based PPM receiver
+
  rx_esp01_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md - ESP-01 based SBUS receiver
 
  rx_esp32_sbus - https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md - ESP32 based SBUS receiver
