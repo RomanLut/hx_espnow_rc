@@ -56,6 +56,8 @@ See building guides:
 - ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md
 - Wemos D1 Mini based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_sbus.md
 - ESP32 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md
+- Wemos D1 Mini based PPM receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_ppm.md
+- ESP32 based PPM receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_pmm.md
 - development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
 - recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
 
