@@ -15,9 +15,12 @@ StateRun StateRun::instance;
 //======================================================
 void StateRun::onEnter(StateBase *prevState)
 {
-  AudioManager::instance.sayProfile(currentProfileIndex);
-  this->initLEDS4RunningLight();
-  this->LEDS4RunningLightAudioWait();
+  if ( (this->lastProfileMessage == 0) || (millis() > (this->lastProfileMessage + 4000)))
+  {
+    AudioManager::instance.sayProfile(currentProfileIndex);
+    this->initLEDS4RunningLight();
+    this->LEDS4RunningLightAudioWait();
+  }
   this->configModeNameAudioPlayed = false;
 }
 

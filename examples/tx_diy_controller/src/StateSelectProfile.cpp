@@ -77,6 +77,7 @@ void StateSelectProfile::onRun(uint32_t t)
       }
       this->SetLEDS4Profile(profileIndex);
       AudioManager::instance.sayProfile(this->profileIndex);
+      this->lastProfileMessage = millis();
     }
 
     if ( TXInput::instance.isStickMax(LEFT_STICK_X_ID) || TXInput::instance.isStickMax(RIGHT_STICK_X_ID) )
@@ -92,6 +93,7 @@ void StateSelectProfile::onRun(uint32_t t)
       }
       this->SetLEDS4Profile(profileIndex);
       AudioManager::instance.sayProfile(this->profileIndex);
+      this->lastProfileMessage = millis();
     }
 
     if ( TXInput::instance.isButtonPressed(LEFT_BUMPER_ID) )
