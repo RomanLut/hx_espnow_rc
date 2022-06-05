@@ -15,10 +15,11 @@ GPIO15 D8 =o         o= GND
 
 https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/ 
 
-GPIO2 - PPM output
 GPIO15 - Telemetry TX 
 GPIO13 - Telemetry RX
 */
+
+#define PPM_PIN 5  //D1
 
 //#define TELEMETRY_BAUDRATE 115200
 #define TELEMETRY_BAUDRATE 9600

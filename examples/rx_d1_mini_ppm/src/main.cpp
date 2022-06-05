@@ -47,7 +47,7 @@ void setup()
   
   Serial.swap(); //GPIO15 D8 (TX) and GPIO13 D7 (RX)
 
-  hxPPMEncoder.init( PPM_CHANNELS_COUNT, 2 );  //D4
+  hxPPMEncoder.init( PPM_CHANNELS_COUNT, PPM_PIN );  
 
   hxrcSlave.init(
       HXRCConfig(
