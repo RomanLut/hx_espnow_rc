@@ -334,6 +334,7 @@ void ModeKYFPV::loop(
                 lastPacketTime = millis();
                 this->sendChannels(channels);
                 Serial.print("*");
+                this->fireDataflowEvent();
             }
         }
     }

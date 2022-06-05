@@ -53,8 +53,10 @@ public:
     static ModeBase* currentModeHandler;
 
     typedef void (*TModeEventHandler) (const char*); 
-
     static TModeEventHandler eventHandler;
+
+    typedef void (*TDataflowEventHandler) (); 
+    static TDataflowEventHandler eventDataFlowHandler;
 
     virtual void start( JsonDocument* json );
 
@@ -74,6 +76,7 @@ public:
     void rebootToRequestedProfile();
 
     void fire( const char* event );
+    void fireDataflowEvent();
 
 };
 

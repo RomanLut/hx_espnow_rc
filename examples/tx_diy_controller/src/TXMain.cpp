@@ -23,6 +23,21 @@ void TXMain::setLed( bool value )
   digitalWrite(LED_PIN, value ? HIGH : LOW );
 }
 
+
+//=====================================================================
+//=====================================================================
+void TXMain::dataFlowEvent()
+{
+    this->lastDataflowEvent = millis();
+}
+
+//=====================================================================
+//=====================================================================
+void TXMain::eventDataflowHandlerStatic()
+{
+  TXMain::instance.dataFlowEvent();
+}
+
 //=====================================================================
 //=====================================================================
 void TXMain::initLEDS4Pins()
@@ -43,6 +58,14 @@ void TXMain::initLEDS4Pins()
 //=====================================================================
 void TXMain::setLEDS4(uint8_t v)
 {
+  if ( this->lastDataflowEvent + 300 > millis() )
+  {
+    if ( millis() & 32 )
+    {
+        v = 0;
+    }
+  }
+
  #ifdef LED_INVERT
   digitalWrite(LED1_PIN, (v & 8)>0? LOW:HIGH );
   digitalWrite(LED2_PIN, (v & 4)>0? LOW:HIGH );
@@ -82,6 +105,8 @@ void TXMain::setup()
 
   pinMode(HC06_INTERFACE_TX_PIN,OUTPUT);
   pinMode(HC06_INTERFACE_RX_PIN,INPUT);
+
+  ModeBase::eventDataFlowHandler = &TXMain::eventDataflowHandlerStatic;
 
   TXInput::instance.init();
 

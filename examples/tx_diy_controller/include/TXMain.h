@@ -35,14 +35,20 @@ class TXMain
 {
 private:
 
+    uint32_t lastDataflowEvent = 0;
+
     BluetoothState bluetoothState;
     BatteryState batteryState;
 
     void initLedPin();
     void initLEDS4Pins();
 
+    static void eventDataflowHandlerStatic();
+
 public:
     static TXMain instance;
+
+    void dataFlowEvent();
 
     void setLed( bool value );
     void setLEDS4(uint8_t v);

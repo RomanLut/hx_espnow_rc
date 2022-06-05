@@ -14,7 +14,7 @@
 ModeBase* ModeBase::currentModeHandler;
 
 ModeBase::TModeEventHandler ModeBase::eventHandler = NULL;
-
+ModeBase::TDataflowEventHandler ModeBase::eventDataFlowHandler = NULL;
 
 //=====================================================================
 //=====================================================================
@@ -174,5 +174,15 @@ void ModeBase::fire( const char* event )
     if (ModeBase::eventHandler)
     {
         ModeBase::eventHandler(event);
+    }
+}
+
+//=====================================================================
+//=====================================================================
+void ModeBase::fireDataflowEvent()
+{
+    if (ModeBase::eventDataFlowHandler)
+    {
+        ModeBase::eventDataFlowHandler();
     }
 }

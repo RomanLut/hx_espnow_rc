@@ -407,6 +407,7 @@ void ModeXiroMini::loop(
         {
             lastPacketTime = millis();
             this->sendChannels(channels);
+            this->fireDataflowEvent();
         }
 
         if ((millis() - lastRTPPacketTime) > 5000)

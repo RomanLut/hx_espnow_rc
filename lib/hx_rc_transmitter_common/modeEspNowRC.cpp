@@ -161,6 +161,11 @@ void ModeEspNowRC::loop(
       ArduinoOTA.handle();  
   }
 
+  if ( !hxrcMaster.getReceiverStats().isFailsafe() )
+  {
+    this->fireDataflowEvent();
+  }
+
   if ( haveToChangeProfile() )
   {
       rebootToRequestedProfile();
