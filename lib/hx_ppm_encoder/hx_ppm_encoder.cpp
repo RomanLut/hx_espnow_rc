@@ -27,8 +27,8 @@ static uint8_t tx_pin_mask;
 static uint8_t channelsCount;
 static int PPMFrameLengthUS;
 
-static volatile bool readyFailsafe = false;
-static volatile bool failsafe = false;
+static volatile bool readyFailsafe = true;
+static volatile bool failsafe = true;
 
 static volatile int outChannelsIndex = 0;
 
