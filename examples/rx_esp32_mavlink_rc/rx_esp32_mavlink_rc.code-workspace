@@ -5,7 +5,7 @@
 			"path": "."
 		},
 		{
-			"name": "hx_espnow_rc",
+			"name": "lib",
 			"path": "../../lib"
 		}
 	],
