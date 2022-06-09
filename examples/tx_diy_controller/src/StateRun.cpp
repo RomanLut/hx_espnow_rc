@@ -15,7 +15,7 @@ StateRun StateRun::instance;
 //======================================================
 void StateRun::onEnter(StateBase *prevState)
 {
-  if ( (this->lastProfileMessage == 0) || (millis() > (this->lastProfileMessage + 4000)))
+  if ( (StateBase::lastProfileMessage == 0) || (millis() > (StateBase::lastProfileMessage + 4000)))
   {
     AudioManager::instance.sayProfile(currentProfileIndex);
     this->initLEDS4RunningLight();

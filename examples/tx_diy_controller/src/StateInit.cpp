@@ -43,18 +43,18 @@ void StateInit::onRun(uint32_t t)
       TXMain::instance.setLEDS4( 8 + 4 + 2 + 1 ); 
       break;
     case 4: 
-      if ( TXInput::instance.isButtonPressed(RIGHT_TRIGGER_ID) || !TXInput::instance.calibrationDataLoadedOk )
+      if ( TXInput::instance.isButtonPressed(RIGHT_BUMPER_ID) || !TXInput::instance.calibrationDataLoadedOk )
       {
         AudioManager::instance.play( "/calibration.mp3", AUDIO_GROUP_NONE );
         AudioManager::instance.waitFinish();
         StateBase::Goto(&StateCalibrateMinMax::instance);
       }
-      else if ( TXInput::instance.isButtonPressed(RIGHT_BUMPER_ID))
+      else if ( TXInput::instance.isButtonPressed(RIGHT_TRIGGER_ID))
       {
         currentProfileIndex = CONFIG_PROFILE_INDEX;  //Mode Config profile
         StateBase::Goto(&StateRun::instance);
       }
-      else if ( TXInput::instance.isButtonPressed(LEFT_BUMPER_ID))
+      else if ( TXInput::instance.isButtonPressed(LEFT_TRIGGER_ID))
       {
         StateBase::Goto(&StateSelectProfile::instance);
       }

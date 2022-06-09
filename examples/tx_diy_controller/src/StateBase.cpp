@@ -5,6 +5,8 @@
 
 StateBase* StateBase::currentState = NULL;
 
+uint32_t StateBase::lastProfileMessage = 0;
+
 //======================================================
 //======================================================
 void StateBase::Goto(StateBase* s)

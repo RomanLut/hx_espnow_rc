@@ -34,6 +34,7 @@ void StateSelectProfile::onRun(uint32_t t)
   {
     if ( 
       TXInput::instance.isButtonUnPressed(LEFT_BUMPER_ID) && 
+      TXInput::instance.isButtonUnPressed(LEFT_TRIGGER_ID) && 
       TXInput::instance.isStickMiddle(RIGHT_STICK_X_ID) &&
       TXInput::instance.isStickMiddle(LEFT_STICK_X_ID) 
       )
@@ -77,7 +78,7 @@ void StateSelectProfile::onRun(uint32_t t)
       }
       this->SetLEDS4Profile(profileIndex);
       AudioManager::instance.sayProfile(this->profileIndex);
-      this->lastProfileMessage = millis();
+      StateBase::lastProfileMessage = millis();
     }
 
     if ( TXInput::instance.isStickMax(LEFT_STICK_X_ID) || TXInput::instance.isStickMax(RIGHT_STICK_X_ID) )
@@ -93,10 +94,10 @@ void StateSelectProfile::onRun(uint32_t t)
       }
       this->SetLEDS4Profile(profileIndex);
       AudioManager::instance.sayProfile(this->profileIndex);
-      this->lastProfileMessage = millis();
+      StateBase::lastProfileMessage = millis();
     }
 
-    if ( TXInput::instance.isButtonPressed(LEFT_BUMPER_ID) )
+    if ( TXInput::instance.isButtonPressed(LEFT_TRIGGER_ID) )
     {
       this->waitUnpress = true;
       this->runningLight = true;

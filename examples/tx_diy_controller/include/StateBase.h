@@ -32,7 +32,7 @@ private:
     uint32_t runningLightStart;
 
 protected:    
-    uint32_t lastProfileMessage = 0;
+    static uint32_t lastProfileMessage;
 
 public:
 
