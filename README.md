@@ -16,7 +16,7 @@
 - [ ] external module for Jumper T-Lite: telemetry translation: CRSF stream -> SPORT
 - [ ] SBUS receiver: SPORT telemetry quering
 - [x] PPM output
-- [ ] Pure mavlink control instead of SBUS
+- [x] Mavlink RC
 
 
 # hx_espnow_rc
