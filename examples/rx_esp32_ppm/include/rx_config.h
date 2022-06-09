@@ -1,5 +1,10 @@
 #pragma once
 
+/*
+Pinout:
+https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
+*/
+
 //#define TELEMETRY_BAUDRATE 115200
 #define TELEMETRY_BAUDRATE 57600
 

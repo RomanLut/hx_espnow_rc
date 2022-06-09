@@ -1,17 +1,8 @@
 #pragma once
 
-/* ESP-01
-            ____________
-           |  -.-._.   |  
-           |           |
-           | **  ****  |
-           | **  ****  |
-           |     ****  |
-           |  o o o o  |         GND   GPIO2   GPIO1   RX      
-           |__o o o o__|         TX    CH_EN   RESET   VCC 
-
-https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/ 
-
+/*
+Pinout:
+https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
 */
 
 //output inverted SBUS? 
