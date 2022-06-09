@@ -28,7 +28,6 @@ There is no RC_CHANNELS_OVERRIDE messages on failsafe.
 # Parts list
 
 - Wemos D1 Mini board
-- 1k 1/8W resistor 
 - dipole or whip antenna (optional)
 
 # Removing VBUS diode
