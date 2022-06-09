@@ -38,5 +38,14 @@ RF Power Sensor http://www.herbert-dingfelder.de/?page_id=68 with 20db attenuato
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rfpower/rfpowersensor.jpg "RF Power Sensor")
 
 
+# Links
+
+DIY RF Power Sensor http://www.herbert-dingfelder.de/?page_id=68 
+
+DIY attenuator https://www.electronics-notes.com/articles/radio/rf-attenuators/pi-t-bridged-resistor-values-table-calculator.php
+
+Circuit Fun: a simple RF detector / demodulator probe for DMM or scope https://www.youtube.com/watch?v=C8SKiyJUAlU
+
+
 
 
