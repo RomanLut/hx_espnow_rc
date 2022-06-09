@@ -58,7 +58,7 @@ void setup()
   hxrcSlave.setA1(42);
 
   //REVIEW: receiver does not work if AP is not initialized?
-  WiFi.softAP("hxrcrsbus", NULL, USE_WIFI_CHANNEL);
+  WiFi.softAP("hxrcmavlink", NULL, USE_WIFI_CHANNEL);
 
   ArduinoOTA.begin();  
 }
