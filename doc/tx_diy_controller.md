@@ -149,7 +149,7 @@ Calibration data is saved to **calibration.json**.
 
 # Profile selection
 
-To enable **Profile slection mode**, power controller **with LEFT Bumper pressed**.
+To enable **Profile slection mode**, power controller **with LEFT Trigger pressed**.
 Move left or right stick left and right to select profile 1...8.
 LED pattern corresponds to profile number: 
 - `1 *...` 
@@ -166,7 +166,7 @@ Press **LEFT Bumper** to use selected profile. Selected profile will be stored a
 
 # Configration mode
 
-To force **Configuration mode**, power the controller with **RIGHT Bumper** pressed.
+To force **Configuration mode**, power the controller with **RIGHT Trigger** pressed.
 
 **Configuration mode** is used to upload profiles to controller filesystem.
 
