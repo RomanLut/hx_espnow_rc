@@ -151,7 +151,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
     //So to force full LR communication, both peers should use exclusively WIFI_PROTOCOL_LR mode
     if ( esp_wifi_set_protocol (WIFI_IF_STA, config.LRMode ? WIFI_PROTOCOL_LR : ( /*WIFI_PROTOCOL_LR |*/ WIFI_PROTOCOL_11B ) ) != ESP_OK)
     {
-        Serial.println("HXRC: Error: Failed to enable LR mode");
+        Serial.println("HXRC: Error: Failed to switch LR mode");
         return false;
     }
 
