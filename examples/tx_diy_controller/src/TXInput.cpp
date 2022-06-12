@@ -617,7 +617,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
-      else if ( strcmp(opName, "AXIS_SWITCH_LEFT") == 0)
+      else if (( strcmp(opName, "AXIS_SWITCH_LEFT") == 0) || ( strcmp(opName, "AXIS_SWITCH_DOWN") == 0))
       {
         if (!this->isValidChannelIndex(channelIndex)) return;
         int av = this->getAxisValueByName(parm);
@@ -637,7 +637,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
-      else if ( strcmp(opName, "AXIS_SWITCH_RIGHT") == 0)
+      else if (( strcmp(opName, "AXIS_SWITCH_RIGHT") == 0) || ( strcmp(opName, "AXIS_SWITCH_UP") == 0))
       {
         if (!this->isValidChannelIndex(channelIndex)) return;
         int av = this->getAxisValueByName(parm);
@@ -657,7 +657,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
-      else if ( strcmp(opName, "AXIS_BUTTON_LEFT") == 0)
+      else if (( strcmp(opName, "AXIS_BUTTON_LEFT") == 0) || ( strcmp(opName, "AXIS_BUTTON_DOWN") == 0) ) 
       {
         if (!this->isValidChannelIndex(channelIndex)) return;
         int av = this->getAxisValueByName(parm);
@@ -676,7 +676,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
           }
         }
       }
-      else if ( strcmp(opName, "AXIS_BUTTON_RIGHT") == 0)
+      else if (( strcmp(opName, "AXIS_BUTTON_RIGHT") == 0) || ( strcmp(opName, "AXIS_BUTTON_UP") == 0))
       {
         if (!this->isValidChannelIndex(channelIndex)) return;
         int av = this->getAxisValueByName(parm);
