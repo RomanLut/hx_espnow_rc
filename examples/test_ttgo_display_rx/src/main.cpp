@@ -153,7 +153,7 @@ void setup()
       HXRCConfig(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          false,
+          true,     //LR mode
           LED_BUILTIN, false));
 
   WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL );
