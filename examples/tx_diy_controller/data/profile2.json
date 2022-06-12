@@ -6,7 +6,7 @@
 	"ap_name": "hxrct",
 	"ap_password": "",
 	"mapping": [
-		{ "event": { "name": "STARTUP"		},	"op": {	"name": "SOUND",	"parm": "/mode_esp_now.mp3"		} },
+		{ "event": { "name": "STARTUP"		},	"op": {	"name": "SOUND",	"parm": "/mode_esp_now_lr.mp3"		} },
       	{ "event": { "name": "CONNECTED"	},	"op": { "name": "SOUND",	"parm": "/connected.mp3"		} },
       	{ "event": { "name": "DISCONNECTED"	},  "op": { "name": "SOUND",	"parm": "/connection_lost.mp3"	} },
 
