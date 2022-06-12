@@ -33,6 +33,8 @@ Check **errorLog.txt** for the last error messages.
 
 *Note: DIY Controller plays **"Error.please check log"** audio message on error.*
 
+*Note: It might be a good idea to validate json file in some online tool, like: https://jsonformatter.curiousconcept.com/*
+
 # Modes 
 
 `ESPNOW` hx_espnow_rc https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_hx_espnow_rc.md

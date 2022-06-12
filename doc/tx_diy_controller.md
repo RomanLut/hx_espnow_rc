@@ -13,7 +13,7 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 - [x] Build on breadboard
 - [x] Implement firmware
 - [x] Modify Dji Mini 1 RC Controller 
-- [ ] Write full documentation and building guide
+- [x] Write full documentation and building guide
 - [x] KY FPV mode
 - [x] Xiro explorer mini mode
 - [ ] Rize tello mode

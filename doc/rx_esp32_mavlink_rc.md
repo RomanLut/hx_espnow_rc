@@ -13,7 +13,7 @@ Mavlink v1 and Mavlink v2 are supported. v1 allows to pass 8 channels only.
 
 RSSI is injected into channel 16(or 8).
 
-Can be powered from 5V BEC or directly from 1S battery (3.0V...5.0V).
+Receiver can be powered from 5V BEC or directly from 1S battery (3.0V...5.0V).
 If you are going to power it from 1S battery, linear regulator should be low-drop one (0.2...0.3V at 340mAh). ESP32 will operate stable down to 2.7V, allowing dischaging battery down to 3V.
 
 Peak power consumption is ~340mA.
