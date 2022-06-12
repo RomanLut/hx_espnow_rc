@@ -1,0 +1,44 @@
+{
+	"transmitter_mode": "ESPNOW",
+	"espnow_channel": 3,
+	"espnow_key": 0,
+	"espnow_long_range_mode": false,
+	"ap_name": "hxrct",
+	"ap_password": "",
+	"mapping": [
+		{ "event": { "name": "STARTUP"		},	"op": {	"name": "SOUND",	"parm": "/mode_esp_now.mp3", "note":"Profile for DIY quadcopter https://github.com/RomanLut/mahowii"	} },
+      	{ "event": { "name": "CONNECTED"	},	"op": { "name": "SOUND",	"parm": "/connected.mp3"		} },
+      	{ "event": { "name": "DISCONNECTED"	},  "op": { "name": "SOUND",	"parm": "/connection_lost.mp3"	} },
+
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_X", 	"channel": 1 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y", 	"channel": 2 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 3 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_Y",		"channel": 4 	} },
+
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "LEFT_BUMPER", 		"channel": 5,	"note": "arm" 		} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH3",	"parm": "RIGHT_TRIGGER",	"channel": 6,	"note": "mode"		} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "RIGHT_BUMPER",		"channel": 8,	"note": "beeper"	} },
+
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "LEFT_TRIGGER",		"channel": 15,	"note": "Trim mod" 	} },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "CONSTANT",	"parm": "1500",	"channel": 1,	"note":"Roll middle"	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "CONSTANT",	"parm": "1500",	"channel": 2,	"note":"Pitch middle"	} },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "AXIS_BUTTON_UP",	"parm": "RIGHT_STICK_Y",	"channel": 9,	"note":"trim up"	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "AXIS_BUTTON_DOWN",	"parm": "RIGHT_STICK_Y",	"channel": 10,	"note":"trim down"	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "AXIS_BUTTON_LEFT",	"parm": "RIGHT_STICK_X",	"channel": 11,	"note":"trim left"	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "AXIS_BUTTON_RIGHT","parm": "RIGHT_STICK_X",	"channel": 12,	"note":"trim right"	} },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 9,  "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/beep_short.mp3", "note": "trim" } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 10, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/beep_short.mp3", "note": "trim" } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 11, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/beep_short.mp3", "note": "trim" } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 12, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/beep_short.mp3", "note": "trim" } },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disarmed.mp3" 		} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3" 			} },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 6, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/acro_mode.mp3" 		} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 6, "value": 1500, "once": "yes" }, "op": { "name": "SOUND", "parm": "/angle_mode.mp3" 		} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 6, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/althold_mode.mp3" 	} }
+	]
+}
