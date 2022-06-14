@@ -17,12 +17,14 @@
     { "event": { "name": "ALWAYS"				},	"op": { "name": "AXIS",		"parm": "LEFT_STICK_Y",		"channel": 3	} },
     { "event": { "name": "ALWAYS"				},  "op": { "name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 4	} },
 
-    { "event": { "name": "ALWAYS"				},	"op": { "name": "BUTTON",	"parm": "LEFT_BUMPER",		"channel": 5,	"note":"takeoff"		} },
-    { "event": { "name": "ALWAYS"				},	"op": { "name": "BUTTON",	"parm": "RIGHT_BUMPER",		"channel": 6,	"note":"landing"		} },
-    { "event": { "name": "ALWAYS"				},	"op": {	"name": "BUTTON",	"parm": "RIGHT_TRIGGER",	"channel": 7,	"note":"emergency stop"	} },
-    { "event": { "name": "ALWAYS"				},	"op": {	"name": "TRIM",		"parm": "LEFT_TRIGGER",		"channel": 8,	"note":"trim modifier"	} },
+    { "event": { "name": "ALWAYS"				},	"op": { "name": "BUTTON",	"parm": "LEFT_BUMPER",			"channel": 5,	"note":"takeoff"		} },
+    { "event": { "name": "ALWAYS"				},	"op": { "name": "BUTTON",	"parm": "RIGHT_BUMPER",			"channel": 6,	"note":"landing"		} },
+    { "event": { "name": "ALWAYS"				},	"op": {	"name": "BUTTON",	"parm": "RIGHT_TRIGGER",		"channel": 7,	"note":"emergency stop"	} },
 
+    { "event": { "name": "ALWAYS"				},	"op": {	"name": "AXIS_BUTTON_RIGHT",	"parm": "AXIS4",	"channel": 8,	"note":"headless mode"	} },
     { "event": { "name": "ALWAYS"				},	"op": {	"name": "AXIS_BUTTON_LEFT",		"parm": "AXIS4",	"channel": 9,	"note":"flip mode"		} },
-    { "event": { "name": "ALWAYS"				},	"op": {	"name": "AXIS_BUTTON_RIGHT",	"parm": "AXIS4",	"channel": 8,	"note":"headless mode"	} }
+
+    { "event": { "name": "ALWAYS"				},	"op": {	"name": "TRIM",		"parm": "LEFT_TRIGGER",	 "note":"trim modifier"	} }
+
   ]
 }
