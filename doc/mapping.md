@@ -248,6 +248,17 @@ This action sets Expo curve value for a channel.
 **channel** is target channel.
 
 
+#### TRIM
+
+`"op": { "name": "TRIM", "parm": "LEFT_TRIGGER", "channel": 8 } },`
+
+This action is used to trim sticks: Left X, Right X, Right Y. Move sticks while holding modifier button to adjust trim.
+
+Trim is reset on reboot.
+
+**parm** is modifier button name.
+
+
 #### SOUND
 
 `"op": { name : "SOUND", "parm" : "/armed.mp3" },`
@@ -259,17 +270,6 @@ This action used to play sound file.
 MP3: 24KHz, momo, 128-192kBit
 
 WAV: 8-16KHz 8bit mono.
-
-
-#### TRIM
-
-`"op": { "name": "TRIM", "parm": "LEFT_TRIGGER", "channel": 8 } },`
-
-This action is used to trim sticks: Left X, Right X, Right Y. Move sticks while holding modifier button to adjust trim.
-
-Trim is reset on reboot.
-
-**parm**" is modifier button name.
 
 
 
