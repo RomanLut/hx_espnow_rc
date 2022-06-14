@@ -236,6 +236,17 @@ This action is used to add value to the channel.
 
 **channel** is target channel.
 
+#### EXPO
+
+`"op": { "name" : "EXPO", "parm" : 20, "channel" : 1 },`
+
+
+This action sets Expo curve value for a channel.
+
+**parm** is expo curve coefficient (integer). Value is specified without quotes. Range in 0..100. Meaning is analogous to Expo curve in OpenTX.
+
+**channel** is target channel.
+
 
 #### SOUND
 
