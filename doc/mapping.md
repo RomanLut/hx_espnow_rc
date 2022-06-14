@@ -236,6 +236,28 @@ This action is used to add value to the channel.
 
 **channel** is target channel.
 
+#### EXPO
+
+`"op": { "name" : "EXPO", "parm" : 20, "channel" : 1 },`
+
+
+This action sets Expo curve value for a channel.
+
+**parm** is expo curve coefficient (integer). Value is specified without quotes. Range in 0..100. 0 menas linear, 100 means cubic.
+
+**channel** is target channel.
+
+
+#### TRIM
+
+`"op": { "name": "TRIM", "parm": "LEFT_TRIGGER", "channel": 8 } },`
+
+This action is used to trim sticks: Left X, Right X, Right Y. Move sticks while holding modifier button to adjust trim.
+
+Trim is reset on reboot.
+
+**parm** is modifier button name.
+
 
 #### SOUND
 
@@ -248,17 +270,6 @@ This action used to play sound file.
 MP3: 24KHz, momo, 128-192kBit
 
 WAV: 8-16KHz 8bit mono.
-
-
-#### TRIM
-
-`"op": { "name": "TRIM", "parm": "LEFT_TRIGGER", "channel": 8 } },`
-
-This action is used to trim sticks: Left X, Right X, Right Y. Move sticks while holding modifier button to adjust trim.
-
-Trim is reset on reboot.
-
-**parm**" is modifier button name.
 
 
 
