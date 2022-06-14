@@ -11,6 +11,10 @@
     { "event": { "name": "ALWAYS"	}, 	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y",	"channel": 4	} },
     { "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "AXIS4",			"channel": 5	} },
 
+    { "event": { "name": "ALWAYS"	},	"op": { "name": "EXPO",		"parm": 70,	"channel": 1	} },
+    { "event": { "name": "ALWAYS"	},	"op": { "name": "EXPO",		"parm": 70,	"channel": 3	} },
+    { "event": { "name": "ALWAYS"	}, 	"op": {	"name": "EXPO",		"parm": 70,	"channel": 4	} },
+
     { "event": { "name": "ALWAYS"	},	"op": { "name": "ADDITIVE",	"parm": "LEFT_STICK_Y",		"speed": 20,	"channel": 6	} },
 
     { "event": { "name": "ALWAYS"	},	"op": { "name": "BUTTON",	"parm": "LEFT_BUMPER",		"channel": 7 	} },

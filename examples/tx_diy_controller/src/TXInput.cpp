@@ -472,6 +472,27 @@ bool TXInput::isValidChannelIndex(int channelIndex)
 
 //=====================================================================
 //=====================================================================
+//chValue == 1000..2000
+//expo = 0...100
+int16_t TXInput::getExpo( int16_t chValue, int expo )
+{
+  //Y = e * x^3 + (1-e) * x
+  //https://www.modelflying.co.uk/forums/index.php?/topic/46166-what-exactly-does-expo-percent-mean/
+
+  if ( expo == 0 ) return chValue;
+
+  int64_t x = chValue - 1500;  
+  x = expo * x * x * x / 25000000 + (100-expo) * x / 100;
+
+  //Serial.print(chValue);
+  //Serial.print(" ");
+  //Serial.println(x +1500);
+
+  return TXInput::chClamp( x + 1500 );
+}
+
+//=====================================================================
+//=====================================================================
 void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, const char* inEventName)
 {
   channelValues-> isFailsafe = false;
@@ -487,6 +508,9 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
   {
     dT = 0;
   }
+
+  uint8_t expo[HXRC_CHANNELS_COUNT];
+  for ( int i = 0; i < HXRC_CHANNELS_COUNT; i++) expo[i] = 0;
 
   for ( int i = 0; i < mapping.size(); i++)
   {
@@ -702,7 +726,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       else if ( strcmp(opName, "CONSTANT") == 0)
       {
         if (!this->isValidChannelIndex(channelIndex)) return;
-        channelValues->channelValue[channelIndex] = action["parm"] | 0;
+        channelValues->channelValue[channelIndex] = op["parm"] | 0;
       }
       else if ( strcmp(opName, "ADD") == 0)
       {
@@ -723,6 +747,18 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       {
         AudioManager::instance.play(String(parm), AUDIO_GROUP_NONE);
       }
+      else if ( strcmp(opName, "EXPO") == 0)
+      {
+        if (!this->isValidChannelIndex(channelIndex)) return;
+        int e = op["parm"] | -1;
+        if ( e < 0 || e > 100 ) 
+        {
+          ErrorLog::instance.writeOnce("Invalid expo value");
+          ErrorLog::instance.writeOnce("\n");
+          ErrorLog::instance.disableWriteOnce();
+        }
+        expo[channelIndex] = e;
+      }
       else
       {
         ErrorLog::instance.writeOnce("Invalid operation:");
@@ -736,7 +772,7 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
 
   for ( int i = 0; i < HXRC_CHANNELS_COUNT; i++ )
   {
-    channelValues->channelValue[i] = this->chClamp(channelValues->channelValue[i]);
+    channelValues->channelValue[i] = this->getExpo(  this->chClamp( channelValues->channelValue[i] ), expo[i] );
   }
 
   this->processTrim();
