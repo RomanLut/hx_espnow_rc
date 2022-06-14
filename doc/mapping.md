@@ -243,7 +243,7 @@ This action is used to add value to the channel.
 
 This action sets Expo curve value for a channel.
 
-**parm** is expo curve coefficient (integer). Value is specified without quotes. Range in 0..100. Meaning is analogous to Expo curve in OpenTX.
+**parm** is expo curve coefficient (integer). Value is specified without quotes. Range in 0..100. 0 menas linear, 100 means cubic.
 
 **channel** is target channel.
 
