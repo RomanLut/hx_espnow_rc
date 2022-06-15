@@ -36,7 +36,7 @@ Used in external RC Controler JR Bay module: https://github.com/RomanLut/hx_espn
 
 Used in DIY RC Controller: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_diy_controller.md
 
-Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/mahowii
+Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/Multiwii-ESP32-port
 
 Used in DIY ESP8266 plane: https://www.youtube.com/watch?v=c9dDOX0IzME
 
