@@ -75,6 +75,7 @@ private:
 
     void processAxisTrim( uint32_t t, int axisId, int trimIndex );
     void processTrim();
+    void processSwitchN( HXChannels* channelValues, int channelIndex, const char* parm, int N);
 
     void modeEventHandler(const char* event); 
     static void staticModeEventHandler(const char* event); 

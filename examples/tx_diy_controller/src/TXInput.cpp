@@ -493,6 +493,26 @@ int16_t TXInput::getExpo( int16_t chValue, int expo )
 
 //=====================================================================
 //=====================================================================
+void TXInput::processSwitchN( HXChannels* channelValues, int channelIndex, const char* parm, int N)
+{
+  if (!this->isValidChannelIndex(channelIndex)) return;
+  if ( this->hasButtonPressEventByName(parm) )
+  {
+    for ( int i = 1; i < N; i++ ) 
+    {
+      int v = 1000 + (1000 * i  + N/2 - 1) / (N-1);
+      if ( channelValues->channelValue[channelIndex] < v )
+      {
+        channelValues->channelValue[channelIndex] = v;
+        return;
+      }
+    }
+    channelValues->channelValue[channelIndex] = 1000;
+  }
+}
+
+//=====================================================================
+//=====================================================================
 void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, const char* inEventName)
 {
   channelValues-> isFailsafe = false;
@@ -573,54 +593,23 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       }
       else if ( strcmp(opName, "SWITCH") == 0)
       {
-        if (!this->isValidChannelIndex(channelIndex)) return;
-        if ( this->hasButtonPressEventByName(parm) )
-        {
-          channelValues->channelValue[channelIndex] = ( channelValues->channelValue[channelIndex] == 1000) ? 2000: 1000;
-          //Serial.print(channelValues->channelValue[channelIndex]);
-        }
+        this->processSwitchN( channelValues, channelIndex, parm, 2 );
       }
       else if ( strcmp(opName, "SWITCH3") == 0)
       {
-        if (!this->isValidChannelIndex(channelIndex)) return;
-        if ( this->hasButtonPressEventByName(parm) )
-        {
-          if ( channelValues->channelValue[channelIndex] < 1500 )
-          {
-            channelValues->channelValue[channelIndex] = 1500;
-          }
-          else if ( channelValues->channelValue[channelIndex] < 2000 )
-          {
-            channelValues->channelValue[channelIndex] = 2000;
-          }
-          else
-          {
-            channelValues->channelValue[channelIndex] = 1000;              
-          }
-        }
+        this->processSwitchN( channelValues, channelIndex, parm, 3 );
       }
       else if ( strcmp(opName, "SWITCH4") == 0)
       {
-        if (!this->isValidChannelIndex(channelIndex)) return;
-        if ( this->hasButtonPressEventByName(parm) )
-        {
-          if ( channelValues->channelValue[channelIndex] < 1333 )
-          {
-            channelValues->channelValue[channelIndex] = 1333;
-          }
-          else if ( channelValues->channelValue[channelIndex] < 1666 )
-          {
-            channelValues->channelValue[channelIndex] = 1666;
-          }
-          else if ( channelValues->channelValue[channelIndex] < 2000 )
-          {
-            channelValues->channelValue[channelIndex] = 2000;
-          }
-          else
-          {
-            channelValues->channelValue[channelIndex] = 1000;              
-          }
-        }
+        this->processSwitchN( channelValues, channelIndex, parm, 4 );
+      }
+      else if ( strcmp(opName, "SWITCH6") == 0)
+      {
+        this->processSwitchN( channelValues, channelIndex, parm, 6 );
+      }
+      else if ( strcmp(opName, "SWITCH16") == 0)
+      {
+        this->processSwitchN( channelValues, channelIndex, parm, 16 );
       }
       else if ( strcmp(opName, "AXIS_SWITCH") == 0)
       {
