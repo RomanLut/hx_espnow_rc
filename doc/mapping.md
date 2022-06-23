@@ -107,36 +107,21 @@ This action sets channel value to 1000/2000 depending on button/switch status.
 **channel** is target channel.
 
 
-#### SWITCH
+#### SWITCH, SWITCH3, SWITCH3, SWITCH
 
 `"op": { "name" : "SWITCH", "parm" : "LEFT_THUMB", "channel" : 5 }`
 
-This action is used to implement switch using a button. Channel value is switched between 1000/2000 values on each button press.
+This action is used to implement N-position switch using a button. Channel value is switched between step values on each button press.
+- SWITCH: 1000/2000
+- SWITCH3: 1000/1500/2000
+- SWITCH4: 1000/1333/1666/2000
+- SWITCH6: 1000/1250/1500/1750/2000
+- SWITCH16: 16 positions. Can be used for INAV adjustments.
 
 **parm** is button name.
 
 **channel** is target channel.
 
-#### SWITCH3
-
-`"op": { "name" : "SWITCH3", "parm" : "LEFT_THUMB", "channel" : 5 }`
-
-This action is used to implement 3-state switch using button. Channel value is switched beetwen 1000/1500/2000 on each button press.
-
-**parm** is button name.
-
-**channel** is target channel.
-
-
-#### SWITCH4
-
-`"op": { "name" : "SWITCH4", "parm" : "LEFT_THUMB", "channel" : 5 }`
-
-This action is used to implement 4-state switch using button. Channel value is switched beetwen 1000/1333/1666/2000 on each button press.
-
-**parm** is button name.
-
-**channel** is target channel.
 
 #### AXIS_SWITCH
 
