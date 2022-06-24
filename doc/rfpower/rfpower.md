@@ -15,16 +15,16 @@ Packet rate can be adjusted in settings (`DEFAULT_PACKET_SEND_PERIOD_MS` and `DE
 
 Packets flow can be captured using RF Power sensor described here http://www.herbert-dingfelder.de/?page_id=68, and an oscilloscope. 
 
-# Packets flow in normal mode
+# Packets flow in normal mode 
 
-Higher peaks - master packets. Smaller peaks - slave packets.
+Higher peaks - master packets. Smaller peaks - slave packets. Rate is iset to 40Hz.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rfpower/AKIP0022.jpg "Packets flow - normal")
 
 
 # Packets flow in LR mode
 
-Higher peaks - master packets. Smaller peaks - slave packets.
+Higher peaks - master packets. Smaller peaks - slave packets. Rate is iset to 40Hz.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rfpower/AKIP0019.jpg "Packets flow - LR")
 
