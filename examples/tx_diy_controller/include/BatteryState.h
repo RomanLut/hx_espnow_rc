@@ -22,6 +22,7 @@ protected:
 
     bool readState( bool lastState ) override
     {
+      //Serial.println(TXInput::instance.ADC[BAT_ADC]);
       if ( lastState )
       {
         return TXInput::instance.ADC[BAT_ADC] < BAT_LOW_HIGH;
