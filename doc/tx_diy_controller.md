@@ -177,6 +177,8 @@ See **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/do
 
 1) Sound volume is low. Speaker is not well placed. It would  produce good sound if mounted against shell holes. Possible solutions: Use PAM8403 amplifier for higher volume? Use tiny mobile phone speaker mouted against holes at the back of the shell?
 
+2) Controller reboots when USB cable is disconnected. This happends because Powerbank boost up controller needs 2 seconds to turn on after USB power loss. It might be better to use separate USB Changing/protection board and boost up converter to avoid this behavior.
+
 
 # See next
 
