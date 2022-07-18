@@ -28,6 +28,7 @@ There is no RC_CHANNELS_OVERRIDE messages on failsafe.
 # Parts list
 
 - Wemos D1 Mini board
+- 1k 1/8W resistor 
 - dipole or whip antenna (optional)
 
 # Removing VBUS diode
@@ -52,13 +53,19 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini_cap_33v.jpg "D1 Mini cap")
 
+# 1k resistor (R1)
+                                               
+If GPIO8 is pulled down, ESP8266 boot fails. Some FCs may pull up RX pin. The easiest way to solve this is to add 1k pulldown resistor. Resistor may be required and may be not dependiong on FC type.
+
 # Building steps
 
-1. Remove PCB antenna using dremel, leaving two small pins only (optional) and solder dipole or whip antenna (optional).
+1. Solder R1
+
+2. Remove PCB antenna using dremel, leaving two small pins only (optional) and solder dipole or whip antenna (optional).
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/d1mini_dipole.jpg "D1 Mini dipole antenna")
 
-2) Flash firmware
+3) Flash firmware
 
 # Flashing first time
 
