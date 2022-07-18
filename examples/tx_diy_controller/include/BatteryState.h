@@ -10,6 +10,8 @@
 #include "TXInput.h"
 #include "AudioManager.h"
 
+extern HC06Interface externalBTSerial;
+
 #define BATTERY_CHECK_PERIOD_FIRST_MS 10000
 #define BATTERY_CHECK_PERIOD_MS 10000
 #define BATTERY_REPEAT_PERIOD_MS 60000
@@ -49,6 +51,15 @@ protected:
       {
         AudioManager::instance.play( "/low_battery.mp3", AUDIO_GROUP_NONE );
       }
+      /*
+      char msg[100];
+      sprintf( msg, "%d\n\r", TXInput::instance.ADC[BAT_ADC] );
+      char *p = msg;
+      while ( *p )
+      {
+        externalBTSerial.write( *p++ );
+      }
+      */
     }
 
   public:
