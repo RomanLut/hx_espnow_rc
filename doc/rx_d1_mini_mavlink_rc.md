@@ -96,7 +96,7 @@ lines in `platformio.ini`.
 
 # Setting up Mavlink RC in INav 4.0+
 
-- enable Mavlink telemetry in Ports tab. Do not enable RC switch.
+- enable Mavlink telemetry in Ports tab. Select Baudrate. Do not enable RC switch.
 - Select Receiver type "Serial", Protocol: "Mavlink" in Receiver tab.
 - Select "Enable telemetry output" in Config tab.
 
