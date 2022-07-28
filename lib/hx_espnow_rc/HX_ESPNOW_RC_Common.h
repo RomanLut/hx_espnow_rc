@@ -23,7 +23,7 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <esp_wifi.h>
-#include "esp_wifi_internal.h" 
+//#include <esp_wifi_internal.h> 
 #endif
 
 #define HXRCLOG (*HXRCGetLogStream())

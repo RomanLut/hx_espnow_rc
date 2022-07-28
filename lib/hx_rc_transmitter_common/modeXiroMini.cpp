@@ -12,7 +12,7 @@
 #include <WiFiUdp.h>
 
 #include <esp_wifi.h>
-#include "esp_wifi_internal.h" 
+//#include <esp_wifi_internal.h>
 
 #define UDP_CMD_PORT 7088
 #define UDP_RTP_PORT 7078
