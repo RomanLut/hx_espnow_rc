@@ -94,6 +94,12 @@ lines in `platformio.ini`.
 3. Build and upload using PlatformIO IDE as usual.
 
 
+# Setting up Mavlink RC in INav 4.0+
+
+- enable Mavlink telemetry in Ports tab. Select Baudrate. Do not enable RC switch.
+- Select Receiver type "Serial", Protocol: "Mavlink" in Receiver tab.
+- Select "Enable telemetry output" in Config tab.
+
 # Reference
 
 # D1 Mini  schematix
