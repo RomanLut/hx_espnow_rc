@@ -17,7 +17,7 @@ Packets flow can be captured using RF Power sensor described here http://www.her
 
 # Packets flow in normal mode 
 
-Higher peaks - master packets. Smaller peaks - slave packets. Rate is iset to 40Hz.
+Higher peaks - master packets. Smaller peaks - slave packets. Rate is set to 40Hz.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rfpower/AKIP0022.jpg "Packets flow - normal")
 
