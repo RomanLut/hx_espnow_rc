@@ -33,7 +33,7 @@ As can be seen, packets flow is not perfect. I guess ESP32 is sending Wifi netwo
 
 # RF Power sensor
 
-RF Power Sensor http://www.herbert-dingfelder.de/?page_id=68 with 20db attenuator https://www.electronics-notes.com/articles/radio/rf-attenuators/pi-t-bridged-resistor-values-table-calculator.php:
+RF Power Sensor http://www.herbert-dingfelder.de/?page_id=68 with 20db attenuator https://www.electronics-notes.com/articles/radio/rf-attenuators/pi-t-bridged-resistor-values-table-calculator.php were used to capture images above:
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rfpower/rfpowersensor.jpg "RF Power Sensor")
 
