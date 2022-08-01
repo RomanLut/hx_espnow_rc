@@ -45,7 +45,7 @@ Buttons will be mapped starting from channel `BLE_GAMEPAD_AXIS_COUNT` ( ==6 ).
 
 Event definition includes name of event, and event specific parameters:
 
-`"event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "ence": "yes" }`
+`"event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "once": "yes" }`
 
 #### STARTUP
 
