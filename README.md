@@ -23,9 +23,9 @@
 
 Remote control library based on ESP-NOW protocol (PlatformIO, ESP32 and ESP8266)
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/ExternalModule.jpg "External module")
+![alt text](doc/ExternalModule.jpg "External module")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diagram.jpg "Diagram")
+![alt text](doc/diagram.jpg "Diagram")
 
 Transmits 16 channels at 50 Hz, bidirectional telemetry(transparent stream) and RSSI, A1, A2.
 
@@ -85,33 +85,33 @@ Moxon antenna with:
 
 2dbi dipole antenna on transmitter <-> 2dbi dipole on receiver provide range up to 1Km:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/planehxwing.jpg "hxwing")
+![alt text](doc/planehxwing.jpg "hxwing")
 
 Tested with INAV 1.7.3 Naze32 1s flying wing based on Eachine E58 brushed motors, with HX_ESPNOW_RC SBUS Esp-01s based receiver https://www.youtube.com/watch?v=UptvxsFHDFA.
 
 I have got first failsave event at 950m and still could control plane at 1100m:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer.jpg "telemetryviewer")
+![alt text](doc/telemetryviewer.jpg "telemetryviewer")
 
 5dbi TP-Link antenna with RP-SMA-SMA adapter on transmitter <-> 2dbi dipole on receiver provide range up to 1.3Km:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/antenna_5dbi.jpg "antenna_5dbi")
+![alt text](doc/antenna_5dbi.jpg "antenna_5dbi")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
+![alt text](doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
 5dbi TP-Link antenna with RP-SMA-SMA adapter on transmitter <-> 2dbi dipole on receiver, ESP32 LR mode provide range up to 1.8Km(!):
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/dfminispirit.jpg "dfminispirit")
+![alt text](doc/dfminispirit.jpg "dfminispirit")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_5dbi_lr.jpg "telemetryviewer_5dbi_lr")
+![alt text](doc/telemetryviewer_5dbi_lr.jpg "telemetryviewer_5dbi_lr")
 
 Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode https://youtu.be/GYB-UckucRA
 
 DIY Moxon antenna on transmitter https://www.thingiverse.com/thing:5148464 <-> 2dbi dipole or receiver provide range up to 1.8Km:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/moxon.jpg "moxon")
+![alt text](doc/moxon.jpg "moxon")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/telemetryviewer_moxon_lr.jpg "telemetryviewer_moxon_lr")
+![alt text](doc/telemetryviewer_moxon_lr.jpg "telemetryviewer_moxon_lr")
 
 Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode.
 
@@ -121,12 +121,12 @@ DYI moxon antenna perform similar to 5dbi antenna, while having compact size.
 
 I also tested with Frsky directional patch 7dbi antenna clone, and I was not able to get any good result with it. I got a lot of failsafe events at 700m already.
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatch.jpg "frskypatch")
+![alt text](doc/frskypatch.jpg "frskypatch")
 
 I am not sure if this is caused by poor clone quality, my ability to point in the right direction, or poor antena SWR.
 (I know I have to open the clone and rotate inner part in the right direction).
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/frskypatchinside.jpg "frskypatchinside")
+![alt text](doc/frskypatchinside.jpg "frskypatchinside")
 
 # Telemetry
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distortion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
