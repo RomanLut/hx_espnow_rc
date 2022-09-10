@@ -1,5 +1,3 @@
-[Work in progress]
-
 Audio files making
 
 Make with voicemaker.in
