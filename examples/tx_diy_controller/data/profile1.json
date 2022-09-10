@@ -14,11 +14,18 @@
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y", 	"channel": 2 	} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_Y",		"channel": 3 	} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 4 	} },
-		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "LEFT_BUMPER", 		"channel": 5 	} },
-		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "RIGHT_BUMPER",		"channel": 6 	} },
-		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "LEFT_TRIGGER",		"channel": 7 	} },
-		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "RIGHT_TRIGGER",	"channel": 8 	} },
+
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "AXIS4", 			"channel": 9 	} },
+
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "LEFT_BUMPER", 		"channel": 5 	} },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000 }, "op": { "name": "CONSTANT", "parm": 1000, "channel": 6 } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000 }, "op": { "name": "CONSTANT", "parm": 1000, "channel": 7 } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000 }, "op": { "name": "CONSTANT", "parm": 1000, "channel": 8 } },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000 },	"op": {	"name": "SWITCH16",	"parm": "RIGHT_BUMPER",		"channel": 6 	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000 },	"op": {	"name": "SWITCH",	"parm": "LEFT_TRIGGER",		"channel": 7 	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000 },	"op": {	"name": "SWITCH",	"parm": "RIGHT_TRIGGER",	"channel": 8 	} },
 
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disarmed.mp3" } },
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3" 	} }
