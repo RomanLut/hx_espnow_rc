@@ -20,6 +20,11 @@
     { "event": { "name": "ALWAYS"	},	"op": { "name": "BUTTON",	"parm": "LEFT_BUMPER",		"channel": 7 	} },
     { "event": { "name": "ALWAYS"	},  "op": { "name": "BUTTON",	"parm": "RIGHT_BUMPER",		"channel": 8	} },
     { "event": { "name": "ALWAYS"	},	"op": { "name": "BUTTON",	"parm": "LEFT_TRIGGER",		"channel": 9	} },
-    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "RIGHT_TRIGGER",	"channel": 10	} }
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "RIGHT_TRIGGER",	"channel": 10	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON4",	"channel": 11	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON5",	"channel": 12	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON6",	"channel": 13	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON7",	"channel": 14	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON8",	"channel": 15	} }
   ]
 }
