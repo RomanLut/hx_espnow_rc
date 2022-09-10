@@ -15,14 +15,18 @@
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 3 	} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_Y",		"channel": 4 	} },
 
+	    { "event": { "name": "ALWAYS"	},	"op": { "name": "EXPO",		"parm": 30,	"channel": 1	} },
+	    { "event": { "name": "ALWAYS"	},	"op": { "name": "EXPO",		"parm": 30,	"channel": 2	} },
+	    { "event": { "name": "ALWAYS"	},	"op": { "name": "EXPO",		"parm": 30,	"channel": 3	} },
+
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "LEFT_BUMPER", 		"channel": 5,	"note": "arm" 		} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH3",	"parm": "RIGHT_TRIGGER",	"channel": 6,	"note": "mode"		} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "RIGHT_BUMPER",		"channel": 8,	"note": "beeper"	} },
 
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "LEFT_TRIGGER",		"channel": 15,	"note": "Trim mod" 	} },
 
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "CONSTANT",	"parm": "1500",	"channel": 1,	"note":"Roll middle"	} },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "CONSTANT",	"parm": "1500",	"channel": 2,	"note":"Pitch middle"	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "CONSTANT",	"parm": 1500,	"channel": 1,	"note":"Roll middle"	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "CONSTANT",	"parm": 1500,	"channel": 2,	"note":"Pitch middle"	} },
 
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "AXIS_BUTTON_UP",	"parm": "RIGHT_STICK_Y",	"channel": 9,	"note":"trim up"	} },
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 15, "value": 2000	}, "op": {	"name": "AXIS_BUTTON_DOWN",	"parm": "RIGHT_STICK_Y",	"channel": 10,	"note":"trim down"	} },
