@@ -39,9 +39,9 @@ Check **errorLog.txt** for the last error messages.
 
 `ESPNOW` hx_espnow_rc https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_hx_espnow_rc.md
 
-`XIROMINI` Xiro Xplorer Mini quadcopter  https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/xiromini/mode_xiromini.md
-
 `BLEGAMEPAD` BLE gamepad https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_ble_gamepad.md
+
+`XIROMINI` Xiro Xplorer Mini quadcopter  https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/xiromini/mode_xiromini.md
 
 `KY FPV` Drones controller with KY FPV application https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/kyfpv/mode_kyfpv.md
 
