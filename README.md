@@ -1,7 +1,7 @@
 **Goals:**
 - [x] transmit 16 RC channels
-- [x] transmit RSSI, A1, A2 telemetry 
-- [x] transmit bidirectional telemetry stream 
+- [x] transmit RSSI and two custom values (A1, A2) from air to ground
+- [x] transmit bidirectional telemetry stream (serial bridge) 
 - [x] build external module for Jumper T-Lite 
 - [x] build receiver based on Wemos D1 Mini board (Servo/PWM outputs) 
 - [x] build ESP-01 based SBUS output receiver 
