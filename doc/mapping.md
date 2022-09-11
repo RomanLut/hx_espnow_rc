@@ -268,38 +268,38 @@ WAV: 8-16KHz 8bit mono.
 
 Available axis names:
 
-**LEFT_STICK_X == AXIS0**
+**AXIS0 == LEFT_STICK_X**
 
-**LEFT_STICK_Y == AXIS1**
+**AXIS1 == LEFT_STICK_Y**
 
-**RIGHT_STICK_X == AXIS2**
+**AXIS2 == RIGHT_STICK_X**
 
-**RIGHT_STICK_Y == AXIS3**
+**AXIS3 == RIGHT_STICK_Y**
 
-**AXIS5 == Self-centering jog wheel**
+**AXIS4 == Self-centering jog wheel**
 
 
 # Button names
 
 Available button names:
 
-**LEFT_BUMPER == BUTTON0**
+**BUTTON0 == LEFT_BUMPER**
 
-**RIGHT_BUMPER == BUTTON1**
+**BUTTON1 == RIGHT_BUMPER**
 
-**LEFT_TRIGGER == BUTTON2**
+**BUTTON2 == LEFT_TRIGGER**
 
-**RIGHT_TRIGGER == BUTTON3**
+**BUTTON3 == RIGHT_TRIGGER**
 
-**JOY_CENTER == BUTTON4**
+**BUTTON4 == JOY_CENTER**
 
-**JOY_LEFT == BUTTON5**
+**BUTTON5 == JOY_LEFT**
 
-**JOY_RIGHT == BUTTON6**
+**BUTTON6 == JOY_RIGHT**
 
-**JOY_UP == BUTTON7**
+**BUTTON7 == JOY_UP**
 
-**JOY_DOWN == BUTTON8**
+**BUTTON8 == JOY_DOWN**
 
 
 # Inverting axis
@@ -318,6 +318,19 @@ Available button names:
  { "event": { "name": "ALWAYS" }, "op": { "name" : "AXIS", "parm" : "LEFT_STICK_Y", "channel" : 1 },
  { "event": { "name": "ALWAYS" }, "op": { "name" : "MUL", "parm" : 20, "channel" : 1 },
  { "event": { "name": "ALWAYS" }, "op": { "name" : "ADD", "parm" : -500, "channel" : 1 }
+```
+
+# Implementing 5-position switch with joystick buttons
+
+ Joystick or any other set of buttons can be used to implement multiple position switch.
+```
+  { "event": { "name": "STARTUP" },  "op": { "name": "CONSTANT", "parm": 1000, "channel": 9 } },
+
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_CENTER" },	"op": {	"name": "CONSTANT",	"parm": "1200",	"channel": 9	} },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_LEFT"   },	"op": {	"name": "CONSTANT",	"parm": "1400",	"channel": 9	} },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_RIGHT"  },	"op": {	"name": "CONSTANT",	"parm": "1600",	"channel": 9	} },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_UP"     },	"op": {	"name": "CONSTANT",	"parm": "1700",	"channel": 9	} },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_DOWN"   },	"op": {	"name": "CONSTANT",	"parm": "1800",	"channel": 9	} },	
 ```
 
 # Clamping 
