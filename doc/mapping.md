@@ -100,7 +100,7 @@ This actions sets `AXIS` value to the channel.
 
 `"op" : { "op" : "BUTTON", "parm" : "LEFT_THUMB", "channel" : 5 }`
 
-This action sets channel value to 1000/2000 depending on button/switch status.
+This action sets channel value to 1000/2000 depending on physical button (or two-position switch) status.
 
 **parm** is button name: **LEFT_BUMPER == BUTTON0, RIGHT_BUMPER == BUTTON1, LEFT_TRIGGER == BUTTON2, RIGHT_TRIGGER == BUTTON3, BUTTON4 ... BUTTONN**
 
@@ -111,7 +111,7 @@ This action sets channel value to 1000/2000 depending on button/switch status.
 
 `"op": { "name" : "SWITCH", "parm" : "LEFT_THUMB", "channel" : 5 }`
 
-This action is used to implement N-position switch using a button. Channel value is switched between step values on each button press.
+This action is used to implement N-position switch using a physical button. Channel value is switched between step values on each button press.
 - SWITCH: 1000/2000
 - SWITCH3: 1000/1500/2000
 - SWITCH4: 1000/1333/1666/2000
@@ -127,7 +127,7 @@ This action is used to implement N-position switch using a button. Channel value
 
 `"op": { "name" : "AXIS_SWITCH", "parm" : "AXIS4", "channel" : 5 }`
 
-This action is used to implement switch using self-sentering axis. Channel value is switched between 1000/2000 values when axis is moved left or right.
+This action is used to implement switch using self-centering axis. Channel value is switched between 1000/2000 values when axis is moved min or max.
 
 **parm** is axis name.
 
@@ -140,9 +140,9 @@ This action is used to implement switch using self-sentering axis. Channel value
 
 `"op": { "name" : "AXIS_BUTTON_RIGHT", "parm" : "AXIS4", "channel" : 6 }`
 
-Theese actions are used to implement button using self-centering axis. Channel value is switched between 1000/2000 values while axis is hold at specified direction.
+Theese actions are used to implement a button using self-centering axis. Channel value is set to 2000 value while axis is hold at specified direction. Then reset to 1000.
 
-This way axis works as two independent buttons.
+This way axis can work as two independent buttons.
 
 **parm** is axis name.
 
@@ -155,9 +155,9 @@ This way axis works as two independent buttons.
 
 `"op": { "name" : "AXIS_SWITCH_RIGHT", "parm" : "AXIS4", "channel" : 6 }`
 
-Theese actions are used to implement switches using celf-sentering axis. Channel value is switched between 1000/2000 values when axis is moved to specified direction.
+Theese actions are used to implement switches using celf-centering axes. Channel value is switched between 1000/2000 values when axis is moved to specified direction.
 
-This way axis works as two independent switches.
+This way axis can work as two independent switches.
 
 **parm** is axis name.
 
