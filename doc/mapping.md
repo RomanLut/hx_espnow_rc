@@ -20,11 +20,11 @@ Mapping is described in profile json:
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y", 	"channel": 2 	} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_Y",		"channel": 3 	} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 4 	} },
-		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "TRIGGER",	"parm": "LEFT_BUMPER", 		"channel": 5 	} },
-		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "TRIGGER",	"parm": "RIGHT_BUMPER",		"channel": 6 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "LEFT_BUMPER", 		"channel": 5 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "RIGHT_BUMPER",		"channel": 6 	} },
 
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disarmed.mp3"    } },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "ence": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3"       } }
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3"       } }
 	]
 }
 ```
@@ -60,6 +60,14 @@ On statup, all channels have value 1000. `STARTUP` is the only action which is e
 
  Action is executed on each loop.
 
+#### BUTTON_PRESS
+
+`"event": { "name": "BUTTON_PRESS", "parm": "LEFT_BUMPER" }`
+
+Action is executed when specified physical button is pressed.
+
+**parm** is button name.
+
 #### CHANNEL_EQUAL
 
 `"event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }`
@@ -91,7 +99,7 @@ Operation definition contains operation name, and operation specific parameters:
 
 This actions sets `AXIS` value to the channel.
 
-**parm** is axis name: **LEFT_STICK_X == AXIS0, LEFT_STICK_Y == AXIS1, RIGHT_STICK_X == AXIS2, RIGHT_STICK_Y == AXIS3, AXIS4...AXIS15**
+**parm** is axis name.
 
 **channel** is target channel.
 
@@ -102,7 +110,7 @@ This actions sets `AXIS` value to the channel.
 
 This action sets channel value to 1000/2000 depending on button/switch status.
 
-**parm** is button name: **LEFT_BUMPER == BUTTON0, RIGHT_BUMPER == BUTTON1, LEFT_TRIGGER == BUTTON2, RIGHT_TRIGGER == BUTTON3, BUTTON4 ... BUTTONN**
+**parm** is button name.
 
 **channel** is target channel.
 
@@ -256,6 +264,42 @@ MP3: 24KHz, momo, 128-192kBit
 
 WAV: 8-16KHz 8bit mono.
 
+# Axis names
+
+Available axis names:
+
+**LEFT_STICK_X == AXIS0**
+
+**LEFT_STICK_Y == AXIS1**
+
+**RIGHT_STICK_X == AXIS2**
+
+**RIGHT_STICK_Y == AXIS3**
+
+**AXIS5 == Self-centering jog wheel**
+
+
+# Button names
+
+Available button names:
+
+**LEFT_BUMPER == BUTTON0**
+
+**RIGHT_BUMPER == BUTTON1**
+
+**LEFT_TRIGGER == BUTTON2**
+
+**RIGHT_TRIGGER == BUTTON3**
+
+**JOY_CENTER == BUTTON4**
+
+**JOY_LEFT == BUTTON5**
+
+**JOY_RIGHT == BUTTON6**
+
+**JOY_UP == BUTTON7**
+
+**JOY_DOWN == BUTTON8**
 
 
 # Inverting axis
