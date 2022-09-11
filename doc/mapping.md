@@ -326,11 +326,11 @@ Available button names:
 ```
   { "event": { "name": "STARTUP" },  "op": { "name": "CONSTANT", "parm": 1000, "channel": 9 } },
 
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_CENTER" },	"op": {	"name": "CONSTANT",	"parm": "1200",	"channel": 9	} },
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_LEFT"   },	"op": {	"name": "CONSTANT",	"parm": "1400",	"channel": 9	} },
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_RIGHT"  },	"op": {	"name": "CONSTANT",	"parm": "1600",	"channel": 9	} },
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_UP"     },	"op": {	"name": "CONSTANT",	"parm": "1700",	"channel": 9	} },
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_DOWN"   },	"op": {	"name": "CONSTANT",	"parm": "1800",	"channel": 9	} },	
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_CENTER" }, "op": {	"name": "CONSTANT", "parm": "1200", "channel": 9 } },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_LEFT"   }, "op": {	"name": "CONSTANT", "parm": "1400", "channel": 9 } },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_RIGHT"  }, "op": {	"name": "CONSTANT", "parm": "1600", "channel": 9 } },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_UP"     }, "op": {	"name": "CONSTANT", "parm": "1700", "channel": 9 } },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_DOWN"   }, "op": {	"name": "CONSTANT", "parm": "1800", "channel": 9 } },	
 ```
 
 # Clamping 
