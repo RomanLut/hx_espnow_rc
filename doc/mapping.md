@@ -76,7 +76,7 @@ This action is executed on each loop ("once":"no"), or each time channel value i
 
 Make sure action is placed after (not before) action which actually changes channel value, otherwise change will not be detected.
 
-Common usage of "ence" action is to play sound file using `SOUND` action.
+Common usage of "once" action is to play sound file using `SOUND` action.
 
 
 # op
