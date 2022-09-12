@@ -424,6 +424,26 @@ int TXInput::getButtonIdByName( const char* parm)
   {
     return RIGHT_TRIGGER_ID;
   }  
+  else if ( strcmp(parm, "JOY_CENTER") == 0 )
+  {
+    return JOY_CENTER_ID;
+  }  
+  else if ( strcmp(parm, "JOY_LEFT") == 0 )
+  {
+    return JOY_LEFT_ID;
+  }  
+  else if ( strcmp(parm, "JOY_RIGHT") == 0 )
+  {
+    return JOY_RIGHT_ID;
+  }  
+  else if ( strcmp(parm, "JOY_UP") == 0 )
+  {
+    return JOY_UP_ID;
+  }  
+  else if ( strcmp(parm, "JOY_DOWN") == 0 )
+  {
+    return JOY_DOWN_ID;
+  }  
   else
   {
       for ( int i = 0; i < BUTTONS_COUNT; i++)
@@ -537,10 +557,10 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
     const JsonVariant& action = mapping[i];
     const JsonVariant& event = action["event"];
     const JsonVariant& op = action["op"];
-
     bool run = false;
 
     const char* eventName = event["name"] | "";
+    const char* eventParm = event["parm"] | "";      
 
     if ( inEventName != NULL ) 
     {
@@ -555,13 +575,17 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       {
         run = true;
       }
-      else if ( strcmp(eventName, "CHANNEL_EQUAL") == 0)
+      else if ( strcmp(eventName, "CHANNEL_EQUAL" ) == 0)
       {
         int channelIndex = (event["channel"] | -1) - 1;
         if (!this->isValidChannelIndex(channelIndex)) return;
         int value = (event["value"] | 0);
         bool once = strcmp((event["once"] | ""), "yes") == 0;
         run = (channelValues->channelValue[channelIndex] == value) && ( !once || (this->lastChannelValue[channelIndex] != value));
+      }
+      else if ( strcmp(eventName, "BUTTON_PRESS" ) == 0)
+      {
+        run = this->hasButtonPressEventByName(eventParm);
       }
       else
       {
