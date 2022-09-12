@@ -15,19 +15,32 @@
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_Y",		"channel": 3 	} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 4 	} },
 
-		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "AXIS4", 			"channel": 9 	} },
-
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "LEFT_BUMPER", 		"channel": 5 	} },
 
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000 }, "op": { "name": "CONSTANT", "parm": 1000, "channel": 6 } },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000 }, "op": { "name": "CONSTANT", "parm": 1000, "channel": 7 } },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000 }, "op": { "name": "CONSTANT", "parm": 1000, "channel": 8 } },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "RIGHT_BUMPER",		"channel": 6 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "LEFT_TRIGGER",		"channel": 7 	} },
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "RIGHT_TRIGGER",	"channel": 8 	} },
 
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000 },	"op": {	"name": "SWITCH16",	"parm": "RIGHT_BUMPER",		"channel": 6 	} },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000 },	"op": {	"name": "SWITCH",	"parm": "LEFT_TRIGGER",		"channel": 7 	} },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000 },	"op": {	"name": "SWITCH",	"parm": "RIGHT_TRIGGER",	"channel": 8 	} },
+		{ "event": { "name": "STARTUP"	}, 	"op": { "name": "CONSTANT", "parm": 1000, "channel": 9 } },
 
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disarmed.mp3" } },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3" 	} }
+		{ "event": { "name": "BUTTON_PRESS", "parm": "JOY_CENTER" 	},	"op": {	"name": "CONSTANT",	"parm": "1200",	"channel": 9	} },
+		{ "event": { "name": "BUTTON_PRESS", "parm": "JOY_LEFT" 	},	"op": {	"name": "CONSTANT",	"parm": "1400",	"channel": 9	} },
+		{ "event": { "name": "BUTTON_PRESS", "parm": "JOY_RIGHT" 	},	"op": {	"name": "CONSTANT",	"parm": "1600",	"channel": 9	} },
+		{ "event": { "name": "BUTTON_PRESS", "parm": "JOY_UP" 		},	"op": {	"name": "CONSTANT",	"parm": "1700",	"channel": 9	} },
+		{ "event": { "name": "BUTTON_PRESS", "parm": "JOY_DOWN" 	},	"op": {	"name": "CONSTANT",	"parm": "1800",	"channel": 9	} },	
+
+		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "AXIS4", 	"channel": 10 	} },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disarmed.mp3"} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3"	} },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 6, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/on.mp3" 	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 6, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/off.mp3" } },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/on.mp3" 	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/off.mp3" } },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/on.mp3" 	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/off.mp3" } }
 	]
 }
