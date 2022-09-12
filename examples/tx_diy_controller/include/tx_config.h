@@ -65,22 +65,22 @@
 #define RIGHT_BUMPER_ID     1  //== BUTTON1
 #define LEFT_TRIGGER_ID     2  //== BUTTON2 
 #define RIGHT_TRIGGER_ID    3  //== BUTTON3
-#define CROSS_LEFT_ID             4  
-#define CROSS_RIGHT_ID            5   
-#define CROSS_UP_ID               6      
-#define CROSS_DOWN_ID             7  
-#define CROSS_CENTER_ID           8  
+#define JOY_CENTER_ID       4  
+#define JOY_LEFT_ID         5  
+#define JOY_RIGHT_ID        6   
+#define JOY_UP_ID           7      
+#define JOY_DOWN_ID         8  
 
-#define LEFT_BUMPER_PIN     5
-#define RIGHT_BUMPER_PIN    18
-#define LEFT_TRIGGER_PIN    19
-#define RIGHT_TRIGGER_PIN   21
-#define CROSS_LEFT_PIN         12  // (must be LOW during boot)
-#define CROSS_RIGHT_PIN        15  // outputs PWM signal at boot, (must be HIGH during boot)
-#define CROSS_UP_PIN           25
-#define CROSS_DOWN_PIN         26 
-#define CROSS_CENTER_PIN       0   // pulled up, (grounded to upload on boot)
+#define LEFT_BUMPER_PIN         5
+#define RIGHT_BUMPER_PIN        18
+#define LEFT_TRIGGER_PIN        19
+#define RIGHT_TRIGGER_PIN       21
+#define JOY_CENTER_PIN          0   // pulled up, (grounded to upload on boot)
+#define JOY_LEFT_PIN            12  // (must be LOW during boot)
+#define JOY_RIGHT_PIN           15  // outputs PWM signal at boot, (must be HIGH during boot)
+#define JOY_UP_PIN              25
+#define JOY_DOWN_PIN            26 
 //--------------------------------------------
 
-#define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN, LEFT_TRIGGER_PIN, RIGHT_TRIGGER_PIN, CROSS_LEFT_PIN, CROSS_RIGHT_PIN, CROSS_UP_PIN, CROSS_DOWN_PIN, CROSS_CENTER_PIN};
+#define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN, LEFT_TRIGGER_PIN, RIGHT_TRIGGER_PIN, JOY_CENTER_PIN, JOY_LEFT_PIN, JOY_RIGHT_PIN, JOY_UP_PIN, JOY_DOWN_PIN};
 
