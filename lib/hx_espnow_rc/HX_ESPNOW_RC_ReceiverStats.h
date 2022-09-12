@@ -26,7 +26,7 @@ public:
     uint16_t prevSequenceId;
     //total number of packets recevied (excluding invalid/crc)
     uint16_t packetsReceived; 
-    //total number of packets not recevied (we find it out from packetId)
+    //total number of packets not received (we find it out from packetId)
     uint16_t packetsLost;
 
     unsigned long RSSIUpdateMs;

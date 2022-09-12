@@ -43,9 +43,9 @@ void setup()
   pinMode( 13, INPUT);
 
   Serial.begin(TELEMETRY_BAUDRATE);
-  
-  Serial.swap(); //GPIO15 D8 (TX) and GPIO13 D7 (RX)
 
+  Serial.swap(); //GPIO15 D8 (TX) and GPIO13 D7 (RX)
+  
   hxSBUSEncoder.init( Serial1, 2, SBUS_INVERTED );
 
   hxrcSlave.init(
@@ -54,8 +54,6 @@ void setup()
           USE_KEY,
           false,
           -1, false));
-
-  hxrcSlave.setA1(42);
 
   //REVIEW: receiver does not work if AP is not initialized?
   WiFi.softAP("hxrcrsbus", NULL, USE_WIFI_CHANNEL);
@@ -96,11 +94,15 @@ void loop()
   fillOutgoingTelemetry();
   hxrcTelemetrySerial.flushOut();
 
+  //Example: send custom S.PORT telemetry: A1 and A2 values
+  hxrcSlave.setA1(42);
   hxrcSlave.setA2(hxrcSlave.getReceiverStats().getRSSI());
 
   hxrcSlave.loop();
 
+
 /*
+  //Note: Stats are written to serial. Serial is reconfigured to D8,D7
   if (millis() - lastStats > 1000)
   {
     lastStats = millis();
