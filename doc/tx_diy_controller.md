@@ -77,7 +77,7 @@ Solder ESP32, BT-06, powerbank module and amplifier according to schematics abov
 
 ![alt text](/doc/mavic_mini_rc/mavic_mini_rc_1.jpg  "Mavic mini rc 1")
 
-![alt text](doc/mavic_mini_rc/mavic_mini_rc_2.jpg  "Mavic mini rc 2")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_2.jpg  "Mavic mini rc 2")
 
 Use control points on the original PCB to solder wires. Fix wires with epoxy glue.
 
@@ -182,7 +182,7 @@ See **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/do
 
 # See next
 
-Profiles https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_profiles.md
+Profiles [a relative link](/doc/tx_profiles.md)
 
 Controls mapping https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mapping.md
 
