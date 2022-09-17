@@ -111,7 +111,13 @@ Volume control if placed on the front cover of the controller (fixed with epoxy 
 
 I also used Joystick from Siemens SX65 mobile phone. It has 4 direction buttons and one center button.
 
-[img]
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_6.jpg  "Mavic mini rc 6")
+
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_joy_1.jpg  "Mavic mini rc joy 1")
+
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_joy_2.jpg  "Mavic mini rc joy 2")
+
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_joy_3.jpg  "Mavic mini rc joy 3")
 
 Charging indicator LED and power switch are placed on the back cover of the RC controller (fixed with epoxy glue):
 
@@ -119,8 +125,9 @@ Charging indicator LED and power switch are placed on the back cover of the RC c
 
 I used tiny  speaker from some mobile phone. It can be mouted against holes of the bottom cover, producing good sound:
 
-[img]
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_speaker_1.jpg  "Mavic mini rc speaker 1")
 
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_speaker_2.jpg  "Mavic mini rc speaker 2")
 
 ![alt text](/doc/mavic_mini_rc/diy_mavic_mini_rc_mod.jpg  "Mavic mini rc 8")
 
