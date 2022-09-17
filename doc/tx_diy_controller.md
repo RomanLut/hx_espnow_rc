@@ -57,7 +57,9 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 
 Pictures below provide hints for converting Mavic Mini 1 RC Controller. We reuse sticks, buttons, camera control slider, original battery and micro USB connector.
 
-DIY powerbank board is used to control battery charge and power ESP32. It has one drawback though: when usb cable is disconnected, it takes ~1 second to start boost up converter. Due to this delay, controller reboots.
+Orignal Li-ion battery is reused. It is charged with TP4056 board. DC-DC 5V boost converter is used to power ESP32 and Bluetooth module. 
+
+*Note: DIY powerbank board was used in V1. It has one drawback though: when usb cable is disconnected, it takes ~1 second to start boost up converter. Due to this delay, controller reboots. I recommend to use TP4056 board and DC-DC boost converter.*
 
 Mavic Mini controller can be disassembled using guides from youtube.
 
@@ -107,9 +109,18 @@ Volume control if placed on the front cover of the controller (fixed with epoxy 
 
 ![alt text](/doc/mavic_mini_rc/mavic_mini_rc_6.jpg  "Mavic mini rc 6")
 
+I also used Joystick from Siemens SX65 mobile phone. It has 4 direction buttons and one center button.
+
+[img]
+
 Charging indicator LED and power switch are placed on the back cover of the RC controller (fixed with epoxy glue):
 
 ![alt text](/doc/mavic_mini_rc/mavic_mini_rc_7.jpg  "Mavic mini rc 7")
+
+I used tiny  speaker from some mobile phone. It can be mouted against holes of the bottom cover, producing good sound:
+
+[img]
+
 
 ![alt text](/doc/mavic_mini_rc/diy_mavic_mini_rc_mod.jpg  "Mavic mini rc 8")
 
