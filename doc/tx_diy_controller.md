@@ -63,55 +63,55 @@ Mavic Mini controller can be disassembled using guides from youtube.
 
 Connection diagrams for the internals of the controller are shown below:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_sticks.jpg "Mavic Mini RC sticks")
+![alt text](/doc/mavic_mini_rc/mavic_mini_sticks.jpg "Mavic Mini RC sticks")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_cam_control.jpg "Mavic camera control")
+![alt text](/doc/mavic_mini_rc/mavic_cam_control.jpg "Mavic camera control")
 
 **LB**, **RB** are **HOME** and **Power** buttons. **LT** and **RT** are **Record** and **Photo** buttons.
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_led_board.jpg  "Mavic LED board")
+![alt text](/doc/mavic_mini_rc/mavic_led_board.jpg  "Mavic LED board")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_battery.jpg "Mavic battery")
+![alt text](/doc/mavic_mini_rc/mavic_battery.jpg "Mavic battery")
 
 Solder ESP32, BT-06, powerbank module and amplifier according to schematics above.
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_1.jpg  "Mavic mini rc 1")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_1.jpg  "Mavic mini rc 1")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_2.jpg  "Mavic mini rc 2")
+![alt text](doc/mavic_mini_rc/mavic_mini_rc_2.jpg  "Mavic mini rc 2")
 
 Use control points on the original PCB to solder wires. Fix wires with epoxy glue.
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_3.jpg  "Mavic mini rc 3")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_3.jpg  "Mavic mini rc 3")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_4.jpg  "Mavic mini rc 4")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_4.jpg  "Mavic mini rc 4")
 
 Remove PCB antenna from bluetooth module. Cut U.FL connector from feeder wire and solder right antenna of RC controller to the module:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_bt_1.jpg  "Mavic mini bt 1")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_bt_1.jpg  "Mavic mini bt 1")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_bt_2.jpg  "Mavic mini bt 2")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_bt_2.jpg  "Mavic mini bt 2")
 
 Fix feeder cable with epoxy glue:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_bt_3.jpg  "Mavic mini bt 3")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_bt_3.jpg  "Mavic mini bt 3")
 
 Remove PCB antenna from ESP32 module and solder left antenna of RC controller:
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_wifi_1.jpg  "Mavic mini wifi")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_wifi_1.jpg  "Mavic mini wifi")
 
 Volume control if placed on the front cover of the controller (fixed with epoxy glue). The handle is covered by antennas in folded state.
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_ant.jpg  "Mavic mini ant")
+![alt text](/doc/mavic_mini_rc/mavic_mini_ant.jpg  "Mavic mini ant")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_5.jpg  "Mavic mini rc 5")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_5.jpg  "Mavic mini rc 5")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_6.jpg  "Mavic mini rc 6")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_6.jpg  "Mavic mini rc 6")
 
 Charging indicator LED and power switch are placed on the back cover of the RC controller (fixed with epoxy glue):
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/mavic_mini_rc_7.jpg  "Mavic mini rc 7")
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_7.jpg  "Mavic mini rc 7")
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/mavic_mini_rc/diy_mavic_mini_rc_mod.jpg  "Mavic mini rc 8")
+![alt text](/doc/mavic_mini_rc/diy_mavic_mini_rc_mod.jpg  "Mavic mini rc 8")
 
 Flash module with Examples/tx_diy_controller/
 
