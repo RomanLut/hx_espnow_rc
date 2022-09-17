@@ -34,7 +34,7 @@ Main goal is to use it in the DIY ESP8266/ESP32 based projects.
 
 Used in external RC Controler JR Bay module: [/doc/tx_external_module.md](/doc/tx_external_module.md)
 
-Used in DIY RC Controller: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_diy_controller.md
+Used in DIY RC Controller: [/doc/tx_diy_controller.md](/doc/tx_diy_controller.md)
 
 Used in DIY ESP32 based quadcopter: https://github.com/RomanLut/Multiwii-ESP32-port
 
@@ -48,23 +48,23 @@ You can build **transmitter module for RC Controller with External module bay**,
 
 See building guides:
 
-- transmitter module for Jumpter T-Lite (JR Bay): https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_external_module.md
-- DIY RC Controller: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_diy_controller.md
+- transmitter module for Jumpter T-Lite (JR Bay): [/doc/tx_external_module.md](/doc/tx_external_module.md)
+- DIY RC Controller: [/doc/tx_diy_controller.md](/doc/tx_diy_controller.md)
 - module for Radiomaster TX16s JR bay [todo]
 
-- Servo/PWM/Discrete output receiver based on Wemos D1 mini board: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_pwm.md
+- Servo/PWM/Discrete output receiver based on Wemos D1 mini board: [/doc/rx_d1_mini_pwm.md](/doc/rx_d1_mini_pwm.md)
 
-- ESP-01 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp01_sbus.md
-- Wemos D1 Mini based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_sbus.md
-- ESP32 based SBUS receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_sbus.md
+- ESP-01 based SBUS receiver: [/doc/rx_esp01_sbus.md](/doc/rx_esp01_sbus.md)
+- Wemos D1 Mini based SBUS receiver: [/doc/rx_d1_mini_sbus.md](/doc/rx_d1_mini_sbus.md)
+- ESP32 based SBUS receiver: [/doc/rx_esp32_sbus.md](/doc/rx_esp32_sbus.md)
 
-- Wemos D1 Mini based Mavlink RC receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_mavlink_rc.md
-- ESP32 based Mavlink RC receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_mavlink_rc.md
+- Wemos D1 Mini based Mavlink RC receiver: [/doc/rx_d1_mini_mavlink_rc.md](/doc/rx_d1_mini_mavlink_rc.md)
+- ESP32 based Mavlink RC receiver: [/doc/rx_esp32_mavlink_rc.md](/doc/rx_esp32_mavlink_rc.md)
 
-- Wemos D1 Mini based PPM receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_d1_mini_ppm.md
-- ESP32 based PPM receiver: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rx_esp32_pmm.md
+- Wemos D1 Mini based PPM receiver: [/doc/rx_d1_mini_ppm.md](/doc/rx_d1_mini_ppm.md)
+- ESP32 based PPM receiver: [/doc/rx_esp32_pmm.md](/doc/rx_esp32_pmm.md)
 
-- development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
+- development guide: [/doc/development.md](/doc/development.md)
 - recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
 
 # Range
@@ -132,14 +132,14 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distortion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
 Additionally library transmits A1 and A2 (32-bit) values for simple telemetry.
 
-See packets timing: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/rfpower/rfpower.md
+See packets timing: [/doc/rfpower/rfpower.md](/doc/rfpower/rfpower.md)
 
 # Building and Flashing
 Currently pre-build firmware is not provided. You have to build firmware yourself and flash ESP32/ESP8266 modules using PlatformIO https://platformio.org/
 
 If you do not know what PlatformIO is, than this project is not for you at the current stage. Later I may try to provide pre-build binaries and detailed instructions for flashing and configuring transmitter and receivers.
 
-See development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
+See development guide: [/doc/development.md](/doc/development.md)
 
 # Quick start
 
@@ -148,7 +148,7 @@ See development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/de
 - flash second with test_esp32_devkit_tx project
 - see statistic in terminal
 
-Continue with development guide: https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/development.md
+Continue with development guide: [/doc/development.md](/doc/development.md)
 
 
 # Other projects
