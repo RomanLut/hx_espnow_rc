@@ -20,11 +20,11 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 - [ ] Eachine E58 mode
 
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_controller_prototype.jpg "DIY controller prototype")
+![alt text](/doc/diy_controller_prototype.jpg "DIY controller prototype")
 
 # Connection diagram
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/diy_controller_connections.jpg "DIY controller connections")
+![alt text](/doc/diy_controller_connections.jpg "DIY controller connections")
 
 # Parts list
 
