@@ -75,11 +75,11 @@
 #define RIGHT_BUMPER_PIN        18
 #define LEFT_TRIGGER_PIN        19
 #define RIGHT_TRIGGER_PIN       21
-#define JOY_CENTER_PIN          0   // pulled up, (grounded to upload on boot)
-#define JOY_LEFT_PIN            12  // (must be LOW during boot)
-#define JOY_RIGHT_PIN           15  // outputs PWM signal at boot, (must be HIGH during boot)
-#define JOY_UP_PIN              25
-#define JOY_DOWN_PIN            26 
+#define JOY_CENTER_PIN          15 // outputs PWM signal at boot, (must be HIGH during boot)
+#define JOY_LEFT_PIN            0  // pulled up, (grounded to upload on boot)
+#define JOY_RIGHT_PIN           25
+#define JOY_UP_PIN              26
+#define JOY_DOWN_PIN            12 // (must be LOW during boot)
 //--------------------------------------------
 
 #define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN, LEFT_TRIGGER_PIN, RIGHT_TRIGGER_PIN, JOY_CENTER_PIN, JOY_LEFT_PIN, JOY_RIGHT_PIN, JOY_UP_PIN, JOY_DOWN_PIN};
