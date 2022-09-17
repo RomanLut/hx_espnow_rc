@@ -1,12 +1,12 @@
 {
   "transmitter_mode": "BLEGAMEPAD",
   "mapping": [
-	{ "event": { "name": "STARTUP" 		},	"op": { "name": "SOUND",	"parm": "/mode_bt_gamepad.mp3"	} },
-   	{ "event": { "name": "CONNECTED"	},	"op": { "name": "SOUND",	"parm": "/connected.mp3"		} },
+	  { "event": { "name": "STARTUP" 		  },	"op": { "name": "SOUND",	"parm": "/mode_bt_gamepad.mp3"	} },
+   	{ "event": { "name": "CONNECTED"	  },	"op": { "name": "SOUND",	"parm": "/connected.mp3"		} },
    	{ "event": { "name": "DISCONNECTED"	},  "op": { "name": "SOUND",	"parm": "/connection_lost.mp3"	} },
 
-	{ "event": { "name": "ALWAYS" 	},	"op": { "name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 1	} },
-    { "event": { "name": "ALWAYS" 	},  "op": { "name": "AXIS",     "parm": "LEFT_STICK_Y",		"channel": 2	} },
+	  { "event": { "name": "ALWAYS"	},	"op": { "name": "AXIS",		"parm": "LEFT_STICK_X",		"channel": 1	} },
+    { "event": { "name": "ALWAYS"	},  "op": { "name": "AXIS",     "parm": "LEFT_STICK_Y",		"channel": 2	} },
     { "event": { "name": "ALWAYS"	},	"op": { "name": "AXIS",		"parm": "RIGHT_STICK_X",	"channel": 3	} },
     { "event": { "name": "ALWAYS"	}, 	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y",	"channel": 4	} },
     { "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "AXIS4",			"channel": 5	} },
@@ -21,10 +21,10 @@
     { "event": { "name": "ALWAYS"	},  "op": { "name": "BUTTON",	"parm": "RIGHT_BUMPER",		"channel": 8	} },
     { "event": { "name": "ALWAYS"	},	"op": { "name": "BUTTON",	"parm": "LEFT_TRIGGER",		"channel": 9	} },
     { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "RIGHT_TRIGGER",	"channel": 10	} },
-    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON4",	"channel": 11	} },
-    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON5",	"channel": 12	} },
-    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON6",	"channel": 13	} },
-    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON7",	"channel": 14	} },
-    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "BUTTON8",	"channel": 15	} }
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "JOY_CENTER",	    "channel": 11	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "JOY_LEFT",	      "channel": 12	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "JOY_RIGHT",	    "channel": 13	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "JOY_UP",	        "channel": 14	} },
+    { "event": { "name": "ALWAYS"	},	"op": {	"name": "BUTTON",	"parm": "JOY_DOWN",	      "channel": 15	} }
   ]
 }
