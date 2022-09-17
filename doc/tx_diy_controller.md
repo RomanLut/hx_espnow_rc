@@ -170,7 +170,7 @@ To force **Configuration mode**, power the controller with **RIGHT Trigger** pre
 
 **Configuration mode** is used to upload profiles to controller filesystem.
 
-See **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mode_configuration.md
+See **Configuration mode** [/doc/mode_configuration.md](/doc/mode_configuration.md)
 
 
 # Known problems
@@ -182,7 +182,7 @@ See **Configuration mode** https://github.com/RomanLut/hx_espnow_rc/blob/main/do
 
 # See next
 
-Profiles [a relative link](/doc/tx_profiles.md)
+Profiles [/doc/tx_profiles.md](/doc/tx_profiles.md)
 
-Controls mapping https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/mapping.md
+Controls mapping [doc/mapping.md](doc/mapping.md)
 
