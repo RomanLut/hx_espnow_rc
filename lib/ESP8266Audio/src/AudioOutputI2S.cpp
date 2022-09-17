@@ -65,6 +65,7 @@ bool AudioOutputI2S::SetPinout()
         .data_out_num = doutPin,
         .data_in_num = I2S_PIN_NO_CHANGE};
     i2s_set_pin((i2s_port_t)portNo, &pins);
+
     return true;
   #else
     (void)bclkPin;
@@ -254,6 +255,8 @@ bool AudioOutputI2S::begin(bool txDAC)
 #if CONFIG_IDF_TARGET_ESP32
         i2s_set_pin((i2s_port_t)portNo, NULL);
         i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
+
+
 #else
         return false;
 #endif

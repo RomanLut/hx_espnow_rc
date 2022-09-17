@@ -30,6 +30,7 @@ GPIO13 - RX
 //Practical rate it 40...50ms. At 20ms, inav is not able to send telemetry at all.
 //This can be fixed only by fixing inav sources.
 //inav/src/main/telemetry/mavlink.c, remove "if (!incomingRequestServed) ..."
+//See https://github.com/iNavFlight/inav/pull/8274
 #define MAVLINK_RC_PACKET_RATE_MS   40  //Rate in Hz = 1000 / MAVLINK_RC_PACKET_RATE_MS
 
 //note: 

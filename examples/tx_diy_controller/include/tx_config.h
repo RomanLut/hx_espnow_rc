@@ -22,7 +22,8 @@
 //--------------------------------------------
 
 #define SPEAKER_PIN 22  
-//pin 25, 26 - occupied by I2S
+//pin 25, 26 - can be used.
+//2 - useless, occupied by I2S DAC outputs
 
 //--------------------------------------------
 #define AXIS_COUNT 5
@@ -56,7 +57,7 @@
 #define ADC_PINS_LIST {LEFT_STICK_X_PIN, LEFT_STICK_Y_PIN, RIGHT_STICK_X_PIN, RIGHT_STICK_Y_PIN, EXT_AXIS_PIN, BAT_ADC_PIN};
 
 //--------------------------------------------
-#define BUTTONS_COUNT 4
+#define BUTTONS_COUNT 9
 
 #define BUTTONS_CH_BASE     AXIS_COUNT
 
@@ -64,21 +65,22 @@
 #define RIGHT_BUMPER_ID     1  //== BUTTON1
 #define LEFT_TRIGGER_ID     2  //== BUTTON2 
 #define RIGHT_TRIGGER_ID    3  //== BUTTON3
-//#define BUTTON4_ID          4  
-//#define BUTTON5_ID          5  
+#define JOY_CENTER_ID       4  
+#define JOY_LEFT_ID         5  
+#define JOY_RIGHT_ID        6   
+#define JOY_UP_ID           7      
+#define JOY_DOWN_ID         8  
 
-#define LEFT_BUMPER_PIN     5
-#define RIGHT_BUMPER_PIN    18
-#define LEFT_TRIGGER_PIN    19
-#define RIGHT_TRIGGER_PIN   21
-//#define BUTTON4_PIN         14  // pulled up
-//#define BUTTON5_PIN         15  
+#define LEFT_BUMPER_PIN         5
+#define RIGHT_BUMPER_PIN        18
+#define LEFT_TRIGGER_PIN        19
+#define RIGHT_TRIGGER_PIN       21
+#define JOY_CENTER_PIN          15 // outputs PWM signal at boot, (must be HIGH during boot)
+#define JOY_LEFT_PIN            0  // pulled up, (grounded to upload on boot)
+#define JOY_RIGHT_PIN           25
+#define JOY_UP_PIN              26
+#define JOY_DOWN_PIN            12 // (must be LOW during boot)
 //--------------------------------------------
 
-#define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN, LEFT_TRIGGER_PIN, RIGHT_TRIGGER_PIN/*, BUTTON4_PIN, BUTTON5_PIN*/};
+#define BUTTON_PINS_LIST { LEFT_BUMPER_PIN, RIGHT_BUMPER_PIN, LEFT_TRIGGER_PIN, RIGHT_TRIGGER_PIN, JOY_CENTER_PIN, JOY_LEFT_PIN, JOY_RIGHT_PIN, JOY_UP_PIN, JOY_DOWN_PIN};
 
-//Used:
-//0 - pulled up
-//2 - onboard LED
-//Free: 
-//12 (boot fails if pooled high)
