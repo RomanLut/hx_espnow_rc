@@ -57,7 +57,9 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 
 Pictures below provide hints for converting Mavic Mini 1 RC Controller. We reuse sticks, buttons, camera control slider, original battery and micro USB connector.
 
-Orignal Li-ion battery is reused. It is charged with TP4056 board. DC-DC 5V boost converter is used to power ESP32 and Bluetooth module. 
+Battery is charged with TP4056 board. DC-DC 5V boost converter is used to power ESP32 and Bluetooth module. 
+
+USB 5V and USB GND lines of original microUSB connector are connected to the TP4056 board. USB D+ and USB D- lines are connected to the corresponding lines on ESP32 board.
 
 *Note: DIY powerbank board was used in V1. It has one drawback though: when usb cable is disconnected, it takes ~1 second to start boost up converter. Due to this delay, controller reboots. I recommend to use TP4056 board and DC-DC boost converter.*
 
@@ -101,17 +103,11 @@ Remove PCB antenna from ESP32 module and solder left antenna of RC controller:
 
 ![alt text](/doc/mavic_mini_rc/mavic_mini_rc_wifi_1.jpg  "Mavic mini wifi")
 
-Volume control if placed on the front cover of the controller (fixed with epoxy glue). The handle is covered by antennas in folded state.
+Volume control if placed on the front cover of the controller (fixed with epoxy glue). The wheel is covered by antennas in folded state.
 
 ![alt text](/doc/mavic_mini_rc/mavic_mini_ant.jpg  "Mavic mini ant")
 
-![alt text](/doc/mavic_mini_rc/mavic_mini_rc_5.jpg  "Mavic mini rc 5")
-
-![alt text](/doc/mavic_mini_rc/mavic_mini_rc_6.jpg  "Mavic mini rc 6")
-
 I also used Joystick from Siemens SX65 mobile phone. It has 4 direction buttons and one center button.
-
-![alt text](/doc/mavic_mini_rc/mavic_mini_rc_6.jpg  "Mavic mini rc 6")
 
 ![alt text](/doc/mavic_mini_rc/mavic_mini_rc_joy_1.jpg  "Mavic mini rc joy 1")
 
@@ -123,7 +119,11 @@ Charging indicator LED and power switch are placed on the back cover of the RC c
 
 ![alt text](/doc/mavic_mini_rc/mavic_mini_rc_7.jpg  "Mavic mini rc 7")
 
-I used tiny  speaker from some mobile phone. It can be mouted against holes of the bottom cover, producing good sound:
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_5.jpg  "Mavic mini rc 5")
+
+![alt text](/doc/mavic_mini_rc/mavic_mini_rc_6.jpg  "Mavic mini rc 6")
+
+In version 2, I used tiny  speaker from some mobile phone. It can be mouted against holes of the bottom cover, producing good sound:
 
 ![alt text](/doc/mavic_mini_rc/mavic_mini_rc_speaker_1.jpg  "Mavic mini rc speaker 1")
 
