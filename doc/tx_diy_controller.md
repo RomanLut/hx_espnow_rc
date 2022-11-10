@@ -50,7 +50,7 @@ DIY RC controller can work in multiple modes: HX_ESPNOW_RC, Bluetooth gamepad an
 
 *I recommend to get original XBOX/Dualshock sticks ("3D Analog dualshock"), sticks from serious RC controllers, or modify original Dualshock/XBOX gamepads or RC controllers with good sticks.*
 
-*Connections diagram is shown for 5-axis, 4-buttons RC controller. As there are few pins left, it is possible to add three more buttons. Axes and buttons are configured in include\txConfig.h*
+*Connection diagram is shown for 5-axis, 4-buttons, 5 actions joystitck RC controller. Different configuration is possible. Axes and buttons are configured in include\txConfig.h*
 
 
 # Building guide
@@ -189,13 +189,6 @@ To force **Configuration mode**, power the controller with **RIGHT Trigger** pre
 **Configuration mode** is used to upload profiles to controller filesystem.
 
 See **Configuration mode** [/doc/mode_configuration.md](/doc/mode_configuration.md)
-
-
-# Known problems
-
-1) Sound volume is low. Speaker is not well placed. It would  produce good sound if mounted against shell holes. Possible solutions: Use PAM8403 amplifier for higher volume? Use tiny mobile phone speaker mouted against holes at the back of the shell?
-
-2) Controller reboots when USB cable is disconnected. This happends because Powerbank boost up controller needs 2 seconds to turn on after USB power loss. It might be better to use separate USB Changing/protection board and boost up converter to avoid this behavior.
 
 
 # See next
