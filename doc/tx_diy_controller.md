@@ -133,7 +133,7 @@ In version 2, I used tiny  speaker from some mobile phone. It can be mouted agai
 
 Flash module with Examples/tx_diy_controller/
 
-Upload filesystem Examples/tx_diy_controller/
+Upload filesystem Examples/tx_diy_controller/ (on the left side of the screen in PlatromIO IDE, select PlatformIO -> Uload filesystem image)
 
 
 # Sticks calibration
