@@ -104,7 +104,7 @@ Double-check all connections. Use M2.5 bolts to fix cover on the main part:
 
 Flash module with Examples/tx_external_module/
 
-Upload filesystem Examples/tx_external_module/ (on the left side of the screen in PlatformIO IDE, select PlatformIO -> Uload filesystem image)
+Upload filesystem Examples/tx_external_module/ (on the left side of the screen in PlatformIO IDE, select PlatformIO -> Upload filesystem image)
 
 Configure T-Lite to output SBUS (normal SBUS => inverted uart).
 
