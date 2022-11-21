@@ -62,7 +62,7 @@ See building guides:
 - ESP32 based Mavlink RC receiver: [/doc/rx_esp32_mavlink_rc.md](/doc/rx_esp32_mavlink_rc.md)
 
 - Wemos D1 Mini based PPM receiver: [/doc/rx_d1_mini_ppm.md](/doc/rx_d1_mini_ppm.md)
-- ESP32 based PPM receiver: [/doc/rx_esp32_pmm.md](/doc/rx_esp32_pmm.md)
+- ESP32 based PPM receiver: [/doc/rx_esp32_pmm.md](/doc/rx_esp32_ppm.md)
 
 - development guide: [/doc/development.md](/doc/development.md)
 - recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
