@@ -55,7 +55,7 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
 
 # 1k resistor (R1)
                                                
-If GPIO8 is pulled down, ESP8266 boot fails. Some FCs may pull up RX pin. The easiest way to solve this is to add 1k pulldown resistor. Resistor may be required and may be not dependiong on FC type.
+If GPIO15(D8) is pulled up, ESP8266 boot fails. Some FCs may pull up RX pin. The easiest way to solve this is to add 1k pulldown resistor. Resistor may be required and may be not depending on FC type. If ESP can not boot, try to disconnect D8 during powerup to check if resistor is required.
 
 # Building steps
 
