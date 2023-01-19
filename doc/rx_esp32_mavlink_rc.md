@@ -9,7 +9,7 @@ As inav supports Mavlink RC now https://github.com/iNavFlight/inav/pull/6738, it
 
 Mavlink v1 and Mavlink v2 are supported. v1 allows to pass 8 channels only.
         
-*In current implementation, any incoming telemetry is ignored. So telemetry is one-way.*
+*In current implementation, uplink telemetry is ignored. It is replaced with RC_CHANNELS_OVERRIDE messages. So telemetry is one-way: air => groud*
 
 RSSI is injected into channel 16(or 8).
 
