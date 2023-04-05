@@ -3,7 +3,7 @@
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_sbus2.jpg "ESP01 sbus2")
 
 Receiver to be used with flight controller. Receives 15 channels and outputs SBUS signal.
-Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MCP etc.). 
+Transmits bidirectional transparent telemetry stream (can be used for Mavlink, LTM, MSP etc.). 
 
 RSSI is injected into channel 16.
 
@@ -14,9 +14,9 @@ Peak power consumption is ~170mA.
 
 See testing with INAV 1.7.3 flying wing: https://www.youtube.com/watch?v=UptvxsFHDFA
 
-TODO: support sensors pooling for Smartport telemetry.
+*TODO: support sensors pooling for Smartport telemetry.*
 
-TODO: work as telemetry blackbox?
+*TODO: work as telemetry blackbox?*
 
 # Failsave
 
@@ -39,13 +39,13 @@ Failsafe flag is passed in SBUS packets. Channels retain last good values.
 
 # 10k Resistors (R2...R4)
 
-10K pullup resistors are not required for ESP01S board. Should be installed on ESP01 boards only.
+10K pullup resistors are not required for ESP01s board. Should be installed on ESP01 boards only.
 
 # 1k resistor (R1)
                                                
 SBUS output is GPIO2. If GPIO2 is pulled down, ESP board boot fails. Typical SBUS invertor schematix on flight controller includes 1k resistor to the base/gate of transistor and 10k pulldown resistor from base/gate to GND. Effectively, GPIO2 is grounded. The easiest way to solve this is to add 1k pullup resistor. 
 
-If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then R1 value show be decreased, down to 470 Ohm. Alternativelly, connect GPIO2 to FC through diode (cathode to ESP01).
+If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then R1 value should be decreased, down to 470 Ohm. Alternativelly, connect GPIO2 to FC through diode (cathode to ESP01).
 
 # Building steps
 
@@ -82,6 +82,8 @@ If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then
 
 # Flashing first time
 
+Make sure you flash correct firmware. There are 3 types of ESP-01 board. See reference section below. Use esp01 or esp_1m firmware accordingly.
+
 1. Edit receiver configuration: examples/rx_esp01_sbus/include/rx_config.h
  - configure key and wifi channel: USE_KEY and USE_WIFI_CHANNEL
  - configure telemetry baudrate
@@ -95,7 +97,9 @@ If ESP is still not able to boot, and boots with GPIO2 disconneted from FC, then
 
 4. Plug USB-UART adapter while holding FLASH button. Upload examples/rx_esp01_sbus/ project using PlatformIO.
 
-Optionally, you can flash firmware before soldering anything using some ESP01 breakout board OR using FC serialpathrough mode.
+Optionally, you can flash firmware before soldering anything using some ESP01 breakout board.
+
+From my experience, FC serialpathrough mode does not work for flashing.
 
 After initial flashing, firmware can be updated wirelessly (OTA).
 
@@ -118,6 +122,13 @@ upload_port = 192.168.4.1
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_sbus.jpg "ESP01 sbus")
 
 # Reference
+
+There are 3 types of ESP-01 board:
+- ESP-01 blue board: 512Kb flash, 2 LEDs (red power LED, blue LED on TX ) 
+- ESP-01 black board: 1Mb flash, 2 LEDs (red power LED, blue LED on TX )
+- ESP-01s black board: 1Mb flash, 1 LED ( blue LED on GPIO2 )
+
+Determine your board type by checking installed flash chip. F.e. T25S80 is 1Mb chip. 
 
 # ESP01 schematix
 
