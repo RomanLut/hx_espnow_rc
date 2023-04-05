@@ -44,28 +44,39 @@ Used in INAV 1.7.3 plane: https://www.youtube.com/watch?v=UptvxsFHDFA
 
 Used in INAV 3.0.2 plane: https://youtu.be/GYB-UckucRA
 
-You can build **transmitter module for RC Controller with External module bay**, **DIY RC controller**, and **SBUS/PWM receiver** using guides below.
+# Building guides
 
-See building guides:
+You can build **transmitter module for RC Controller with External module bay**, **DIY RC controller**, and **SBUS/PPM/PWM/Mavlink receivers** using guides below.
 
+## Transmiters
 - transmitter module for Jumpter T-Lite (JR Bay): [/doc/tx_external_module.md](/doc/tx_external_module.md)
 - DIY RC Controller: [/doc/tx_diy_controller.md](/doc/tx_diy_controller.md)
-- module for Radiomaster TX16s JR bay [todo]
+- *module for Radiomaster TX16s JR bay [todo]*
 
-- Servo/PWM/Discrete output receiver based on Wemos D1 mini board: [/doc/rx_d1_mini_pwm.md](/doc/rx_d1_mini_pwm.md)
+## Receivers
 
+**SBUS wihh transparent bidirectional telemetry**
 - ESP-01 based SBUS receiver: [/doc/rx_esp01_sbus.md](/doc/rx_esp01_sbus.md)
 - Wemos D1 Mini based SBUS receiver: [/doc/rx_d1_mini_sbus.md](/doc/rx_d1_mini_sbus.md)
 - ESP32 based SBUS receiver: [/doc/rx_esp32_sbus.md](/doc/rx_esp32_sbus.md)
 
+**Mavlink RC with telemetry** 
+- ESP-01 based Mavlink receiver: [/doc/rx_esp01_sbus.md](/doc/rx_esp01_mavlink.md)
 - Wemos D1 Mini based Mavlink RC receiver: [/doc/rx_d1_mini_mavlink_rc.md](/doc/rx_d1_mini_mavlink_rc.md)
 - ESP32 based Mavlink RC receiver: [/doc/rx_esp32_mavlink_rc.md](/doc/rx_esp32_mavlink_rc.md)
 
+**PPM with transparrent bidirectional telemetry**
 - Wemos D1 Mini based PPM receiver: [/doc/rx_d1_mini_ppm.md](/doc/rx_d1_mini_ppm.md)
 - ESP32 based PPM receiver: [/doc/rx_esp32_pmm.md](/doc/rx_esp32_ppm.md)
 
-- development guide: [/doc/development.md](/doc/development.md)
-- recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
+**PWM**
+- Servo/PWM/Discrete output receiver based on Wemos D1 mini board: [/doc/rx_d1_mini_pwm.md](/doc/rx_d1_mini_pwm.md)
+
+Development guide: [/doc/development.md](/doc/development.md)
+
+Recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
+
+Recommended telemetry viewer application: https://github.com/RomanLut/android-taranis-smartport-telemetry
 
 # Range
 2 dbi dipole antenna on transmitter with:
