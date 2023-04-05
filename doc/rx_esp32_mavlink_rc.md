@@ -9,7 +9,7 @@ As inav supports Mavlink RC now https://github.com/iNavFlight/inav/pull/6738, it
 
 Mavlink v1 and Mavlink v2 are supported. v1 allows to pass 8 channels only.
         
-*In current implementation, any incoming telemetry is ignored. So telemetry is one-way.*
+*In current implementation, uplink telemetry is ignored. It is replaced with RC_CHANNELS_OVERRIDE messages. So telemetry is one-way: air => ground.*
 
 RSSI is injected into channel 16(or 8).
 
@@ -24,7 +24,7 @@ TODO: work as telemetry blackbox?
 
 # Failsave
 
-There is no RC_CHANNELS_OVERRIDE messages on failsafe.
+There are no RC_CHANNELS_OVERRIDE messages on failsafe.
 
 # Connection diagram
 
@@ -96,6 +96,12 @@ lines in platformio.ini.
 If receiver is flashed in LR mode, access point will not be visible initially. Receiver will switch to normal mode to show AP and allow OTA updates after 1 minute of inactivity. Just power on receiver without transmitter enabled, and wait for 1 minute.
 
 
+# Setting up in INAV
+
+- Set Receiver type: Serial, Provider: Mavlink
+- Enable Mavlink telemetry on some UART, set corrent speed
+- Enable "Telemetry output" in configuration tab  
+- use *set mavlink_version = 2* in CLI to enable Mavlink v2 if necessary.
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_sbus.jpg "ESP32 sbus")
 
