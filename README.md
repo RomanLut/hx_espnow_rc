@@ -61,7 +61,7 @@ You can build **transmitter module for RC Controller with External module bay**,
 - ESP32 based SBUS receiver: [/doc/rx_esp32_sbus.md](/doc/rx_esp32_sbus.md)
 
 **Mavlink RC with telemetry** 
-- ESP-01 based Mavlink receiver: [/doc/rx_esp01_sbus.md](/doc/rx_esp01_mavlink.md)
+- ESP-01 based Mavlink receiver: [/doc/rx_esp01_mavlink_rc.md](/doc/rx_esp01_mavlink_rc.md)
 - Wemos D1 Mini based Mavlink RC receiver: [/doc/rx_d1_mini_mavlink_rc.md](/doc/rx_d1_mini_mavlink_rc.md)
 - ESP32 based Mavlink RC receiver: [/doc/rx_esp32_mavlink_rc.md](/doc/rx_esp32_mavlink_rc.md)
 
