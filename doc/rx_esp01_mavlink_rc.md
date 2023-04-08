@@ -23,5 +23,5 @@ Basically building guide is analogous to ESP01 SBUS receiver with the only diffe
 
 ESP-01 based SBUS receiver: [/doc/rx_esp01_sbus.md](/doc/rx_esp01_sbus.md)
 
-Firmware: xamples/rx_esp01_mavlink_rc
+Firmware: examples/rx_esp01_mavlink_rc
 
