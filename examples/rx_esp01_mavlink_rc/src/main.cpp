@@ -12,14 +12,29 @@ HXMavlinkRCEncoder hxMavlinkRCEncoder;
 
 unsigned long lastStats = millis();
 
+bool bMSPMode = false;
+
+//=====================================================================
+//=====================================================================
+bool isInMSPMode()
+{
+  HXRCChannels channels = hxrcSlave.getChannels();
+  return (MSP_SWITCH_CHANNEL > 0) && (channels.getChannelValue(MSP_SWITCH_CHANNEL - 1) < 1250);
+}
 //=====================================================================
 //=====================================================================
 void processIncomingTelemetry()
 {
+
   while ( hxrcTelemetrySerial.getAvailable() > 0 && Serial.availableForWrite() > 0)
   {
-    hxrcTelemetrySerial.read();
     //todo: interlieve incoming messages with RC_OVERRIDE messages
+    uint8_t c = hxrcTelemetrySerial.read();
+
+    if ( bMSPMode )
+    {
+      Serial.write(c);
+    }
   }
 }
 
@@ -67,7 +82,7 @@ void updateOutput()
   hxMavlinkRCEncoder.setFailsafe( failsafe);
   
   //inject RSSI into channel 16
-  hxMavlinkRCEncoder.setChannelValue( USE_MAVLINK_V1 ? MAVLINK_RC_CHANNELS_COUNT_V1 - 1 : MAVLINK_RC_CHANNELS_COUNT-1, 1000 + ((uint16_t)hxrcSlave.getReceiverStats().getRSSI())*10 );
+  hxMavlinkRCEncoder.setChannelValue( USE_MAVLINK_V1 ? MAVLINK_RC_CHANNELS_COUNT_V1 - 1 : MAVLINK_RC_CHANNELS_COUNT - 1, 1000 + ((uint16_t)hxrcSlave.getReceiverStats().getRSSI())*10 );
 
   if ( !failsafe ) //keep last channel values on failsafe
   {
@@ -78,7 +93,25 @@ void updateOutput()
     }
   }
 
-  hxMavlinkRCEncoder.loop( Serial );
+  if (bMSPMode == false )
+  {
+    if ( hxMavlinkRCEncoder.loop( Serial ) )
+    {
+      //update mode after channel values are sent to FC
+      if (!failsafe)
+      {
+        bMSPMode = isInMSPMode();
+      }
+    }
+  }
+  else
+  {
+    if (!failsafe)
+    {
+      bMSPMode = isInMSPMode();
+    }
+  }
+  
 }
 
 //=====================================================================

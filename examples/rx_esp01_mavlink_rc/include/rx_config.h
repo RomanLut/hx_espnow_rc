@@ -21,12 +21,17 @@ https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 #define TELEMETRY_BAUDRATE 115200
 
 //send packet every ?ms
-//Note: If RC messages are sent too frequently, inav will not be able to send telemetry.
-//Practical rate it 40...50ms. At 20ms, inav is not able to send telemetry at all.
-//This can be fixed only by fixing inav sources.
-//inav/src/main/telemetry/mavlink.c, remove "if (!incomingRequestServed) ..."
-//See https://github.com/iNavFlight/inav/pull/8274
+//Note for inav: "Serial receiver half-duplex" should be set to "OFF", otherwise inav will not be able to send telemetry.
 #define MAVLINK_RC_PACKET_RATE_MS   40  //Rate in Hz = 1000 / MAVLINK_RC_PACKET_RATE_MS
+
+//Declare chanel which is used to switch function of shared port in inav.
+//See telemetry_channel CLI setting in inav.
+//Channel value < 1250 disables MAVLINK_RC messages and switches telemetry stream to transparent bidirectional mode.
+//Note that it is not be possible to switch UART back to telemetry mode because MAVLINK_RC messages will not be sent to FC anymore; channel value on FC is stuck in MSP mode.
+//The only way to switch back is to reset FC.
+//Thus it is not possible to use ARM switch for this purpoce. 
+//Number is one based index!!! (channel 1 = 1)
+#define MSP_SWITCH_CHANNEL 15 
 
 //note: 
 //Mavlink v1: 18 bytes(message size) * 25(rate) * 10(bits) = 4500 baud
