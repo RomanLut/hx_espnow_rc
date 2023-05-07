@@ -68,6 +68,14 @@ Action is executed when specified physical button is pressed.
 
 **parm** is button name.
 
+#### AXIS_LEFT, AXIS_RIGHT
+
+`"event": { "name": "AXIS_LEFT", "parm": "AXIS4" }`
+
+Action is executed while specified axis is moved to the left of right maximum position. 
+
+**parm** is axis name.
+
 #### CHANNEL_EQUAL
 
 `"event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }`
@@ -115,7 +123,7 @@ This action sets channel value to 1000/2000 depending on physical button (or two
 **channel** is target channel.
 
 
-#### SWITCH, SWITCH3, SWITCH3, SWITCH
+#### SWITCH, SWITCH3, SWITCH4, SWITCH5, SWITCH6, SWITCH16
 
 `"op": { "name" : "SWITCH", "parm" : "LEFT_THUMB", "channel" : 5 }`
 
@@ -315,9 +323,20 @@ Available button names:
 
  If Throttle axis is self-centering, sometimes it is desired to map apper part of axis to full range.
 ```
- { "event": { "name": "ALWAYS" }, "op": { "name" : "AXIS", "parm" : "LEFT_STICK_Y", "channel" : 1 },
- { "event": { "name": "ALWAYS" }, "op": { "name" : "MUL", "parm" : 20, "channel" : 1 },
- { "event": { "name": "ALWAYS" }, "op": { "name" : "ADD", "parm" : -500, "channel" : 1 }
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "AXIS", "parm" : "LEFT_STICK_Y", "channel" : 1 } },
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "MUL", "parm" : 20, "channel" : 1 } },
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "ADD", "parm" : -500, "channel" : 1 } }
+```
+
+# Implementing switch 1500/2000 with button
+
+ SWITCH changes channel value between 1000/2000. Unmap channel value before SWITCH operation and map after operation to implement switch beetween values 1500/2000.
+```
+{ "event": { "name": "ALWAYS" }, "op": { "name": "ADD",               "parm" : -250,    "channel": 10 } },
+{ "event": { "name": "ALWAYS" }, "op": { "name": "MULD10",            "parm" : 20,      "channel": 10 } },
+{ "event": { "name": "ALWAYS" }, "op": { "name": "AXIS_SWITCH_RIGHT", "parm": "AXIS4",	"channel": 10 } },
+{ "event": { "name": "ALWAYS" }, "op": { "name": "MULD10",            "parm" : 5,       "channel": 10 } },
+{ "event": { "name": "ALWAYS" }, "op": { "name": "ADD",               "parm" : 250,     "channel": 10 } },
 ```
 
 # Implementing 5-position switch with joystick buttons
@@ -326,11 +345,11 @@ Available button names:
 ```
   { "event": { "name": "STARTUP" },  "op": { "name": "CONSTANT", "parm": 1000, "channel": 9 } },
 
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_CENTER" }, "op": {	"name": "CONSTANT", "parm": "1200", "channel": 9 } },
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_LEFT"   }, "op": {	"name": "CONSTANT", "parm": "1400", "channel": 9 } },
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_RIGHT"  }, "op": {	"name": "CONSTANT", "parm": "1600", "channel": 9 } },
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_UP"     }, "op": {	"name": "CONSTANT", "parm": "1700", "channel": 9 } },
-  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_DOWN"   }, "op": {	"name": "CONSTANT", "parm": "1800", "channel": 9 } },	
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_CENTER" }, "op": {	"name": "CONSTANT", "parm": 1200, "channel": 9 } },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_LEFT"   }, "op": {	"name": "CONSTANT", "parm": 1400, "channel": 9 } },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_RIGHT"  }, "op": {	"name": "CONSTANT", "parm": 1600, "channel": 9 } },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_UP"     }, "op": {	"name": "CONSTANT", "parm": 1700, "channel": 9 } },
+  { "event": { "name": "BUTTON_PRESS", "parm": "JOY_DOWN"   }, "op": {	"name": "CONSTANT", "parm": 1800, "channel": 9 } },	
 ```
 
 # Clamping 
