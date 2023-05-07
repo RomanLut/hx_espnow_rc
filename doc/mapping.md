@@ -115,7 +115,7 @@ This action sets channel value to 1000/2000 depending on physical button (or two
 **channel** is target channel.
 
 
-#### SWITCH, SWITCH3, SWITCH3, SWITCH
+#### SWITCH, SWITCH3, SWITCH4, SWITCH5, SWITCH6, SWITCH16
 
 `"op": { "name" : "SWITCH", "parm" : "LEFT_THUMB", "channel" : 5 }`
 
