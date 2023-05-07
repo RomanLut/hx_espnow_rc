@@ -38,14 +38,14 @@ void HXMavlinkRCEncoder::init( uint16_t packetRateMS, bool mavlink_v1 )
 
 //=====================================================================
 //=====================================================================
-void HXMavlinkRCEncoder::loop( HardwareSerial& serial )
+bool HXMavlinkRCEncoder::loop( HardwareSerial& serial )
 {
-    if (serial.availableForWrite() < 34 ) return;
+    if (serial.availableForWrite() < 34 ) return false;
 
     unsigned long t = millis();
-    if ( (t - this->lastPacketTime)  < this->packetRateMS ) return;
+    if ( (t - this->lastPacketTime)  < this->packetRateMS ) return false;
 
-    if ( this->failsafe ) return;
+    if ( this->failsafe ) return false;
 
     mavlink_message_t msg;
     mavlink_msg_rc_channels_override_pack( 
@@ -73,11 +73,13 @@ void HXMavlinkRCEncoder::loop( HardwareSerial& serial )
     uint8_t sbuf[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(sbuf, &msg); //len = 18(v1) or 34(v2)  
 
-    if (serial.availableForWrite() < len ) return;
+    if (serial.availableForWrite() < len ) return false;
 
     serial.write( sbuf, len );
 
     this->lastPacketTime = t;
+
+    return true;
 }
 
 //=====================================================================

@@ -27,7 +27,7 @@ public:
 
     void setFailsafe( bool failsafe );
     void setChannelValue( uint8_t index, uint16_t value );
-    void loop( HardwareSerial& serial );
+    bool loop( HardwareSerial& serial );
 };
 
 
