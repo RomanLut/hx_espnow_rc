@@ -323,9 +323,20 @@ Available button names:
 
  If Throttle axis is self-centering, sometimes it is desired to map apper part of axis to full range.
 ```
- { "event": { "name": "ALWAYS" }, "op": { "name" : "AXIS", "parm" : "LEFT_STICK_Y", "channel" : 1 },
- { "event": { "name": "ALWAYS" }, "op": { "name" : "MUL", "parm" : 20, "channel" : 1 },
- { "event": { "name": "ALWAYS" }, "op": { "name" : "ADD", "parm" : -500, "channel" : 1 }
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "AXIS", "parm" : "LEFT_STICK_Y", "channel" : 1 } },
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "MUL", "parm" : 20, "channel" : 1 } },
+ { "event": { "name": "ALWAYS" }, "op": { "name" : "ADD", "parm" : -500, "channel" : 1 } }
+```
+
+# Implementing switch 1500/2000 with button
+
+ SWITCH changes channel value between 1000/2000. Unmap channel value before SWITCH operation and map after operation to implement switch beetween values 1500/2000.
+```
+{ "event": { "name": "ALWAYS" }, "op": { "name": "ADD",               "parm" : -250,    "channel": 10 } },
+{ "event": { "name": "ALWAYS" }, "op": { "name": "MULD10",            "parm" : 20,      "channel": 10 } },
+{ "event": { "name": "ALWAYS" }, "op": { "name": "AXIS_SWITCH_RIGHT", "parm": "AXIS4",	"channel": 10 } },
+{ "event": { "name": "ALWAYS" }, "op": { "name": "MULD10",            "parm" : 5,       "channel": 10 } },
+{ "event": { "name": "ALWAYS" }, "op": { "name": "ADD",               "parm" : 250,     "channel": 10 } },
 ```
 
 # Implementing 5-position switch with joystick buttons
