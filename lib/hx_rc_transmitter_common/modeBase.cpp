@@ -29,9 +29,9 @@ void ModeBase::start(JsonDocument* json)
 //=====================================================================
 //=====================================================================
 void ModeBase::loop(
-        const HXChannels* channels,
-        HC06Interface* externalBTSerial,
-        Smartport* sport
+  const HXChannels* channels,
+  HC06Interface* externalBTSerial,
+  Smartport* sport
 )
 {
     if ( !channels->isFailsafe)
@@ -62,7 +62,6 @@ void ModeBase::loop(
         Serial.println(dt);
     }
 
-
     if ( sport != NULL )
     {
         sport->setR9PWR( 20 );
@@ -71,7 +70,6 @@ void ModeBase::loop(
 
         sport->loop();
     }
-
 }
 
 //=====================================================================

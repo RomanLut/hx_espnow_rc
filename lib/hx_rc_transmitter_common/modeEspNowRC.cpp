@@ -67,7 +67,6 @@ void ModeEspNowRC::processIncomingTelemetry(HC06Interface* externalBTSerial)
 //=====================================================================
 void ModeEspNowRC::fillOutgoingTelemetry(HC06Interface* externalBTSerial)
 {
-  
   while ( (externalBTSerial->available() > 0) && (hxrcTelemetrySerial.getAvailableForWrite() > 0) )
   {
     uint8_t c = externalBTSerial->read();
@@ -87,16 +86,15 @@ void ModeEspNowRC::setChannels( const HXChannels* channels )
         //15 channels
         for ( int i = 0; i < HXRC_CHANNELS_COUNT-1; i++ )
         {
-        uint16_t r = channels->channelValue[i];
-        //if ( i == 3 ) Serial.println(r);
-        hxrcMaster.setChannelValue( i, r );
+          uint16_t r = channels->channelValue[i];
+          //if ( i == 3 ) Serial.println(r);
+          hxrcMaster.setChannelValue( i, r );
         }
     }
 
-    //use channel 16 to transmit failsafe flag
+    //use channel 16 to transmit failsafe flag (SBUS signal lost)
     hxrcMaster.setChannelValue( 15, channels->isFailsafe ? 1 : 0 );
 }
-
 
 
 //=====================================================================
@@ -107,19 +105,18 @@ void ModeEspNowRC::loop(
         Smartport* sport
     )
 {
-    ModeBase::loop(channels, externalBTSerial, sport);
+  ModeBase::loop(channels, externalBTSerial, sport);
 
-    setChannels(channels);
+  setChannels(channels);
 
-    hxrcTelemetrySerial.flushIn();
-    processIncomingTelemetry(externalBTSerial);
+  hxrcTelemetrySerial.flushIn();
+  processIncomingTelemetry(externalBTSerial);
 
-    fillOutgoingTelemetry( externalBTSerial);
-    hxrcTelemetrySerial.flushOut();
+  fillOutgoingTelemetry( externalBTSerial);
+  hxrcTelemetrySerial.flushOut();
 
-    hxrcMaster.loop();
-    hxrcMaster.updateLed( LED_PIN, true );  //LED_PIN is not inverted. Pass"inverted" flag so led is ON in idle mode
-
+  hxrcMaster.loop();
+  hxrcMaster.updateLed( LED_PIN, true );  //LED_PIN is not inverted. Pass"inverted" flag so led is ON in idle mode
 
   if (millis() - lastStats > 1000)
   {
@@ -158,7 +155,7 @@ void ModeEspNowRC::loop(
 
   if ( hxrcMaster.getReceiverStats().isFailsafe() && (*TXProfileManager::instance.getCurrentProfile())["ap_name"].as<const char*>() )
   {
-      ArduinoOTA.handle();  
+    ArduinoOTA.handle();  
   }
 
   if ( !hxrcMaster.getReceiverStats().isFailsafe() )
@@ -168,7 +165,7 @@ void ModeEspNowRC::loop(
 
   if ( haveToChangeProfile() )
   {
-      rebootToRequestedProfile();
+    rebootToRequestedProfile();
   }
 
 }
