@@ -8,6 +8,6 @@ all defaults
 Audicity
 ctrl+a
 Effect->Amplify
-6db
+New peak amplitude: 6db
 Allow clipping
 Export to MP3 170-210kBit/sec, force mono
