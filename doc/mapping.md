@@ -68,6 +68,14 @@ Action is executed when specified physical button is pressed.
 
 **parm** is button name.
 
+#### AXIS_LEFT, AXIS_RIGHT
+
+`"event": { "name": "AXIS_LEFT", "parm": "AXIS4" }`
+
+Action is executed while specified axis is moved to the left of right maximum position. 
+
+**parm** is axis name.
+
 #### CHANNEL_EQUAL
 
 `"event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }`
