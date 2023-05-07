@@ -587,6 +587,16 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
       {
         run = this->hasButtonPressEventByName(eventParm);
       }
+      else if ( strcmp(eventName, "AXIS_LEFT" ) == 0)
+      {
+        const char* parm = event["parm"] | "";      
+        run = this->getAxisValueByName(parm, false) < 1150;
+      }
+      else if ( strcmp(eventName, "AXIS_RIGHT" ) == 0)
+      {
+        const char* parm = event["parm"] | "";      
+        run = this->getAxisValueByName(parm, false) > 1850;
+      }
       else
       {
         /*
@@ -802,21 +812,21 @@ void TXInput::getChannelValues( HXChannels* channelValues )
     const JsonArray& mapping = (*profile)["mapping"];
     if ( mapping.size() > 0 )
     {
-      const char* eventName = NULL;
       int profileIndex = TXProfileManager::instance.getCurrentProfileIndex();
       if ( this->lastProfileIndex != profileIndex )
       {
         this->lastProfileIndex = profileIndex;
         this->resetLastChannelValues();
         this->buttonPressEvents = 0;
-        eventName = EVENT_STARTUP;
+
+        memcpy( channelValues->channelValue, this->lastChannelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
+        this->getChannelValuesMapping( channelValues, mapping, EVENT_STARTUP );
+        memcpy( this->lastChannelValue, channelValues->channelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
       }
 
       memcpy( channelValues->channelValue, this->lastChannelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
-
-      this->getChannelValuesMapping( channelValues, mapping, eventName );
-
-      this->buttonPressEvents = 0;
+      this->getChannelValuesMapping( channelValues, mapping, NULL );
+      this->buttonPressEvents = 0; //clear events, they was processed in getChannelValuesMapping()
       memcpy( this->lastChannelValue, channelValues->channelValue, HXRC_CHANNELS_COUNT * sizeof(uint16_t));
 
       return;
