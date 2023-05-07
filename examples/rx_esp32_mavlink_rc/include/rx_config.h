@@ -16,10 +16,7 @@ https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
 #define TELEMETRY_BAUDRATE 115200
 
 //send packet every ?ms
-//Note: If RC messages are sent too frequently, inav will not be able to send telemetry.
-//Practical rate it 40...50ms. At 20ms, inav is not able to send telemetry at all.
-//This can be fixed only by fixing inav sources.
-//inav/src/main/telemetry/mavlink.c, remove "if (!incomingRequestServed) ..."
+//Note for inav: "Serial receiver half-duplex" should ne set to "OFF", otherwise inav will not be able to send telemetry.
 #define MAVLINK_RC_PACKET_RATE_MS   40  //Rate in Hz = 1000 / MAVLINK_RC_PACKET_RATE_MS
 
 //note: 
