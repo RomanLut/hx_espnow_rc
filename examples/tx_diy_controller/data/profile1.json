@@ -24,7 +24,7 @@
 
 		{ "event": { "name": "BUTTON_PRESS",	"parm": "LEFT_TRIGGER"	},	"op": {	"name": "CONSTANT",	"parm": 1500,	"channel": 6,	"note":"set angle mode"	} },
 		{ "event": { "name": "BUTTON_PRESS",	"parm": "RIGHT_TRIGGER"	},	"op": {	"name": "CONSTANT",	"parm": 2000,	"channel": 6,	"note":"set cruise mode" } },
-		{ "event": { "name": "AXIS_LEFT",		"parm": "AXIS4"			},	"op": {	"name": "CONSTANT",	"parm": 1000,	"channel": 6,	"note":"set acro mode" } },
+		{ "event": { "name": "AXIS_LEFT",		"parm": "AXIS4"			},	"op": {	"name": "CONSTANT",	"parm": 1200,	"channel": 6,	"note":"set horizon mode" } },
 
 		{ "event": { "name": "ALWAYS" 	},	"op": {	"name": "SWITCH3",	"parm": "RIGHT_BUMPER",	"channel": 7,	"note":"disabled/poshold/rth" } },
 
@@ -59,7 +59,7 @@
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disarmed.mp3"} },
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3"	} },
 
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 6, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/acro_mode.mp3" 	} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 6, "value": 1200, "once": "yes" }, "op": { "name": "SOUND", "parm": "/horizon_mode.mp3" 	} },
 		{ "event": { "name": "BUTTON_PRESS",	"parm": "LEFT_TRIGGER"	}, "op": { "name": "SOUND", "parm": "/angle_mode.mp3" } },
 		{ "event": { "name": "BUTTON_PRESS",	"parm": "RIGHT_TRIGGER"	}, "op": { "name": "SOUND", "parm": "/cruise_mode.mp3" } },
 
