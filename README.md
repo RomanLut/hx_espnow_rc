@@ -78,21 +78,27 @@ Recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
 
 Recommended telemetry viewer application: https://github.com/RomanLut/android-taranis-smartport-telemetry
 
+
 # Range
 
 Range is up to 3Km. Below are real world test results. 
 
-Range depends on used antennas and noise level in the area.
+Range depends on used antennas, LR mode and noise level in the area. LR mode adds ~30% to the range. LR  receiver sensitiviy is -98 dbm. 
+
+As can be seen, range can be 2x higher on area with lower noise level! 
 
 Range testing is done in the clear line of sight conditions. 
 
-## 2 dbi dipole antenna on transmitter, PCB antenna on recever
+
+## 2 dbi dipole antenna on transmitter, PCB antenna on recever, Noise level -90dbm
 Range is less then 150m.
 
-## 2 dbi dipole antenna on transmitter, whip antenna with stripping wire on receiver
+
+## 2 dbi dipole antenna on transmitter, whip antenna with stripping wire on receiver , Noise level -90dbm
 Range is ~250m
 
-## 2dbi dipole antenna on transmitter and receiver
+
+## 2dbi dipole antenna on transmitter and receiver, Noise level -90dbm
 Range is ~1Km 
 
 ![alt text](doc/planehxwing.jpg "hxwing")
@@ -105,7 +111,8 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 *Failsave period is set to 1 second (so there should be at least 1 successfull packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.*
 
-## 5 dbi dipole antenna on transmitter with 2dbi dipole antenna on receiver
+
+## 5 dbi dipole antenna on transmitter with 2dbi dipole antenna on receiver, Noise level -90dbm
 Range is ~1.3Km 
 
 5dbi TP-Link antenna with RP-SMA-SMA 
@@ -114,7 +121,8 @@ Range is ~1.3Km
 
 ![alt text](doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
-## 5 dbi dipole antenna on transmitter with 2dbi dipole antenna and ESP32 LR receiver
+
+## 5 dbi dipole antenna on transmitter with 2dbi dipole antenna and ESP32 LR receiver, Noise level -90dbm
 Range is ~1.8Km 
 
 5dbi TP-Link antenna with RP-SMA-SMA adapter, ESP32 LR mode
@@ -125,7 +133,8 @@ Range is ~1.8Km
 
 Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode https://youtu.be/GYB-UckucRA
 
-## Moxon antenna with on transmitter with 2dbi dipole antenna and ESP32 LR receiver 
+
+## Moxon antenna on transmitter with 2dbi dipole antenna and ESP32 LR receiver, Noise level -90dbm 
 Range is ~1.7Km
 
 DIY Moxon antenna on transmitter https://www.thingiverse.com/thing:5148464
@@ -139,6 +148,35 @@ Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver,
 DYI moxon antenna perform similar to 5dbi antenna, while having compact size. 
 
 **Moxon antenna is recommended antenna for hx_espnow_rc project.**
+
+
+## BetaFPV Moxon antenna (for ELRS 2.4GHz) on transmitter with 2dbi dipole on receiver, Noise level -96dbm
+Range is ~2.7Km
+
+![alt text](doc/betafpv_moxon.jpg "betafov moxon")
+
+![alt text](doc/telemetryviewer_moxon_2p7km.jpg "telemetryiewer betafpv moxon")
+
+
+## DIY controller, Mavic mini antenna on transmitter with 2dbi dipole on receiver, Noise level -96dbm
+Range is ~2.5Km
+
+DIY RC Controller: [/doc/tx_diy_controller.md](/doc/tx_diy_controller.md)
+
+![alt text](doc/dart47diy.jpg "diy ant")
+
+![alt text](doc/telemetryviewer_diy.jpg "telemetryiewer diy")
+
+
+## DIY controller, Mavic mini antenna with Yagi attachment on transmitter with 2dbi dipole on receiver, Noise level -96dbm
+Range is ~3.1Km
+
+DIY RC Controller: [/doc/tx_diy_controller.md](/doc/tx_diy_controller.md)
+
+![alt text](doc/dart47diy_yagi.jpg "diy ant yagi")
+
+![alt text](doc/telemetryviewer_diy_yagi.jpg "telemetryiewer diy")
+
 
 ## FRSky Patch clone
 
