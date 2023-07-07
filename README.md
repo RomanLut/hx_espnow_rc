@@ -79,22 +79,21 @@ Recommended antenna: DIY Moxon antenna https://www.thingiverse.com/thing:5148464
 Recommended telemetry viewer application: https://github.com/RomanLut/android-taranis-smartport-telemetry
 
 # Range
-2 dbi dipole antenna on transmitter with:
- - PCB antenna provide range less then 150m.
- - whip antenna with stripping wire provide range ~250m
- - 2dbi dipole antenna provide range ~1Km (!)
 
-5 dbi dipole antenna on transmitter with:
- - 2dbi dipole antenna provide range ~1.3Km (!)
- - 2dbi dipole antenna and ESP32 LR receiver provide range ~1.8Km (!)
+Range is up to 3Km. Below are real world test results. 
 
-Moxon antenna with:
- - 2dbi dipole antenna and ESP32 LR receiver provide range ~1.7Km (!)
+Range depends on used antennas and noise level in the area.
 
-*Failsave period is set to 1 second (so there should be at least 1 successfull packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.*
+Range testing is done in the clear line of sight conditions. 
 
+## 2 dbi dipole antenna on transmitter, PCB antenna on recever
+Range is less then 150m.
 
-2dbi dipole antenna on transmitter <-> 2dbi dipole on receiver provide range up to 1Km:
+## 2 dbi dipole antenna on transmitter, whip antenna with stripping wire on receiver
+Range is ~250m
+
+## 2dbi dipole antenna on transmitter and receiver
+Range is ~1Km 
 
 ![alt text](doc/planehxwing.jpg "hxwing")
 
@@ -104,13 +103,21 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 ![alt text](doc/telemetryviewer.jpg "telemetryviewer")
 
-5dbi TP-Link antenna with RP-SMA-SMA adapter on transmitter <-> 2dbi dipole on receiver provide range up to 1.3Km:
+*Failsave period is set to 1 second (so there should be at least 1 successfull packet delivery in 1 second). Note that range of actual communication is larger, but is not usefull for RC.*
+
+## 5 dbi dipole antenna on transmitter with 2dbi dipole antenna on receiver
+Range is ~1.3Km 
+
+5dbi TP-Link antenna with RP-SMA-SMA 
 
 ![alt text](doc/antenna_5dbi.jpg "antenna_5dbi")
 
 ![alt text](doc/telemetryviewer_5dbi.jpg "telemetryviewer_5dbi")
 
-5dbi TP-Link antenna with RP-SMA-SMA adapter on transmitter <-> 2dbi dipole on receiver, ESP32 LR mode provide range up to 1.8Km(!):
+## 5 dbi dipole antenna on transmitter with 2dbi dipole antenna and ESP32 LR receiver
+Range is ~1.8Km 
+
+5dbi TP-Link antenna with RP-SMA-SMA adapter, ESP32 LR mode
 
 ![alt text](doc/dfminispirit.jpg "dfminispirit")
 
@@ -118,7 +125,10 @@ I have got first failsave event at 950m and still could control plane at 1100m:
 
 Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver, LR mode https://youtu.be/GYB-UckucRA
 
-DIY Moxon antenna on transmitter https://www.thingiverse.com/thing:5148464 <-> 2dbi dipole or receiver provide range up to 1.8Km:
+## Moxon antenna with on transmitter with 2dbi dipole antenna and ESP32 LR receiver 
+Range is ~1.7Km
+
+DIY Moxon antenna on transmitter https://www.thingiverse.com/thing:5148464
 
 ![alt text](doc/moxon.jpg "moxon")
 
@@ -129,6 +139,8 @@ Tested with INAV 3.0.2 DF mini Spirit 1s flying wing, ESP32-based SBUS receiver,
 DYI moxon antenna perform similar to 5dbi antenna, while having compact size. 
 
 **Moxon antenna is recommended antenna for hx_espnow_rc project.**
+
+## FRSky Patch clone
 
 I also tested with Frsky directional patch 7dbi antenna clone, and I was not able to get any good result with it. I got a lot of failsafe events at 700m already.
 
