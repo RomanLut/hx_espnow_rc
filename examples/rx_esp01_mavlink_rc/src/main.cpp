@@ -81,7 +81,7 @@ void updateOutput()
   bool failsafe = hxrcSlave.getReceiverStats().isFailsafe();
   hxMavlinkRCEncoder.setFailsafe( failsafe);
   
-  //inject RSSI into channel 16
+  //inject RSSI into channel 8/16
   hxMavlinkRCEncoder.setChannelValue( USE_MAVLINK_V1 ? MAVLINK_RC_CHANNELS_COUNT_V1 - 1 : MAVLINK_RC_CHANNELS_COUNT - 1, 1000 + ((uint16_t)hxrcSlave.getReceiverStats().getRSSI())*10 );
 
   if ( !failsafe ) //keep last channel values on failsafe
