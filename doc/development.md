@@ -42,10 +42,12 @@
 
 # ESP-NOW technical details
 ESP-NOW packets are vendor-specific Wifi packets. ESP sends packet and waits for confirmation packet from peer mac address.
-If Ack packet is not received, erorr is returned. So sender knows that packet is not delivered successfully. 
+If Ack packet is not received, packed is retransmitted 3 (?) times at lower bitrates. If no ACK is received, erorr is returned. So sender knows that packet is not delivered successfully. 
 Opposite is not true. If API call returns error, packet still may have been delivered, but sender did not hear Ack packet.
 
 If peer address is set to broadcast address (ff:ff:ff:ff:ff:ff), ESP does not wait for Ack packet and returns no error (Update: API still returns error sometimes?). This address can be used to send one-way, "fire and foget" packets without confirmation and delay.
+
+Example video: https://www.youtube.com/watch?v=Xmzk6v5qIjo
 
 # ESP-NOW encription
 
