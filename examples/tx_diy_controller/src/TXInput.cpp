@@ -66,6 +66,7 @@ void TXInput::init()
   this->calibrationDataLoadedOk = false;
 
   this->resetLastChannelValues();
+  this->resetLastRun();
 
   this->initADCPins();
   this->initButtonPins();
@@ -241,6 +242,16 @@ void TXInput::resetLastChannelValues()
   for ( int i =0; i < HXRC_CHANNELS_COUNT; i++ )  
   {
     this->lastChannelValue[i] = 1000;
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void TXInput::resetLastRun()
+{
+  for ( int i =0; i < MAX_MAPPING_EVENTS; i++ )  
+  {
+    this->lastRun[i] = (uint32_t)-1000000;
   }
 }
 
@@ -581,7 +592,17 @@ void TXInput::getChannelValuesMapping( HXChannels* channelValues, const JsonArra
         if (!this->isValidChannelIndex(channelIndex)) return;
         int value = (event["value"] | 0);
         bool once = strcmp((event["once"] | ""), "yes") == 0;
-        run = (channelValues->channelValue[channelIndex] == value) && ( !once || (this->lastChannelValue[channelIndex] != value));
+        bool channelChanged = (this->lastChannelValue[channelIndex] != value);
+        int repeat = (event["repeat"] | 0);
+        
+        run = (channelValues->channelValue[channelIndex] == value) && 
+        ( !once || channelChanged) &&
+        ( !repeat || ((this->lastRun[i] + repeat <= t)) || channelChanged);
+
+        if ( run )
+        {
+          this->lastRun[i] = t;
+        } 
       }
       else if ( strcmp(eventName, "BUTTON_PRESS" ) == 0)
       {

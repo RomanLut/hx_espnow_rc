@@ -23,6 +23,7 @@
 
 #include <SPIFFS.h> 
 
+#define MAX_MAPPING_EVENTS   128
 
 //=====================================================================
 //=====================================================================
@@ -34,6 +35,7 @@ private:
     int lastProfileIndex = -1;
 
     int16_t lastChannelValue[HXRC_CHANNELS_COUNT];  
+    uint32_t lastRun[MAX_MAPPING_EVENTS];
     uint16_t lastButtonsState;   //a bit for each button 1 << id
     uint16_t buttonPressEvents; // bit for each button 1 << id
 
@@ -50,6 +52,7 @@ private:
     void readButtons(uint32_t t);
 
     void resetLastChannelValues();
+    void resetLastRun();
 
     void  getChannelValuesDefault( HXChannels* channelValues );
     void  getChannelValuesMapping( HXChannels* channelValues, const JsonArray& mapping, const char* inEventName );
