@@ -56,6 +56,16 @@
 		{ "event": { "name": "BUTTON_PRESS",	"parm": "JOY_CENTER"	},	"op": {	"name": "CONSTANT",	"parm": 1000,	"channel": 9,	"note":"reset nav modes - wpm" } },
 		{ "event": { "name": "BUTTON_PRESS",	"parm": "JOY_CENTER"	},	"op": { "name": "SOUND", "parm": "/angle_mode.mp3" } },
 
+		{ "event": { "name": "BUTTON_PRESS",	"parm": "LEFT_TRIGGER"	},	"op": {	"name": "CONSTANT",	"parm": 999,	"channel": 7,	"note":"reset nav modes - rth/poshold" } },
+		{ "event": { "name": "BUTTON_PRESS",	"parm": "LEFT_TRIGGER"	},	"op": {	"name": "CONSTANT",	"parm": 1000,	"channel": 9,	"note":"reset nav modes - wpm" } },
+
+		{ "event": { "name": "BUTTON_PRESS",	"parm": "RIGHT_TRIGGER"	},	"op": {	"name": "CONSTANT",	"parm": 999,	"channel": 7,	"note":"reset nav modes - rth/poshold" } },
+		{ "event": { "name": "BUTTON_PRESS",	"parm": "RIGHT_TRIGGER"	},	"op": {	"name": "CONSTANT",	"parm": 1000,	"channel": 9,	"note":"reset nav modes - wpm" } },
+
+		{ "event": { "name": "BUTTON_PRESS",	"parm": "RIGHT_BUMPER"	},	"op": {	"name": "CONSTANT",	"parm": 1000,	"channel": 9,	"note":"reset nav modes - wpm" } },
+
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 9, "value": 1875,  "once": "yes" }, "op": {	"name": "CONSTANT",	"parm": 999,	"channel": 7,	"note":"reset nav modes - rth/poshold" } },
+
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disarmed.mp3"} },
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/armed.mp3"	} },
 
@@ -64,14 +74,14 @@
 		{ "event": { "name": "BUTTON_PRESS",	"parm": "RIGHT_TRIGGER"	}, "op": { "name": "SOUND", "parm": "/cruise_mode.mp3" } },
 
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/disabled.mp3" 	} },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 1500, "once": "yes" }, "op": { "name": "SOUND", "parm": "/poshold.mp3" } },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/rth.mp3" } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 1500, "repeat": 7000 }, "op": { "name": "SOUND", "parm": "/poshold.mp3" } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 2000, "repeat": 7000 }, "op": { "name": "SOUND", "parm": "/rth.mp3" } },
 
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/gps_on.mp3" } },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/gps_off.mp3"} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 2000, "repeat": 12000 }, "op": { "name": "SOUND", "parm": "/gps_off.mp3"} },
 
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 9, "value": 875,  "once": "yes" }, "op": { "name": "SOUND", "parm": "/wpm_disabled.mp3" } },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 9, "value": 1875, "once": "yes" }, "op": { "name": "SOUND", "parm": "/wpm_enabled.mp3"} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 9, "value": 1875, "repeat": 15000 }, "op": { "name": "SOUND", "parm": "/wpm_enabled.mp3"} },
 
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 10, "value": 1500, "once": "yes" }, "op": { "name": "SOUND", "parm": "/vtx_power_minimum.mp3" 	} },
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 10, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/vtx_power_maximum.mp3" } },
