@@ -7,8 +7,7 @@
 
 #define CONFIG_PROFILE_INDEX 9
 
-#define JSON_BUFFER_SIZE 8192
-
+#define JSON_BUFFER_SIZE 16384
 //=====================================================================
 //=====================================================================
 class TXProfileManager
