@@ -80,6 +80,8 @@ Action is executed while specified axis is moved to the left of right maximum po
 
 `"event": { "name": "CHANNEL_EQUAL", "channel": 5, "value": 1000, "once": "yes" }`
 
+`"event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 1500, "repeat": 7000 }, "op": { "name": "SOUND", "parm": "/poshold.mp3" }`
+
 Channel value is compared with "value".
 
 **parm** is value. Value is specified without quotes.
@@ -88,7 +90,12 @@ Channel value is compared with "value".
 
 **once** is either "no"" or "yes".
 
-This action is executed on each loop ("once":"no"), or each time channel value is changed ("once": "yes") (action is executed one time after each change). 
+This action is executed:
+- on each loop ("once":"no")
+- or each time channel value is changed ("once": "yes") (action is executed one time after each change)
+- or repeatedly eveny N ms ("repeat": 7000)
+
+*Eeither "once" or "repeat" should be specified.*
 
 Make sure action is placed after (not before) action which actually changes channel value, otherwise change will not be detected.
 
