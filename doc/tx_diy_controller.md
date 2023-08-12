@@ -195,5 +195,5 @@ See **Configuration mode** [/doc/mode_configuration.md](/doc/mode_configuration.
 
 Profiles [/doc/tx_profiles.md](/doc/tx_profiles.md)
 
-Controls mapping [doc/mapping.md](doc/mapping.md)
+Controls mapping [doc/mapping.md](/doc/mapping.md)
 
