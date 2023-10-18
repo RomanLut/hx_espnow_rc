@@ -31,7 +31,6 @@ void HXSBUSEncoder::init( HardwareSerial& serial, uint8_t tx_pin, bool invert )
 #elif defined(ESP32)
     serial.begin(100000, SERIAL_8E2, -1, tx_pin, !invert );  
 #endif
-
 }
 
 //=====================================================================
