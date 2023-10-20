@@ -191,6 +191,8 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 
 # Packet rate
 
+Packet rate is 50 packets/second in LR and normal modes.
+
 See:  [/doc/rfpower/rfpower.md](/doc/packet_rate.md)
 
 # Telemetry
