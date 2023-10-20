@@ -32,4 +32,7 @@ Set ```config.packetRatePeriodMS = HXRCConfig::PACKET_RATE_MAX; config.wifiPhyRa
 
 Communication parameters should be tuned taking packets airtime into account. HXRC_SLAVE_TELEMETRY_SIZE_MAX telemetry packet airtime with default 1Mbit Phy rate is ~2.5ms. It can be made smaller by increasing Phy rate (by the cost of smaller range). In practice, it is no sence to set Phy rate higher than 5Mbit: library can not handle packet rate highger then 300 packet/sec due to poor scheduling. Packets airtime is very small on 5Mbit and thus increasing phy rate further does not improve throughput but decreases range significantly.
 
+
+Setting different Phy rates on master and slave is possible (as long as both are using the same setting for LR mode), but does not make much sense. If ethier side does not hear other end, telemetry will not be be sent.
+
 See packets timing: [/doc/rfpower/rfpower.md](/doc/rfpower/rfpower.md)
