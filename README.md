@@ -59,7 +59,8 @@ You can build **transmitter module for RC Controller with External module bay**,
 - ESP-01 based SBUS receiver: [/doc/rx_esp01_sbus.md](/doc/rx_esp01_sbus.md)
 - Wemos D1 Mini based SBUS receiver: [/doc/rx_d1_mini_sbus.md](/doc/rx_d1_mini_sbus.md)
 - ESP32 based SBUS receiver: [/doc/rx_esp32_sbus.md](/doc/rx_esp32_sbus.md)
-
+- Wemos D1 Mini based receiver which outputs inverted SBUS to USB-serial: [/doc/rx_d1_mini_sbus_usb_serial.md)
+- 
 **Mavlink RC with telemetry** 
 - ESP-01 based Mavlink receiver: [/doc/rx_esp01_mavlink_rc.md](/doc/rx_esp01_mavlink_rc.md)
 - Wemos D1 Mini based Mavlink RC receiver: [/doc/rx_d1_mini_mavlink_rc.md](/doc/rx_d1_mini_mavlink_rc.md)
@@ -193,7 +194,7 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 
 Packet rate is 50 packets/second in LR and normal modes.
 
-See:  [/doc/rfpower/rfpower.md](/doc/packet_rate.md)
+See:  [/doc/packet_rate.md](/doc/packet_rate.md)
 
 # Telemetry
 Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distortion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. 
@@ -202,8 +203,6 @@ Downlink data rate is ~57kBit/sec in normal mode and ~2.4kBit/sec in LR mode.
 Uplink data rate is ~12kBit/sec in normal mode and ~2.4kBit/sec in LR mode.
 
 Additionally library transmits A1 and A2 (32-bit) values for simple telemetry.
-
-See packets timing: [/doc/rfpower/rfpower.md](/doc/rfpower/rfpower.md)
 
 # Building and Flashing
 Currently pre-build firmware is not provided. You have to build firmware yourself and flash ESP32/ESP8266 modules using PlatformIO https://platformio.org/
