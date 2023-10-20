@@ -189,8 +189,12 @@ I am not sure if this is caused by poor clone quality, my ability to point in th
 
 ![alt text](doc/frskypatchinside.jpg "frskypatchinside")
 
+# Packet rate
+
+See:  [/doc/rfpower/rfpower.md](/doc/packet_rate.md)
+
 # Telemetry
-Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distortion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec.
+Telemetry stream is transparent and CRC protected. Data is ensured to be delivered without distortion, unless failsave or overflow condition araise. Stream can be used to transfer Mavlink, MCP, Sport, LTM etc. telemetry. Data rate is ~57kBit/sec in normal mode and ~2.4kBit/sec in LR mode.
 Additionally library transmits A1 and A2 (32-bit) values for simple telemetry.
 
 See packets timing: [/doc/rfpower/rfpower.md](/doc/rfpower/rfpower.md)
