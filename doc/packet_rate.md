@@ -30,6 +30,11 @@ Set ```config.packetRatePeriodMS = HXRCConfig::PACKET_RATE_MAX; config.wifiPhyRa
 
 ```config.slaveTelemertyPayloadSize``` has the biggest influence on telemetry throughput.
 
+Telemetry rate can be increased up to 150kBit/sec in normal mode on ESP8266:
+
+Set ```config.packetRatePeriodMS = HXRCConfig::PACKET_RATE_MAX``` on both ends and ```config.slaveTelemertyPayloadSize = HXRC_SLAVE_TELEMETRY_SIZE_MAX``` on slave.
+
+
 # Considerations
 
 Communication parameters should be tuned taking packets airtime into account. HXRC_SLAVE_TELEMETRY_SIZE_MAX telemetry packet airtime with default 1Mbit Phy rate is ~2.5ms. It can be made smaller by increasing Phy rate (by the cost of smaller range). In practice, it is no sence to set Phy rate higher than 5Mbit: library can not handle packet rate highger then 300 packet/sec due to poor scheduling. Packets airtime is very small on 5Mbit and thus increasing phy rate further does not improve throughput but decreases range significantly.
