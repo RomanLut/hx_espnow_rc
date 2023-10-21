@@ -33,7 +33,6 @@ void setup()
       HXRCConfig(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          false,
           -1, false));
 
   //REVIEW: receiver does not work if AP is not initialized?

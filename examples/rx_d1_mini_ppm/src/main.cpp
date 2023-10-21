@@ -53,7 +53,6 @@ void setup()
       HXRCConfig(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          false,
           -1, false));  //LED_BUILTIN, true
 
   hxrcSlave.setA1(42);

@@ -62,7 +62,6 @@ void setup()
       HXRCConfig(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          false,
           -1, false));
 
   hxrcSlave.setA1(42);

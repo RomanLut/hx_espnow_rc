@@ -10,6 +10,7 @@
 
 #define LED_BUILTIN 33
 
+#define MAX_OUTGOING_TELEMETRY_RATE
 #define TEST_SERIALBUFFER
 
 HXRCSlave hxrcSlave;
@@ -32,7 +33,7 @@ uint8_t incomingTelVal = 0;
 uint8_t outgoingTelVal = 0;
 
 #ifdef TEST_SERIALBUFFER
-HXRCSerialBuffer<256> hxrcTelemetrySerial( &hxrcSlave );
+HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcSlave );
 #endif
 
 //=====================================================================
@@ -79,8 +80,12 @@ void fillOutgoingTelemetry()
 {
   uint8_t buffer[HXRC_SLAVE_TELEMETRY_SIZE_MAX];
 
-  //generate at most HXRC_SLAVE_TELEMETRY_SIZE_MAX bytes on each loop
+
+#ifdef MAX_OUTGOING_TELEMETRY_RATE  
+  uint8_t len = HXRC_SLAVE_TELEMETRY_SIZE_MAX;
+#else
   uint8_t len = rand() % (HXRC_SLAVE_TELEMETRY_SIZE_MAX+1);
+#endif  
 
   uint8_t v = outgoingTelVal;
   
@@ -129,9 +134,9 @@ void checkChannels()
 //=====================================================================
 void setSimpleTelemetry()
 {
-  uint32_t r = rand();
-  hxrcSlave.setA1(r);
-  hxrcSlave.setA2(~r);
+  uint32_t r = rand() & 0xffff;
+  hxrcSlave.setA1((~r & 0xffff ) | (r << 16));
+  hxrcSlave.setA2(r | (~r << 16));
 }
 
 //=====================================================================
@@ -149,12 +154,17 @@ void setup()
   tft.setTextDatum(ML_DATUM);
   tft.setRotation(0);
 
-  hxrcSlave.init(
-      HXRCConfig(
+  HXRCConfig config(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          true,     //LR mode
-          LED_BUILTIN, false));
+          false,     //LR mode
+          LED_BUILTIN, false);
+
+//config.wifiPhyRate = WIFI_PHY_RATE_5M_L;
+//config.wifiPhyRate = WIFI_PHY_RATE_LORA_500K;
+//config.slaveTelemertyPayloadSize = HXRC_SLAVE_TELEMETRY_SIZE_MAX;
+
+  hxrcSlave.init(config);
 
   WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL );
 }
@@ -186,11 +196,9 @@ void loop()
   fillOutgoingTelemetry();
   setSimpleTelemetry();
 
-/*
  #ifdef TEST_SERIALBUFFER
   hxrcTelemetrySerial.flush();
  #endif 
-*/
 
   hxrcSlave.loop();
 
@@ -239,7 +247,7 @@ void loop()
     drawLine("Receiver Failsafe: %d ", prStats.isFailsafe() ? 1 : 0);
     drawLine("RSSI: %d     ", prStats.getRSSI());
 
-    sprintf(buff, "Recv(rty):%u(%u)       ", prStats.packetsReceived, prStats.packetsRetransmit);
+    sprintf(buff, "Recv(rty):%u(%u)    ", prStats.packetsReceived, prStats.packetsRetransmit);
     tft.drawString(buff, 0, y);
     y += 14;
 
@@ -249,7 +257,10 @@ void loop()
     tft.drawString(buff, 0, y);
     y += 14;
 
-    drawLine("Tel. overflow: %u     ", prStats.telemetryOverflowCount);
+    sprintf(buff, "Tel.ovrfl/rs: %u/%u     ", prStats.telemetryOverflowCount, prStats.resyncCount);
+    tft.drawString(buff, 0, y);
+    y += 14;
+
     drawLine("In tel.: %ub/s     ", prStats.getTelemetryReceivedSpeed());
 
     sprintf(buff, "Errors: %u, %u     ", errorCountRC, errorCountTelemetry);

@@ -6,8 +6,7 @@
 #define USE_KEY 0 
 
 #define TEST_SERIALBUFFER
-
-#define TELEMETRY_RATE  4192  // keep rate b/sec
+//#define TELEMETRY_RATE  1000  // keep rate b/sec
 
 HXRCMaster hxrcMaster;
 
@@ -23,7 +22,7 @@ unsigned long rateTime = millis();
 uint16_t rateCounter = 0;
 
 #ifdef TEST_SERIALBUFFER
-HXRCSerialBuffer<256> hxrcTelemetrySerial( &hxrcMaster );
+HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcMaster );
 #endif
 
 //=====================================================================
@@ -70,7 +69,14 @@ void processSimpleTelemetry()
 {
   if ( hxrcMaster.getReceiverStats().isFailsafe() ) return;
 
-  if ( hxrcMaster.getA1() != ~hxrcMaster.getA2() )
+  uint32_t r = hxrcMaster.getA1();
+  if ( (r & 0xffff) != (~r >> 16 ))
+  {
+    errorCountTelemetry++;
+  }
+
+  r = hxrcMaster.getA2();
+  if ( (r & 0xffff) != (~r >> 16 ))
   {
     errorCountTelemetry++;
   }
@@ -80,6 +86,7 @@ void processSimpleTelemetry()
 //=====================================================================
 void fillOutgoingTelemetry()
 {
+#ifdef TELEMETRY_RATE  
   unsigned long t = millis();
   if ( t - rateTime > 100 )
   {
@@ -92,13 +99,15 @@ void fillOutgoingTelemetry()
     return;
   }
 
-  uint8_t buffer[HXRC_MASTER_TELEMETRY_SIZE_MAX];
+  uint8_t len = rand() % (HXRC_MASTER_TELEMETRY_SIZE_MAX+1);
+#else  
+  uint8_t len = HXRC_MASTER_TELEMETRY_SIZE_MAX;
+#endif
 
   //generate at most HXRC_MASTER_TELEMETRY_SIZE_MAX bytes on each loop
-  uint8_t len = rand() % (HXRC_MASTER_TELEMETRY_SIZE_MAX+1);
+  uint8_t buffer[HXRC_MASTER_TELEMETRY_SIZE_MAX];
 
   uint8_t v = outgoingTelVal;
-  
   //fill stream with increasing numbers
   for ( int i = 0; i < len; i++ ) buffer[i] = v++;
   
@@ -146,12 +155,14 @@ void setup()
   Serial.begin(115200);
   Serial.println("Start");
 
-  hxrcMaster.init(
-      HXRCConfig(
+  HXRCConfig config(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          false,
-          -1, false));
+          -1, false);
+  
+  //config.packetRatePeriodMS = HXRCConfig::PACKET_RATE_MAX;          
+
+  hxrcMaster.init( config );
 
   //init SoftAp after HXRC
   //Wifi Channel is global setting for AP, STA and ESP-NOW.
@@ -174,11 +185,10 @@ void loop()
   processSimpleTelemetry();
   fillOutgoingTelemetry();
 
-/*
- #ifdef TEST_SERIALBUFFER
-  hxrcTelemetrySerial.flush();
- #endif 
-*/
+
+  #ifdef TEST_SERIALBUFFER
+    hxrcTelemetrySerial.flush();
+  #endif 
 
   hxrcMaster.loop();
 

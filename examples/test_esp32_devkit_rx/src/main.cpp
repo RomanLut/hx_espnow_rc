@@ -6,6 +6,7 @@
 #define USE_WIFI_CHANNEL 3
 #define USE_KEY 0
 
+#define MAX_OUTGOING_TELEMETRY_RATE
 #define TEST_SERIALBUFFER
 
 HXRCSlave hxrcSlave;
@@ -19,7 +20,7 @@ uint8_t incomingTelVal = 0;
 uint8_t outgoingTelVal = 0;
 
 #ifdef TEST_SERIALBUFFER
-HXRCSerialBuffer<256> hxrcTelemetrySerial( &hxrcSlave );
+HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcSlave );
 #endif
 
 //=====================================================================
@@ -66,8 +67,11 @@ void fillOutgoingTelemetry()
 {
   uint8_t buffer[HXRC_SLAVE_TELEMETRY_SIZE_MAX];
 
-  //generate at most HXRC_SLAVE_TELEMETRY_SIZE_MAX bytes on each loop
+#ifdef MAX_OUTGOING_TELEMETRY_RATE  
+  uint8_t len = HXRC_SLAVE_TELEMETRY_SIZE_MAX;
+#else
   uint8_t len = rand() % (HXRC_SLAVE_TELEMETRY_SIZE_MAX+1);
+#endif  
 
   uint8_t v = outgoingTelVal;
   
@@ -92,9 +96,9 @@ void fillOutgoingTelemetry()
 //=====================================================================
 void setSimpleTelemetry()
 {
-  uint32_t r = rand();
-  hxrcSlave.setA1(r);
-  hxrcSlave.setA2(~r);
+  uint32_t r = rand() & 0xffff;
+  hxrcSlave.setA1((~r & 0xffff ) | (r << 16));
+  hxrcSlave.setA2(r | (~r << 16));
 }
 
 //=====================================================================
@@ -128,14 +132,19 @@ void setup()
   Serial.begin(115200);
   Serial.println("Start");
 
-  hxrcSlave.init(
-      HXRCConfig(
+  HXRCConfig config(
           USE_WIFI_CHANNEL,
           USE_KEY,
-          false,  //LR Mode
-          LED_BUILTIN, false));
+          false,     //LR mode
+          LED_BUILTIN, false);
 
-    WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL );
+//config.wifiPhyRate = WIFI_PHY_RATE_5M_L;
+//config.wifiPhyRate = WIFI_PHY_RATE_LORA_500K;
+//config.slaveTelemertyPayloadSize = HXRC_SLAVE_TELEMETRY_SIZE_MAX;
+
+  hxrcSlave.init(config);
+
+  WiFi.softAP("hxrcr", NULL, USE_WIFI_CHANNEL );
 }
 
 //=====================================================================
@@ -147,11 +156,9 @@ void loop()
   fillOutgoingTelemetry();
   setSimpleTelemetry();
 
-/*
  #ifdef TEST_SERIALBUFFER
   hxrcTelemetrySerial.flush();
  #endif 
-*/
 
   hxrcSlave.loop();
 
