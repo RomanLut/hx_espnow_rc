@@ -59,7 +59,7 @@ You can build **transmitter module for RC Controller with External module bay**,
 - ESP-01 based SBUS receiver: [/doc/rx_esp01_sbus.md](/doc/rx_esp01_sbus.md)
 - Wemos D1 Mini based SBUS receiver: [/doc/rx_d1_mini_sbus.md](/doc/rx_d1_mini_sbus.md)
 - ESP32 based SBUS receiver: [/doc/rx_esp32_sbus.md](/doc/rx_esp32_sbus.md)
-- Wemos D1 Mini based receiver which outputs inverted SBUS to USB-serial: [/doc/rx_d1_mini_sbus_usb_serial.md)
+- Wemos D1 Mini based receiver which outputs inverted SBUS to USB-serial: [/doc/rx_d1_mini_sbus_usb_serial.md](/doc/rx_d1_mini_sbus_usb_serial.md)
 - 
 **Mavlink RC with telemetry** 
 - ESP-01 based Mavlink receiver: [/doc/rx_esp01_mavlink_rc.md](/doc/rx_esp01_mavlink_rc.md)
