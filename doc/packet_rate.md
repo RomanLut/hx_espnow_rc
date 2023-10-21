@@ -6,11 +6,13 @@ BY default packet rate is 50 Packets/second in LR and normal modes.
 
 By default Wifi Phy rate is WIFI_PHY_RATE_1M_L for normal mode and WIFI_PHY_RATE_LORA_250K for long range mode.
 
+Phy rate can not be adjusted on ESP8266.
+
 # Adjusting link parameters
 
 ## Maximizing range
 
-Use LR mode with default parameters. It is tuned for maximum range.
+Use LR mode with default parameters. It is tuned for maximum range. Use default normal mode for ESP8266.
 
 ## Maximizing packet rate
 
@@ -22,7 +24,7 @@ Please note that this library has never been designed for high thoughput.
 
 Telemetry rate can be increased a litle (up to ~3kBit/sec) in LR mode. Set ```config.packetRatePeriodMS = HXRCConfig::PACKET_RATE_MAX``` (on master). Other parameters should be left default. There is no space for further impprovement because packets airtime is very long in LR mode.
 
-Telemetry rate can be increased up to 600kBit/sec in normal mode.
+Telemetry rate can be increased up to 600kBit/sec in normal mode on ESP32:
 
 Set ```config.packetRatePeriodMS = HXRCConfig::PACKET_RATE_MAX; config.wifiPhyRate = WIFI_PHY_RATE_5M_L``` on both ends and ```config.slaveTelemertyPayloadSize = HXRC_SLAVE_TELEMETRY_SIZE_MAX``` on slave.
 
