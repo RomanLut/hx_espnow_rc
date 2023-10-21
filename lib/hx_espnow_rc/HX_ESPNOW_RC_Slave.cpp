@@ -100,7 +100,6 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
                     receiverStats.onTelemetryOverflow();
                 }
             }
-            this->receivedSequenceId = pPayload->sequenceId;
 
             if ( this->waitAck && ( outgoingData.sequenceId == pPayload->ackSequenceId ) )
             {
@@ -155,11 +154,11 @@ void HXRCSlave::loop()
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
         unsigned long t = millis();
-        //unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
+        unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
         //reply as soon as we got packet from master. 
         //we send packets in responce only to avoid collision with master packets
-        if ( this->gotIncomingPacket )
+        if ( this->gotIncomingPacket)
         {
             this->gotIncomingPacket = false;
             outgoingData.packetId++;
@@ -167,11 +166,11 @@ void HXRCSlave::loop()
             if ( !this->waitAck )
             {
                 outgoingData.sequenceId++;
-                outgoingData.length = outgoingTelemetryBuffer.receiveUpTo( HXRC_SLAVE_TELEMETRY_SIZE_MAX, outgoingData.data );
+                outgoingData.length = outgoingTelemetryBuffer.receiveUpTo( config.getSlaveTelemetryPayloadSize(), outgoingData.data );
                 this->waitAck = true;
             }
 
-            outgoingData.ackSequenceId = receivedSequenceId;
+            outgoingData.ackSequenceId = this->receiverStats.prevSequenceId;  //ACK last received telemetry packet
             outgoingData.A1 = A1;
             outgoingData.A2 = A2;
             outgoingData.RSSIDbm = this->transmitterStats.getRSSIDbm();

@@ -120,20 +120,6 @@ bool HXRCInitEspNow( HXRCConfig& config )
 
     WiFi.mode(WIFI_STA);
 
-/*
-    Can't set rate without disabling AMPDU, disabling is impossible with Arduino SDK :(
-    "If you want to use esp_wifi_internal_set_fix_rate, please disable WiFi AMPDU TX by:
-     make menuconfig => components => Wi-Fi => Disable TX AMPDU."
-
-    if( config.LRMode)
-    {
-        if ( esp_wifi_internal_set_fix_rate(ESP_IF_WIFI_STA, true, WIFI_PHY_RATE_LORA_250K) != true )  //WIFI_PHY_RATE_1M_L
-        {
-            Serial.println("HXRC: Error: Failed to set rate");
-            //return false;
-        }
-    }
-*/
     esp_wifi_set_promiscuous(true); //promiscous mode is required to set channel on older SDK
     if ( esp_wifi_set_channel( config.wifi_channel, WIFI_SECOND_CHAN_NONE) != ESP_OK )
     {
@@ -149,7 +135,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
     //If  WIFI_PROTOCOL_LR connects to (WIFI_PROTOCOL_LR | WIFI_PROTOCOL_11B), packets in one direction are WIFI_PROTOCOL_LR,
     //packtes in other direction are  WIFI_PROTOCOL_11B
     //So to force full LR communication, both peers should use exclusively WIFI_PROTOCOL_LR mode
-    if ( esp_wifi_set_protocol (WIFI_IF_STA, config.LRMode ? WIFI_PROTOCOL_LR : ( /*WIFI_PROTOCOL_LR |*/ WIFI_PROTOCOL_11B ) ) != ESP_OK)
+    if ( esp_wifi_set_protocol(WIFI_IF_STA, config.LRMode ? WIFI_PROTOCOL_LR : WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G | WIFI_PROTOCOL_11N) != ESP_OK)
     {
         Serial.println("HXRC: Error: Failed to switch LR mode");
         return false;
@@ -207,9 +193,15 @@ bool HXRCInitEspNow( HXRCConfig& config )
     esp_wifi_set_promiscuous(true); 
 
     if (  esp_wifi_set_max_tx_power(84) != ESP_OK )
-  {
-    Serial.println("An error occurred while setting TX power");
-  }
+    {
+        Serial.println("An error occurred while setting TX power");
+    }
+
+    if ( esp_wifi_config_espnow_rate(WIFI_IF_STA, (wifi_phy_rate_t)config.getDesiredWifiPhyRate()) != ESP_OK )
+    {
+        Serial.println("HXRC: Error: Failed to set wifi phy rate");
+        return false;
+    }
 #endif
 
     return true;

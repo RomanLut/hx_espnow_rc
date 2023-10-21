@@ -173,14 +173,21 @@ void TXMain::saveLastProfile()
 //=====================================================================
 void TXMain::loop()
 {
+
   esp_task_wdt_reset();
 
   uint32_t t = millis();
+
+  //REVIEW: some library affects gpios?
+  pinMode(JOY_LEFT_PIN,INPUT_PULLUP);
+  pinMode(JOY_RIGHT_PIN,INPUT_PULLUP);
 
   TXInput::instance.loop(t);
   StateBase::currentState->onRun(t);
 
   AudioManager::instance.loop(t);
+
+
 
   this->bluetoothState.loop();
   this->batteryState.loop();

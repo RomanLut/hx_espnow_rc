@@ -24,10 +24,6 @@ typedef enum
 class HXRCBase
 {
 protected:
-
-    //last received sequenceId
-    uint16_t receivedSequenceId;
-
     uint32_t A1,A2;
 
     //waiting for ack?

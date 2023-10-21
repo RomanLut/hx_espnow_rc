@@ -67,7 +67,7 @@ uint8_t HXRCTransmitterStats::getRSSI()
 
 //=====================================================================
 //=====================================================================
-uint8_t HXRCTransmitterStats::getSuccessfulPacketRate()
+uint16_t HXRCTransmitterStats::getSuccessfulPacketRate()
 {
     return this->successfullPacketRateLast;
 }
@@ -184,10 +184,10 @@ void HXRCTransmitterStats::printStats()
     HXRCLOG.printf(" | Ack: %u", packetsAcknowledged);
     HXRCLOG.printf(" | Error: %u", packetsSentError);
     HXRCLOG.printf(" | Missed time: %u", packetsNotSentInTime);
-    HXRCLOG.printf(" | PacketRate: %dp/s", getSuccessfulPacketRate());
+    HXRCLOG.printf(" | ACKed PktRate: %up/s", getSuccessfulPacketRate());
     HXRCLOG.printf(" | Out telemetry: %u b/s\n", getTelemetrySendSpeed());
 #if defined(ESP32)
-    HXRCLOG.printf(" RSSIDBm: -%ddbm", getRSSIDbm());
+    HXRCLOG.printf("            | RSSIDBm: -%ddbm", getRSSIDbm());
     HXRCLOG.printf(" | Noise Floor: -%ddbm", getNoiseFloor());
     HXRCLOG.printf(" | SNR: %ddb", getSNR());
     HXRCLOG.printf(" | WifiRate: %i\n", getRate());

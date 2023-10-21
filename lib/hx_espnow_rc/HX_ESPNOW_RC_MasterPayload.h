@@ -7,6 +7,7 @@
 //#define HXRC_MASTER_TELEMETRY_SIZE_MAX ( HXRC_PAYLOAD_SIZE_MAX - HXRC_MASTER_PAYLOAD_SIZE_BASE )
 #define HXRC_MASTER_TELEMETRY_SIZE_MAX 64  //limit packet size to improve chances of successfull delivery
 
+
 #pragma pack (push)
 #pragma pack (1)
 
@@ -32,7 +33,7 @@ typedef struct
     //and to calculate RSSI on master
     uint16_t sequenceId;
 
-    //acknowledge of last incoming packet
+    //acknowledge of last received telemetry packet
     uint16_t ackSequenceId;
 
     HXRCChannels channels;

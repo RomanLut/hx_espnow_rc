@@ -52,7 +52,7 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
 
     if ( 
         ( len >= HXRC_SLAVE_PAYLOAD_SIZE_BASE ) && 
-        ( len == HXRC_SLAVE_PAYLOAD_SIZE_BASE + pPayload->length ) && 
+        ( len == (HXRC_SLAVE_PAYLOAD_SIZE_BASE + pPayload->length) ) && 
         ( pPayload->key == config.key )
         )
     {
@@ -75,9 +75,8 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
                     receiverStats.onTelemetryOverflow();
                 }
             }
-            this->receivedSequenceId = pPayload->sequenceId;
 
-            if ( this->waitAck && ( outgoingData.sequenceId == pPayload->ackSequenceId ) )
+            if ( this->waitAck && (outgoingData.sequenceId == pPayload->ackSequenceId )) 
             {
                 this->waitAck = false;
                 this->transmitterStats.onPacketAck( outgoingData.length );
@@ -131,14 +130,21 @@ void HXRCMaster::loop()
         unsigned long t = millis();
         unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
-        int count = deltaT / (this->config.LRMode ? DEFAULT_PACKET_SEND_PERIOD_LR_MS : DEFAULT_PACKET_SEND_PERIOD_MS);
-        if ( count > 1)
+        int ratePeriodMS = this->config.getDesiredPacketRatePeriodMS();
+        int count = deltaT / ratePeriodMS;
+
+        if ( count >= 1)
         {
             outgoingData.packetId += count - 1;  //missed time to send packet(s) with desired rate
             transmitterStats.onPacketSendMiss( count - 1 );           
         }
 
-        if ( count > 0 )
+        if ( (config.packetRatePeriodMS == HXRCConfig::PACKET_RATE_MAX) && !this->waitAck ) 
+        {
+            count = 1;
+        }       
+
+        if ( count > 0)
         {
             outgoingData.packetId++;
 
@@ -152,7 +158,7 @@ void HXRCMaster::loop()
                 this->waitAck = true;
             }
 
-            outgoingData.ackSequenceId = receivedSequenceId;
+            outgoingData.ackSequenceId = this->receiverStats.prevSequenceId; //ACK received sequence packet
 
             outgoingData.setCRC();
             transmitterStats.onPacketSend( t );

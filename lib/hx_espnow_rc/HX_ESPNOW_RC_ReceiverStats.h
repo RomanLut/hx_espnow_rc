@@ -23,7 +23,7 @@ public:
     unsigned long lastReceivedTimeMs;
 
     uint16_t prevPacketId;
-    uint16_t prevSequenceId;
+    uint16_t prevSequenceId;  //successfully received sequence id
     //total number of packets recevied (excluding invalid/crc)
     uint16_t packetsReceived; 
     //total number of packets not received (we find it out from packetId)
@@ -32,10 +32,14 @@ public:
     unsigned long RSSIUpdateMs;
     uint16_t RSSIPacketsReceived;
     uint16_t RSSIPacketsLost;
+    uint16_t RSSIPacketsRetransmit;
     uint16_t RSSILast4;  //filtered RSSI over 4 seconds
+    uint8_t retransmitRatio;  //% of telemetry packets ignored because need retransmit
 
     //number of packers with non-increased sequense id   
     uint16_t packetsRetransmit;
+
+    uint16_t resyncCount;
 
     uint16_t packetsCRCError;
     uint16_t packetsInvalid;
@@ -54,9 +58,10 @@ public:
 
     bool isFailsafe();
     uint8_t getRSSI();
+    uint8_t getRetransmitRatio();
     //The following values: 
-    //1) are awailable on Master only.
-    //2) are wailable only if slave is based on ESP32.
+    //1) are available on Master only.
+    //2) are available only if slave is based on ESP32.
     //3) are 0 if receiver is based on ESP8266
     uint8_t getRemoteRSSIDbm();  //RSSI in Dbm on slave. 70 means -70Dbm
     uint8_t getRemoteNoiseFloor();  //Noise floor on slave. 90 means - 90Dbm

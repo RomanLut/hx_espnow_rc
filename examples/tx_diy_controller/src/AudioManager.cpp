@@ -44,8 +44,8 @@ bool AudioManager::loop( uint32_t t )
     //this->output = new AudioOutputI2S(0, AudioOutputI2S::INTERNAL_DAC, 32);
     this->output = new AudioOutputI2SNoDAC(0, 8);
 
-    //free pins 25,26, but render pin 2 useless
-    this->output->SetPinout( 2,2, SPEAKER_PIN );
+    //free pins 25, 26, but render pin 2 useless
+    this->output->SetPinout( 2, 2, SPEAKER_PIN );
 
     this->output->SetGain(1.0f);
     this->output->SetRamp(100);

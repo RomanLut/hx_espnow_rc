@@ -17,19 +17,21 @@ void HXRCReceiverStats::reset()
     this->lastReceivedTimeMs = t - DEFAULT_FAILSAFE_PERIOD_MS;
 
     this->prevPacketId = 0xffff;
-    this->prevSequenceId = 0xffff;
+    this->prevSequenceId = 0;
     this->packetsReceived = 0;
     this->packetsLost = 0;
 
     this->RSSIUpdateMs = t;
     this->RSSIPacketsReceived = 0;
     this->RSSIPacketsLost = 0;
+    this->RSSIPacketsRetransmit = 0;
     this->RSSILast4 = 0;
 
     this->telemetryBytesReceivedTotal = 0;
     this->packetsRetransmit = 0;
     this->packetsCRCError = 0;
     this->packetsInvalid = 0;
+    this->resyncCount = 0;
 
     this->lastTelemetryBytesReceivedSpeed = 0;
     this->lastTelemetryBytesReceivedTotal = 0;
@@ -59,14 +61,25 @@ uint8_t HXRCReceiverStats::getRSSI()
         uint16_t packetsSuccessCount = this->packetsReceived - this->RSSIPacketsReceived;
         uint16_t packetsLostCount = this->packetsLost - this->RSSIPacketsLost;
         uint16_t packetsTotalCount = packetsSuccessCount + packetsLostCount;
+        uint16_t retransmitCount = this->packetsRetransmit - this->RSSIPacketsRetransmit;
 
         this->RSSILast4 -= this->RSSILast4 >> 2;
         this->RSSILast4 += ( packetsTotalCount > 0 ) ? (((uint32_t)packetsSuccessCount) * 100 / packetsTotalCount) : 0;
         this->RSSIPacketsReceived = this->packetsReceived;
         this->RSSIPacketsLost = this->packetsLost;
+        this->RSSIPacketsRetransmit = this->packetsRetransmit;
+        this->retransmitRatio = packetsSuccessCount == 0 ? 0 : ((uint32_t)retransmitCount) * 100 / packetsSuccessCount;
         this->RSSIUpdateMs = t; 
     }
     return this->RSSILast4 >> 2;
+}
+
+//=====================================================================
+//=====================================================================
+uint8_t HXRCReceiverStats::getRetransmitRatio()
+{
+    this->getRSSI();
+    return this->retransmitRatio;
 }
 
 //=====================================================================
@@ -96,24 +109,32 @@ bool HXRCReceiverStats::onPacketReceived( uint16_t packetId, uint16_t sequenceId
 {
     this->packetsReceived++;
 
-    bool res = sequenceId != this->prevSequenceId;
+    uint16_t delta = sequenceId > this->prevSequenceId ? sequenceId - this->prevSequenceId : this->prevSequenceId - sequenceId;
+    
+    bool res = sequenceId == (uint16_t)(this->prevSequenceId + 1);
     if ( res )
     {
         this->telemetryBytesReceivedTotal += telemetrySize;
+        this->prevSequenceId = sequenceId;
     }
     else
     {
         this->packetsRetransmit++;
+
+        if (delta > 200) //out of sync
+        {
+            //resync
+            this->prevSequenceId = sequenceId;
+            this->resyncCount++;
+        }
     }
 
-    uint16_t delta = packetId - this->prevPacketId;
     if ( delta > 1 )
     {
         this->packetsLost += delta-1;
     }
 
     this->prevPacketId = packetId;
-    this->prevSequenceId = sequenceId;
     this->lastReceivedTimeMs = millis();
 
     this->remoteRSSIDbm = RSSIDbm;
@@ -155,10 +176,10 @@ void HXRCReceiverStats::printStats()
     HXRCLOG.printf("Receiver   ");
     HXRCLOG.printf(" | FS: %d", isFailsafe()?1:0);
     HXRCLOG.printf(" | RSSI: %d", getRSSI() );
-    HXRCLOG.printf(" | Recv(retransm): %u(%u)", packetsReceived, packetsRetransmit);
+    HXRCLOG.printf(" | Recv/retransm: %u/%u(%2u%%))", packetsReceived, packetsRetransmit, this->getRetransmitRatio());
     HXRCLOG.printf(" | Lost: %u", packetsLost);
     HXRCLOG.printf(" | Invalid/CRC: %u/%u", packetsInvalid, packetsCRCError);
-    HXRCLOG.printf(" | Tel. overflow: %u", telemetryOverflowCount);
+    HXRCLOG.printf(" | Tel. overflow/resync: %u/%u", telemetryOverflowCount, resyncCount);
     HXRCLOG.printf(" | In telemetry: %d b/s\n", getTelemetryReceivedSpeed());
 }
 
