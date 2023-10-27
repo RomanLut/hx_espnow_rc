@@ -96,15 +96,14 @@ void TXMain::setup()
 
   Serial.begin(115200, SERIAL_8N1);  
 
+  pinMode(HC06_INTERFACE_TX_PIN,OUTPUT);
+  pinMode(HC06_INTERFACE_RX_PIN,INPUT);
   externalBTSerial.init(&Serial2, HC06_INTERFACE_RX_PIN, HC06_INTERFACE_TX_PIN);
 
   HXRCLOG.println("Start");
 
   digitalWrite(SPEAKER_PIN, LOW);
   pinMode(SPEAKER_PIN,OUTPUT);  //speaker pin
-
-  pinMode(HC06_INTERFACE_TX_PIN,OUTPUT);
-  pinMode(HC06_INTERFACE_RX_PIN,INPUT);
 
   ModeBase::eventDataFlowHandler = &TXMain::eventDataflowHandlerStatic;
 
