@@ -147,7 +147,7 @@ public:
         this->buffferHandle = xRingbufferCreate(Size, RINGBUF_TYPE_BYTEBUF);
         if ( this->buffferHandle == NULL) 
         {
-            Serial.print("HXRC: Failed create ring buffer");
+            HXRCLOG.print("HXRC: Failed create ring buffer");
         }    
     }
 

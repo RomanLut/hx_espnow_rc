@@ -24,7 +24,7 @@ HXRCSlave::HXRCSlave() : HXRCBase()
     this->channelsMutex = xSemaphoreCreateMutex();
     if( this->channelsMutex == NULL )
     {
-        Serial.print("HXRC: Failed create mutex");
+        HXRCLOG.print("HXRC: Failed create mutex");
     }
 #endif
 }
@@ -116,8 +116,8 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
     else
     {
         //ignore unknown packet, too short
-        //Serial.print("Unknown packet length:");
-        //Serial.println(len);
+        //HXRCLOG.print("Unknown packet length:");
+        //HXRCLOG.println(len);
         receiverStats.onInvalidPacket();
     }
 
@@ -208,7 +208,7 @@ HXRCChannels HXRCSlave::getChannels()
 #elif defined (ESP32)
     if ( xSemaphoreTake( this->channelsMutex,  portMAX_DELAY ) != pdTRUE )
     {
-        Serial.println("HXRC: Failed to get mutex");
+        HXRCLOG.println("HXRC: Failed to get mutex");
     }
     memcpy(&ret, &receivedChannels, sizeof(receivedChannels));
     xSemaphoreGive( this->channelsMutex);

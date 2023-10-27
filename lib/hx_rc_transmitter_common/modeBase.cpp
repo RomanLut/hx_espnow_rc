@@ -58,8 +58,8 @@ void ModeBase::loop(
 
     if ( dt > 10 )
     {
-        Serial.print("!Cycle time:");
-        Serial.println(dt);
+        HXRCLOG.print("!Cycle time:");
+        HXRCLOG.println(dt);
     }
 
     if ( sport != NULL )
@@ -167,8 +167,8 @@ int ModeBase::getProfileIndexFromChannelValue( int value)
 //=====================================================================
 void ModeBase::fire( const char* event )
 {
-    Serial.print("Event:");
-    Serial.println(event);
+    HXRCLOG.print("Event:");
+    HXRCLOG.println(event);
     if (ModeBase::eventHandler)
     {
         ModeBase::eventHandler(event);

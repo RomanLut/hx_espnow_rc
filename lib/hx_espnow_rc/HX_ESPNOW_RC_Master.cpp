@@ -90,7 +90,7 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
     else
     {
         //ignore too short payload
-        //Serial.println("HXRC: Error: invalid payload length");
+        //HXRCLOG.println("HXRC: Error: invalid payload length");
         receiverStats.onInvalidPacket();
     }
 }
@@ -170,7 +170,7 @@ void HXRCMaster::loop()
             }
             else
             {
-                Serial.println(result);
+                HXRCLOG.println(result);
             }            
         }
 

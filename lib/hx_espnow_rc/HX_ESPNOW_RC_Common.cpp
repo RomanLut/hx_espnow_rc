@@ -82,7 +82,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
     //Channel setting works only in WIFI_STA mode. Mode can be changed later.Channel will be preserved.
     if  (!wifi_set_channel( config.wifi_channel ) )
     {
-        Serial.println("HXRC: Error: Failed to set channel");
+        HXRCLOG.println("HXRC: Error: Failed to set channel");
         return false;
     }
     wifi_promiscuous_enable(false);
@@ -91,26 +91,26 @@ bool HXRCInitEspNow( HXRCConfig& config )
     //https://www.esp32.com/viewtopic.php?t=12772
     //esp_wifi_set_ps(WIFI_PS_NONE);
 
-    Serial.print("HXESPNOWRC: Info: Board MAC address(STA): ");
-    Serial.println(WiFi.macAddress());
-    Serial.print("HXESPNOWRC: Info: Board MAC address(AP): ");
-    Serial.println(WiFi.softAPmacAddress());
+    HXRCLOG.print("HXESPNOWRC: Info: Board MAC address(STA): ");
+    HXRCLOG.println(WiFi.macAddress());
+    HXRCLOG.print("HXESPNOWRC: Info: Board MAC address(AP): ");
+    HXRCLOG.println(WiFi.softAPmacAddress());
 
     if (esp_now_init() != ESP_OK)
     {
-        Serial.println("HXESPNOWRC: Error: Error initializing ESP-NOW");
+        HXRCLOG.println("HXESPNOWRC: Error: Error initializing ESP-NOW");
         return false;
     }
 
     if ( esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER) != ESP_OK )
     {
-        Serial.println("HXRC: Error: Failed to set role");
+        HXRCLOG.println("HXRC: Error: Failed to set role");
         return false;
     }
 
     if ( esp_now_add_peer(BROADCAST_MAC, ESP_NOW_ROLE_COMBO, config.wifi_channel, NULL, 0) != ESP_OK )
     {
-        Serial.println("HXRC: Error: Failed to add peer");
+        HXRCLOG.println("HXRC: Error: Failed to add peer");
         return false;
     }
 
@@ -123,7 +123,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
     esp_wifi_set_promiscuous(true); //promiscous mode is required to set channel on older SDK
     if ( esp_wifi_set_channel( config.wifi_channel, WIFI_SECOND_CHAN_NONE) != ESP_OK )
     {
-        Serial.println("HXRC: Error: Failed to set channel");
+        HXRCLOG.println("HXRC: Error: Failed to set channel");
         return false;
     }
     esp_wifi_set_promiscuous(false); 
@@ -137,7 +137,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
     //So to force full LR communication, both peers should use exclusively WIFI_PROTOCOL_LR mode
     if ( esp_wifi_set_protocol(WIFI_IF_STA, config.LRMode ? WIFI_PROTOCOL_LR : WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G | WIFI_PROTOCOL_11N) != ESP_OK)
     {
-        Serial.println("HXRC: Error: Failed to switch LR mode");
+        HXRCLOG.println("HXRC: Error: Failed to switch LR mode");
         return false;
     }
 
@@ -145,7 +145,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
     //review: does it have any effect?
     if ( esp_wifi_set_bandwidth(WIFI_IF_STA, WIFI_BW_HT20) != ESP_OK )
     {
-        Serial.println("HXRC: Error: Failed to set bandwidth");
+        HXRCLOG.println("HXRC: Error: Failed to set bandwidth");
         return false;
     } 
 
@@ -154,18 +154,18 @@ bool HXRCInitEspNow( HXRCConfig& config )
     //https://github.com/espressif/esp-idf/issues/5759
     if ( esp_wifi_set_ps(WIFI_PS_MIN_MODEM) != ESP_OK )
     {
-        Serial.println("HXRC: Error: Failed to set power mode");
+        HXRCLOG.println("HXRC: Error: Failed to set power mode");
         return false;
     }
 
-    Serial.print("HXESPNOWRC: Info: Board MAC address(STA): ");
-    Serial.println(WiFi.macAddress());
-    Serial.print("HXESPNOWRC: Info: Board MAC address(AP): ");
-    Serial.println(WiFi.softAPmacAddress());
+    HXRCLOG.print("HXESPNOWRC: Info: Board MAC address(STA): ");
+    HXRCLOG.println(WiFi.macAddress());
+    HXRCLOG.print("HXESPNOWRC: Info: Board MAC address(AP): ");
+    HXRCLOG.println(WiFi.softAPmacAddress());
 
     if ( esp_now_init() != ESP_OK )
     {
-        Serial.println("HXESPNOWRC: Error: Error initializing ESP-NOW");
+        HXRCLOG.println("HXESPNOWRC: Error: Error initializing ESP-NOW");
         return false;
     }
 
@@ -178,14 +178,14 @@ bool HXRCInitEspNow( HXRCConfig& config )
 
     if (esp_now_add_peer(&peerInfo) != ESP_OK)
     {
-        Serial.println("HXRC: Error: Failed to add peer");
+        HXRCLOG.println("HXRC: Error: Failed to add peer");
         return false;
     }
 
 #ifdef COEXIST
   if ( esp_coex_preference_set(ESP_COEX_PREFER_WIFI) != ESP_OK )
   {
-    Serial.println("An error occurred initializing coexist setting");
+    HXRCLOG.println("An error occurred initializing coexist setting");
   }
 #endif
 
@@ -194,12 +194,12 @@ bool HXRCInitEspNow( HXRCConfig& config )
 
     if (  esp_wifi_set_max_tx_power(84) != ESP_OK )
     {
-        Serial.println("An error occurred while setting TX power");
+        HXRCLOG.println("An error occurred while setting TX power");
     }
 
     if ( esp_wifi_config_espnow_rate(WIFI_IF_STA, (wifi_phy_rate_t)config.getDesiredWifiPhyRate()) != ESP_OK )
     {
-        Serial.println("HXRC: Error: Failed to set wifi phy rate");
+        HXRCLOG.println("HXRC: Error: Failed to set wifi phy rate");
         return false;
     }
 #endif

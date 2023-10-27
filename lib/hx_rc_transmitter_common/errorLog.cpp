@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "HX_ESPNOW_RC_common.h"
+
 ErrorLog ErrorLog::instance;
 
 //=====================================================================
@@ -18,13 +20,13 @@ ErrorLog::ErrorLog()
 //=====================================================================
 void ErrorLog::write( const char* msg )
 {
-    Serial.print(msg);
+    HXRCLOG.print(msg);
     this->hasError = true;
 
     File logFile = SPIFFS.open("/errorLog.txt", FILE_APPEND);
     if (!logFile) 
     {
-        Serial.println("- failed to open log file for writing");
+        HXRCLOG.println("- failed to open log file for writing");
         return;
     }
     logFile.print(msg);

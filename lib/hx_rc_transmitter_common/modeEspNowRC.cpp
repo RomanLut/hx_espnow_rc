@@ -70,7 +70,7 @@ void ModeEspNowRC::fillOutgoingTelemetry(HC06Interface* externalBTSerial)
   while ( (externalBTSerial->available() > 0) && (hxrcTelemetrySerial.getAvailableForWrite() > 0) )
   {
     uint8_t c = externalBTSerial->read();
-    //Serial.print(char(c));
+    //HXRCLOG.print(char(c));
     hxrcTelemetrySerial.write(c);
   }
   
@@ -87,7 +87,7 @@ void ModeEspNowRC::setChannels( const HXChannels* channels )
         for ( int i = 0; i < HXRC_CHANNELS_COUNT-1; i++ )
         {
           uint16_t r = channels->channelValue[i];
-          //if ( i == 3 ) Serial.println(r);
+          //if ( i == 3 ) HXRCLOG.println(r);
           hxrcMaster.setChannelValue( i, r );
         }
     }

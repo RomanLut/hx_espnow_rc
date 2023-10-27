@@ -256,7 +256,7 @@ void ModeKYFPV::sendChannels( const HXChannels* channels )
     | ( channels->channelValue[7] > 1750 ? 16 : 0 ) //headless
     | ( (this->GyroCount > 0 && this->GyroCount <= 22 ) ? 128 : 0 );
 
-    //Serial.println(msg[21]);
+    //HXRCLOG.println(msg[21]);
 
     udpCMD.beginPacket(UDP_CMD_IP, UDP_CMD_PORT);
     udpCMD.write( msg, sizeof(msg) );
@@ -264,7 +264,7 @@ void ModeKYFPV::sendChannels( const HXChannels* channels )
 
     this->packetsCount++;
 
-    //Serial.println(sizeof(msg));
+    //HXRCLOG.println(sizeof(msg));
 }
 
 //=====================================================================
@@ -299,8 +299,8 @@ void ModeKYFPV::loop(
 
             if ( WiFi.status() != WL_IDLE_STATUS && WiFi.status() != WL_NO_SSID_AVAIL )  
             {
-                Serial.println(WiFi.status());
-                Serial.println("Connect...");
+                HXRCLOG.println(WiFi.status());
+                HXRCLOG.println("Connect...");
                 WiFi.begin("KY-wifi-FD0B0B4A", "");    
             }
         }
@@ -311,7 +311,7 @@ void ModeKYFPV::loop(
         {
             this->state = STATE_CONNECTED_WIFI;
         
-            Serial.println("Connected to wifi...");
+            HXRCLOG.println("Connected to wifi...");
             udpCMD.begin( 40000 );
 
             this->retryConnectionTime = t;
@@ -333,7 +333,7 @@ void ModeKYFPV::loop(
             {
                 lastPacketTime = millis();
                 this->sendChannels(channels);
-                Serial.print("*");
+                HXRCLOG.print("*");
                 this->fireDataflowEvent();
             }
         }
@@ -352,7 +352,7 @@ void ModeKYFPV::loop(
 
             this->state = STATE_CONNECTED;
 
-            Serial.printf("Received %d bytes from %s:%d\n", packetSize, udpCMD.remoteIP().toString().c_str(), udpCMD.remotePort());
+            HXRCLOG.printf("Received %d bytes from %s:%d\n", packetSize, udpCMD.remoteIP().toString().c_str(), udpCMD.remotePort());
             
             char incomingPacket[1460];
             int len = udpCMD.read(incomingPacket, 1460);

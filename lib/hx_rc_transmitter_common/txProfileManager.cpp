@@ -5,6 +5,8 @@
 #include "smartport.h"
 #include "errorLog.h"
 
+#include "HX_ESPNOW_RC_common.h"
+
 TXProfileManager TXProfileManager::instance;  
 
 static const char* configProfile = "{\"transmitter_mode\" : \"CONFIG\", \"ap_name\" : \"hxrct\", \"ap_password\" : \"\", \"ftp_user\" : \"anonymous\", \"ftp_password\" : \"anonymous\" }";
@@ -22,7 +24,7 @@ void TXProfileManager::loadConfig(int profileIndex)
 {
     char fname[32];
     sprintf( fname, "/profile%d.json", profileIndex+1 );
-    Serial.println(fname);
+    HXRCLOG.println(fname);
     File file = SPIFFS.open(fname);
 
     if ( !file) 
