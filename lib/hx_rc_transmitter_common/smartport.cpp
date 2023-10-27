@@ -130,8 +130,8 @@ Smartport::Smartport()
 void Smartport::init( HardwareSerial* serial, int tx_pin )
 {
     this->serial = serial;
+    pinMode(tx_pin, OUTPUT);
     this->serial->begin(57600, SERIAL_8N1, -1, tx_pin, true );  
-    pinMode(tx_pin, OUTPUT);  //call after serial->begin()
 	this->lastSend = millis();
     this->lastSensor = 0;
 }

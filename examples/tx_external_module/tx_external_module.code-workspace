@@ -31,7 +31,8 @@
 			"algorithm": "cpp",
 			"list": "cpp",
 			"ios": "cpp",
-			"xstring": "cpp"
+			"xstring": "cpp",
+			"string_view": "cpp"
 		}
 	}
 }
