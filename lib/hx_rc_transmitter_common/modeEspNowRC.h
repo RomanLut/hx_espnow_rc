@@ -19,7 +19,7 @@ private:
     bool lastFailsafe;
 
     HXRCMaster hxrcMaster;
-    HXRCSerialBuffer<512> hxrcTelemetrySerial;
+    HXRCSerialBuffer<1024> hxrcTelemetrySerial;
 
     void setChannels(const HXChannels* channels);
     void fillOutgoingTelemetry(HC06Interface* externalBTSerial);

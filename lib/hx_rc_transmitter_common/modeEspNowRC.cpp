@@ -4,7 +4,9 @@
 
 #include "modeEspNowRC.h"
 #include "txProfileManager.h"
+#include "ErrorLog.h"
 
+#include "HX_ESPNOW_RC_Slave.h"
 
 ModeEspNowRC ModeEspNowRC::instance;
 const char* ModeEspNowRC::name = "ESPNOW";
@@ -24,14 +26,68 @@ void ModeEspNowRC::start( JsonDocument* json )
 
     JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
 
-    this->LRMode = (*profile)["espnow_long_range_mode"] | false;
-
-    this->hxrcMaster.init(
-        HXRCConfig(
+    HXRCConfig config(
             (*profile)["espnow_channel"] | 3,
             (*profile)["espnow_key"] | 0,
             this->LRMode,
-            -1, false));
+            -1, false);
+
+    String pktRate = (*profile)["packet_rate"] | "";
+    if ( pktRate == "MAX" )
+    {
+        config.packetRatePeriodMS = HXRCConfig::PACKET_RATE_MAX;
+    }
+    else if ( pktRate != "" )
+    {
+        int pktRateInt = (*profile)["packet_rate"].as<int>() | 0;
+        if ( pktRateInt > 0 )
+        {
+            config.packetRatePeriodMS = 1000 / pktRateInt;
+        }
+        else
+        {
+            ErrorLog::instance.write("Invalid packet rate:");
+            ErrorLog::instance.write(pktRate.c_str());
+            ErrorLog::instance.write("\n");
+        }
+    }
+
+    String phyRate = (*profile)["phy_rate"] | "";
+    if ( phyRate == "250K" )
+    {
+        config.wifiPhyRate = WIFI_PHY_RATE_LORA_250K;
+    }
+    else if ( phyRate == "500K" )
+    {
+        config.wifiPhyRate = WIFI_PHY_RATE_LORA_500K;
+    }
+    else if ( phyRate == "1M" )
+    {
+        config.wifiPhyRate = WIFI_PHY_RATE_1M_L;
+    }
+    else if ( phyRate == "2M" )
+    {
+        config.wifiPhyRate = WIFI_PHY_RATE_2M_L;
+    }
+    else if ( phyRate == "5M" )
+    {
+        config.wifiPhyRate = WIFI_PHY_RATE_5M_L;
+    }
+    else if ( phyRate == "11M" )
+    {
+        config.wifiPhyRate = WIFI_PHY_RATE_11M_L;
+    }
+    else
+    {
+        ErrorLog::instance.write("Invalid phy rate:");
+        ErrorLog::instance.write(phyRate.c_str());
+        ErrorLog::instance.write("\n");
+    }
+
+
+    this->LRMode = (*profile)["espnow_long_range_mode"] | false;
+
+    this->hxrcMaster.init(config);
 
     esp_task_wdt_reset();
 
