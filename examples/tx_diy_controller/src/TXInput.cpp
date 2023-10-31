@@ -57,6 +57,7 @@ void TXInput::initButtonPins()
 void TXInput::init()
 {
   this->lastADCRead = millis();
+  this->readADCIndex = 255;
   this->lastButtonsRead = millis();
   this->lastAdditiveProcessing = millis();
 
@@ -158,6 +159,7 @@ void TXInput::readADCEx(int pin, uint16_t* v )
   for ( int i = 0; i < 8; i++ )
   {
     sample[i]=analogRead(pin);  //analogRead() => 0..4095
+
     mean += sample[i];
   }
   mean >>= 3;
@@ -197,12 +199,26 @@ void TXInput::readADCEx(int pin, uint16_t* v )
 //=====================================================================
 void TXInput::readADC(uint32_t t)
 {
-  if ( lastADCRead - t < 10 ) return;
+  if ( this->readADCIndex == 255 )
+  {
+    for ( int i = 0; i < ADC_COUNT; i++ )
+    {
+      readADCEx(ADC_PINS[i], &ADC[i] );
+    }
+    lastADCRead = t;
+    this->readADCIndex = 0;
+    return;
+  }
+
+  if ( lastADCRead - t < 2 ) return;
   lastADCRead = t;
 
-  for ( int i = 0; i < ADC_COUNT; i++ )
+  readADCEx(ADC_PINS[this->readADCIndex], &ADC[this->readADCIndex] );
+  
+  this->readADCIndex++;
+  if ( this->readADCIndex == ADC_COUNT )
   {
-    readADCEx(ADC_PINS[i], &ADC[i] );
+    this->readADCIndex = 0;
   }
 }
 
@@ -1147,8 +1163,23 @@ void TXInput::staticModeEventHandler(const char* event)
 //=====================================================================
 void TXInput::loop(uint32_t t)
 {
-  this->readADC(t);
-  this->readButtons(t);
+
+  //uint32_t t1 = millis();
+
+  this->readADC(t);  //2ms simetimes
+
+/*
+  uint32_t t2 = millis();
+  t2 = t2 - t1;
+  if ( t2 > 1 )
+  {
+    HXRCLOG.println("DT=");
+    HXRCLOG.println(t2);
+    HXRCLOG.println("\n");
+  }
+*/
+
+  this->readButtons(t);  //0ms
 }
 
 

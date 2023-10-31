@@ -88,6 +88,7 @@ public:
     static TXInput instance;
 
     uint32_t lastADCRead;
+    uint8_t readADCIndex;
     static const uint8_t ADC_PINS[ADC_COUNT];
     static const bool AXIS_INVERT[AXIS_COUNT];
 
