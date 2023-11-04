@@ -45,7 +45,7 @@ void HXRCMaster::OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t statu
 #if defined(ESP8266)
 void HXRCMaster::OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len)
 #elif defined (ESP32)
-void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
+void IRAM_ATTR HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len)
 #endif
 {
     const HXRCSlavePayload* pPayload = ( const HXRCSlavePayload*) incomingData;
@@ -66,7 +66,7 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
             memcpy( this->peerMac, mac, 6 );
 #if defined(ESP32)
             memcpy( capture.peerMac, mac, 6 );
-#endif            
+#endif
 
             if ( receiverStats.onPacketReceived( pPayload->packetId, pPayload->sequenceId, pPayload->length, pPayload->RSSIDbm, pPayload->NoiseFloor ) )
             {
@@ -74,6 +74,30 @@ void HXRCMaster::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int
                 {
                     receiverStats.onTelemetryOverflow();
                 }
+/*                
+                static uint8_t b=0;
+                uint8_t buf[300];
+                for ( int i=0; i < pPayload->length; i++ )
+                {
+                    buf[i]=b++;
+                }
+                if ( !this->incomingTelemetryBuffer.send( buf, pPayload->length ) )
+                {
+                    receiverStats.onTelemetryOverflow();
+                }
+*/
+/*
+                static uint8_t b=0;
+                for ( int i=0; i < pPayload->length; i++ )
+                {
+                    if ( pPayload->data[i] != b++ )
+                    {
+                        b = pPayload->data[i] + 1;
+                        receiverStats.onInvalidPacket();
+                    }
+                }
+*/
+
             }
 
             if ( this->waitAck && (outgoingData.sequenceId == pPayload->ackSequenceId )) 

@@ -41,7 +41,7 @@ public:
 
     ModeXiroMini();
 
-    void start( JsonDocument* json );
+    void start( JsonDocument* json, HC06Interface* externalBTSerial );
 
     void loop(
         const HXChannels* channels,

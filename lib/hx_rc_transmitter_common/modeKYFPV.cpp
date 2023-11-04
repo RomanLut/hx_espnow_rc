@@ -60,9 +60,9 @@ static void ICACHE_RAM_ATTR sniffer_callback(void *buf, wifi_promiscuous_pkt_typ
 
 //=====================================================================
 //=====================================================================
-void ModeKYFPV::start( JsonDocument* json )
+void ModeKYFPV::start( JsonDocument* json, HC06Interface* externalBTSerial )
 {
-    ModeBase::start(json);
+    ModeBase::start(json, externalBTSerial);
 
     pinMode(LED_PIN,OUTPUT);
     digitalWrite(LED_PIN, HIGH );

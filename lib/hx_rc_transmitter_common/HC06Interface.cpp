@@ -76,6 +76,7 @@ int HC06Interface::availableForWrite()
 {
     return this->serial->availableForWrite();
 }
+
 //=====================================================================
 //=====================================================================
 size_t HC06Interface::write(uint8_t c)
@@ -83,3 +84,9 @@ size_t HC06Interface::write(uint8_t c)
     return this->serial->write(c);
 }
 
+//=====================================================================
+//=====================================================================
+Stream* HC06Interface::getStream()
+{
+    return this->serial;
+}

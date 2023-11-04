@@ -20,5 +20,6 @@ public:
     int read();
     int availableForWrite();
     size_t write(uint8_t c);
+    Stream* getStream();
 };
 

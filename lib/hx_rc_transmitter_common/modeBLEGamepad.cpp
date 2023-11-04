@@ -101,9 +101,9 @@ void ModeBLEGamepad::sendControls(const HXChannels* channels)
 
 //=====================================================================
 //=====================================================================
-void ModeBLEGamepad::start( JsonDocument* json )
+void ModeBLEGamepad::start( JsonDocument* json, HC06Interface* externalBTSerial )
 {
-    ModeBase::start( json );
+    ModeBase::start( json, externalBTSerial );
     
     HXRCLOG.println("BLE Gamepad start\n");      
 

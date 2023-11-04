@@ -66,5 +66,10 @@ public:
     void updateLed(int8_t ledPin, bool ledPinInverted);
 
     const uint8_t* getPeerMac() const;
+
+    int getOutgoingTelemetryBufferAvailableForWrite()
+    {
+        return this->outgoingTelemetryBuffer.getAvailableForWrite();
+    }
 };
 

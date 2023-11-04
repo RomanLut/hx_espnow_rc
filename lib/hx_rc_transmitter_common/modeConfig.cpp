@@ -23,9 +23,9 @@ ModeConfig::ModeConfig() : filemgr(CONFIG_FILE_MANAGER_PORT)
 
 //=====================================================================
 //=====================================================================
-void ModeConfig::start( JsonDocument* json )
+void ModeConfig::start( JsonDocument* json, HC06Interface* externalBTSerial )
 {
-    ModeBase::start(json);
+    ModeBase::start(json, externalBTSerial);
     
     HXRCLOG.println("Config mode start\n");      
 

@@ -49,8 +49,13 @@ private:
 
     int getProfileIndexFromChannelValue( int value);
 
+    void initTelemetryOutput( JsonDocument* json, HC06Interface* externalBTSerial );
+
 public:
     static ModeBase* currentModeHandler;
+
+    bool USBSerialTelemetryOutput;
+    int USBSerialBaudRate;
 
     typedef void (*TModeEventHandler) (const char*); 
     static TModeEventHandler eventHandler;
@@ -58,7 +63,7 @@ public:
     typedef void (*TDataflowEventHandler) (); 
     static TDataflowEventHandler eventDataFlowHandler;
 
-    virtual void start( JsonDocument* json );
+    virtual void start( JsonDocument* json, HC06Interface* externalBTSerial );
 
     virtual void loop(
         const HXChannels* channels,
@@ -72,7 +77,7 @@ public:
     //current profile does not match profile requested by CH16?
     boolean haveToChangeProfile();
 
-    void startRequestedProfile();
+    void startRequestedProfile( HC06Interface* externalBTSerial );
     void rebootToRequestedProfile();
 
     void fire( const char* event );

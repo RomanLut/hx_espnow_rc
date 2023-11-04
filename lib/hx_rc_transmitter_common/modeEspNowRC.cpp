@@ -20,9 +20,9 @@ ModeEspNowRC::ModeEspNowRC() : hxrcTelemetrySerial(&hxrcMaster)
 
 //=====================================================================
 //=====================================================================
-void ModeEspNowRC::start( JsonDocument* json )
+void ModeEspNowRC::start( JsonDocument* json, HC06Interface* externalBTSerial )
 {
-    ModeBase::start( json );
+    ModeBase::start( json, externalBTSerial );
 
     JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
 
@@ -84,7 +84,6 @@ void ModeEspNowRC::start( JsonDocument* json )
         ErrorLog::instance.write("\n");
     }
 
-
     this->LRMode = (*profile)["espnow_long_range_mode"] | false;
 
     this->hxrcMaster.init(config);
@@ -108,15 +107,73 @@ void ModeEspNowRC::start( JsonDocument* json )
 }
 
 
+int ci = 0;
+const char* m = "QUICK FOX JUMPS OVER THE LAZY DOG\n";
+
 //=====================================================================
 //=====================================================================
 void ModeEspNowRC::processIncomingTelemetry(HC06Interface* externalBTSerial)
 {
-  while ( this->hxrcTelemetrySerial.getAvailable() > 0 && externalBTSerial->availableForWrite() > 0)
+/*
+      uint8_t c = hxrcTelemetrySerial.read();
+      Serial.write( m[ci] );
+      ci++;
+      if ( m[ci] == 0 ) ci = 0;
+*/      
+
+  uint8_t buffer[256];
+
+  if ( USBSerialTelemetryOutput )
   {
-    uint8_t c = hxrcTelemetrySerial.read();
-    externalBTSerial->write( c );
+    //we do not call this->hxrcTelemetrySerial.getAvailable() as flushIn() is called explicitly
+    
+    int avOut = Serial.availableForWrite();
+
+    while ( avOut > 0)
+    {
+      int count = hxrcTelemetrySerial.readUpTo( buffer, avOut > 256 ? 256 : avOut );
+      if ( count == 0 ) break;
+/*
+  for ( int i =0; i < count; i++ )
+  {
+    buffer[i] = ci++;
   }
+*/
+/*
+      static uint8_t b=0;
+      for ( int i=0; i < count; i++ )
+      {
+          if ( buffer[i] != b++ )
+          {
+              b = buffer[i] + 1;
+              hxrcMaster.getReceiverStats().onInvalidPacket();
+          }
+      }
+*/
+      Serial.write( buffer, count );
+
+
+      avOut = Serial.availableForWrite();
+    }
+  }
+  else
+  {
+    while ( this->hxrcTelemetrySerial.getAvailable() > 0 && externalBTSerial->availableForWrite() > 0)
+    {
+      uint8_t c = hxrcTelemetrySerial.read();
+      externalBTSerial->write( c );
+    }
+  }
+
+
+/*
+  while ( externalBTSerial->availableForWrite() > 0)
+  {
+    externalBTSerial->write(m[ci]);
+    ci++;
+    if ( m[ci]==0) ci=0;
+  }
+*/
 }
 
 //=====================================================================
@@ -161,12 +218,17 @@ void ModeEspNowRC::loop(
         Smartport* sport
     )
 {
+//int t1 = millis();
+
   ModeBase::loop(channels, externalBTSerial, sport);
 
   setChannels(channels);
 
   hxrcTelemetrySerial.flushIn();
-  processIncomingTelemetry(externalBTSerial);
+
+
+  processIncomingTelemetry(externalBTSerial);  //2ms 
+
 
   fillOutgoingTelemetry( externalBTSerial);
   hxrcTelemetrySerial.flushOut();
@@ -224,4 +286,12 @@ void ModeEspNowRC::loop(
     rebootToRequestedProfile();
   }
 
+/*
+t1 = millis() - t1;
+if ( t1 > 1 )
+{
+    HXRCLOG.print("!Time:");
+    HXRCLOG.println(t1);
+}
+*/
 }

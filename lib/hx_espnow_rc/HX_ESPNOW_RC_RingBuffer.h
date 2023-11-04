@@ -102,6 +102,12 @@ public:
         return this->count != 0;
     }
 
+    uint16_t getAvailableForWrite()
+    {
+        esp8266::InterruptLock lock;
+        return getFreeCount();
+    }
+
     bool send( const void* data, uint16_t lenToWrite )
     {
         {     
@@ -192,6 +198,10 @@ public:
         return total;
     }
 
+    uint16_t getAvailableForWrite()
+    {
+        return xRingbufferGetCurFreeSize(this->buffferHandle);
+    }
 
 };
 

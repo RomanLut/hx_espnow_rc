@@ -4,13 +4,32 @@
 
 //=====================================================================
 //=====================================================================
+class HXRCSerialBufferBase
+{
+    public:
+        virtual uint16_t getAvailableForWrite() = 0;
+        virtual void write(uint8_t c) = 0;
+
+        void writeBuffer(const uint8_t* buf, int size) 
+        {
+            while (size > 0)
+            {
+                this->write(*buf++);
+                size--;
+            }
+        }
+};
+
+
+//=====================================================================
+//=====================================================================
 //It is unefficent to read/write RingBuffer byte by byte
 //This class is an adapter around RingBuffer with Serial-like interface
 //and flush() method.
 //flush() should be called in a loop to fill serial buffer from RingBuffer,
 //and send filled buffer to RingBuffer
 template<int Size> 
-class HXRCSerialBuffer
+class HXRCSerialBuffer : public HXRCSerialBufferBase
 {
 private:
 
@@ -42,7 +61,7 @@ public:
         return this->inCount;
     }
     
-    uint16_t getAvailableForWrite() 
+    virtual uint16_t getAvailableForWrite()  override
     {
         if ( Size ==  this->outCount ) flushOut();
         return Size - this->outCount;
@@ -57,14 +76,27 @@ public:
         return res;
     }
 
-/*
-    uint8_t peek()
+
+    //returns number of bytes actually read
+    int readUpTo(uint8_t* buffer, int maxCount)
     {
-        if ( this->inCount == 0) return 0;
-        return inBuffer[inHead];
+        int res = this->inCount;
+        if ( res == 0 ) return 0;
+        
+        int toTail = Size - inHead;
+        if ( toTail < res ) res = toTail;
+        if (res > maxCount ) res = maxCount;
+
+        memcpy( buffer, &(inBuffer[inHead]), res);
+        inHead += res;
+
+        if ( inHead == Size) inHead = 0;
+        inCount -= res;
+
+        return res;
     }
-*/
-    void write(uint8_t c)
+
+    virtual void write(uint8_t c) override
     {
         if ( outCount == Size ) flushOut();
         if ( outCount == Size ) return;
@@ -73,8 +105,9 @@ public:
         outCount++;
     }
 
-    void flushOut()
+    int flushOut()
     {
+        int cout = 0;
         // 1)
         //--------DDDDDDDD-----------
         //        |       h
@@ -89,15 +122,21 @@ public:
             if ( p < 0 ) p += Size;
             int countEnd = Size - p;
             int c = outCount < countEnd ? outCount : countEnd;
+            //if ( c > HXRC_TELEMETRY_BUFFER_SIZE) c = HXRC_TELEMETRY_BUFFER_SIZE;
+            int max = this->base->getOutgoingTelemetryBufferAvailableForWrite();  
+            if ( c > max ) c = max;
+            if ( c == 0) break;
             if ( this->base->sendOutgoingTelemetry( &outBuffer[p], c) )
             {
                 outCount -= c;
+                cout += c;
             }
             else
             {
                 break;
             }
         }
+        return cout;
     }
 
     void flushIn()

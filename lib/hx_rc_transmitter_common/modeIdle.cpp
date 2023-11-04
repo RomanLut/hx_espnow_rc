@@ -4,9 +4,9 @@ ModeIdle ModeIdle::instance;
 
 //=====================================================================
 //=====================================================================
-void ModeIdle::start( JsonDocument* json )
+void ModeIdle::start( JsonDocument* json, HC06Interface* externalBTSerial )
 {
-    ModeBase::start(json);
+    ModeBase::start( json, externalBTSerial );
 }
 
 //=====================================================================
@@ -21,6 +21,6 @@ void ModeIdle::loop(
 
     if ( haveToChangeProfile() )
     {
-        startRequestedProfile();
+        startRequestedProfile(externalBTSerial);
     }
 }

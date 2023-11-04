@@ -18,10 +18,16 @@ ModeBase::TDataflowEventHandler ModeBase::eventDataFlowHandler = NULL;
 
 //=====================================================================
 //=====================================================================
-void ModeBase::start(JsonDocument* json)
+//json can be NULL
+void ModeBase::start(JsonDocument* json, HC06Interface* externalBTSerial)
 {
     this->gotCH16ProfileTime = 0;
     this->CH16ProfileIndex = -1;
+
+    if ( json )
+    {
+        this->initTelemetryOutput( json, externalBTSerial );
+    }
 
     HXRCLOG.println("Waiting for CH16 profile");
 }
@@ -88,7 +94,7 @@ boolean ModeBase::haveToChangeProfile()
 
 //=====================================================================
 //=====================================================================
-void ModeBase::startRequestedProfile()
+void ModeBase::startRequestedProfile( HC06Interface* externalBTSerial )
 {
     HXRCLOG.print("Starting profile ");
     HXRCLOG.println( CH16ProfileIndex );
@@ -128,10 +134,31 @@ void ModeBase::startRequestedProfile()
             ErrorLog::instance.write("\n");
         }
 
-        ModeBase::currentModeHandler->start(json);
+        ModeBase::currentModeHandler->start(json, externalBTSerial);
+    }
+}
+
+//=====================================================================
+//=====================================================================
+void ModeBase::initTelemetryOutput( JsonDocument* json, HC06Interface* externalBTSerial )
+{
+    this->USBSerialTelemetryOutput = (*json)["usb_serial_telemetry_output"] | false;
+
+    this->USBSerialBaudRate = (*json)["usb_serial_baudrate"] | 115200;
+    if ( this->USBSerialBaudRate <= 0 )
+    {
+        ErrorLog::instance.write("Invalid USBSerial rate:");
+        ErrorLog::instance.write((*json)["usb_serial_baudrate"] | "");
+        ErrorLog::instance.write("\n");
     }
 
+    if (this->USBSerialTelemetryOutput)
+    {
+        HXRCSetLogStream( externalBTSerial->getStream() );
+        Serial.begin(this->USBSerialBaudRate);
+    }
 }
+
 
 //=====================================================================
 //=====================================================================

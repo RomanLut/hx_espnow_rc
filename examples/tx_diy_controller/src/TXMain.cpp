@@ -119,7 +119,7 @@ void TXMain::setup()
   this->loadLastProfile();
 
   ModeBase::currentModeHandler = &ModeIdle::instance;
-  ModeBase::currentModeHandler->start(NULL);
+  ModeBase::currentModeHandler->start(NULL, &externalBTSerial);
 
   AudioManager::instance.init();
 
@@ -172,7 +172,6 @@ void TXMain::saveLastProfile()
 //=====================================================================
 void TXMain::loop()
 {
-
   esp_task_wdt_reset();
 
   uint32_t t = millis();
@@ -181,15 +180,26 @@ void TXMain::loop()
   pinMode(JOY_LEFT_PIN,INPUT_PULLUP);
   pinMode(JOY_RIGHT_PIN,INPUT_PULLUP);
 
-  TXInput::instance.loop(t);
-  StateBase::currentState->onRun(t);
+  TXInput::instance.loop(t);   //2ms sometimes
 
-  AudioManager::instance.loop(t);
+//uint32_t t1 = millis();
 
+  StateBase::currentState->onRun(t);  //2-3ms
 
+/*
+t1 = millis() - t1;
+if ( t1 > 1 )
+{
+  HXRCLOG.print("DT=");
+  HXRCLOG.println(t1);
+}
+*/
 
-  this->bluetoothState.loop();
-  this->batteryState.loop();
+  AudioManager::instance.loop(t); //10ms when sound is played
+
+  this->bluetoothState.loop();  //0ms
+  this->batteryState.loop();  //0ms
+
 
   //TXInput::instance.dumpBatADC();
 
