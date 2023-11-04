@@ -103,7 +103,7 @@ void setup()
   SPIFFS.begin(true); //true -> format if mount failed
 
   ModeBase::currentModeHandler = &ModeIdle::instance;
-  ModeBase::currentModeHandler->start(NULL);
+  ModeBase::currentModeHandler->start(NULL, &externalBTSerial);
 
   esp_task_wdt_reset();
 }
