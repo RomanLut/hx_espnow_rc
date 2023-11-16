@@ -27,11 +27,14 @@ private:
     bool hasNewFrameData;
     int chunk;
 
+    SemaphoreHandle_t frameDataMutex;
+
     bool trySendFrameHeader(HXRCSerialBufferBase& buffer);
     bool trySendChunk(HXRCSerialBufferBase& buffer);
 
 public:
     HXMavlinkFrameSender();
+    ~HXMavlinkFrameSender();
 
     bool send(HXRCSerialBufferBase& buffer);
     bool isEmpty();

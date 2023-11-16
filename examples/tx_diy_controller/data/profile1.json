@@ -3,6 +3,10 @@
 	"espnow_channel": 3,
 	"espnow_key": 0,
 	"espnow_long_range_mode": false,
+	"packet_rate" : "MAX",
+	"phy_rate" : "1M",
+	"usb_serial_telemetry_output": true,
+	"usb_serial_baudrate": 460800,
 	"ap_name": "hxrct",
 	"ap_password": "",
 	"mapping": [

@@ -1,37 +1,21 @@
 #pragma once
 
 /*
-            [][][][][][][][]
-            [5V]      [3.3V]
-            [GND]       [16]
- Mavlink RX [12]         [0]         <---/ ---> GND  FLASH Button
- Mavlink TX [13]       [GND]
-            [15]     [3.3/5]
-            [14]         [3] RX      <---/ ---> GND  REC Button
-            [2]          [1] TX
-       LAMP [4]        [GND]
-            [  ESP32 CAM   ]
-            [][][][][][][][]
-
 Pinout:
-https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
-
-4 - LAMP
-/33 - red LED
-2,14,15 - SD 1 bit mode 4,12,13 - SD 4 bit mode
-3 - RXD0 (debug)  
-1 - TXD0 (debug)
-12 - RXD2 (mavlink)
-13 - TDX2 (mavlink)
+https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
 */
 
-//true to use Mavlink1 ( TODO: support Mavlink1)
+//mavlink serial port pins (UART2)
+#define MAVLINK_RX_PIN    16
+#define MAVLINK_TX_PIN    17
+
+//Use Mavlink v1 ( 8 RC Channels ) or Mavlink v2 (15 RC Channels)
 #define USE_MAVLINK_V1 false
 
 //telemetry/mavlink port speed
-#define TELEMETRY_BAUDRATE 115200
+#define TELEMETRY_BAUDRATE 57600
 
-//send RC packet every ?ms
+//send packet every ?ms
 //Note for inav: "Serial receiver half-duplex" should be set to "OFF", otherwise inav will not be able to send telemetry.
 #define MAVLINK_RC_PACKET_RATE_MS   40  //Rate in Hz = 1000 / MAVLINK_RC_PACKET_RATE_MS
 

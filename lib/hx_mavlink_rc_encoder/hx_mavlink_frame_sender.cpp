@@ -3,16 +3,25 @@
 
 #define MAX_CHUNK_SIZE 253 //size of ENCAPSULATED_DATA payload
 
-#define MAX_FRAME_SIZE (MAX_CHUNK_SIZE*300)  //~101Kb
-
+#define MAX_FRAME_SIZE (MAX_CHUNK_SIZE*300)  //~75Kb
 
 //=====================================================================
 //=====================================================================
 HXMavlinkFrameSender::HXMavlinkFrameSender()
 {
-    this->frameData = (uint8_t*)malloc( MAX_FRAME_SIZE );
+    this->frameData = NULL;
     this->state = FS_IDLE;
     this->hasNewFrameData = false;
+
+    this->frameDataMutex = xSemaphoreCreateMutex();
+}
+
+//=====================================================================
+//=====================================================================
+HXMavlinkFrameSender::~HXMavlinkFrameSender()
+{
+    if (!this->frameData) free(this->frameData);
+    vSemaphoreDelete( this->frameDataMutex );
 }
 
 //=====================================================================
@@ -22,6 +31,8 @@ bool HXMavlinkFrameSender::send(HXRCSerialBufferBase& buffer)
     //Serial.print("framedata=");
     //Serial.print((int)(this->frameData));
 
+    xSemaphoreTake(this->frameDataMutex, portMAX_DELAY); 
+
     if ( this->state == FS_IDLE ) 
     {
         if ( this->hasNewFrameData )
@@ -30,6 +41,7 @@ bool HXMavlinkFrameSender::send(HXRCSerialBufferBase& buffer)
         }
         else
         {
+            xSemaphoreGive(this->frameDataMutex); 
             return false; //nothing to send
         }
     }
@@ -38,6 +50,7 @@ bool HXMavlinkFrameSender::send(HXRCSerialBufferBase& buffer)
     {
         if (!this->trySendFrameHeader(buffer)) 
         { 
+            xSemaphoreGive(this->frameDataMutex); 
             return false;
         }
     }
@@ -48,15 +61,18 @@ bool HXMavlinkFrameSender::send(HXRCSerialBufferBase& buffer)
         {
             if  (!this->trySendChunk(buffer)) 
             {
+                xSemaphoreGive(this->frameDataMutex); 
                 return false;
             }
         }
         else
         {
-            //staet = FS_IDLE
+            //state == FS_IDLE
+            xSemaphoreGive(this->frameDataMutex); 
             return true; //should add frame and call again
         }
     }
+    xSemaphoreGive(this->frameDataMutex); 
 }
 
 //=====================================================================
@@ -70,13 +86,29 @@ bool HXMavlinkFrameSender::isEmpty()
 //=====================================================================
 void HXMavlinkFrameSender::addFrame(const uint8_t* frame, int size)
 {
-    if ( this->state != FS_IDLE ) return;  //do not accept new frame until current one is not sent completely
-
     if ( size > MAX_FRAME_SIZE ) return;
+
+    xSemaphoreTake(this->frameDataMutex, portMAX_DELAY); 
+
+    if ( this->state != FS_IDLE ) 
+    {
+        xSemaphoreGive(this->frameDataMutex); 
+        return;  //do not accept new frame until current one is not sent completely
+    }
+
+
+    //allocate here not in constructor, so frameData could possibly go into PSRAM
+    //PSRAM is not availabe in static constructors
+    if (!this->frameData)
+    {
+        this->frameData = (uint8_t*)ps_malloc( MAX_FRAME_SIZE );
+    }
 
     this->hasNewFrameData = true;
     memcpy( this->frameData, frame, size);
     this->frameSize = size;
+
+    xSemaphoreGive(this->frameDataMutex); 
 }
 
 uint8_t binc = 0;
