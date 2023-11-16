@@ -101,11 +101,21 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
                 }
             }
 
+            //there may be late packets which acknowledge older sequenceId. thay should be ignored.
             if ( this->waitAck && ( outgoingData.sequenceId == pPayload->ackSequenceId ) )
             {
+                //Serial.printf("Acked:%d\n",outgoingData.sequenceId);
                 this->waitAck = false;
                 this->transmitterStats.onPacketAck( outgoingData.length );
             }
+
+/*
+            if ( this->waitAck && ( outgoingData.sequenceId != pPayload->ackSequenceId ) )
+            {
+                Serial.printf("Expected:%d, got:%d\n",outgoingData.sequenceId,pPayload->ackSequenceId);
+            }
+*/
+
             this->gotIncomingPacket = true;
         }
         else
@@ -151,11 +161,17 @@ bool HXRCSlave::init( HXRCConfig config )
 //=====================================================================
 void HXRCSlave::loop()
 {
+    unsigned long t = millis();
+    unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
+
+    if (deltaT > 500)
+    {
+        HXRCLOG.println("Callback timeout!");
+        senderState = HXRCSS_READY_TO_SEND;
+    }
+
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
-        unsigned long t = millis();
-        unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
-
         //reply as soon as we got packet from master. 
         //we send packets in responce only to avoid collision with master packets
         if ( this->gotIncomingPacket)
@@ -163,6 +179,7 @@ void HXRCSlave::loop()
             this->gotIncomingPacket = false;
             outgoingData.packetId++;
 
+            //if packet is not acked, retransmit it with the same outgoingData.sequenceId
             if ( !this->waitAck )
             {
                 outgoingData.sequenceId++;
@@ -170,7 +187,7 @@ void HXRCSlave::loop()
                 this->waitAck = true;
             }
 
-            outgoingData.ackSequenceId = this->receiverStats.prevSequenceId;  //ACK last received telemetry packet
+            outgoingData.ackSequenceId = this->receiverStats.prevSequenceId;  //ACK last received telemetry packet so other end does continue seuqence
             outgoingData.A1 = A1;
             outgoingData.A2 = A2;
             outgoingData.RSSIDbm = this->transmitterStats.getRSSIDbm();
@@ -178,13 +195,11 @@ void HXRCSlave::loop()
 
             outgoingData.setCRC();
             transmitterStats.onPacketSend( t );
+            senderState = HXRCSS_WAIT_SEND_FINISH;
             esp_err_t result = esp_now_send(BROADCAST_MAC, (uint8_t *) &outgoingData, HXRC_SLAVE_PAYLOAD_SIZE_BASE + outgoingData.length );
-            if (result == ESP_OK) 
+            if (result != ESP_OK) 
             {
-                senderState = HXRCSS_WAIT_SEND_FINISH;
-            }
-            else
-            {
+                HXRCLOG.println("Packet send error!");
                 transmitterStats.onPacketSendError();
             }            
         }

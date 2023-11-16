@@ -40,6 +40,7 @@ public:
     uint16_t packetsRetransmit;
 
     uint16_t resyncCount;
+    uint16_t resyncCounter;
 
     uint16_t packetsCRCError;
     uint16_t packetsInvalid;

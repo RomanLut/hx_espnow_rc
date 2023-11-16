@@ -32,6 +32,7 @@ void HXRCReceiverStats::reset()
     this->packetsCRCError = 0;
     this->packetsInvalid = 0;
     this->resyncCount = 0;
+    this->resyncCounter = 0;
 
     this->lastTelemetryBytesReceivedSpeed = 0;
     this->lastTelemetryBytesReceivedTotal = 0;
@@ -109,26 +110,33 @@ bool HXRCReceiverStats::onPacketReceived( uint16_t packetId, uint16_t sequenceId
 {
     this->packetsReceived++;
 
-    uint16_t delta = sequenceId > this->prevSequenceId ? sequenceId - this->prevSequenceId : this->prevSequenceId - sequenceId;
+    int16_t delta = sequenceId - this->prevSequenceId;
     
-    bool res = sequenceId == (uint16_t)(this->prevSequenceId + 1);
+    //accept packet if it is next in sequence.
+    bool res = delta == 1;
     if ( res )
     {
         this->telemetryBytesReceivedTotal += telemetrySize;
         this->prevSequenceId = sequenceId;
+        this->resyncCounter = 0;
     }
     else
     {
+        //there may be late packets which retransmit older sequnceId
+        //or there can be complete desync due to master/slave reboot
         this->packetsRetransmit++;
-
-        if (delta > 200) //out of sync
+        this->resyncCounter++;
+        if ( this->resyncCounter >= 10)
         {
+            //many packets in row have wrong sequence id
             //resync
-            this->prevSequenceId = sequenceId;
             this->resyncCount++;
+            this->prevSequenceId = sequenceId;
+            this->resyncCounter = 0;
         }
     }
 
+    delta = this->prevPacketId - packetId;
     if ( delta > 1 )
     {
         this->packetsLost += delta-1;
