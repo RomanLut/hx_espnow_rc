@@ -166,7 +166,7 @@ void HXRCSlave::loop()
 
     if (deltaT > 500)
     {
-        HXRCLOG.println("Callback timeout!");
+        //HXRCLOG.println("Callback timeout!");
         senderState = HXRCSS_READY_TO_SEND;
     }
 

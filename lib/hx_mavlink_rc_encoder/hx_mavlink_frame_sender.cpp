@@ -96,7 +96,6 @@ void HXMavlinkFrameSender::addFrame(const uint8_t* frame, int size)
         return;  //do not accept new frame until current one is not sent completely
     }
 
-
     //allocate here not in constructor, so frameData could possibly go into PSRAM
     //PSRAM is not availabe in static constructors
     if (!this->frameData)
