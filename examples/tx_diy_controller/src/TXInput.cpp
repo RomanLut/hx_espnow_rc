@@ -191,8 +191,12 @@ void TXInput::readADCEx(int pin, uint16_t* v )
     mean = mean1 / count;
   }
 
-  uint16_t v0 = ((*v)+2) >> 2;
-  *v += -v0 + mean;
+  //uint16_t v0 = ((*v)+2) >> 2;
+  //*v += -v0 + mean;
+  //uint16_t v0 = ((*v)+1) >> 1;
+  //*v += -v0 + mean*2;
+  
+  *v = mean * 4;
 }
 
 //=====================================================================
