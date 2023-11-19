@@ -14,13 +14,13 @@
 //=========================================================
 
 //DVR frame size
-#define DVR_FRAMESIZE  FRAMESIZE_VGA
+#define DVR_FRAMESIZE  FRAMESIZE_SVGA
 
 //DVR FPS
 #define DVR_FPS 25
 
 //true to autostart recording on boot
-#define DVR_AUTO_START_RECORDING false
+#define DVR_AUTO_START_RECORDING true
 
 //max frames in one avi file (uint16_t)
 //65000 35 FPS = 43 minutes
@@ -33,10 +33,10 @@
 #define DVR_SEND_FRAMES_NO_RECORDING false
 
 //0...63 Lower number is higher quality
-#define DVR_JPEG_QUALITY 4
+#define DVR_JPEG_QUALITY 12
 
 //flip picture vetically
-#define DVR_VERTICAL_FLIP 0
+#define DVR_VERTICAL_FLIP 1
 
 //mirror picture horizontally
 #define DVR_HORIZONTAL_MIRROR 1

@@ -9,7 +9,7 @@
             [15]     [3.3/5]
             [14]         [3] RX      <---/ ---> GND  REC Button
             [2]          [1] TX
-       LAMP [4]        [GND]
+       LAMP [4]      [GND/R]  <-- GND on some boards, RESET/EN (pullup 3.3V) on toher boards
             [  ESP32 CAM   ]
             [][][][][][][][]
 

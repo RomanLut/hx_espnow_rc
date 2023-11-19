@@ -6,6 +6,8 @@
 #define LED_PIN 33
 #define REC_BUTTON_PIN 3
 
+#include <hxfilelog.h>
+
 #ifndef DVR_ONLY
 #include <ArduinoOTA.h>
 
@@ -34,6 +36,7 @@ unsigned long lastStats = millis();
 #endif
 
 bool initError = false;
+bool cameraInitError = false;
 
 #ifndef DVR_ONLY
 
@@ -56,6 +59,8 @@ HardwareSerial mavlinkSerial(2);
 // start SD **************************************************************
 
 #include <SD_MMC.h>
+
+HXFileLog<2048> fileLog;
 
 #define ONEMEG (1024 * 1024)
 
@@ -170,8 +175,7 @@ void initCamera()
   config.grab_mode = CAMERA_GRAB_LATEST;
   // init with high specs to pre-allocate larger buffers
   config.fb_location = CAMERA_FB_IN_PSRAM;
-
-  config.frame_size = DVR_FRAMESIZE;  
+  config.frame_size = FRAMESIZE_UXGA;  
 
   config.jpeg_quality = DVR_JPEG_QUALITY;
   config.fb_count = FB_BUFFERS + 1; // +1 needed
@@ -196,6 +200,7 @@ void initCamera()
   {
     Serial.printf("Startup failure: Camera init error 0x%x", err);
     initError = true;
+    cameraInitError = true;
     return;
   }
 
@@ -332,12 +337,13 @@ void controlFrameTimer(bool restartTimer)
 
 //=====================================================================
 //=====================================================================
-static void openAvi() 
+static bool openAvi() 
 {
   oTime = millis();
 
   // open avi file with temporary name 
   aviFile = SD_MMC.open(AVITEMP, FILE_WRITE);
+  if ( aviFile == NULL ) return false;
   oTime = millis() - oTime;
   Serial.printf("File opening time: %ums\n", oTime);
 
@@ -345,6 +351,7 @@ static void openAvi()
   frameCnt = fTimeTot = wTimeTot = dTimeTot = vidSize = 0;
   highPoint = AVI_HEADER_LEN; // allocate space for AVI header
   prepAviIndex();
+  return true;
 }
 
 //=====================================================================
@@ -403,25 +410,27 @@ static bool closeAvi()
     cTime = millis() - cTime;
     
     // AVI stats
-    Serial.printf("******** AVI recording stats ********\n");
-    Serial.printf("Recorded %s\n", aviFileName);
-    Serial.printf("AVI duration: %u secs\n", vidDurationSecs);
-    Serial.printf("Number of frames: %u\n", frameCnt);
-    Serial.printf("Required FPS: %u\n", FPS);
-    Serial.printf("Actual FPS: %0.1f\n", actualFPS);
-    Serial.printf("File size: %s\n", fmtSize(vidSize));
+    fileLog.printf("******** AVI recording stats ********\n");
+    fileLog.printf("%s\n", aviFileName);
+    fileLog.printf("Recorded %s\n", aviFileName);
+    fileLog.printf("AVI duration: %u secs\n", vidDurationSecs);
+    fileLog.printf("Number of frames: %u\n", frameCnt);
+    fileLog.printf("Required FPS: %u\n", FPS);
+    fileLog.printf("Actual FPS: %0.1f\n", actualFPS);
+    fileLog.printf("File size: %s\n", fmtSize(vidSize));
     if (frameCnt) 
     {
-      Serial.printf("Average frame length: %u bytes\n", vidSize / frameCnt);
-      Serial.printf("Average frame monitoring time: %u ms\n", dTimeTot / frameCnt);
-      Serial.printf("Average frame buffering time: %u ms\n", fTimeTot / frameCnt);
-      Serial.printf("Average frame storage time: %u ms\n", wTimeTot / frameCnt);
+      fileLog.printf("Average frame length: %u bytes\n", vidSize / frameCnt);
+      fileLog.printf("Average frame monitoring time: %u ms\n", dTimeTot / frameCnt);
+      fileLog.printf("Average frame buffering time: %u ms\n", fTimeTot / frameCnt);
+      fileLog.printf("Average frame storage time: %u ms\n", wTimeTot / frameCnt);
     }   
-    Serial.printf("Average SD write speed: %u kB/s\n", ((vidSize / wTimeTot) * 1000) / 1024);
-    Serial.printf("File open / completion times: %u ms / %u ms\n", oTime, cTime);
-    Serial.printf("Busy: %u%%\n", std::min(100 * (wTimeTot + fTimeTot + dTimeTot + oTime + cTime) / vidDuration, (uint32_t)100));
-    Serial.printf("Free: heap %u, block: %u, pSRAM %u\n", ESP.getFreeHeap(), heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL), ESP.getFreePsram());
-    Serial.printf("*************************************\n");
+    fileLog.printf("Average SD write speed: %u kB/s\n", ((vidSize / wTimeTot) * 1000) / 1024);
+    fileLog.printf("File open / completion times: %u ms / %u ms\n", oTime, cTime);
+    fileLog.printf("Busy: %u%%\n", std::min(100 * (wTimeTot + fTimeTot + dTimeTot + oTime + cTime) / vidDuration, (uint32_t)100));
+    fileLog.printf("Free: heap %u, block: %u, pSRAM %u\n", ESP.getFreeHeap(), heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL), ESP.getFreePsram());
+    fileLog.printf("*************************************\n");
+    fileLog.flush();
     return true; 
   } 
   else 
@@ -435,7 +444,7 @@ static bool closeAvi()
 
 //=====================================================================
 //=====================================================================
-static void saveFrame(camera_fb_t* fb) 
+static bool saveFrame(camera_fb_t* fb) 
 {
   // save frame on SD card
   uint32_t fTime = millis();
@@ -450,7 +459,8 @@ static void saveFrame(camera_fb_t* fb)
   {
     // marker overflows buffer
     highPoint -= RAMSIZE;
-    aviFile.write(iSDbuffer, RAMSIZE);
+    if ( aviFile.write(iSDbuffer, RAMSIZE) != RAMSIZE) return false;
+
     // push overflow to buffer start
     memcpy(iSDbuffer, iSDbuffer+RAMSIZE, highPoint);
   }
@@ -461,7 +471,7 @@ static void saveFrame(camera_fb_t* fb)
   {
     // write to SD when RAMSIZE is filled in buffer
     memcpy(iSDbuffer+highPoint, fb->buf + jpegSize - jpegRemain, RAMSIZE - highPoint);
-    aviFile.write(iSDbuffer, RAMSIZE);
+    if ( aviFile.write(iSDbuffer, RAMSIZE) != RAMSIZE) return false;
     jpegRemain -= RAMSIZE - highPoint;
     highPoint = 0;
   } 
@@ -479,6 +489,7 @@ static void saveFrame(camera_fb_t* fb)
   fTimeTot += fTime;
 //  Serial.printf("Frame processing time %u ms\n", fTime);
 //  Serial.println("============================");
+  return true;
 }
 
 //=====================================================================
@@ -512,8 +523,16 @@ static boolean processFrame()
   if (forceRecord && !wasCapturing) 
   {
     Serial.println("Capture started.");
-    openAvi();
-    wasCapturing = true;
+    if ( openAvi() )
+    {
+      wasCapturing = true;
+    }
+    else
+    {
+      Serial.println("ERROR: Unable to pen avi file.");
+      forceRecord = false;
+      initError = true;
+    }
   }
 
   if (wasCapturing )  
@@ -522,7 +541,12 @@ static boolean processFrame()
 
     // capture is ongoing
     dTimeTot += millis() - dTime;
-    saveFrame(fb);
+    if ( !saveFrame(fb) )
+    {
+      Serial.print("ERROR: Error writing AVI file.");
+      forceRecord = false;
+      initError = true;
+    }
 
     if (frameCnt >= DVR_MAX_FRAMES) 
     {
@@ -663,21 +687,33 @@ void OTAprereq()
 //=====================================================================
 void updateLEDs()
 {
+  if ( cameraInitError )
+  {
+    bool b = (millis() & 0x7f) > 0x40;
+    b &= (millis() & 0x7ff) > 0x400;
+    digitalWrite( LED_PIN, b ? LOW : HIGH);
+    digitalWrite( 4, b ? HIGH : LOW);
+    return;
+  }
+
   if ( initError )
   {
-    digitalWrite( LED_PIN, (millis() & 0x7f) > 0x40 ? LOW : HIGH);
-    digitalWrite( 4, (millis() & 0x7f) > 0x40 ? LOW : HIGH);
+    bool b = (millis() & 0x7f) > 0x40;
+    digitalWrite( LED_PIN, b ? LOW : HIGH);
+    digitalWrite( 4, b ? HIGH : LOW);
     return;
   }
 
   if (forceRecord)
   {
-    digitalWrite( LED_PIN, (millis() & 0x7ff) > 0x400 ? LOW : HIGH);
-    digitalWrite( 4, (millis() & 0x7ff) > 0x400 ? LOW : HIGH);
+    bool b = (millis() & 0x7ff) > 0x400;
+    digitalWrite( LED_PIN, b ? LOW : HIGH);
+    digitalWrite( 4, b ? HIGH : LOW);
   }
   else
   {
     digitalWrite( LED_PIN, LOW);
+    digitalWrite( 4, HIGH);
   }
 }
 
@@ -701,6 +737,13 @@ void checkButton()
     if ( buttonState )
     {
       forceRecord = !forceRecord;
+
+      if ( initError && forceRecord )
+      {
+        Serial.println("Rebooting after rrror.");
+        delay(300);
+        ESP.restart();
+      }
     }
   }
 }
@@ -743,7 +786,7 @@ void fillOutgoingTelemetry()
   while ( (mavlinkSerial.available() > 0) && (hxrcTelemetrySerial.getAvailableForWrite() > 300) ) 
   {
     uint8_t c = mavlinkSerial.read();
-    //hxrcTelemetrySerial.write(c);
+//    hxrcTelemetrySerial.write(c);
     outgoingMavlinkParser.processByte( c );
     if (outgoingMavlinkParser.gotPacket() )
     {
@@ -752,7 +795,6 @@ void fillOutgoingTelemetry()
       trySendFrame();
     }
   }
-  
   while ( hxrcTelemetrySerial.getAvailableForWrite() > 300 )
   {
     if ( !trySendFrame() )
@@ -800,9 +842,6 @@ void setup()
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 
-  //Serial.begin(115200, SERIAL_8N1, 12, 13); //debug output on GPIO13
-  //mavlinkSerial.begin( TELEMETRY_BAUDRATE, SERIAL_8N1, 3, 1);  //Mavlink telemetry on GPIO3 and GPIO1 (use UART2 on default pins for UART0)
-
   Serial.begin(115200, SERIAL_8N1, 4, 1 );  //connect RX pin to LAMP(4) pin to free pin 3
 
 #ifndef DVR_ONLY
@@ -820,7 +859,6 @@ void setup()
   config.slaveTelemertyPayloadSize = HXRC_SLAVE_TELEMETRY_SIZE_MAX;
   config.wifiPhyRate =  WIFI_PHY_RATE_1M_L;
 
-
   hxrcSlave.init(config);
 
   //REVIEW: receiver does not work if AP is not initialized?
@@ -837,7 +875,7 @@ void setup()
   initSD(); 
 
   //reinit mavlink serial pins after initSD()
- // pinMode(12, INPUT);
+// pinMode(12, INPUT);
 //  pinMode(13, OUTPUT);
 
   initCamera();
