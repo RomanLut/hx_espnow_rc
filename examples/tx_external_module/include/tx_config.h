@@ -4,6 +4,7 @@
 #define SPORT_PIN 18 //output pin for Serial0 ( SPORT output )
 
 #define CP2102_RX_PIN  1  //if we use Serial0 for SPORT, we setup software serial to output to USB
+#define CP2102_TX_PIN  3  //
 
 #define HC06_INTERFACE_RX_PIN  35
 #define HC06_INTERFACE_TX_PIN  32

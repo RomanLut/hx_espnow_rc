@@ -3,10 +3,14 @@
 	"espnow_channel": 3,
 	"espnow_key": 0,
 	"espnow_long_range_mode": false,
+	"packet_rate" : "MAX",
+	"phy_rate" : "1M",
+	"usb_serial_telemetry_output": true,
+	"usb_serial_baudrate": 460800,
 	"ap_name": "hxrct",
 	"ap_password": "",
 	"mapping": [
-		{ "event": { "name": "STARTUP"		},	"op": {	"name": "SOUND",	"parm": "/mode_esp_now.mp3"		} },
+		{ "event": { "name": "STARTUP"		},	"op": {	"name": "SOUND",	"parm": "/mode_esp_now_image.mp3"		} },
       	{ "event": { "name": "CONNECTED"	},	"op": { "name": "SOUND",	"parm": "/connected.mp3"		} },
       	{ "event": { "name": "DISCONNECTED"	},  "op": { "name": "SOUND",	"parm": "/connection_lost.mp3"	} },
 

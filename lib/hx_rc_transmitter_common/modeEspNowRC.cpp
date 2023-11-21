@@ -77,7 +77,7 @@ void ModeEspNowRC::start( JsonDocument* json, HC06Interface* externalBTSerial )
     {
         config.wifiPhyRate = WIFI_PHY_RATE_11M_L;
     }
-    else
+    else if ( phyRate != "" )
     {
         ErrorLog::instance.write("Invalid phy rate:");
         ErrorLog::instance.write(phyRate.c_str());
@@ -127,7 +127,7 @@ void ModeEspNowRC::processIncomingTelemetry(HC06Interface* externalBTSerial)
   {
     //we do not call this->hxrcTelemetrySerial.getAvailable() as flushIn() is called explicitly
     
-    int avOut = Serial.availableForWrite();
+    int avOut = this->usbTelemetryOutputSerial->availableForWrite();
 
     while ( avOut > 0)
     {
@@ -150,10 +150,9 @@ void ModeEspNowRC::processIncomingTelemetry(HC06Interface* externalBTSerial)
           }
       }
 */
-      Serial.write( buffer, count );
+      this->usbTelemetryOutputSerial->write( buffer, count );
 
-
-      avOut = Serial.availableForWrite();
+      avOut = this->usbTelemetryOutputSerial->availableForWrite();
     }
   }
   else

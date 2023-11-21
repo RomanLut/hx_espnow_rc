@@ -56,12 +56,16 @@ public:
 
     bool USBSerialTelemetryOutput;
     int USBSerialBaudRate;
+    HardwareSerial* usbTelemetryOutputSerial = NULL;
 
     typedef void (*TModeEventHandler) (const char*); 
     static TModeEventHandler eventHandler;
 
     typedef void (*TDataflowEventHandler) (); 
     static TDataflowEventHandler eventDataFlowHandler;
+
+    typedef HardwareSerial* (*TUSBTelemetryOutputInit) (int baudRate); 
+    static TUSBTelemetryOutputInit USBTelemetryOutputInit;
 
     virtual void start( JsonDocument* json, HC06Interface* externalBTSerial );
 

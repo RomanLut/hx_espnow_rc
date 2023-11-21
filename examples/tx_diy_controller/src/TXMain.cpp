@@ -81,6 +81,23 @@ void TXMain::setLEDS4(uint8_t v)
 
 //=====================================================================
 //=====================================================================
+HardwareSerial* TXMain::USBTelemetryOutputInitStatic(int baudRate)
+{
+  /*
+    Serial0 - usb debug
+    serial 1 - none
+    serial 2 - bt
+  */
+
+  HXRCSetLogStream( externalBTSerial.getStream() );
+  Serial.begin(baudRate);
+
+  return &Serial;
+} 
+
+
+//=====================================================================
+//=====================================================================
 void TXMain::setup()
 {
   this->initLedPin();
@@ -105,6 +122,7 @@ void TXMain::setup()
   digitalWrite(SPEAKER_PIN, LOW);
   pinMode(SPEAKER_PIN,OUTPUT);  //speaker pin
 
+  ModeBase::USBTelemetryOutputInit = &USBTelemetryOutputInitStatic;
   ModeBase::eventDataFlowHandler = &TXMain::eventDataflowHandlerStatic;
 
   TXInput::instance.init();

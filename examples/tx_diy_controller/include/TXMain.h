@@ -34,7 +34,6 @@ extern HC06Interface externalBTSerial;
 class TXMain
 {
 private:
-
     uint32_t lastDataflowEvent = 0;
 
     BluetoothState bluetoothState;
@@ -44,6 +43,7 @@ private:
     void initLEDS4Pins();
 
     static void eventDataflowHandlerStatic();
+    static HardwareSerial* USBTelemetryOutputInitStatic(int baudRate);
 
 public:
     static TXMain instance;

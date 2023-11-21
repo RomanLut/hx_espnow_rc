@@ -72,6 +72,25 @@ void onOTAprogress( uint a, uint b )
 
 //=====================================================================
 //=====================================================================
+HardwareSerial* USBTelemetryOutputInit (int baudRate)
+{
+  /*
+  serial0/serial - SBUS
+  serial1 - SPORT
+  serial2 - bt
+  softwareserial - usb debug
+  */
+
+   softwareSerial.begin( 115200, SWSERIAL_8N1, -1, HC06_INTERFACE_TX_PIN );
+   HXRCSetLogStream(&softwareSerial);  
+
+   Serial2.begin(baudRate, SERIAL_8N1, CP2102_TX_PIN, CP2102_RX_PIN);  
+
+   return &Serial2;
+} 
+
+//=====================================================================
+//=====================================================================
 void setup()
 {
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
@@ -101,6 +120,8 @@ void setup()
   externalBTSerial.init(&Serial2, HC06_INTERFACE_RX_PIN, HC06_INTERFACE_TX_PIN);
 
   SPIFFS.begin(true); //true -> format if mount failed
+
+  ModeBase::USBTelemetryOutputInit = &USBTelemetryOutputInit;
 
   ModeBase::currentModeHandler = &ModeIdle::instance;
   ModeBase::currentModeHandler->start(NULL, &externalBTSerial);

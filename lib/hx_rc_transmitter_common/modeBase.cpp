@@ -15,6 +15,7 @@ ModeBase* ModeBase::currentModeHandler;
 
 ModeBase::TModeEventHandler ModeBase::eventHandler = NULL;
 ModeBase::TDataflowEventHandler ModeBase::eventDataFlowHandler = NULL;
+ModeBase::TUSBTelemetryOutputInit ModeBase::USBTelemetryOutputInit = NULL;
 
 //=====================================================================
 //=====================================================================
@@ -96,7 +97,7 @@ boolean ModeBase::haveToChangeProfile()
 //=====================================================================
 void ModeBase::startRequestedProfile( HC06Interface* externalBTSerial )
 {
-    HXRCLOG.print("Starting profile ");
+    HXRCLOG.print("Starting profile index=");
     HXRCLOG.println( CH16ProfileIndex );
 
     TXProfileManager::instance.setCurrentProfileIndex(CH16ProfileIndex);
@@ -154,8 +155,7 @@ void ModeBase::initTelemetryOutput( JsonDocument* json, HC06Interface* externalB
 
     if (this->USBSerialTelemetryOutput)
     {
-        HXRCSetLogStream( externalBTSerial->getStream() );
-        Serial.begin(this->USBSerialBaudRate);
+        this->usbTelemetryOutputSerial = ModeBase::USBTelemetryOutputInit(this->USBSerialBaudRate);
     }
 }
 
