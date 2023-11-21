@@ -17,8 +17,8 @@
 #define DVR_FRAMESIZE  FRAMESIZE_SVGA
 
 //clip frame to 16:9 aspect ratio?
-//800x600 -> 800 x 480
-#define DVR_FRAMESIZE_16x9 false
+//800x600 -> 800 x 452
+#define DVR_FRAMESIZE_16x9 true
 
 //DVR FPS
 #define DVR_FPS 25
