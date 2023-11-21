@@ -90,23 +90,24 @@ uint8_t aviHeader[AVI_HEADER_LEN] = { // AVI header template
 struct frameSizeStruct {
   uint8_t frameWidth[2];
   uint8_t frameHeight[2];
+  uint8_t frameHeight16x9[2];
 };
 // indexed by frame type - needs to be consistent with sensor.h framesize_t enum
 static const frameSizeStruct frameSizeData[] = {
-  {{0x60, 0x00}, {0x60, 0x00}}, // 96X96
-  {{0xA0, 0x00}, {0x78, 0x00}}, // qqvga 
-  {{0xB0, 0x00}, {0x90, 0x00}}, // qcif 
-  {{0xF0, 0x00}, {0xB0, 0x00}}, // hqvga 
-  {{0xF0, 0x00}, {0xF0, 0x00}}, // 240X240
-  {{0x40, 0x01}, {0xF0, 0x00}}, // qvga 
-  {{0x90, 0x01}, {0x28, 0x01}}, // cif 
-  {{0xE0, 0x01}, {0x40, 0x01}}, // hvga 
-  {{0x80, 0x02}, {0xE0, 0x01}}, // vga 
-  {{0x20, 0x03}, {0x58, 0x02}}, // svga 
-  {{0x00, 0x04}, {0x00, 0x03}}, // xga 
-  {{0x00, 0x05}, {0xD0, 0x02}}, // hd
-  {{0x00, 0x05}, {0x00, 0x04}}, // sxga
-  {{0x40, 0x06}, {0xB0, 0x04}}  // uxga 
+  {{0x60, 0x00}, {0x60, 0x00}, {0x60, 0x00}}, // 96X96
+  {{0xA0, 0x00}, {0x78, 0x00}, {0x78, 0x00}}, // qqvga 
+  {{0xB0, 0x00}, {0x90, 0x00}, {0x90, 0x00}}, // qcif 
+  {{0xF0, 0x00}, {0xB0, 0x00}, {0xB0, 0x00}}, // hqvga 
+  {{0xF0, 0x00}, {0xF0, 0x00}, {0xF0, 0x00}}, // 240X240
+  {{0x40, 0x01}, {0xF0, 0x00}, {0xF0, 0x00}}, // qvga 
+  {{0x90, 0x01}, {0x28, 0x01}, {0x28, 0x01}}, // cif 
+  {{0xE0, 0x01}, {0x40, 0x01}, {0x40, 0x01}}, // hvga 
+  {{0x80, 0x02}, {0xE0, 0x01}, {0xE0, 0x01}}, // vga 
+  {{0x20, 0x03}, {0x58, 0x02}, {0xc4, 0x01}}, // svga 
+  {{0x00, 0x04}, {0x00, 0x03}, {0x00, 0x03}}, // xga 
+  {{0x00, 0x05}, {0xD0, 0x02}, {0xD0, 0x02}}, // hd
+  {{0x00, 0x05}, {0x00, 0x04}, {0x00, 0x04}}, // sxga
+  {{0x40, 0x06}, {0xB0, 0x04}, {0xB0, 0x04}}  // uxga 
 };
 
 #define IDX_ENTRY 16 // bytes per index entry
@@ -129,7 +130,7 @@ void prepAviIndex(bool isTL)
   moviSize[isTL] = indexLen[isTL] = 0;
 }
 
-void buildAviHdr(uint8_t FPS, uint8_t frameType, uint16_t frameCnt, bool isTL) 
+void buildAviHdr(uint8_t FPS, uint8_t frameType, bool clip16x9, uint16_t frameCnt, bool isTL) 
 {
   // update AVI header template with file specific details
   size_t aviSize = moviSize[isTL] + AVI_HEADER_LEN + ((CHUNK_HDR+IDX_ENTRY) * (frameCnt+(haveSoundFile?1:0))); // AVI content size 
@@ -153,8 +154,8 @@ void buildAviHdr(uint8_t FPS, uint8_t frameType, uint16_t frameCnt, bool isTL)
   // apply video framesize to avi header
   memcpy(aviHeader+0x40, frameSizeData[frameType].frameWidth, 2);
   memcpy(aviHeader+0xA8, frameSizeData[frameType].frameWidth, 2);
-  memcpy(aviHeader+0x44, frameSizeData[frameType].frameHeight, 2);
-  memcpy(aviHeader+0xAC, frameSizeData[frameType].frameHeight, 2);
+  memcpy(aviHeader+0x44, clip16x9 ? frameSizeData[frameType].frameHeight16x9 : frameSizeData[frameType].frameHeight, 2);
+  memcpy(aviHeader+0xAC, clip16x9 ? frameSizeData[frameType].frameHeight16x9 : frameSizeData[frameType].frameHeight, 2);
   /*
   // apply audio details to avi header
   memcpy(aviHeader+0xF8, &SAMPLE_RATE, 4);

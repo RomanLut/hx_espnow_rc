@@ -229,10 +229,20 @@ void initCamera()
   //https://randomnerdtutorials.com/esp32-cam-ov2640-camera-settings/
 
   s->set_framesize(s, DVR_FRAMESIZE);
+  if ( DVR_FRAMESIZE_16x9 )
+  {
+    if ( DVR_FRAMESIZE == FRAMESIZE_SVGA)
+    {
+      //800x452
+      //ofsx, ofsy, outw, outh, maxx, maxy
+      s->set_res_raw(s, 1/*OV2640_MODE_SVGA*/,0,0,0, 0, 72, 800, 600-144, 800,600-144,false,false);
+    }
+  }
+
   s->set_quality(s, DVR_JPEG_QUALITY);
   s->set_contrast(s, 0);
   s->set_brightness(s, 0);
-  s->set_saturation(s, 0);
+  s->set_saturation(s, 1);
   s->set_denoise(s, 4);    
   s->set_sharpness(s, 0);    
   s->set_gainceiling(s, (gainceiling_t)0);
@@ -343,7 +353,7 @@ static bool openAvi()
 
   // open avi file with temporary name 
   aviFile = SD_MMC.open(AVITEMP, FILE_WRITE);
-  if ( aviFile == NULL ) return false;
+  if ( !aviFile ) return false;
   oTime = millis() - oTime;
   Serial.printf("File opening time: %ums\n", oTime);
 
@@ -381,7 +391,7 @@ static bool closeAvi()
   uint8_t actualFPSint = (uint8_t)(lround(actualFPS));  
 
   xSemaphoreTake(aviMutex, portMAX_DELAY); 
-  buildAviHdr(actualFPSint, DVR_FRAMESIZE, frameCnt);
+  buildAviHdr(actualFPSint, DVR_FRAMESIZE, DVR_FRAMESIZE_16x9,frameCnt);
   xSemaphoreGive(aviMutex); 
 
   aviFile.seek(0, SeekSet); // start of file
@@ -529,7 +539,7 @@ static boolean processFrame()
     }
     else
     {
-      Serial.println("ERROR: Unable to pen avi file.");
+      Serial.println("ERROR: Unable to open avi file.");
       forceRecord = false;
       initError = true;
     }
@@ -624,8 +634,9 @@ bool initDVR()
   camera_fb_t* fb = esp_camera_fb_get();
   if (fb == NULL) 
   {
-    Serial.println("Error: Failed to get camera frame");
     initError = true;
+    fileLog.printf("Error: Failed to get camera frame");
+    fileLog.flush();
     return false;
   }
   else 

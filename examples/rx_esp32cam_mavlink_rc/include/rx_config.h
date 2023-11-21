@@ -16,6 +16,18 @@
 Pinout:
 https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
 
+OV2640 Datasheet
+https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640_DS(1.6).pdf
+
+)V3660 Datasheet:
+https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/unit/OV3660_CSP3_DS_1.3_sida.pdf
+
+OV5640 Datahsheet:
+https://cdn.sparkfun.com/datasheets/Sensors/LightImaging/OV5640_datasheet.pdf
+
+OV2640 Software application:
+https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640%20Software%20Application%20Notes%201.03.pdf
+
 4 - LAMP
 /33 - red LED
 2,14,15 - SD 1 bit mode 4,12,13 - SD 4 bit mode

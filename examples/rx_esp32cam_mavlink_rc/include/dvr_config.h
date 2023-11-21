@@ -16,6 +16,10 @@
 //DVR frame size
 #define DVR_FRAMESIZE  FRAMESIZE_SVGA
 
+//clip frame to 16:9 aspect ratio?
+//800x600 -> 800 x 480
+#define DVR_FRAMESIZE_16x9 false
+
 //DVR FPS
 #define DVR_FPS 25
 
@@ -33,7 +37,7 @@
 #define DVR_SEND_FRAMES_NO_RECORDING false
 
 //0...63 Lower number is higher quality
-#define DVR_JPEG_QUALITY 12
+#define DVR_JPEG_QUALITY 4
 
 //flip picture vetically
 #define DVR_VERTICAL_FLIP 1
