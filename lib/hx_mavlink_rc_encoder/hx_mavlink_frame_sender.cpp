@@ -3,7 +3,7 @@
 
 #define MAX_CHUNK_SIZE 253 //size of ENCAPSULATED_DATA payload
 
-#define MAX_FRAME_SIZE (MAX_CHUNK_SIZE*300)  //~75Kb
+#define MAX_FRAME_SIZE (MAX_CHUNK_SIZE*600)  //~150Kb
 
 //=====================================================================
 //=====================================================================

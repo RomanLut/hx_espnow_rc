@@ -242,7 +242,7 @@ void initCamera()
   s->set_quality(s, DVR_JPEG_QUALITY);
   s->set_contrast(s, 0);
   s->set_brightness(s, 0);
-  s->set_saturation(s, 1);
+  s->set_saturation(s, 2);
   s->set_denoise(s, 4);    
   s->set_sharpness(s, 0);    
   s->set_gainceiling(s, (gainceiling_t)0);
@@ -431,6 +431,7 @@ static bool closeAvi()
     if (frameCnt) 
     {
       fileLog.printf("Average frame length: %u bytes\n", vidSize / frameCnt);
+      fileLog.printf("Average bandwidth: %u kb/s\n", (vidSize / (vidDurationSecs >0 ? vidDurationSecs : 1) ) / 1024);
       fileLog.printf("Average frame monitoring time: %u ms\n", dTimeTot / frameCnt);
       fileLog.printf("Average frame buffering time: %u ms\n", fTimeTot / frameCnt);
       fileLog.printf("Average frame storage time: %u ms\n", wTimeTot / frameCnt);

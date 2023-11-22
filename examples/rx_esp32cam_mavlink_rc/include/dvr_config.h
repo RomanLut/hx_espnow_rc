@@ -37,7 +37,7 @@
 #define DVR_SEND_FRAMES_NO_RECORDING false
 
 //0...63 Lower number is higher quality
-#define DVR_JPEG_QUALITY 4
+#define DVR_JPEG_QUALITY 6
 
 //flip picture vetically
 #define DVR_VERTICAL_FLIP 1
