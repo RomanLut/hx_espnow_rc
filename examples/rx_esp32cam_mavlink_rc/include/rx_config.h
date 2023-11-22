@@ -19,7 +19,7 @@ https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
 OV2640 Datasheet
 https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640_DS(1.6).pdf
 
-)V3660 Datasheet:
+V3660 Datasheet:
 https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/unit/OV3660_CSP3_DS_1.3_sida.pdf
 
 OV5640 Datahsheet:
@@ -27,6 +27,16 @@ https://cdn.sparkfun.com/datasheets/Sensors/LightImaging/OV5640_datasheet.pdf
 
 OV2640 Software application:
 https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640%20Software%20Application%20Notes%201.03.pdf
+
+Camera library:
+https://github.com/espressif/esp32-camera
+
+ov2640 image quality Issues:
+//https://github.com/espressif/esp32-camera/issues/203
+//https://github.com/raduprv/esp32-cam_ov2640-timelapse/blob/main/ov2640_timelapse_github.ino
+
+//Camera Settings explained:
+//https://github.com/mashabow/timelapse-esp32-cam/issues/4
 
 4 - LAMP
 /33 - red LED

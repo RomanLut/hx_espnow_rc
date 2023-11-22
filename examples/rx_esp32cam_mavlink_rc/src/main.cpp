@@ -147,6 +147,67 @@ bool initSD()
 
 uint8_t xclkMhz = 20; // camera clock rate MHz
 
+//reg,val, mask
+const static uint8_t OV2640_SHARPNESS_AUTO[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0x20,   0x20,   
+};   
+   
+const static uint8_t OV2640_SHARPNESS_MANUAL[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0x00,   0x20,   
+};   
+   
+const static uint8_t OV2640_SHARPNESS_LEVEL0[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0xc0,   0x1f,   
+};   
+const static uint8_t OV2640_SHARPNESS_LEVEL1[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0xc1,   0x1f,   
+};   
+const static uint8_t OV2640_SHARPNESS_LEVEL2[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0xc2,   0x1f,   
+};   
+const static uint8_t OV2640_SHARPNESS_LEVEL3[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0xc4,   0x1f,   
+};   
+const static uint8_t OV2640_SHARPNESS_LEVEL4[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0xc8,   0x1f,   
+};   
+const static uint8_t OV2640_SHARPNESS_LEVEL5[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0xd0,   0x1f,   
+};   
+const static uint8_t OV2640_SHARPNESS_LEVEL6[]=   
+{   
+    0x92,   0x01,   0xff,   
+    0x93,   0xdf,   0x1f,   
+};   
+   
+const static uint8_t* OV_SETTING_SHARPNESS[]=   
+{   
+    OV2640_SHARPNESS_LEVEL0,   
+    OV2640_SHARPNESS_LEVEL1,   
+    OV2640_SHARPNESS_LEVEL2,   
+    OV2640_SHARPNESS_LEVEL3,   
+    OV2640_SHARPNESS_LEVEL4,   
+    OV2640_SHARPNESS_LEVEL5,   
+    OV2640_SHARPNESS_LEVEL6   
+};   
+
+
 //=====================================================================
 //=====================================================================
 void initCamera() 
@@ -173,11 +234,11 @@ void initCamera()
   config.xclk_freq_hz = xclkMhz * 1000000;
   config.pixel_format = PIXFORMAT_JPEG;
   config.grab_mode = CAMERA_GRAB_LATEST;
-  // init with high specs to pre-allocate larger buffers
   config.fb_location = CAMERA_FB_IN_PSRAM;
+  
+  //init with high specs to pre-allocate larger buffers
   config.frame_size = FRAMESIZE_UXGA;  
-
-  config.jpeg_quality = DVR_JPEG_QUALITY;
+  config.jpeg_quality = 1;  
   config.fb_count = FB_BUFFERS + 1; // +1 needed
 
   esp_err_t err = ESP_FAIL;
@@ -239,15 +300,15 @@ void initCamera()
     }
   }
 
-  s->set_quality(s, DVR_JPEG_QUALITY);
-  s->set_contrast(s, 0);
-  s->set_brightness(s, 0);
-  s->set_saturation(s, 2);
-  s->set_denoise(s, 4);    
-  s->set_sharpness(s, 0);    
-  s->set_gainceiling(s, (gainceiling_t)0);
-  s->set_colorbar(s, 0);
-  s->set_whitebal(s, 1);
+  s->set_quality(s, DVR_JPEG_QUALITY);  //0...63, 0 is best
+  s->set_contrast(s, 0); //-2...2
+  s->set_brightness(s, 0); //-2...2 
+  s->set_saturation(s, 2); //-2...2
+  //s->set_denoise(s, 4);  not supported on OV2640 in library
+  //s->set_sharpness(s, 0);  not supported on OV2640 in library
+  s->set_gainceiling(s, (gainceiling_t)3);
+  s->set_colorbar(s, 0);  //0 or 1 - enable color bars
+  s->set_whitebal(s, 1);  //0 or 1
   s->set_gain_ctrl(s, 1);
   s->set_exposure_ctrl(s, 1);
   s->set_hmirror(s, 0);
@@ -267,10 +328,31 @@ void initCamera()
   
   s->set_vflip(s, DVR_VERTICAL_FLIP);
   s->set_hmirror(s, DVR_HORIZONTAL_MIRROR);
+
+/*
+    reg, mask, val
+    s->set_reg(s,0xff,0xff,0x00);//banksel:DSP   BANK_DSP, BANK_SENSOR, BANK_MAX
+    //no sharpening
+    s->set_reg(s,0x92,0xff,0x1);
+    s->set_reg(s,0x93,0xff,0x0);  
+*/
+
+
+  int sharpness = 2;  
+
+  s->set_reg(s,0xff,0xff,0x00); //banksel:DSP   BANK_DSP, BANK_SENSOR, BANK_MAX
+
+  s->set_reg(s,OV2640_SHARPNESS_MANUAL[0],OV2640_SHARPNESS_MANUAL[2],OV2640_SHARPNESS_MANUAL[1]);
+  s->set_reg(s,OV2640_SHARPNESS_MANUAL[0+3],OV2640_SHARPNESS_MANUAL[2+3],OV2640_SHARPNESS_MANUAL[1+3]);
+
+  s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0],OV_SETTING_SHARPNESS[sharpness][2],OV_SETTING_SHARPNESS[sharpness][1]);
+  s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0+3],OV_SETTING_SHARPNESS[sharpness][2+3],OV_SETTING_SHARPNESS[sharpness][1+3]);
+  
+
 }
 
-
 // end camera **************************************************************
+
 
 
 // begin dvr **************************************************************
