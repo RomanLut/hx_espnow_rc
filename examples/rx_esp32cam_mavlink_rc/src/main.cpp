@@ -143,7 +143,8 @@ bool initSD()
 #include "esp_camera.h"
 #include "camera_pins.h"
 
-#define FB_BUFFERS 2 // stream / record
+#define FB_BUFFERS 3 // min 2, use max as much as PSRAM allows, to compensate fluctuating SD write speed. 1 buffer = ~400kb 
+//TODO: can buffer 3x more if use own caching
 
 uint8_t xclkMhz = 20; // camera clock rate MHz
 
@@ -207,6 +208,27 @@ const static uint8_t* OV_SETTING_SHARPNESS[]=
     OV2640_SHARPNESS_LEVEL6   
 };   
 
+
+//=====================================================================
+//=====================================================================
+void setSharpness( sensor_t * s, int sharpness)
+{
+/*
+    reg, mask, val
+    s->set_reg(s,0xff,0xff,0x00);//banksel:DSP   BANK_DSP, BANK_SENSOR, BANK_MAX
+    //no sharpening
+    s->set_reg(s,0x92,0xff,0x1);
+    s->set_reg(s,0x93,0xff,0x0);  
+*/
+
+  s->set_reg(s,0xff,0xff,0x00); //banksel:DSP   BANK_DSP, BANK_SENSOR, BANK_MAX
+
+  s->set_reg(s,OV2640_SHARPNESS_MANUAL[0],OV2640_SHARPNESS_MANUAL[2],OV2640_SHARPNESS_MANUAL[1]);
+  s->set_reg(s,OV2640_SHARPNESS_MANUAL[0+3],OV2640_SHARPNESS_MANUAL[2+3],OV2640_SHARPNESS_MANUAL[1+3]);
+
+  s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0],OV_SETTING_SHARPNESS[sharpness][2],OV_SETTING_SHARPNESS[sharpness][1]);
+  s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0+3],OV_SETTING_SHARPNESS[sharpness][2+3],OV_SETTING_SHARPNESS[sharpness][1+3]);
+}
 
 //=====================================================================
 //=====================================================================
@@ -305,7 +327,7 @@ void initCamera()
   s->set_brightness(s, 0); //-2...2 
   s->set_saturation(s, 2); //-2...2
   //s->set_denoise(s, 4);  not supported on OV2640 in library
-  //s->set_sharpness(s, 0);  not supported on OV2640 in library
+  //s->set_sharpness(s, DVR_SHARPNESS_LEVEL);  not supported on OV2640 in library
   s->set_gainceiling(s, (gainceiling_t)3);
   s->set_colorbar(s, 0);  //0 or 1 - enable color bars
   s->set_whitebal(s, 1);  //0 or 1
@@ -329,26 +351,8 @@ void initCamera()
   s->set_vflip(s, DVR_VERTICAL_FLIP);
   s->set_hmirror(s, DVR_HORIZONTAL_MIRROR);
 
-/*
-    reg, mask, val
-    s->set_reg(s,0xff,0xff,0x00);//banksel:DSP   BANK_DSP, BANK_SENSOR, BANK_MAX
-    //no sharpening
-    s->set_reg(s,0x92,0xff,0x1);
-    s->set_reg(s,0x93,0xff,0x0);  
-*/
-
-
-  int sharpness = 2;  
-
-  s->set_reg(s,0xff,0xff,0x00); //banksel:DSP   BANK_DSP, BANK_SENSOR, BANK_MAX
-
-  s->set_reg(s,OV2640_SHARPNESS_MANUAL[0],OV2640_SHARPNESS_MANUAL[2],OV2640_SHARPNESS_MANUAL[1]);
-  s->set_reg(s,OV2640_SHARPNESS_MANUAL[0+3],OV2640_SHARPNESS_MANUAL[2+3],OV2640_SHARPNESS_MANUAL[1+3]);
-
-  s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0],OV_SETTING_SHARPNESS[sharpness][2],OV_SETTING_SHARPNESS[sharpness][1]);
-  s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0+3],OV_SETTING_SHARPNESS[sharpness][2+3],OV_SETTING_SHARPNESS[sharpness][1+3]);
-  
-
+  //if ( s->id.PID ==  OV2640_PID )
+  setSharpness( s, DVR_SHARPNESS_LEVEL );
 }
 
 // end camera **************************************************************
@@ -374,6 +378,7 @@ uint8_t minSeconds = 5; // default min video length (includes POST_MOTION_TIME)
 
 // header and reporting info
 static uint32_t vidSize; // total video size
+static uint32_t maxFrameSize; 
 static uint16_t frameCnt;
 static uint32_t aviStartTime; // total overall time
 static uint32_t dTimeTot; // total frame decode/monitor time
@@ -381,10 +386,11 @@ static uint32_t fTimeTot; // total frame buffering time
 static uint32_t wTimeTot; // total SD write time
 static uint32_t oTime; // file opening time
 static uint32_t cTime; // file closing time
+static uint32_t maxWriteTime; // maximum time to write block
 
 static size_t highPoint;
 static File aviFile;
-uint8_t iSDbuffer[(RAMSIZE + CHUNK_HDR) * 2];
+uint8_t iSDbuffer[RAMSIZE + CHUNK_HDR];
 #define FILE_NAME_LEN 64
 static char aviFileName[FILE_NAME_LEN];
 
@@ -440,7 +446,7 @@ static bool openAvi()
   Serial.printf("File opening time: %ums\n", oTime);
 
   aviStartTime = millis();
-  frameCnt = fTimeTot = wTimeTot = dTimeTot = vidSize = 0;
+  frameCnt = fTimeTot = wTimeTot = dTimeTot = vidSize = maxFrameSize = maxWriteTime = 0;
   highPoint = AVI_HEADER_LEN; // allocate space for AVI header
   prepAviIndex();
   return true;
@@ -512,11 +518,11 @@ static bool closeAvi()
     fileLog.printf("File size: %s\n", fmtSize(vidSize));
     if (frameCnt) 
     {
-      fileLog.printf("Average frame length: %u bytes\n", vidSize / frameCnt);
+      fileLog.printf("Average/max frame length: %u / %u bytes\n", vidSize / frameCnt, maxFrameSize);
       fileLog.printf("Average bandwidth: %u kb/s\n", (vidSize / (vidDurationSecs >0 ? vidDurationSecs : 1) ) / 1024);
       fileLog.printf("Average frame monitoring time: %u ms\n", dTimeTot / frameCnt);
       fileLog.printf("Average frame buffering time: %u ms\n", fTimeTot / frameCnt);
-      fileLog.printf("Average frame storage time: %u ms\n", wTimeTot / frameCnt);
+      fileLog.printf("Average/max frame storage time: %u / %u ms\n", wTimeTot / frameCnt, maxWriteTime);
     }   
     fileLog.printf("Average SD write speed: %u kB/s\n", ((vidSize / wTimeTot) * 1000) / 1024);
     fileLog.printf("File open / completion times: %u ms / %u ms\n", oTime, cTime);
@@ -570,6 +576,8 @@ static bool saveFrame(camera_fb_t* fb)
   } 
   wTime = millis() - wTime;
   wTimeTot += wTime;
+  if ( maxWriteTime < wTime ) maxWriteTime = wTime;
+
   //Serial.printf("SD storage time %u ms\n", wTime);
   // whats left or small frame
   memcpy(iSDbuffer+highPoint, fb->buf + jpegSize - jpegRemain, jpegRemain);
@@ -577,6 +585,7 @@ static bool saveFrame(camera_fb_t* fb)
   
   buildAviIdx(jpegSize); // save avi index for frame
   vidSize += jpegSize + CHUNK_HDR;
+  if ( maxFrameSize < jpegSize ) maxFrameSize = jpegSize;
   frameCnt++; 
   fTime = millis() - fTime - wTime;
   fTimeTot += fTime;

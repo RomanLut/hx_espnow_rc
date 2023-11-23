@@ -38,6 +38,7 @@ ov2640 image quality Issues:
 //Camera Settings explained:
 //https://github.com/mashabow/timelapse-esp32-cam/issues/4
 
+
 4 - LAMP
 /33 - red LED
 2,14,15 - SD 1 bit mode 4,12,13 - SD 4 bit mode
@@ -45,6 +46,33 @@ ov2640 image quality Issues:
 1 - TXD0 (debug)
 12 - RXD2 (mavlink)
 13 - TDX2 (mavlink)
+
+Various notes:
+1. Camera should be initialzied with highgest settings (UXGA, jpeg quality < 4) to preallocate large buffers. 
+ Settings can be changed later. Otherwise app will likely crash on some high frame size.
+
+2. Sharpness and denoise are not supported in esp32-camera library for ov2640.
+ It is impossible to get good image outdoors with automatic sharpness. Camera enables blur when sky is seen in the large part of frame.
+ So all you get is blurry footage in the air. Sharpness should be set to level 2 or 3 using direct registers manipulation.
+
+3. SD Write speed in 1-bit mote is almost the same as in 4-bit mode. Should use 1-bit mode to free spare pins.
+
+4. SD Write speed fluctuate a lot (updating FAT?)
+
+5. ov2540 is capable of dumping 800x600 30FPS max on 24Mhz. esp32 can do 20Mhz only, so max fps is 30*20/24 = 25.
+
+6. There are 3 'pixel-skipping' modes: 1600x1200, 800x600 and 640x480.  Other modes are just window inside theese modes.
+So while 800x600 can do 25FPS, 1024x768 are significantly slover ( 12.5 FPS) because camera parses full 1600x1200 matrix.
+It is not possible to get good FPS for 1280x720 unfortunatelly (should 3MP or 5MP camera improve situation?).
+
+6. Windowing from 800x600 to 800x452 allows to decrease JPEG size by 30%.
+
+7. Lamp LED is ~100mA. Better should be replaced with small LED + 300Ohm resistor.
+
+8. Total power consumption without lamp is ~300mA.
+
+9. Max SDCard size is 32GB.
+
 */
 
 //true to use Mavlink1 ( TODO: support Mavlink1)

@@ -27,7 +27,7 @@
 #define DVR_AUTO_START_RECORDING true
 
 //max frames in one avi file (uint16_t)
-//65000 35 FPS = 43 minutes
+//65000 25 FPS = 43 minutes
 #define DVR_MAX_FRAMES  65000
 
 //AVI size in seconds
@@ -37,7 +37,10 @@
 #define DVR_SEND_FRAMES_NO_RECORDING false
 
 //0...63 Lower number is higher quality
-#define DVR_JPEG_QUALITY 6
+#define DVR_JPEG_QUALITY 5
+
+//sharpness level, 0...5
+#define DVR_SHARPNESS_LEVEL 2
 
 //flip picture vetically
 #define DVR_VERTICAL_FLIP 1
