@@ -47,3 +47,9 @@
 
 //mirror picture horizontally
 #define DVR_HORIZONTAL_MIRROR 1
+
+
+
+//HQVGA/JQ12/S2/SH0
+//VGA/J5/S2/SH2
+//HD/J8/S0/SH3
