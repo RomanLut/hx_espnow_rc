@@ -15,9 +15,11 @@
       	{ "event": { "name": "DISCONNECTED"	},  "op": { "name": "SOUND",	"parm": "/connection_lost.mp3"	} },
 
 		{ "event": { "name": "STARTUP"	},	"op": {	"name": "CONSTANT",		"parm": 1500,	"channel": 6	} },
+		{ "event": { "name": "STARTUP"	},	"op": {	"name": "CONSTANT",		"parm": 1500,	"channel": 8	} },
 		{ "event": { "name": "STARTUP"	},	"op": {	"name": "CONSTANT",		"parm": 1500,	"channel": 10	} },
 		{ "event": { "name": "STARTUP"	},	"op": {	"name": "CONSTANT",		"parm": 1500,	"channel": 12	} },
 		{ "event": { "name": "STARTUP"	},	"op": {	"name": "CONSTANT",		"parm": 1500,	"channel": 13	} },
+		{ "event": { "name": "STARTUP"	},	"op": {	"name": "CONSTANT",		"parm": 2000,	"channel": 14	} },
 
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_X", 	"channel": 1 	} },
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS",		"parm": "RIGHT_STICK_Y", 	"channel": 2 	} },
@@ -32,13 +34,7 @@
 
 		{ "event": { "name": "ALWAYS" 	},	"op": {	"name": "SWITCH3",	"parm": "RIGHT_BUMPER",	"channel": 7,	"note":"disabled/poshold/rth" } },
 
-		{ "event": { "name": "ALWAYS" 	},	"op": {	"name": "SWITCH",	"parm": "JOY_RIGHT",	"channel": 8,	"note":"gps off/on"	} },
-
-		{ "event": { "name": "ALWAYS"	},	"op": { "name": "ADD",		"parm" : -250,					"channel": 10 } },
-		{ "event": { "name": "ALWAYS"	},	"op": { "name": "MULD10",	"parm" : 20,					"channel": 10 } },
-		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "AXIS_SWITCH_RIGHT",	"parm": "AXIS4",	"channel": 10,	"note":"vtx power"	} },
-		{ "event": { "name": "ALWAYS"	},	"op": { "name": "MULD10",	"parm" : 5,						"channel": 10 } },
-		{ "event": { "name": "ALWAYS"	},	"op": { "name": "ADD",		"parm" : 250,					"channel": 10 } },
+		{ "event": { "name": "ALWAYS" 	},	"op": {	"name": "SWITCH3",	"parm": "JOY_RIGHT",	"channel": 8,	"note":"image quality"	} },
 
 		{ "event": { "name": "ALWAYS"	},	"op": { "name": "ADD",		"parm" : -250,					"channel": 11 } },
 		{ "event": { "name": "ALWAYS"	},	"op": { "name": "MULD10",	"parm" : 20,					"channel": 11 } },
@@ -50,7 +46,7 @@
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "SWITCH",	"parm": "JOY_DOWN",				"channel": 9,	"note":"wpm enable/disable" } },
 		{ "event": { "name": "ALWAYS"	},	"op": { "name": "ADD",		"parm" : -125,					"channel": 9 } },
 
-		{ "event": { "name": "ALWAYS" 	},	"op": {	"name": "BUTTON",	"parm": "JOY_LEFT",	"channel": 14, "note": "recording toggle" } },
+		{ "event": { "name": "ALWAYS" 	},	"op": {	"name": "SWITCH",	"parm": "JOY_LEFT",	"channel": 14, "note": "recording toggle" } },
 
 		{ "event": { "name": "ALWAYS"	},	"op": {	"name": "CONSTANT",	"parm": 2000,	"channel": 15,	"note":"telemetry on" 	} },
 
@@ -81,18 +77,17 @@
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 1500, "repeat": 7000 }, "op": { "name": "SOUND", "parm": "/poshold.mp3" } },
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 7, "value": 2000, "repeat": 7000 }, "op": { "name": "SOUND", "parm": "/rth.mp3" } },
 
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/gps_on.mp3" } },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 2000, "repeat": 12000 }, "op": { "name": "SOUND", "parm": "/gps_off.mp3"} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/image_low.mp3" } },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 1500, "once": "yes" }, "op": { "name": "SOUND", "parm": "/image_medium.mp3"} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 8, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/image_high.mp3"} },
 
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 9, "value": 875,  "once": "yes" }, "op": { "name": "SOUND", "parm": "/wpm_disabled.mp3" } },
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 9, "value": 1875, "repeat": 15000 }, "op": { "name": "SOUND", "parm": "/wpm_enabled.mp3"} },
 
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 10, "value": 1500, "once": "yes" }, "op": { "name": "SOUND", "parm": "/vtx_power_minimum.mp3" 	} },
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 10, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/vtx_power_maximum.mp3" } },
-
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 11, "value": 1500, "once": "yes" }, "op": { "name": "SOUND", "parm": "/autolaunch_disabled.mp3" } },
 		{ "event": { "name": "CHANNEL_EQUAL", "channel": 11, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/autolaunch_enabled.mp3"} },
 
-		{ "event": { "name": "CHANNEL_EQUAL", "channel": 14, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/rec_toggled.mp3"} }
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 14, "value": 1000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/rec_enable.mp3"} },
+		{ "event": { "name": "CHANNEL_EQUAL", "channel": 14, "value": 2000, "once": "yes" }, "op": { "name": "SOUND", "parm": "/rec_disable.mp3"} }
 	]
 }
