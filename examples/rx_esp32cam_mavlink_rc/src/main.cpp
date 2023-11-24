@@ -21,6 +21,8 @@
 
 #define WDT_TIMEOUT_SECONDS 5  
 
+#define ERROR_PAUSE_MS 10000
+
 HXRCSlave hxrcSlave;
 HXRCSerialBuffer<1024> hxrcTelemetrySerial( &hxrcSlave );
 HXMavlinkRCEncoder hxMavlinkRCEncoder;
@@ -37,6 +39,7 @@ unsigned long lastStats = millis();
 
 bool initError = false;
 bool cameraInitError = false;
+unsigned long DVRPause;
 
 #ifndef DVR_ONLY
 
@@ -85,6 +88,7 @@ void printSDInfo()
   {
     Serial.println("No SD card attached");
     initError = true;
+    DVRPause = millis() + ERROR_PAUSE_MS;
   }
   else 
   {
@@ -128,6 +132,7 @@ bool initSD()
   {
     Serial.println("SD card mount failed");
     initError = true;
+    DVRPause = millis() + ERROR_PAUSE_MS;
   }
   return res;
     
@@ -211,7 +216,8 @@ const static uint8_t* OV_SETTING_SHARPNESS[]=
 
 //=====================================================================
 //=====================================================================
-void setSharpness( sensor_t * s, int sharpness)
+//0...5
+void setOV2640SharpnessLevel( sensor_t * s, int sharpness)
 {
 /*
     reg, mask, val
@@ -228,6 +234,37 @@ void setSharpness( sensor_t * s, int sharpness)
 
   s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0],OV_SETTING_SHARPNESS[sharpness][2],OV_SETTING_SHARPNESS[sharpness][1]);
   s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0+3],OV_SETTING_SHARPNESS[sharpness][2+3],OV_SETTING_SHARPNESS[sharpness][1+3]);
+}
+
+//=====================================================================
+//=====================================================================
+void setDRVQuality() 
+{
+  sensor_t * s = esp_camera_sensor_get();
+
+  s->set_framesize(s, DVRQualitySettings[DVRQuality].frameSize);
+  if ( DVRQualitySettings[DVRQuality].frameSize16x9mod )
+  {
+    if ( DVRQualitySettings[DVRQuality].frameSize == FRAMESIZE_SVGA)
+    {
+      //800x452
+      //ofsx, ofsy, outw, outh, maxx, maxy
+      s->set_res_raw(s, 1/*OV2640_MODE_SVGA*/,0,0,0, 0, 72, 800, 600-144, 800,600-144,false,false);
+    }
+  }
+
+  if ( s->id.PID == OV2640_PID )
+  {
+    setOV2640SharpnessLevel( s, DVRQualitySettings[DVRQuality].sharpness + 3 );
+  }
+  else
+  {
+    s->set_sharpness(s, DVRQualitySettings[DVRQuality].sharpness);  //not supported on OV2640 in esp32camp library
+  }
+
+  s->set_saturation(s, DVRQualitySettings[DVRQuality].saturation);
+  
+  s->set_quality(s, DVRQualitySettings[DVRQuality].jpegQuality);  
 }
 
 //=====================================================================
@@ -284,6 +321,7 @@ void initCamera()
     Serial.printf("Startup failure: Camera init error 0x%x", err);
     initError = true;
     cameraInitError = true;
+    DVRPause = millis() + 0xf000000;
     return;
   }
 
@@ -309,25 +347,12 @@ void initCamera()
     break;
   }
 
+  setDRVQuality();
+
   //https://randomnerdtutorials.com/esp32-cam-ov2640-camera-settings/
-
-  s->set_framesize(s, DVR_FRAMESIZE);
-  if ( DVR_FRAMESIZE_16x9 )
-  {
-    if ( DVR_FRAMESIZE == FRAMESIZE_SVGA)
-    {
-      //800x452
-      //ofsx, ofsy, outw, outh, maxx, maxy
-      s->set_res_raw(s, 1/*OV2640_MODE_SVGA*/,0,0,0, 0, 72, 800, 600-144, 800,600-144,false,false);
-    }
-  }
-
-  s->set_quality(s, DVR_JPEG_QUALITY);  //0...63, 0 is best
   s->set_contrast(s, 0); //-2...2
   s->set_brightness(s, 0); //-2...2 
-  s->set_saturation(s, 2); //-2...2
   //s->set_denoise(s, 4);  not supported on OV2640 in library
-  //s->set_sharpness(s, DVR_SHARPNESS_LEVEL);  not supported on OV2640 in library
   s->set_gainceiling(s, (gainceiling_t)3);
   s->set_colorbar(s, 0);  //0 or 1 - enable color bars
   s->set_whitebal(s, 1);  //0 or 1
@@ -351,8 +376,6 @@ void initCamera()
   s->set_vflip(s, DVR_VERTICAL_FLIP);
   s->set_hmirror(s, DVR_HORIZONTAL_MIRROR);
 
-  //if ( s->id.PID ==  OV2640_PID )
-  setSharpness( s, DVR_SHARPNESS_LEVEL );
 }
 
 // end camera **************************************************************
@@ -368,8 +391,8 @@ void initCamera()
 SemaphoreHandle_t aviMutex = NULL;
 SemaphoreHandle_t frameSemaphore;
 TaskHandle_t captureHandle = NULL;
-uint8_t FPS = DVR_FPS;
-static uint8_t saveFPS = DVR_FPS;
+//uint8_t FPS = DVR_FPS;
+//static uint8_t saveFPS = DVR_FPS;
 static uint16_t frameInterval; // units of 0.1ms between frames
 bool isCapturing = false;
 bool wasCapturing = false;
@@ -408,7 +431,7 @@ static void IRAM_ATTR frameISR()
 
 //=====================================================================
 //=====================================================================
-void controlFrameTimer(bool restartTimer) 
+void controlFrameTimer(bool restartTimer, int FPS) 
 {
   // frame timer control, timer 3 so dont conflict with cam
   static hw_timer_t* frameTimer = NULL;
@@ -479,7 +502,7 @@ static bool closeAvi()
   uint8_t actualFPSint = (uint8_t)(lround(actualFPS));  
 
   xSemaphoreTake(aviMutex, portMAX_DELAY); 
-  buildAviHdr(actualFPSint, DVR_FRAMESIZE, DVR_FRAMESIZE_16x9,frameCnt);
+  buildAviHdr( actualFPSint, DVRQualitySettings[DVRQuality].frameSize, DVRQualitySettings[DVRQuality].frameSize16x9mod, frameCnt );
   xSemaphoreGive(aviMutex); 
 
   aviFile.seek(0, SeekSet); // start of file
@@ -513,7 +536,7 @@ static bool closeAvi()
     fileLog.printf("Recorded %s\n", aviFileName);
     fileLog.printf("AVI duration: %u secs\n", vidDurationSecs);
     fileLog.printf("Number of frames: %u\n", frameCnt);
-    fileLog.printf("Required FPS: %u\n", FPS);
+    fileLog.printf("Required FPS: %u\n", DVRQualitySettings[DVRQuality].fps);
     fileLog.printf("Actual FPS: %0.1f\n", actualFPS);
     fileLog.printf("File size: %s\n", fmtSize(vidSize));
     if (frameCnt) 
@@ -596,44 +619,78 @@ static bool saveFrame(camera_fb_t* fb)
 
 //=====================================================================
 //=====================================================================
+void setDVRFPS() 
+{
+  controlFrameTimer(true, DVRQualitySettings[DVRQuality].fps);
+}
+
+//=====================================================================
+//=====================================================================
 static boolean processFrame() 
 {
   // get camera frame
   bool res = true;
-
   bool restartAvi = false;
-
   uint32_t dTime = millis();
 
-  //Serial.println("PROCESS1");
+  if ( initError) return false;
 
   camera_fb_t* fb = esp_camera_fb_get();
   if (fb == NULL) 
   {
     return false;
   }
-      //Serial.println("PROCESS2");
 
-  if ( forceRecord || DVR_SEND_FRAMES_NO_RECORDING)
+  if ( DVRPause < dTime )
   {
-    if (mavlinkFrameSender.isEmpty())
-    {   
-      mavlinkFrameSender.addFrame(fb->buf, fb->len);
+    if ( forceRecord || DVR_SEND_FRAMES_NO_RECORDING)
+    {
+      if (mavlinkFrameSender.isEmpty())
+      {   
+        mavlinkFrameSender.addFrame(fb->buf, fb->len);
+      }
     }
   }
 
-  if (forceRecord && !wasCapturing) 
+  int quality = DVRQuality;
+  
+  if ( DVRPause < dTime )
   {
-    Serial.println("Capture started.");
-    if ( openAvi() )
-    {
-      wasCapturing = true;
+    if ( (QUALITY_CHANNEL>0) && !hxrcSlave.getReceiverStats().isFailsafe())
+    { 
+        HXRCChannels channels = hxrcSlave.getChannels();
+        int v = channels.getChannelValue(QUALITY_CHANNEL-1);
+        if ( v < 1250 ) 
+        {
+          quality = 0;
+        }
+        else if ( v < 1750 ) 
+        {
+          quality = 1;
+        }
+        else
+        {
+          quality = 2;
+        }
     }
-    else
+  }
+
+  if ( DVRPause < dTime )
+  {
+    if (forceRecord && !wasCapturing) 
     {
-      Serial.println("ERROR: Unable to open avi file.");
-      forceRecord = false;
-      initError = true;
+      Serial.println("Capture started.");
+      if ( openAvi() )
+      {
+        wasCapturing = true;
+      }
+      else
+      {
+        Serial.println("ERROR: Unable to open avi file.");
+        forceRecord = false;
+        initError = true;
+        DVRPause = millis() + ERROR_PAUSE_MS;
+      }
     }
   }
 
@@ -648,6 +705,7 @@ static boolean processFrame()
       Serial.print("ERROR: Error writing AVI file.");
       forceRecord = false;
       initError = true;
+      DVRPause = millis() + ERROR_PAUSE_MS;
     }
 
     if (frameCnt >= DVR_MAX_FRAMES) 
@@ -663,6 +721,11 @@ static boolean processFrame()
       restartAvi = true;
     }
 
+    if ( DVRQuality != quality )
+    {
+      Serial.println("Auto closed recording to change quality");
+      restartAvi = true;
+    }
   }
 
   esp_camera_fb_return(fb);
@@ -671,6 +734,15 @@ static boolean processFrame()
   {
     wasCapturing = false;
     closeAvi();
+  }
+
+  if ( (wasCapturing == false) && ( DVRQuality != quality) )
+  {
+      DVRQuality = quality;
+      Serial.printf("Setting quality to: %d", DVRQuality);
+      setDRVQuality();
+      setDVRFPS();
+      DVRPause = millis() + 2000; //2 seconds pause to apply camera settings
   }
 
   return res;
@@ -697,21 +769,6 @@ static void captureTask(void* parameter)
 
 //=====================================================================
 //=====================================================================
-uint8_t setFPS(uint8_t val) 
-{
-  // change or retrieve FPS value
-  if (val) 
-  {
-    FPS = val;
-    // change frame timer which drives the task
-    controlFrameTimer(true);
-    saveFPS = FPS; // used to reset FPS after playback
-  }
-  return FPS;
-}
-
-//=====================================================================
-//=====================================================================
 bool initDVR() 
 {
   //Initialisation & prep for AVI capture
@@ -727,6 +784,7 @@ bool initDVR()
   if (fb == NULL) 
   {
     initError = true;
+    DVRPause = millis() + ERROR_PAUSE_MS;
     fileLog.printf("Error: Failed to get camera frame");
     fileLog.flush();
     return false;
@@ -751,7 +809,7 @@ bool initDVR()
 
   xTaskCreate(&captureTask, "captureTask", 1024 * 4, NULL, 5, &captureHandle);
 
-  setFPS(DVR_FPS); 
+  setDVRFPS();
 
   Serial.println("Init DVR done.");
 
@@ -778,7 +836,8 @@ void endTasks()
 void OTAprereq() 
 {
   forceRecord = false;
-  controlFrameTimer(false);
+  DVRPause = millis() + 0xff0000;
+  controlFrameTimer(false, 25);
   endTasks();
   esp_camera_deinit();
   delay(100);
@@ -829,24 +888,17 @@ void checkButton()
   static bool lastButtonState = false;
 
   if ( debounceTime > millis() ) return;
-
   bool buttonState = digitalRead( REC_BUTTON_PIN ) == LOW;
-
   if ( buttonState != lastButtonState )
   {
     debounceTime = millis() + 100;
     lastButtonState = buttonState;
 
+    Serial.println("Button pressed");
+
     if ( buttonState )
     {
       forceRecord = !forceRecord;
-
-      if ( initError && forceRecord )
-      {
-        Serial.println("Rebooting after rrror.");
-        delay(300);
-        ESP.restart();
-      }
     }
   }
 }
@@ -939,6 +991,8 @@ void setup()
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 #endif 
+
+  DVRPause = millis() + 1000;
 
   //Note: GPIO16 can not be used, it is used by PSRAM
   //GPIO33 is red /LED
@@ -1100,6 +1154,26 @@ void loop()
 
 #endif
   updateLEDs();
-  checkButton();
+
+  if ( DVRPause < millis() )
+  {
+    if ((RECORD_CHANNEL > 0) && !hxrcSlave.getReceiverStats().isFailsafe())
+    {
+      HXRCChannels channels = hxrcSlave.getChannels();
+      forceRecord = channels.getChannelValue(RECORD_CHANNEL-1) > 1750;
+    }
+    else
+    {
+      checkButton();
+    }
+
+    if ( initError && forceRecord )
+    {
+      Serial.println("Rebooting after errror.");
+      delay(300);
+      ESP.restart();
+    }
+  }
+  
 }
  
