@@ -18,15 +18,20 @@ https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
 
 OV2640 Datasheet
 https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640_DS(1.6).pdf
+OV2640 Software application notes:
+https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640%20Software%20Application%20Notes%201.03.pdf
 
 V3660 Datasheet:
 https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/unit/OV3660_CSP3_DS_1.3_sida.pdf
+OV3640 Software application notes:
+https://www.arducam.com/downloads/modules/OV3640/3-OV3640%20Software%20application%20notes.pdf
 
 OV5640 Datahsheet:
 https://cdn.sparkfun.com/datasheets/Sensors/LightImaging/OV5640_datasheet.pdf
-
-OV2640 Software application:
-https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640%20Software%20Application%20Notes%201.03.pdf
+OV5640 Software application notes:
+https://www.waveshare.com/w/upload/c/cb/OV5640_camera_module_software_application_notes_1.3_Sonix.pdf
+OV5640 Auto Focus Camera Module Application Note:
+https://www.arducam.com/downloads/modules/OV5640/OV5640_Software_app_note_parallel.pdf
 
 Camera library:
 https://github.com/espressif/esp32-camera
