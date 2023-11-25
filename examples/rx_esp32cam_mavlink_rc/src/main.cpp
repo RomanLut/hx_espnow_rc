@@ -248,7 +248,7 @@ void setDRVQuality()
     if ( DVRQualitySettings[DVRQuality].frameSize == FRAMESIZE_SVGA)
     {
       //800x452
-      //ofsx, ofsy, outw, outh, maxx, maxy
+      //ov2640_sensor_mode_t, unused,unused,unused, ofsx, ofsy, max_x, max_y, w, h
       s->set_res_raw(s, 1/*OV2640_MODE_SVGA*/,0,0,0, 0, 72, 800, 600-144, 800,600-144,false,false);
     }
   }
@@ -371,7 +371,7 @@ void initCamera()
   s->set_lenc(s, 1);
   s->set_special_effect(s, 0);
   s->set_wb_mode(s, 0);
-  s->set_ae_level(s, 2);  
+  s->set_ae_level(s, 1);  
   
   s->set_vflip(s, DVR_VERTICAL_FLIP);
   s->set_hmirror(s, DVR_HORIZONTAL_MIRROR);

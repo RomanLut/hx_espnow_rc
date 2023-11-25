@@ -10,7 +10,7 @@
 #define DVR_LQ_FPS              25
 #define DVR_LQ_JPEG_QUALITY     12
 #define DVR_LQ_SHARPNESS        -1
-#define DVR_LQ_SATURATION       2
+#define DVR_LQ_SATURATION       0
 
 //=========================================================
 // Medium Quality Preset
@@ -18,7 +18,7 @@
 #define DVR_MQ_FRAMESIZE_16x9   true
 #define DVR_MQ_FPS              25
 #define DVR_MQ_JPEG_QUALITY     5
-#define DVR_MQ_SHARPNESS        -1
+#define DVR_MQ_SHARPNESS        0
 #define DVR_MQ_SATURATION       2
 
 //=========================================================
