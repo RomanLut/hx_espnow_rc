@@ -236,6 +236,28 @@ void setOV2640SharpnessLevel( sensor_t * s, int sharpness)
   s->set_reg(s,OV_SETTING_SHARPNESS[sharpness][0+3],OV_SETTING_SHARPNESS[sharpness][2+3],OV_SETTING_SHARPNESS[sharpness][1+3]);
 }
 
+typedef struct {
+        union {
+                struct {
+                        uint8_t pclk_div:7;
+                        uint8_t pclk_auto:1;
+                };
+                uint8_t pclk;
+        };
+        union {
+                struct {
+                        uint8_t clk_div:6;
+                        uint8_t reserved:1;
+                        uint8_t clk_2x:1;
+                };
+                uint8_t clk;
+        };
+} ov2640_clk_t;
+
+#define R_DVP_SP            0xD3
+#define CLKRC               0x11
+
+
 //=====================================================================
 //=====================================================================
 void setDRVQuality() 
@@ -251,6 +273,12 @@ void setDRVQuality()
       //ov2640_sensor_mode_t, unused,unused,unused, ofsx, ofsy, max_x, max_y, w, h
       s->set_res_raw(s, 1/*OV2640_MODE_SVGA*/,0,0,0, 0, 72, 800, 600-144, 800,600-144,false,false);
     }
+    else if ( DVRQualitySettings[DVRQuality].frameSize == FRAMESIZE_UXGA)
+    {
+      //1600x904
+      //ov2640_sensor_mode_t, unused,unused,unused, ofsx, ofsy, max_x, max_y, w, h
+      s->set_res_raw(s, 0/*OV2640_MODE_UXGA*/,0,0,0, 0, 148, 1600, 1200-148*2, 1600,1200-148*2,false,false);
+    }
   }
 
   if ( s->id.PID == OV2640_PID )
@@ -265,6 +293,33 @@ void setDRVQuality()
   s->set_saturation(s, DVRQualitySettings[DVRQuality].saturation);
   
   s->set_quality(s, DVRQualitySettings[DVRQuality].jpegQuality);  
+
+  if (s->id.PID == OV2640_PID)
+  {
+    if (DVRQualitySettings[DVRQuality].frameSize == FRAMESIZE_SVGA)
+    {
+      s->set_xclk( s, 0, 12 );  //actual frequency will be 12,307692307692  (160Mhz / 13)
+
+      ov2640_clk_t c;
+      c.reserved = 0;
+
+      c.clk_2x = 1;  // 12,307692307692 * 2 = ~ 24,6Mhz
+      c.clk_div = 0;
+      c.pclk_auto = 0;
+      c.pclk_div = 6;
+
+      s->set_reg(s,0xff,0xff,0x01); //banksel:sensor  ()  BANK_DSP, BANK_SENSOR, BANK_MAX)
+      s->set_reg(s, CLKRC, 0xff, c.clk);
+
+      s->set_reg(s,0xff,0xff,0x00); //banksel:dsp  ()  BANK_DSP, BANK_SENSOR, BANK_MAX)
+      s->set_reg(s, R_DVP_SP, 0xff, c.pclk);
+    }
+    else
+    {
+      s->set_xclk( s, 0, 20 );
+    }
+  }
+
 }
 
 //=====================================================================
@@ -295,9 +350,13 @@ void initCamera()
   config.grab_mode = CAMERA_GRAB_LATEST;
   config.fb_location = CAMERA_FB_IN_PSRAM;
   
-  //init with high specs to pre-allocate larger buffers
+  //init with high specs to pre-allocate large buffers
   config.frame_size = FRAMESIZE_UXGA;  
   config.jpeg_quality = 1;  
+  //https://github.com/espressif/esp32-camera/issues/185#issue-716800775
+  //jpeg_quality 0 ..5 -- 960,000 bytes uxga, 240,000 bytes svga
+  //jpeg_quality 6..10 -- 384,000 bytes uxga, 96,000 bytes svga
+  //jpeg_quality 11+ -- 240,000 bytes uxga, 60,000 bytes svga  */
   config.fb_count = FB_BUFFERS + 1; // +1 needed
 
   esp_err_t err = ESP_FAIL;
@@ -785,7 +844,7 @@ bool initDVR()
   {
     initError = true;
     DVRPause = millis() + ERROR_PAUSE_MS;
-    fileLog.printf("Error: Failed to get camera frame");
+    fileLog.printf("Init Error: Failed to get camera frame");
     fileLog.flush();
     return false;
   }
@@ -1020,6 +1079,11 @@ void setup()
 
   //REVIEW: receiver does not work if AP is not initialized?
   WiFi.softAP("hxrccammavlink", NULL, USE_WIFI_CHANNEL);
+
+  //corruped frames due to wifi
+  //https://github.com/espressif/esp32-camera/issues/244
+  esp_wifi_set_ps(WIFI_PS_NONE);
+
 
   ArduinoOTA.onProgress(&onOTAprogress);
   ArduinoOTA.begin();  

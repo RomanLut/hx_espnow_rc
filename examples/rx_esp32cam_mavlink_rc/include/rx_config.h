@@ -37,12 +37,20 @@ Camera library:
 https://github.com/espressif/esp32-camera
 
 ov2640 image quality Issues:
-//https://github.com/espressif/esp32-camera/issues/203
-//https://github.com/raduprv/esp32-cam_ov2640-timelapse/blob/main/ov2640_timelapse_github.ino
+https://github.com/espressif/esp32-camera/issues/203
+https://github.com/raduprv/esp32-cam_ov2640-timelapse/blob/main/ov2640_timelapse_github.ino
 
-//Camera Settings explained:
-//https://github.com/mashabow/timelapse-esp32-cam/issues/4
+Camera Settings explained:
+https://github.com/mashabow/timelapse-esp32-cam/issues/4
 
+Broken frames problem:
+https://github.com/espressif/esp32-camera/issues/244#issuecomment-831561336
+
+Sharpness, jpg clock:
+https://github.com/espressif/esp32-camera/issues/203
+
+Camera parallel interface description
+https://www.ftdichip.com/old2020/Support/Documents/TechnicalNotes/TN_158_What_Is_The_Camera_Parallel_Interface.pdf
 
 4 - LAMP
 /33 - red LED
