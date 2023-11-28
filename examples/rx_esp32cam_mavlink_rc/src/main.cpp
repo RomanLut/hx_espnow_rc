@@ -306,7 +306,7 @@ void setDRVQuality()
       c.clk_2x = 1;  // 12,307692307692 * 2 = ~ 24,6Mhz
       c.clk_div = 0;
       c.pclk_auto = 0;
-      c.pclk_div = 6;
+      c.pclk_div = 6;    //DVP PCLK = XCLK * (clk_2x?2:1) / clk_div * 2 / pclk_div ????
 
       s->set_reg(s,0xff,0xff,0x01); //banksel:sensor  ()  BANK_DSP, BANK_SENSOR, BANK_MAX)
       s->set_reg(s, CLKRC, 0xff, c.clk);
