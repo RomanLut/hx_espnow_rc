@@ -30,8 +30,12 @@ OV5640 Datahsheet:
 https://cdn.sparkfun.com/datasheets/Sensors/LightImaging/OV5640_datasheet.pdf
 OV5640 Software application notes:
 https://www.waveshare.com/w/upload/c/cb/OV5640_camera_module_software_application_notes_1.3_Sonix.pdf
+Hardware application notes:
+http://ica123.com/wp-content/uploads/2021/01/OV5640_Camera_Module_Hardware_Application_Notes_R1.0%E8%8B%B1%E6%96%87%E6%89%8B%E5%86%8C.pdf
 OV5640 Auto Focus Camera Module Application Note:
 https://www.arducam.com/downloads/modules/OV5640/OV5640_Software_app_note_parallel.pdf
+Timer tree:
+https://patchwork.kernel.org/project/linux-media/patch/20181113130325.28975-2-maxime.ripard@bootlin.com/
 
 Camera library:
 https://github.com/espressif/esp32-camera
