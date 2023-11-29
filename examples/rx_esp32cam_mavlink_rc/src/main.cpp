@@ -21,8 +21,6 @@
 
 #define WDT_TIMEOUT_SECONDS 5  
 
-#define ERROR_PAUSE_MS 10000
-
 HXRCSlave hxrcSlave;
 HXRCSerialBuffer<1024> hxrcTelemetrySerial( &hxrcSlave );
 HXMavlinkRCEncoder hxMavlinkRCEncoder;
@@ -36,6 +34,8 @@ unsigned long lastStats = millis();
 #ifdef HXRC_ONLY
 #include "frame.h"
 #endif
+
+#define ERROR_PAUSE_MS 10000
 
 bool initError = false;
 bool cameraInitError = false;
@@ -700,6 +700,7 @@ static boolean processFrame()
     return false;
   }
 
+#ifndef DVR_ONLY
   if ( DVRPause < dTime )
   {
     if ( forceRecord || DVR_SEND_FRAMES_NO_RECORDING)
@@ -710,9 +711,11 @@ static boolean processFrame()
       }
     }
   }
+#endif  
 
   int quality = DVRQuality;
   
+#ifndef DVR_ONLY  
   if ( DVRPause < dTime )
   {
     if ( (QUALITY_CHANNEL>0) && !hxrcSlave.getReceiverStats().isFailsafe())
@@ -733,6 +736,7 @@ static boolean processFrame()
         }
     }
   }
+#endif
 
   if ( DVRPause < dTime )
   {
@@ -1221,12 +1225,14 @@ void loop()
 
   if ( DVRPause < millis() )
   {
+#ifndef DVR_ONLY    
     if ((RECORD_CHANNEL > 0) && !hxrcSlave.getReceiverStats().isFailsafe())
     {
       HXRCChannels channels = hxrcSlave.getChannels();
       forceRecord = channels.getChannelValue(RECORD_CHANNEL-1) > 1750;
     }
     else
+#endif    
     {
       checkButton();
     }
