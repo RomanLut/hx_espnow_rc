@@ -17,9 +17,11 @@ Pinout:
 https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
 
 OV2640 Datasheet
-https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640_DS(1.6).pdf
+https://github.com/espressif/esp32-camera/files/8845358/Camera.ov2640_ds_1.8_.pdf
 OV2640 Software application notes:
 https://github.com/Freenove/Freenove_ESP32_WROVER_Board/blob/main/Datasheet/OV2640/OV2640%20Software%20Application%20Notes%201.03.pdf
+//Setting brightness/contracs, BPADDR,BPDATA:
+https://github.com/espressif/esp32-camera/issues/401
 
 V3660 Datasheet:
 https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/unit/OV3660_CSP3_DS_1.3_sida.pdf
