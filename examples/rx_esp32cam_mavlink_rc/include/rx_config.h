@@ -58,6 +58,9 @@ https://github.com/espressif/esp32-camera/issues/203
 Camera parallel interface description
 https://www.ftdichip.com/old2020/Support/Documents/TechnicalNotes/TN_158_What_Is_The_Camera_Parallel_Interface.pdf
 
+Stack overflow crash with high settings:
+https://github.com/espressif/esp32-camera/issues/514
+
 4 - LAMP
 /33 - red LED
 2,14,15 - SD 1 bit mode 4,12,13 - SD 4 bit mode
