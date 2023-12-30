@@ -1,3 +1,5 @@
+#if defined(ESP32)
+
 #include "hx_mavlink_frame_sender.h"
 #include <common/mavlink.h>
 
@@ -233,3 +235,5 @@ void HXMavlinkFrameSender::dumpState()
         break;
     }
 }
+
+#endif

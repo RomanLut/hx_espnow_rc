@@ -1,5 +1,7 @@
 #pragma once
 
+#if defined(ESP32)
+
 #include <Arduino.h>
 #include <stdint.h>
 
@@ -42,5 +44,6 @@ public:
     void dumpState();
 };
 
+#endif
 
 
