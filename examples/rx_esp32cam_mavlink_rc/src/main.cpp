@@ -1065,7 +1065,7 @@ void setup()
   Serial.begin(115200, SERIAL_8N1, 4, 1 );  //connect RX pin to LAMP(4) pin to free pin 3
 
 #ifndef DVR_ONLY
-  mavlinkSerial.begin( TELEMETRY_BAUDRATE, SERIAL_8N1, 12, 13); //rx tx
+  mavlinkSerial.begin( TELEMETRY_BAUDRATE, SERIAL_8N1, 13, 12); //rx tx
 
   hxMavlinkRCEncoder.init( MAVLINK_RC_PACKET_RATE_MS, USE_MAVLINK_V1 );
 
@@ -1098,10 +1098,6 @@ void setup()
   printFreeMem();
 
   initSD(); 
-
-  //reinit mavlink serial pins after initSD()
-// pinMode(12, INPUT);
-//  pinMode(13, OUTPUT);
 
   initCamera();
 

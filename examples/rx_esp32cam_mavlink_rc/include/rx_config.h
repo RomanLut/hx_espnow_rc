@@ -4,14 +4,16 @@
             [][][][][][][][]
             [5V]      [3.3V]
             [GND]       [16]
- Mavlink RX [12]         [0]         <---/ ---> GND  FLASH Button
- Mavlink TX [13]       [GND]
+ Mavlink TX [12]         [0]         <---/ ---> GND  FLASH Button
+ Mavlink RX [13]       [GND]
             [15]     [3.3/5]
             [14]         [3] RX      <---/ ---> GND  REC Button
             [2]          [1] TX
        LAMP [4]      [GND/R]  <-- GND on some boards, RESET/EN (pullup 3.3V) on toher boards
             [  ESP32 CAM   ]
             [][][][][][][][]
+
+GPIO12 should not be pulled up by FC! ESP will not boot!
 
 Pinout:
 https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/
@@ -64,8 +66,8 @@ https://github.com/espressif/esp32-camera/issues/514
 4 - LAMP
 /33 - red LED
 2,14,15 - SD 1 bit mode 4,12,13 - SD 4 bit mode
-3 - RXD0 (debug)  
-1 - TXD0 (debug)
+4 - RXD0 (intentionally connected to LED pin(4) to free pin 3 for REC button)   
+1 - TXD0 (debug output)
 12 - RXD2 (mavlink)
 13 - TDX2 (mavlink)
 
@@ -81,11 +83,11 @@ Various notes:
 
 4. SD Write speed fluctuate a lot (updating FAT?)
 
-5. ov2540 is capable of dumping 800x600 30FPS max on 24Mhz. esp32 can do 20Mhz only, so max fps is 30*20/24 = 25.
+5. ov2640 is capable of dumping 800x600 30FPS max on 24Mhz. esp32 can do 20Mhz only, so max fps is 30*20/24 = 25.
 
-6. There are 3 'pixel-skipping' modes: 1600x1200, 800x600 and 640x480.  Other modes are just window inside theese modes.
+6. There are 3 'pixel-skipping' modes: 1600x1200, 800x600 and 400x296.  Other modes are just window inside theese modes.
 So while 800x600 can do 25FPS, 1024x768 are significantly slover ( 12.5 FPS) because camera parses full 1600x1200 matrix.
-It is not possible to get good FPS for 1280x720 unfortunatelly (should 3MP or 5MP camera improve situation?).
+It is not possible to get good FPS in 1280x720 mode unfortunatelly (should 3MP or 5MP camera improve situation?).
 
 6. Windowing from 800x600 to 800x452 allows to decrease JPEG size by 30%.
 
