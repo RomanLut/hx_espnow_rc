@@ -26,11 +26,22 @@ void ModeEspNowRC::start( JsonDocument* json, HC06Interface* externalBTSerial )
 
     JsonDocument* profile = TXProfileManager::instance.getCurrentProfile();
 
+    this->LRMode = (*profile)["espnow_long_range_mode"] | false;
+
     HXRCConfig config(
             (*profile)["espnow_channel"] | 3,
             (*profile)["espnow_key"] | 0,
             this->LRMode,
             -1, false);
+
+    if ( this->LRMode ) 
+    {
+      HXRCLOG.print("LR Mode=true\n");
+    }
+    else
+    {
+      HXRCLOG.print("LR Mode=false\n");
+    }
 
     String pktRate = (*profile)["packet_rate"] | "";
     if ( pktRate == "MAX" )
@@ -83,8 +94,6 @@ void ModeEspNowRC::start( JsonDocument* json, HC06Interface* externalBTSerial )
         ErrorLog::instance.write(phyRate.c_str());
         ErrorLog::instance.write("\n");
     }
-
-    this->LRMode = (*profile)["espnow_long_range_mode"] | false;
 
     this->hxrcMaster.init(config);
 
