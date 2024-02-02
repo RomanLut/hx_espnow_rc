@@ -84,7 +84,7 @@ Profile to be used with:
 
 Note that receiver should be flashed with LR mode enabled `#define USE_LR_MODE true`
 
-To enable LR mode, add parameter to prfile json:
+To enable LR mode, add parameter to profile json:
 ``
     "espnow_long_range_mode" : true,
 ``
