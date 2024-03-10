@@ -62,7 +62,7 @@ void setup()
   Serial.begin(TELEMETRY_BAUDRATE);
 //  Serial.println("Start");
 
-  hxSBUSEncoder.init( Serial1, SBUS_PIN, SBUS_INVERTED );
+  hxSBUSEncoder.init( Serial1, SBUS_PIN, 100000, SERIAL_8E2, SBUS_INVERTED );
 
   hxrcSlave.init(
       HXRCConfig(

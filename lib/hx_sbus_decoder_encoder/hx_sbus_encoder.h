@@ -20,7 +20,7 @@ public:
     HXSBUSEncoder();
 
     //invert==true means inverted SBUS == normal UART
-    void init( HardwareSerial& serial, uint8_t tx_pin, bool invert );
+    void init( HardwareSerial& serial, uint8_t tx_pin, int baudrate, int parity, bool invert );
 
     void setFailsafe( bool failsafe );
     void setChannelValueDirect( uint8_t index, uint16_t value );

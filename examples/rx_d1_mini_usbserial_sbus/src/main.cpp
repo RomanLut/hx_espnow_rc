@@ -27,7 +27,7 @@ void processIncomingTelemetry()
 //=====================================================================
 void setup()
 {
-  hxSBUSEncoder.init( Serial, 1, true );
+  hxSBUSEncoder.init( Serial, 1, USBSERIAL_BAUDRATE, USBSERIAL_PARITY, USBSERIAL_INVERTED_SBUS );
 
   hxrcSlave.init(
       HXRCConfig(

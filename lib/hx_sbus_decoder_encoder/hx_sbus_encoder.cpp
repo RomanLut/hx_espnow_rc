@@ -13,7 +13,7 @@ HXSBUSEncoder::HXSBUSEncoder()
 
 //=====================================================================
 //=====================================================================
-void HXSBUSEncoder::init( HardwareSerial& serial, uint8_t tx_pin, bool invert )
+void HXSBUSEncoder::init( HardwareSerial& serial, uint8_t tx_pin, int baudrate, int parity, bool invert )
 {
     lastPacket.init();
     lastPacket.failsafe = 1;
@@ -22,14 +22,14 @@ void HXSBUSEncoder::init( HardwareSerial& serial, uint8_t tx_pin, bool invert )
 #if defined(ESP8266)
     //FIXME: Arduino library for ESP8266 does not contain code to invert Serial1.
     //Sneak flags to SerialConfig
-    int serialConfig = SERIAL_8E2;
+    int serialConfig = parity;
     if  (!invert )
     {
         serialConfig |= BIT(UCTXI);
     }
-    serial.begin(100000, (SerialConfig)serialConfig, SerialMode::SERIAL_TX_ONLY, tx_pin, !invert );  
+    serial.begin(baudrate, (SerialConfig)serialConfig, SerialMode::SERIAL_TX_ONLY, tx_pin, !invert );  
 #elif defined(ESP32)
-    serial.begin(100000, SERIAL_8E2, -1, tx_pin, !invert );  
+    serial.begin(baudrate, parity, -1, tx_pin, !invert );  
 #endif
 }
 

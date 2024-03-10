@@ -46,7 +46,7 @@ void setup()
 
   Serial.swap(); //GPIO15 D8 (TX) and GPIO13 D7 (RX)
   
-  hxSBUSEncoder.init( Serial1, 2, SBUS_INVERTED );
+  hxSBUSEncoder.init( Serial1, 2, 100000, SERIAL_8E2, SBUS_INVERTED );
 
   hxrcSlave.init(
       HXRCConfig(

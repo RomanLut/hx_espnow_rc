@@ -20,7 +20,18 @@ To be used with simulators which expect SBUS receiver to be connected to COM por
 
 */
 
-#define SERIAL_BAUDRATE 100000
+
+//Serial port parameters for SBUS output:
+
+#define USBSERIAL_INVERTED_SBUS true  //true => inverted SBUS == normal UART
+#define USBSERIAL_PARITY SERIAL_8E2 
+#define USBSERIAL_BAUDRATE 100000
+
+/*
+#define USBSERIAL_INVERTED_SBUS true  //true => inverted SBUS == normal UART
+#define USBSERIAL_PARITY SERIAL_8N1 
+#define USBSERIAL_BAUDRATE 115200
+*/
 
 //=============================================================================
 //Receiver binding
