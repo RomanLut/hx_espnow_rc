@@ -130,6 +130,10 @@ There are 3 types of ESP-01 board:
 
 Determine your board type by checking installed flash chip. F.e. T25S80 is 1Mb chip. 
 
+# SBUS view with logic analizer
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/sbus_logic.jpg "sbus logic")
+
 # ESP01 schematix
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp01_schematix.jpg "ESP01 schematix")
