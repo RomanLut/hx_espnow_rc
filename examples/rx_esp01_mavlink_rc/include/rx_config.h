@@ -31,7 +31,8 @@ https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 //The only way to switch back is to reset FC.
 //Thus it is not possible to use ARM switch for this purpoce. 
 //Number is one based index!!! (channel 1 = 1)
-#define MSP_SWITCH_CHANNEL 15 
+//set to 0 to disable
+#define MSP_SWITCH_CHANNEL 0
 
 //note: 
 //Mavlink v1: 18 bytes(message size) * 25(rate) * 10(bits) = 4500 baud
