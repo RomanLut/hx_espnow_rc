@@ -125,10 +125,10 @@ For example:
 - 1300...1400 ( or -40%) - profile 4
 - 1400...1500 ( or -20%) - profile 5
 - 1500...1600 ( or 0%) - profile 6
-- 1600...1700 ( or -20%) - profile 7
-- 1700...1800 ( or -40%) - profile 8
-- 1800...1900 ( or -60%) - profile 9
-- 1900...2000 ( or -80%) - profile 10 (Configuration mode)
+- 1600...1700 ( or +20%) - profile 7
+- 1700...1800 ( or +40%) - profile 8
+- 1800...1900 ( or +60%) - profile 9
+- 1900...2000 ( or +80%) - profile 10 (Configuration mode)
 
 See profiles https://github.com/RomanLut/hx_espnow_rc/blob/main/doc/tx_profiles.md
 
