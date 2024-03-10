@@ -96,6 +96,10 @@ If receiver is flashed in LR mode, access point will not be visible initially. R
 
 # Reference
 
+# SBUS view with logic analizer
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/sbus_logic.jpg "sbus logic")
+
 # ESP32-WROOM-32 pinout
 
 ![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_wroom_32_pinout.png "ESP32-PINOUT-32 pinout")
