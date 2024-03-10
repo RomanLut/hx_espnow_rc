@@ -95,6 +95,10 @@ lines in `platformio.ini`.
 
 # Reference
 
+# SBUS view with logic analizer
+
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/sbus_logic.jpg "sbus logic")
+
 # D1 Mini  schematix
 
 ESP8266 operating voltage range is 3.0v - 3.3V. Maximum power consumption is ~300mA. Board contains LDO regulator ( 250mV on 500mA ). This allows to run board directly from 1S battery. In practice, it runs fine down to 3.1V.
