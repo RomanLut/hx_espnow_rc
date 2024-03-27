@@ -149,6 +149,15 @@ bool HXRCMaster::init( HXRCConfig config )
 //=====================================================================
 void HXRCMaster::loop()
 {
+    unsigned long t = millis();
+    unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
+
+    if ((senderState == HXRCSS_WAIT_SEND_FINISH) && (deltaT > HXRC_MISSED_ACK_PERIOD_MS))
+    {
+        //HXRCLOG.println("Callback timeout!");
+        senderState = HXRCSS_READY_TO_SEND;
+    }
+
     if ( senderState == HXRCSS_READY_TO_SEND )
     {
         unsigned long t = millis();

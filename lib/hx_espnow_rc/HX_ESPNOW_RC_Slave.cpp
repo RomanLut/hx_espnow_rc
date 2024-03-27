@@ -164,7 +164,7 @@ void HXRCSlave::loop()
     unsigned long t = millis();
     unsigned long deltaT = t - transmitterStats.lastSendTimeMs;
 
-    if (deltaT > 500)
+    if ((senderState == HXRCSS_WAIT_SEND_FINISH) && (deltaT > HXRC_MISSED_ACK_PERIOD_MS))
     {
         //HXRCLOG.println("Callback timeout!");
         senderState = HXRCSS_READY_TO_SEND;

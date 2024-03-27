@@ -40,6 +40,8 @@
 
 #define HXRC_PROTOCOL_VERSION 1
 
+#define HXRC_MISSED_ACK_PERIOD_MS 500
+
 class HXRCConfig;
 
 extern uint8_t BROADCAST_MAC[6];
