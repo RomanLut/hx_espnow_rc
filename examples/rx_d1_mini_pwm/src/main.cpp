@@ -424,8 +424,9 @@ void updateHDriverOutputs()
 
     if (mag < H_BRIDGE_DEADBAND_US)
     {
-      analogWrite(fwd, 0);
-      analogWrite(rev, 0);
+      int brake = ( channels.getChannelValue(MOTOR_BEEPER_CH) >= 1750) ? 1023 : 0;
+      analogWrite(fwd, brake);
+      analogWrite(rev, brake);
       continue;
     }
 

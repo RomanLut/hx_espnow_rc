@@ -54,16 +54,16 @@ Failsafe:
 
 //PWM duty value to beep with brushed motors
 //idle beep
-#define BEEP_DUTY_VALUE 15
+#define BEEP_DUTY_VALUE 200
 //high volume beep duty value, used when MOTOR_BEEPER_CH is enabled.
 //This value can turn motors a little.
-#define BEEP_DUTY_VALUE_HIGH 35
+#define BEEP_DUTY_VALUE_HIGH 300
 
 //if channel value is less then PWM_CH_MIN, pwm output is zero - for PWM outputs
 #define PWM_CH_MIN 1050 
 
 //deadband for center position, f.e. 100 => 1400...1600 is dead zone - ofr H_BRIDGE output
-#define H_BRIDGE_DEADBAND_US   100
+#define H_BRIDGE_DEADBAND_US   50
 
 //PWM frequency for H-BRIDGE and PWM outputs
 #define OUTPUT_PWM_FREQ_HZ    8192
@@ -71,8 +71,8 @@ Failsafe:
 
 //if adc read smaler values for period BATTERY_THRESHOLD_PERIOD_MS, all outputs will be disabled (low voltage protection).
 //Zero means low battery protection is disabled.
-#define BATTERY_THRESHOLD  0
-#define BATTERY_THRESHOLD_PERIOD_MS 500
+#define BATTERY_THRESHOLD  114
+#define BATTERY_THRESHOLD_PERIOD_MS 1000
 
 //=============================================================================
 //Receiver binding
@@ -93,6 +93,7 @@ Failsafe:
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
 //#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
 //#define MOTOR_BEEPER_CH -1
+//#define BRAKE_CH -1
 //==========================================================================================
 
 
@@ -111,6 +112,7 @@ Failsafe:
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
 //#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
 //#define MOTOR_BEEPER_CH 8 //zero-based CH number
+//#define BRAKE_CH -1
 //==========================================================================================
 
 
@@ -121,14 +123,29 @@ Failsafe:
 //3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
 //A0 - ADC input
 
-#define TOTAL_CHANNELS   9
-#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
-#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
-#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
-#define MOTOR_BEEPER_CH 8 //zero-based CH number
+//#define TOTAL_CHANNELS   9
+//#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+//#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
+//#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+//#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
+//#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
+//#define MOTOR_BEEPER_CH 8 //zero-based CH number
+//#define BRAKE_CH -1
 //==========================================================================================
+
+//Receiver configuration 4: RC car H-Bridge + servo
+//==========================================================================================
+
+#define TOTAL_CHANNELS   9
+#define SERVO_PINS {13 /*D7*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
+#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
+#define HDRIVER_PINS { { NOPIN, NOPIN }, {NOPIN, NOPIN}, {12 /*D6*/,14 /*D5*/}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
+#define MOTOR_BEEPER_CH 7 //zero-based CH number
+#define BRAKE_CH 6 //zero-based CH number enable brake
+//==========================================================================================
+
 
 //Notes: 
 //5 - D1 - SCL, 4 - D2 - SDA
