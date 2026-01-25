@@ -13,6 +13,9 @@ unsigned long analogReadTime = millis();
 unsigned long failsafeStart = 0;
 unsigned long idleStart = 0;
 uint16_t battSum = 0;
+uint16_t adcFiltered = 0;
+bool lowBattery = false;
+unsigned long lowBatteryStart = 0;
 
 bool servoOutputsAttached = false;
 bool PWMOutputsAttached = false;
@@ -105,7 +108,7 @@ void updateServoOutputs()
 {
   static uint8_t counter = 0;
 
-  if ( hxrcSlave.getReceiverStats().isFailsafe() )
+  if ( hxrcSlave.getReceiverStats().isFailsafe() || lowBattery )
   {
     if ( servoOutputsAttached )
     {
@@ -182,7 +185,7 @@ void attachPWMPins()
   if ( PWMOutputsAttached ) return;
   PWMOutputsAttached = true;
   
-  analogWriteFreq( 8192 );
+  analogWriteFreq( OUTPUT_PWM_FREQ_HZ );
   analogWriteResolution(10);
   
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
@@ -283,6 +286,20 @@ void processBeep()
 //=====================================================================
 void updatePWMOutputs()
 {
+  if (lowBattery)
+  {
+    idleStart = 0;
+    attachPWMPins();
+    for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+    {
+      if (pwmPins[i] != NOPIN)
+      {
+        analogWrite(pwmPins[i], 0 );
+      }
+    }
+    return;
+  }
+
   bool fs = hxrcSlave.getReceiverStats().isFailsafe();
   HXRCChannels channels = hxrcSlave.getChannels();
 
@@ -338,7 +355,7 @@ void updatePWMOutputs()
 void attachHDriverPins()
 {
   //Use dedicated PWM frequency for H-bridge outputs (global for all analogWrite)
-  analogWriteFreq(H_BRIDGE_PWM_HZ);
+  analogWriteFreq(OUTPUT_PWM_FREQ_HZ);
   analogWriteResolution(10);
 
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
@@ -365,7 +382,7 @@ void updateHDriverOutputs()
 
     if ((fwd == NOPIN) || (rev == NOPIN)) continue;
 
-    if (fs)
+    if (fs || lowBattery)
     {
       analogWrite(fwd, 0);
       analogWrite(rev, 0);
@@ -402,7 +419,7 @@ void updateHDriverOutputs()
 //=====================================================================
 void updateDiscreteOutputs()
 {
-  if( hxrcSlave.getReceiverStats().isFailsafe() ) return;
+  if( hxrcSlave.getReceiverStats().isFailsafe() || lowBattery ) return;
 
   HXRCChannels channels = hxrcSlave.getChannels();
 
@@ -467,6 +484,7 @@ void setup()
   writeBeepDutyValue(false, false);
   attachPWMPins();
   attachHDriverPins();
+  detachServoOutputs(); //ensure PWM/H-driver freq setup does not interfere with servo timing before first use
 }
 
 //=====================================================================
@@ -519,7 +537,34 @@ void loop()
       battSum = battSum - (( battSum + 4 ) >> 3) + ((v + 2) >> 2);
     }
 
-    hxrcSlave.setA1( (battSum + 4 ) >> 3);
+    adcFiltered = (battSum + 4 ) >> 3;
+    hxrcSlave.setA1( adcFiltered );
+
+    //Low-battery detection (raw ADC units)
+    bool wasLow = lowBattery;
+    if (BATTERY_THRESHOLD == 0)
+    {
+      lowBattery = false;
+      lowBatteryStart = 0;
+    }
+    else if (adcFiltered < BATTERY_THRESHOLD)
+    {
+      if (lowBatteryStart == 0) lowBatteryStart = millis();
+      if (!lowBattery && (millis() - lowBatteryStart >= BATTERY_THRESHOLD_PERIOD_MS))
+      {
+        lowBattery = true;
+      }
+    }
+    else
+    {
+      lowBatteryStart = 0;
+      lowBattery = false;
+    }
+
+    if (lowBattery && !wasLow)
+    {
+      zeroOutputs();
+    }
   }
 
   hxrcSlave.loop();
@@ -529,12 +574,17 @@ void loop()
     lastStats = millis();
     hxrcSlave.getTransmitterStats().printStats();
     hxrcSlave.getReceiverStats().printStats();
+    Serial.print("ADC0: ");
+    Serial.println(adcFiltered);
   }
 
-  updateServoOutputs();
-  updatePWMOutputs();
-  updateHDriverOutputs();
-  updateDiscreteOutputs();
+  if ( !lowBattery )
+  {
+    updateServoOutputs();
+    updatePWMOutputs();
+    updateHDriverOutputs();
+    updateDiscreteOutputs();
+  }
 
 #if defined(DEBUG_LOOP_PIN)
     digitalWrite(DEBUG_LOOP_PIN, LOW );  

@@ -15,11 +15,11 @@ GPIO15 D8 =o         o= GND
 
 https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/ 
 
-SERVO_PINS - Pins for SERVO output ( 1-2ms 50Hz pulses ). GPIO id for each RC channel. Set to NOPIN to skip channel.
+SERVO_PINS - Pins for SERVO (or ESC) output ( 1-2ms 50Hz pulses ). GPIO id for each RC channel. Set to NOPIN to skip channel.
 
 CALIBRATE_ESC_PINS - whether to run ESC calibration on pins on boot. Applicable to SERVO_PINS only.
 
-PWM_PINS - Pins for PWM output (8192Hz PWM, duty cycle 0-100%). GPIO id for each RC channel. Set to NOPIN to skip channel.
+PWM_PINS - Pins for PWM output (OUTPUT_PWM_FREQ_HZ PWM, duty cycle 0-100%). GPIO id for each RC channel. Set to NOPIN to skip channel.
 
 DISCRETE_PINS - Pins for discrete output: 1000 -> 0, >1250-> 1. GPIO id for each RC channel. Set to NOPIN to skip channel.
 
@@ -35,6 +35,9 @@ Failsafe:
  Servo pins - no pulses
  PWM pins - no pulses
  Discrete pins - keeps last state
+
+ ADC0 can be connected to battery voltage with divider which outputs 3.2V max.
+ Recommended maximum value is 2.5V because higher values are not linear in esp8266 ADC.
 */
 
 #define NOPIN 255
@@ -56,14 +59,20 @@ Failsafe:
 //This value can turn motors a little.
 #define BEEP_DUTY_VALUE_HIGH 35
 
-//if channel value is less then PWM_CH_MIN, pwm output is zero
+//if channel value is less then PWM_CH_MIN, pwm output is zero - for PWM outputs
 #define PWM_CH_MIN 1050 
 
-//PWM frequency for H-BRIDGE
-#define H_BRIDGE_PWM_HZ    5000
-
-//deadband for center position, f.e. 100 => 1400...1600 is dead zone
+//deadband for center position, f.e. 100 => 1400...1600 is dead zone - ofr H_BRIDGE output
 #define H_BRIDGE_DEADBAND_US   100
+
+//PWM frequency for H-BRIDGE and PWM outputs
+#define OUTPUT_PWM_FREQ_HZ    8192
+
+
+//if adc read smaler values for period BATTERY_THRESHOLD_PERIOD_MS, all outputs will be disabled (low voltage protection).
+//Zero means low battery protection is disabled.
+#define BATTERY_THRESHOLD  0
+#define BATTERY_THRESHOLD_PERIOD_MS 500
 
 //=============================================================================
 //Receiver binding
