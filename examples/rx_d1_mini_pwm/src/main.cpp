@@ -22,6 +22,14 @@ uint8_t servoPins[TOTAL_CHANNELS] = SERVO_PINS;
 uint8_t pwmPins[TOTAL_CHANNELS] = PWM_PINS;
 uint8_t discretePins[TOTAL_CHANNELS] = DISCRETE_PINS;
 
+struct HDriverPins
+{
+  uint8_t forward;
+  uint8_t reverse;
+};
+
+HDriverPins hdriverPins[TOTAL_CHANNELS] = HDRIVER_PINS;
+
 
 //=====================================================================
 //=====================================================================
@@ -327,6 +335,71 @@ void updatePWMOutputs()
 
 //=====================================================================
 //=====================================================================
+void attachHDriverPins()
+{
+  //Use dedicated PWM frequency for H-bridge outputs (global for all analogWrite)
+  analogWriteFreq(H_BRIDGE_PWM_HZ);
+  analogWriteResolution(10);
+
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    if ((hdriverPins[i].forward != NOPIN) && (hdriverPins[i].reverse != NOPIN))
+    {
+      analogWrite( hdriverPins[i].forward, 0 );
+      analogWrite( hdriverPins[i].reverse, 0 );
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
+void updateHDriverOutputs()
+{
+  HXRCChannels channels = hxrcSlave.getChannels();
+  bool fs = hxrcSlave.getReceiverStats().isFailsafe();
+
+  for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
+  {
+    uint8_t fwd = hdriverPins[i].forward;
+    uint8_t rev = hdriverPins[i].reverse;
+
+    if ((fwd == NOPIN) || (rev == NOPIN)) continue;
+
+    if (fs)
+    {
+      analogWrite(fwd, 0);
+      analogWrite(rev, 0);
+      continue;
+    }
+
+    int16_t v = (int16_t)channels.getChannelValue(i) - 1500;
+    int16_t mag = abs(v);
+
+    if (mag < H_BRIDGE_DEADBAND_US)
+    {
+      analogWrite(fwd, 0);
+      analogWrite(rev, 0);
+      continue;
+    }
+
+    mag = constrain(mag, 0, 500);
+    uint16_t duty = map(mag, 0, 500, 0, 1023);
+
+    if (v > 0)
+    {
+      analogWrite(fwd, duty);
+      analogWrite(rev, 0);
+    }
+    else
+    {
+      analogWrite(fwd, 0);
+      analogWrite(rev, duty);
+    }
+  }
+}
+
+//=====================================================================
+//=====================================================================
 void updateDiscreteOutputs()
 {
   if( hxrcSlave.getReceiverStats().isFailsafe() ) return;
@@ -349,11 +422,11 @@ void zeroOutputs()
 {
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
-    if ((servoPins[i] != NOPIN) || (pwmPins[i] != NOPIN) || (discretePins[i] != NOPIN))
-    {
-      pinMode(servoPins[i], OUTPUT );  
-      digitalWrite(servoPins[i], LOW );  
-    }
+    if (servoPins[i] != NOPIN)      { pinMode(servoPins[i], OUTPUT );      digitalWrite(servoPins[i], LOW );  }
+    if (pwmPins[i] != NOPIN)        { pinMode(pwmPins[i], OUTPUT );        digitalWrite(pwmPins[i], LOW );    }
+    if (discretePins[i] != NOPIN)   { pinMode(discretePins[i], OUTPUT );   digitalWrite(discretePins[i], LOW );}
+    if (hdriverPins[i].forward != NOPIN) { pinMode(hdriverPins[i].forward, OUTPUT ); digitalWrite(hdriverPins[i].forward, LOW ); }
+    if (hdriverPins[i].reverse != NOPIN) { pinMode(hdriverPins[i].reverse, OUTPUT ); digitalWrite(hdriverPins[i].reverse, LOW ); }
   }
 }
 
@@ -393,6 +466,7 @@ void setup()
   delay(100);
   writeBeepDutyValue(false, false);
   attachPWMPins();
+  attachHDriverPins();
 }
 
 //=====================================================================
@@ -459,6 +533,7 @@ void loop()
 
   updateServoOutputs();
   updatePWMOutputs();
+  updateHDriverOutputs();
   updateDiscreteOutputs();
 
 #if defined(DEBUG_LOOP_PIN)

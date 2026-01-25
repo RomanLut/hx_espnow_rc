@@ -17,13 +17,19 @@ https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 
 SERVO_PINS - Pins for SERVO output ( 1-2ms 50Hz pulses ). GPIO id for each RC channel. Set to NOPIN to skip channel.
 
-CALIBRATE_ESC_PINS - run ESC calibration on pins on boot. Applicable to SERVO_PINS only.
+CALIBRATE_ESC_PINS - whether to run ESC calibration on pins on boot. Applicable to SERVO_PINS only.
 
 PWM_PINS - Pins for PWM output (8192Hz PWM, duty cycle 0-100%). GPIO id for each RC channel. Set to NOPIN to skip channel.
 
 DISCRETE_PINS - Pins for discrete output: 1000 -> 0, >1250-> 1. GPIO id for each RC channel. Set to NOPIN to skip channel.
 
 MOTOR_BEEPER_CH - channel to enable beep with PWM mottor. Value >1250 - motors with zero throttle value will start beeping. 
+
+HDRIVER_PINS - H-BRIDGE control, f.e. l298n, mx1919, mx 619e -  2 pins for each channel
+
+H-bridge channel mapping:
+- RC value < 1500-deadband -> reverse; > 1500+deadband -> forward; near 1500 -> brake/stop
+- Duty is proportional to |value-1500|
 
 Failsafe:
  Servo pins - no pulses
@@ -53,6 +59,11 @@ Failsafe:
 //if channel value is less then PWM_CH_MIN, pwm output is zero
 #define PWM_CH_MIN 1050 
 
+//PWM frequency for H-BRIDGE
+#define H_BRIDGE_PWM_HZ    5000
+
+//deadband for center position, f.e. 100 => 1400...1600 is dead zone
+#define H_BRIDGE_DEADBAND_US   100
 
 //=============================================================================
 //Receiver binding
@@ -71,6 +82,7 @@ Failsafe:
 //#define CALIBRATE_ESC_PINS {false, false, false, true, false, false, false, false}
 //#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
+//#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
 //#define MOTOR_BEEPER_CH -1
 //==========================================================================================
 
@@ -88,6 +100,7 @@ Failsafe:
 //#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
 //#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
+//#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
 //#define MOTOR_BEEPER_CH 8 //zero-based CH number
 //==========================================================================================
 
@@ -104,6 +117,7 @@ Failsafe:
 #define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
 #define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 #define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
+#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
 #define MOTOR_BEEPER_CH 8 //zero-based CH number
 //==========================================================================================
 
