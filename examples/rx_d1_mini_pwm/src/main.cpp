@@ -220,11 +220,18 @@ void attachPWMPinsBeep( bool force )
 //=====================================================================
 void writeBeepDutyValue( bool b, bool highVolume )
 {
+  uint16_t duty = b ? (highVolume? BEEP_DUTY_VALUE_HIGH : BEEP_DUTY_VALUE):0;
+
   for (uint8_t i = 0; i < TOTAL_CHANNELS; i++ )
   {
     if (pwmPins[i] != NOPIN)
     {
-      analogWrite(pwmPins[i], b ? (highVolume? BEEP_DUTY_VALUE_HIGH : BEEP_DUTY_VALUE):0);
+      analogWrite(pwmPins[i], duty);
+    }
+    if ((hdriverPins[i].forward != NOPIN) && (hdriverPins[i].reverse != NOPIN))
+    {
+      analogWrite(hdriverPins[i].forward, duty);
+      analogWrite(hdriverPins[i].reverse, 0);
     }
   }
 }
