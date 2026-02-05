@@ -57,6 +57,9 @@ Anternatively, repace 1uF capacitor on board with 20uF capacitor:
                                                
 If GPIO15(D8) is pulled up, ESP8266 boot fails. Some FCs may pull up RX pin. The easiest way to solve this is to add 1k pulldown resistor. Resistor may be required and may be not depending on FC type. If ESP can not boot, try to disconnect D8 during powerup to check if resistor is required.
 
+# Using USB UART
+If you plan to connect receiver to some GS using USB, uncomment define **USE_USB_UART** in **rx_config.h**. Communication will work on normal RX/TX pins, so you can connect d1 mini to USB host port.
+
 # Building steps
 
 1. Solder R1

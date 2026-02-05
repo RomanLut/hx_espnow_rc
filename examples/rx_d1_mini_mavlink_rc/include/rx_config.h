@@ -19,6 +19,9 @@ GPIO15 - TX
 GPIO13 - RX
 */
 
+//Communicae over USB UART
+//#define USE_USB_UART
+
 //Use Mavlink v1 ( 8 RC Channels ) or Mavlink v2 (15 RC Channels)
 #define USE_MAVLINK_V1 false
 

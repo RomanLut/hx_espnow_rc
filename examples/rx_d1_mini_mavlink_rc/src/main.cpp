@@ -44,7 +44,9 @@ void setup()
 
   Serial.begin(TELEMETRY_BAUDRATE);
   
-  Serial.swap(); //GPIO15 D8 (TX) and GPIO13 D7 (RX)
+#if !defined(USE_USB_UART)
+    Serial.swap(); //GPIO15 D8 (TX) and GPIO13 D7 (RX)
+#endif    
   
   hxMavlinkRCEncoder.init( MAVLINK_RC_PACKET_RATE_MS, USE_MAVLINK_V1 );
 
