@@ -142,6 +142,7 @@ void buildAviHdr(uint8_t FPS, uint8_t frameType, bool clip16x9, uint16_t frameCn
   memcpy(aviHeader+0x8C, &frameCnt, 2);
   memcpy(aviHeader+0x84, &FPS, 1);
   uint32_t dataSize = moviSize[isTL] + ((frameCnt+(haveSoundFile?1:0)) * CHUNK_HDR) + 4; 
+//datasize to e8 =  moviSize + framecount * CHUNK_HDR + 4
   //memcpy(aviHeader+0x12E, &dataSize, 4); // data size 
   /*/
   uint8_t withAudio = 2; // increase number of streams for audio
