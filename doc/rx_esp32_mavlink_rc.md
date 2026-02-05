@@ -28,7 +28,7 @@ There are no RC_CHANNELS_OVERRIDE messages on failsafe.
 
 # Connection diagram
 
-![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/rx_esp32_mavlink_connections.jpg "ESP32 mavlink connections")
+![alt text](https://raw.githubusercontent.com/RomanLut/hx_espnow_rc/main/doc/esp32_mavlink_connections.jpg "ESP32 mavlink connections")
 
 # Parts list
 
