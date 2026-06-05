@@ -71,7 +71,7 @@ Failsafe:
 
 //if adc read smaler values for period BATTERY_THRESHOLD_PERIOD_MS, all outputs will be disabled (low voltage protection).
 //Zero means low battery protection is disabled.
-#define BATTERY_THRESHOLD  114
+//See BATTERY_THRESHOLD below
 #define BATTERY_THRESHOLD_PERIOD_MS 1000
 
 //=============================================================================
@@ -86,12 +86,14 @@ Failsafe:
 //3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
 //A0 - ADC input
 
+//#define BATTERY_THRESHOLD  0
 //#define TOTAL_CHANNELS   8
 //#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN}
-//#define CALIBRATE_ESC_PINS {false, false, false, true, false, false, false, false}
+//#define CALIBRATE_ESC_PINS {false, false, true, false, false, false, false, false}
 //#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
 //#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
+//#define INVERT_CHANNELS {false, false, false, false, false, false, false, false} //invert output for each channel
 //#define MOTOR_BEEPER_CH -1
 //#define BRAKE_CH -1
 //==========================================================================================
@@ -104,13 +106,14 @@ Failsafe:
 //3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
 //A0 - ADC input
 
-
+//#define BATTERY_THRESHOLD  0
 //#define TOTAL_CHANNELS   9
 //#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 //#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
 //#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
 //#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
+//#define INVERT_CHANNELS {false, false, false, false, false, false, false, false} //invert output for each channel
 //#define MOTOR_BEEPER_CH 8 //zero-based CH number
 //#define BRAKE_CH -1
 //==========================================================================================
@@ -129,6 +132,7 @@ Failsafe:
 //#define PWM_PINS {NOPIN, NOPIN, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
 //#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
 //#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
+//#define INVERT_CHANNELS {false, false, false, false, false, false, false, false} //invert output for each channel
 //#define MOTOR_BEEPER_CH 8 //zero-based CH number
 //#define BRAKE_CH -1
 //==========================================================================================
@@ -136,14 +140,36 @@ Failsafe:
 //Receiver configuration 4: RC car H-Bridge + servo
 //==========================================================================================
 
-#define TOTAL_CHANNELS   9
-#define SERVO_PINS {13 /*D7*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
-#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
-#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
-#define HDRIVER_PINS { { NOPIN, NOPIN }, {NOPIN, NOPIN}, {12 /*D6*/,14 /*D5*/}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
-#define MOTOR_BEEPER_CH 7 //zero-based CH number
-#define BRAKE_CH 6 //zero-based CH number enable brake
+//#define BATTERY_THRESHOLD  114
+//#define TOTAL_CHANNELS   9
+//#define SERVO_PINS {13 /*D7*/, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+//#define CALIBRATE_ESC_PINS {false, false, false, false, false, false, false, false, false}
+//#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+//#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */, NOPIN}
+//#define HDRIVER_PINS { { NOPIN, NOPIN }, {NOPIN, NOPIN}, {12 /*D6*/,14 /*D5*/}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
+//#define INVERT_CHANNELS {false, false, false, false, false, false, false, false} //invert output for each channel
+//#define MOTOR_BEEPER_CH 7 //zero-based CH number
+//#define BRAKE_CH 6 //zero-based CH number enable brake
+//==========================================================================================
+
+
+//Receiver configuration 1: AETR RC car
+//==========================================================================================
+//4 servo outputs: D5,D6,D7,D8 for RC channels 1,2,3,4
+//ESC calibration on channel 3 
+//3 discrete outputs: D1, D2, D0, D3 - for RC channels 5,6,7,8
+//A0 - ADC input
+
+#define BATTERY_THRESHOLD  0
+#define TOTAL_CHANNELS   8
+#define SERVO_PINS {14 /*D5*/, 12 /*D6*/, 13 /*D7*/, 15 /*D8*/, NOPIN, NOPIN, NOPIN, NOPIN}
+#define CALIBRATE_ESC_PINS {true, true, true, true, false, false, false, false}
+#define PWM_PINS {NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN, NOPIN}
+#define DISCRETE_PINS {NOPIN, NOPIN, NOPIN, NOPIN, 5 /*D1*/, 4 /*D2*/, 16 /*D0*/, 0 /* D3 */}
+#define HDRIVER_PINS { {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN}, {NOPIN, NOPIN} }
+#define INVERT_CHANNELS {true, false, true, false, false, false, false, false} //invert output for each channel
+#define MOTOR_BEEPER_CH -1
+#define BRAKE_CH -1
 //==========================================================================================
 
 

@@ -22,18 +22,29 @@ uint16_t beepDuty = 0;
 bool servoOutputsAttached = false;
 bool PWMOutputsAttached = false;
 Servo servos[TOTAL_CHANNELS];
-
-uint8_t servoPins[TOTAL_CHANNELS] = SERVO_PINS;
-uint8_t pwmPins[TOTAL_CHANNELS] = PWM_PINS;
-uint8_t discretePins[TOTAL_CHANNELS] = DISCRETE_PINS;
+const uint8_t servoPins[TOTAL_CHANNELS] = SERVO_PINS;
+const uint8_t pwmPins[TOTAL_CHANNELS] = PWM_PINS;
+const uint8_t discretePins[TOTAL_CHANNELS] = DISCRETE_PINS;
+const bool invertChannels[TOTAL_CHANNELS] = INVERT_CHANNELS;
 
 struct HDriverPins
 {
   uint8_t forward;
   uint8_t reverse;
 };
+const HDriverPins hdriverPins[TOTAL_CHANNELS] = HDRIVER_PINS;
 
-HDriverPins hdriverPins[TOTAL_CHANNELS] = HDRIVER_PINS;
+//=====================================================================
+//=====================================================================
+uint16_t getOutputChannelValue(const HXRCChannels& channels, uint8_t index)
+{
+  uint16_t value = constrain(channels.getChannelValue(index), 1000, 2000);
+  if (invertChannels[index])
+  {
+    value = 3000 - value;
+  }
+  return value;
+}
 
 
 //=====================================================================
@@ -135,9 +146,10 @@ void updateServoOutputs()
         //calling Servo.writeMicroseconds() continuously will produce delay up to 20ms on each call,
         //because waveform generator will wait until previous settings are applied.
         //so avoid redundand calls to writeMicroseconds()
-        if ( servos[counter].readMicroseconds() != channels.getChannelValue(counter) )
+        uint16_t value = getOutputChannelValue(channels, counter);
+        if ( servos[counter].readMicroseconds() != value )
         {
-          servos[counter].writeMicroseconds(channels.getChannelValue(counter));
+          servos[counter].writeMicroseconds(value);
 
           //in any case, update up to 1 servo at a time. 20 ms per servo is quite slow.
           //but if we just attached all servos after failsave (b == false), write all.
@@ -279,7 +291,7 @@ void processBeep()
   if ( !fs && (MOTOR_BEEPER_CH >= 0) )
   {
     HXRCChannels channels = hxrcSlave.getChannels();
-    if ( channels.getChannelValue(MOTOR_BEEPER_CH) >= 1750) 
+    if ( getOutputChannelValue(channels, MOTOR_BEEPER_CH) >= 1750) 
     {
       if ( (millis() % 3000) < 100 ) 
       {
@@ -319,7 +331,7 @@ void updatePWMOutputs()
   {
     if (pwmPins[i] != NOPIN)
     {
-      if ( !fs && (channels.getChannelValue(i) >= PWM_CH_MIN )) 
+      if ( !fs && (getOutputChannelValue(channels, i) >= PWM_CH_MIN )) 
       {
         canBeep = false;
         break;
@@ -329,8 +341,8 @@ void updatePWMOutputs()
     if ((hdriverPins[i].forward != NOPIN))
     {
       if ( !fs && (
-        (channels.getChannelValue(i) >= (1500 + H_BRIDGE_DEADBAND_US)) || 
-        (channels.getChannelValue(i) <= (1500 - H_BRIDGE_DEADBAND_US))) 
+        (getOutputChannelValue(channels, i) >= (1500 + H_BRIDGE_DEADBAND_US)) || 
+        (getOutputChannelValue(channels, i) <= (1500 - H_BRIDGE_DEADBAND_US))) 
       )
       {
         canBeep = false;
@@ -359,13 +371,14 @@ void updatePWMOutputs()
     {
       if (pwmPins[i] != NOPIN)
       {
-        if ( channels.getChannelValue(i) < PWM_CH_MIN ) 
+        uint16_t value = getOutputChannelValue(channels, i);
+        if ( value < PWM_CH_MIN ) 
         {
           analogWrite(pwmPins[i], 0 );  
         }
         else
         {
-          analogWrite(pwmPins[i], map( constrain( channels.getChannelValue(i), 1000, 2000), 1000, 2000, 0, 1023 ) );  
+          analogWrite(pwmPins[i], map(value, 1000, 2000, 0, 1023 ) );  
         }
       }
     }
@@ -419,12 +432,13 @@ void updateHDriverOutputs()
       continue;
     }
 
-    int16_t v = (int16_t)channels.getChannelValue(i) - 1500;
+    uint16_t value = getOutputChannelValue(channels, i);
+    int16_t v = (int16_t)value - 1500;
     int16_t mag = abs(v);
 
     if (mag < H_BRIDGE_DEADBAND_US)
     {
-      int brake = ( channels.getChannelValue(MOTOR_BEEPER_CH) >= 1750) ? 1023 : 0;
+      int brake = ( getOutputChannelValue(channels, MOTOR_BEEPER_CH) >= 1750) ? 1023 : 0;
       analogWrite(fwd, brake);
       analogWrite(rev, brake);
       continue;
@@ -458,7 +472,7 @@ void updateDiscreteOutputs()
   {
     if (discretePins[i] != NOPIN)
     {
-      digitalWrite(discretePins[i], channels.getChannelValue(i)>1200? HIGH : LOW );  
+      digitalWrite(discretePins[i], getOutputChannelValue(channels, i)>1200? HIGH : LOW );  
     }
   }
 }
@@ -531,7 +545,7 @@ bool isThrottleLow()
   {
     if (pwmPins[i] != NOPIN)
     {
-      if ( channels.getChannelValue(i) >= PWM_CH_MIN ) return false;
+      if ( getOutputChannelValue(channels, i) >= PWM_CH_MIN ) return false;
     }
   }
 
@@ -628,3 +642,4 @@ void loop()
     ArduinoOTA.handle();  
   }
 }
+
