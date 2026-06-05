@@ -38,7 +38,7 @@ void HXMavlinkRCEncoder::init( uint16_t packetRateMS, bool mavlink_v1 )
 
 //=====================================================================
 //=====================================================================
-bool HXMavlinkRCEncoder::loop( HardwareSerial& serial )
+bool HXMavlinkRCEncoder::loop( Stream& serial )
 {
     if (serial.availableForWrite() < 34 ) return false;
 
