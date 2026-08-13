@@ -6,8 +6,16 @@ HXRCMaster* HXRCMaster::pInstance;
 void HXRCMaster::OnDataSentStatic(uint8_t *mac_addr, uint8_t status) {HXRCMaster::pInstance->OnDataSent( mac_addr, status );};
 void HXRCMaster::OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len) {HXRCMaster::pInstance->OnDataRecv( mac, incomingData, len);};
 #elif defined (ESP32)
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 5, 0)
+void HXRCMaster::OnDataSentStatic(const esp_now_send_info_t *sendInfo, esp_now_send_status_t status) {HXRCMaster::pInstance->OnDataSent( sendInfo->des_addr, status );};
+#else
 void HXRCMaster::OnDataSentStatic(const uint8_t *mac_addr, esp_now_send_status_t status) {HXRCMaster::pInstance->OnDataSent( mac_addr, status );};
+#endif
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+void HXRCMaster::OnDataRecvStatic(const esp_now_recv_info_t *receiveInfo, const uint8_t *incomingData, int len) {HXRCMaster::pInstance->OnDataRecv( receiveInfo->src_addr, incomingData, len);};
+#else
 void HXRCMaster::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData, int len) {HXRCMaster::pInstance->OnDataRecv( mac, incomingData, len);};
+#endif
 #endif
 
 //=====================================================================

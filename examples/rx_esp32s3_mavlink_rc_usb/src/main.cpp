@@ -9,7 +9,7 @@
 #include <ArduinoOTA.h>
 #include "USB.h"
 #include "USBCDC.h"
-#include "USBHIDKeyboard.h"
+#include "USBHID.h"
 #include "esp32-hal-tinyusb.h"
 
 #define WDT_TIMEOUT_SECONDS 3  
@@ -29,7 +29,78 @@ unsigned long startTime = millis();
 
 HardwareSerial mavlinkSerial(2);
 USBCDC mavlinkUsbSerial;
-USBHIDKeyboard usbKeyboard;
+
+static const uint8_t keyboardReportDescriptor[] = {
+  TUD_HID_REPORT_DESC_KEYBOARD(HID_REPORT_ID(HID_REPORT_ID_KEYBOARD))
+};
+
+//=====================================================================
+//=====================================================================
+// Provides keyboard reports without advertising the BIOS boot-keyboard protocol.
+// Quest keeps boot keyboards in its input subsystem but can withhold that composite
+// device from application UsbManager, which also makes the CDC interfaces invisible.
+// Report protocol preserves runtime keyboard input while allowing GS to open CDC.
+class ReportProtocolKeyboard : public USBHIDDevice
+{
+private:
+  USBHID hid;
+  hid_keyboard_report_t report;
+
+  void sendReport()
+  {
+    hid.SendReport(HID_REPORT_ID_KEYBOARD, &report, sizeof(report));
+  }
+
+public:
+  ReportProtocolKeyboard()
+    : hid(HID_ITF_PROTOCOL_NONE), report{}
+  {
+    USBHID::addDevice(this, sizeof(keyboardReportDescriptor));
+  }
+
+  uint16_t _onGetDescriptor(uint8_t *buffer) override
+  {
+    memcpy(buffer, keyboardReportDescriptor, sizeof(keyboardReportDescriptor));
+    return sizeof(keyboardReportDescriptor);
+  }
+
+  void begin()
+  {
+    hid.begin();
+  }
+
+  void press(uint8_t keycode)
+  {
+    for (size_t i = 0; i < sizeof(report.keycode); i++)
+    {
+      if (report.keycode[i] == keycode)
+      {
+        return;
+      }
+      if (report.keycode[i] == 0)
+      {
+        report.keycode[i] = keycode;
+        sendReport();
+        return;
+      }
+    }
+  }
+
+  void release(uint8_t keycode)
+  {
+    for (size_t i = 0; i < sizeof(report.keycode); i++)
+    {
+      if (report.keycode[i] == keycode)
+      {
+        report.keycode[i] = 0;
+        sendReport();
+        return;
+      }
+    }
+  }
+};
+
+ReportProtocolKeyboard usbKeyboard;
 
 Stream& getMavlinkSerial()
 {
@@ -49,13 +120,13 @@ struct KeyBinding
 };
 
 KeyBinding keyBindings[] = {
-    {KEY_UP_GPIO, KEY_UP_ARROW, false, 0},
-    {KEY_DOWN_GPIO, KEY_DOWN_ARROW, false, 0},
-    {KEY_LEFT_GPIO, KEY_LEFT_ARROW, false, 0},
-    {KEY_RIGHT_GPIO, KEY_RIGHT_ARROW, false, 0},
-    {KEY_ENTER_GPIO, KEY_RETURN, false, 0},
-    {KEY_R_GPIO, 'r', false, 0},
-    {KEY_G_GPIO, 'g', false, 0},
+    {KEY_UP_GPIO, HID_KEY_ARROW_UP, false, 0},
+    {KEY_DOWN_GPIO, HID_KEY_ARROW_DOWN, false, 0},
+    {KEY_LEFT_GPIO, HID_KEY_ARROW_LEFT, false, 0},
+    {KEY_RIGHT_GPIO, HID_KEY_ARROW_RIGHT, false, 0},
+    {KEY_ENTER_GPIO, HID_KEY_ENTER, false, 0},
+    {KEY_R_GPIO, HID_KEY_R, false, 0},
+    {KEY_G_GPIO, HID_KEY_G, false, 0},
 };
 const size_t keyBindingsCount = sizeof(keyBindings) / sizeof(keyBindings[0]);
 const unsigned long KEY_DEBOUNCE_MS = 100;
@@ -127,7 +198,24 @@ void onOTAprogress( uint a, uint b )
 //=====================================================================
 void setup()
 {
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+  esp_task_wdt_config_t watchdogConfig = {};
+  watchdogConfig.timeout_ms = WDT_TIMEOUT_SECONDS * 1000;
+  // This firmware explicitly subscribes and feeds the Arduino loop task below.
+  // Do not also watch the idle tasks: ESP-NOW/USB startup can legitimately keep
+  // a core busy for three seconds while the application loop remains healthy.
+  watchdogConfig.idle_core_mask = 0;
+  watchdogConfig.trigger_panic = true;
+
+  // Arduino 3 may initialize the task watchdog before setup(), so apply this
+  // firmware's timeout to the existing watchdog instead of leaving its default.
+  if (esp_task_wdt_init(&watchdogConfig) == ESP_ERR_INVALID_STATE)
+  {
+    esp_task_wdt_reconfigure(&watchdogConfig);
+  }
+#else
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS, true); //enable panic so ESP32 restarts
+#endif
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 
   Serial.begin(115200);
@@ -146,6 +234,13 @@ void setup()
   mavlinkUsbSerial.begin(TELEMETRY_BAUDRATE);
 #endif
   usbKeyboard.begin();
+  // Describe this as an interface-classed composite device. Arduino's default
+  // 0xEF/0x02/0x01 tuple is also claimed by Meta Remote Desktop on Quest, which
+  // makes every receiver replug launch its overlay. CDC and HID remain declared
+  // by their individual interface descriptors when the device tuple is zero.
+  USB.usbClass(0);
+  USB.usbSubClass(0);
+  USB.usbProtocol(0);
   USB.begin();
 
 #if !USE_USB_CDC
@@ -181,7 +276,8 @@ void updateOutput()
   //set failsafe flag
   bool failsafe = hxrcSlave.getReceiverStats().isFailsafe();
   hxMavlinkRCEncoder.setFailsafe( failsafe);
-  
+
+
   //inject RSSI into channel 16
   hxMavlinkRCEncoder.setChannelValue( USE_MAVLINK_V1 ? MAVLINK_RC_CHANNELS_COUNT_V1 - 1 : MAVLINK_RC_CHANNELS_COUNT-1, 1000 + ((uint16_t)hxrcSlave.getReceiverStats().getRSSI())*10 );
 

@@ -169,7 +169,7 @@ bool HXRCInitEspNow( HXRCConfig& config )
         return false;
     }
 
-    esp_now_peer_info_t peerInfo;
+    esp_now_peer_info_t peerInfo = {};
     memcpy(peerInfo.peer_addr, BROADCAST_MAC, 6);
     peerInfo.channel = config.wifi_channel;
     memset(peerInfo.lmk, 0, ESP_NOW_KEY_LEN);

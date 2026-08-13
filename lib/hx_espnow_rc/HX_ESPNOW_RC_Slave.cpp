@@ -10,8 +10,16 @@ HXRCSlave* HXRCSlave::pInstance;
 void HXRCSlave::OnDataSentStatic(uint8_t *mac_addr, uint8_t status) {HXRCSlave::pInstance->OnDataSent( mac_addr, status );};
 void HXRCSlave::OnDataRecvStatic(uint8_t *mac, uint8_t *incomingData, uint8_t len) {HXRCSlave::pInstance->OnDataRecv( mac, incomingData, len);};
 #elif defined (ESP32)
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 5, 0)
+void HXRCSlave::OnDataSentStatic(const esp_now_send_info_t *sendInfo, esp_now_send_status_t status) {HXRCSlave::pInstance->OnDataSent( sendInfo->des_addr, status );};
+#else
 void HXRCSlave::OnDataSentStatic(const uint8_t *mac_addr, esp_now_send_status_t status) {HXRCSlave::pInstance->OnDataSent( mac_addr, status );};
+#endif
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+void HXRCSlave::OnDataRecvStatic(const esp_now_recv_info_t *receiveInfo, const uint8_t *incomingData, int len) {HXRCSlave::pInstance->OnDataRecv( receiveInfo->src_addr, incomingData, len);};
+#else
 void HXRCSlave::OnDataRecvStatic(const uint8_t *mac, const uint8_t *incomingData, int len) {HXRCSlave::pInstance->OnDataRecv( mac, incomingData, len);};
+#endif
 #endif
 
 //=====================================================================
@@ -21,11 +29,7 @@ HXRCSlave::HXRCSlave() : HXRCBase()
     HXRCSlave::pInstance = this;
     this->gotIncomingPacket = false;
 #if defined(ESP32)
-    this->channelsMutex = xSemaphoreCreateMutex();
-    if( this->channelsMutex == NULL )
-    {
-        HXRCLOG.print("HXRC: Failed create mutex");
-    }
+    this->channelsMux = portMUX_INITIALIZER_UNLOCKED;
 #endif
 }
 
@@ -33,9 +37,6 @@ HXRCSlave::HXRCSlave() : HXRCBase()
 //=====================================================================
 HXRCSlave::~HXRCSlave()
 {
-#if defined (ESP32)
-    vSemaphoreDelete(this->channelsMutex);
-#endif
 }
 
 
@@ -81,12 +82,14 @@ void HXRCSlave::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int 
                 esp8266::InterruptLock lock;
                 memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
             }
-#elif(ESP32)
-            if ( xSemaphoreTake( this->channelsMutex,  (TickType_t) 100) == pdTRUE );
+#elif defined(ESP32)
+            // The ESP-NOW callback and Arduino loop run in different tasks. Keep the
+            // fixed-size channel snapshot atomic without blocking the Wi-Fi task.
+            portENTER_CRITICAL(&this->channelsMux);
             {
                 memcpy(&receivedChannels, &pPayload->channels, sizeof(receivedChannels));
-                xSemaphoreGive( this->channelsMutex);
             }
+            portEXIT_CRITICAL(&this->channelsMux);
 #endif
             memcpy( this->peerMac, mac, 6 );
 #if defined(ESP32)
@@ -221,17 +224,15 @@ HXRCChannels HXRCSlave::getChannels()
         memcpy(&ret, &receivedChannels, sizeof(receivedChannels));
     }
 #elif defined (ESP32)
-    if ( xSemaphoreTake( this->channelsMutex,  portMAX_DELAY ) != pdTRUE )
+    portENTER_CRITICAL(&this->channelsMux);
     {
-        HXRCLOG.println("HXRC: Failed to get mutex");
+        memcpy(&ret, &receivedChannels, sizeof(receivedChannels));
     }
-    memcpy(&ret, &receivedChannels, sizeof(receivedChannels));
-    xSemaphoreGive( this->channelsMutex);
+    portEXIT_CRITICAL(&this->channelsMux);
 #endif
 
     return ret;
 }
-
 
 //=====================================================================
 //=====================================================================
