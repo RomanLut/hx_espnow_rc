@@ -1,3 +1,7 @@
+![GitHub stars](https://img.shields.io/github/stars/RomanLut/hx-esp32-cam-fpv?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/RomanLut/hx-esp32-cam-fpv?style=for-the-badge)
+![Downloads](https://img.shields.io/github/downloads/RomanLut/hx-esp32-cam-fpv/total?style=for-the-badge)
+
 **Goals:**
 - [x] transmit 16 RC channels
 - [x] transmit RSSI and two custom values (A1, A2) from air to ground
