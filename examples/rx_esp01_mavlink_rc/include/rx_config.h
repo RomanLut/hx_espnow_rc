@@ -14,6 +14,9 @@ https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/
 
 */
 
+// Transmission power in dBm (0-20)
+#define TRANSMISSION_POWER 20
+
 //Use Mavlink v1 ( 8 RC Channels ) or Mavlink v2 (15 RC Channels)
 #define USE_MAVLINK_V1 false
 

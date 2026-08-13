@@ -4,7 +4,15 @@
 #include "hx_mavlink_rc_encoder.h"
 #include "HX_ESPNOW_RC_SerialBuffer.h"
 
+#if defined(ESP8266)
+#include <ESP8266WiFi.h>
+#endif
+
 #include <ArduinoOTA.h>
+
+#if TRANSMISSION_POWER < 0 || TRANSMISSION_POWER > 20
+#error "TRANSMISSION_POWER must be in the 0-20 dBm range"
+#endif
 
 HXRCSlave hxrcSlave;
 HXRCSerialBuffer<512> hxrcTelemetrySerial( &hxrcSlave );
@@ -13,6 +21,15 @@ HXMavlinkRCEncoder hxMavlinkRCEncoder;
 unsigned long lastStats = millis();
 
 bool bMSPMode = false;
+
+//=====================================================================
+//=====================================================================
+void applyTransmissionPower()
+{
+#if defined(ESP8266)
+  WiFi.setOutputPower(TRANSMISSION_POWER);
+#endif
+}
 
 //=====================================================================
 //=====================================================================
@@ -68,6 +85,7 @@ void setup()
 
   //REVIEW: receiver does not work if AP is not initialized?
   WiFi.softAP("hxrcmavlink", NULL, USE_WIFI_CHANNEL);
+  applyTransmissionPower();
 
   ArduinoOTA.begin();  
 }
