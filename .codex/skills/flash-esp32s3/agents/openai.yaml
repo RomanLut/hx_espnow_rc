@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flash ESP32-S3"
+  short_description: "Build, flash, and verify the S3 receiver"
+  default_prompt: "Use $flash-esp32s3 to build, flash, and verify the connected ESP32-S3 receiver."
